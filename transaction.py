@@ -2,7 +2,8 @@
 from coin import Coin
 
 class Transaction:
-    def __init__(self, _to, _from, _coins, _memo):
+    def __init__(self, _chain, _from, _to, _coins, _memo):
+        self.chain = _chain
         self.toAddress = _to
         self.fromAddress = _from
         self.coins = _coins
