@@ -12,3 +12,9 @@ crypto, etc.
 ```bash
 make run
 ```
+
+## Testing
+
+```bash
+make test
+```
