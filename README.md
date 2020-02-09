@@ -18,3 +18,17 @@ make run
 ```bash
 make test
 ```
+
+#### Continuous Testing
+If you want to continuously run tests as you save files, install
+`pytest-watch`
+
+```bash
+pip install pytest-watch
+```
+
+Then run the follow make command...
+
+```bash
+make test-watch
+```
