@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.com/thorchain/heimdall/badges/master/pipeline.svg)](https://gitlab.com/thorchain/heimdall/commits/master)
+
 Heimdall
 ========
 Heimdall is the gatekeeper who sees all. His role within the stack is to
