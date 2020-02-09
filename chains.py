@@ -15,7 +15,6 @@ class Account:
                 if coin.asset == c.asset:
                     self.balances[i].amount -= coin.amount
                     if self.balances[i].amount < 0:
-                        print("Insufficient funds:", self.balances)
                         raise Exception("insufficient funds")
 
 
@@ -69,7 +68,6 @@ class Binance:
         if txn.chain != Binance.chain:
             raise Exception('Cannot transfer. {} is not {}'.format(Binance.chain, txn.chain))
 
-        print("Transaction:", txn)
         from_acct = self.get_account(txn.fromAddress)
         to_acct = self.get_account(txn.toAddress)
 
