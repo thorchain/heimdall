@@ -15,6 +15,9 @@ class ThorchainState:
         return Pool(asset)
 
     def set_pool(self, pool):
+        """
+        Set a pool
+        """
         for p in self.pools:
             if p.asset == pool.asset:
                 p = pool
@@ -51,7 +54,7 @@ class ThorchainState:
 
         self.set_pool(pool)
 
-        return True
+        return True, 0
 
 
 class Pool:

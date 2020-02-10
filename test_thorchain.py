@@ -18,8 +18,9 @@ class TestThorchainState(unittest.TestCase):
             "STAKE:BNB.BNB",
         )
 
-        done = thorchain.handle(txn)
+        done, out = thorchain.handle(txn)
         self.assertEqual(done, True)
+        self.assertEqual(out, 0)
 
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 50000000000)
