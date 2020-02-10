@@ -1,10 +1,10 @@
-.PHONY: test run
+.PHONY: build test test-watch run
 
-run:
-	@docker run --rm -v ${PWD}:/app python:3.8-alpine python /app/main.py
+build:
+	@docker build -t heimdall .
 
 test:
-	@docker run --rm -e PYTHONPATH=/app -v ${PWD}:/app python:3.8-alpine python -m unittest
+	@docker run --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app heimdall python -m unittest
 
 test-watch:
 	@ptw

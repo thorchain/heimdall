@@ -7,12 +7,6 @@ ensure all the various components function and work properly. He verifies that
 THORchain operates with the correct mathematics, emits the correct events,
 crypto, etc.
 
-## Run
-
-```bash
-make run
-```
-
 ## Testing
 
 ```bash

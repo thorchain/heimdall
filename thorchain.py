@@ -1,4 +1,6 @@
 
+from transaction import Transaction
+
 class ThorchainState:
     def __init__(self):
         self.pools = []
@@ -15,43 +17,71 @@ class ThorchainState:
         return Pool(asset)
 
     def set_pool(self, pool):
-        for p in self.pools:
+        """
+        Set a pool
+        """
+        for i, p in enumerate(self.pools):
             if p.asset == pool.asset:
-                p = pool
+                self.pools[i] = pool
                 return
 
         self.pools.append(pool)
 
+    def handle_gas(self, gas):
+        pool = self.get_pool(gas.asset)
+        pool.sub(0, gas.amount)
+        self.set_pool(pool)
+
+    def refund(self, txn):
+        txns = []
+        for coin in txn.coins:
+            txns.append(Transaction(txn.chain, txn.toAddress, txn.fromAddress, [coin], "REFUND"))
+        return txns
+
     def handle(self, txn):
         """
-        This is a router that sends a transaction to the correct handler. This
-        returns a boolean that determines if it should trigger a refund
+        This is a router that sends a transaction to the correct handler. 
+        It will return transactions to send
         """
         if txn.memo.startswith("STAKE:"):
             return self.handle_stake(txn)
         else:
-            return False
+            return self.refund(txn)
 
     def handle_stake(self, txn):
         """
         handles a staking transaction
         """
+        # parse memo
         parts = txn.memo.split(":")
+        if len(parts) < 2:
+            return self.refund(txn)
+
         asset = parts[1]
         parts = asset.split(".")
+        if len(parts) < 2:
+            return self.refund(txn)
         chain = parts[0]
         symbol = parts[1]
+
+        # check that we have one rune and one asset
+        if len(txn.coins) > 2:
+            return self.refund(txn)
+        for coin in txn.coins:
+            if not coin.is_rune():
+                if symbol != coin.asset:
+                    return self.refund(txn) # mismatch coin asset and memo
 
         pool = self.get_pool(asset)
         for coin in txn.coins:
             if coin.is_rune():
-                pool.rune_balance += coin.amount
+                pool.add(coin.amount, 0)
             else:
-                pool.asset_balance += coin.amount
+                pool.add(0, coin.amount)
 
         self.set_pool(pool)
 
-        return True
+        return []
 
 
 class Pool:
@@ -59,6 +89,17 @@ class Pool:
         self.asset = asset
         self.rune_balance = 0
         self.asset_balance = 0
+
+    def sub(self, rune_amt, asset_amt):
+        self.rune_balance -= rune_amt
+        self.asset_balance -= asset_amt
+        if self.asset_balance < 0 or self.rune_balance < 0:
+            print("Overdrawn pool", self)
+            raise Exception("insufficient funds")
+
+    def add(self, rune_amt, asset_amt):
+        self.rune_balance += rune_amt
+        self.asset_balance += asset_amt
 
     def __repr__(self):
         return "<Pool %s Rune: %d | Asset: %d>" % (self.asset, self.rune_balance, self.asset_balance)

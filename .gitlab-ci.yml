@@ -3,6 +3,9 @@ image: python:3.8-alpine
 stages:
   - test
 
+before_script:
+  - pip install -r requirements.txt
+
 unit_tests:
   stage: test
   script:
