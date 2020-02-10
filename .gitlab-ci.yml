@@ -2,7 +2,6 @@ image: python:3.8-alpine
 
 stages:
   - test
-  - run
 
 before_script:
   - pip install -r requirements.txt
@@ -11,8 +10,3 @@ unit_tests:
   stage: test
   script:
     - python -m unittest -v
-
-unit_tests:
-  stage: run
-  script:
-    - python main.py
