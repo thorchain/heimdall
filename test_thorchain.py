@@ -8,6 +8,20 @@ from coin import Coin
 
 class TestThorchainState(unittest.TestCase):
 
+    def test_add(self):
+        thorchain = ThorchainState()
+        txn = Transaction(
+            Binance.chain, 
+            "STAKER-1", 
+            "VAULT", 
+            [Coin("BNB", 150000000), Coin("RUNE", 50000000000)], 
+            "ADD:BNB.BNB",
+        )
+
+        outbound = thorchain.handle(txn)
+        self.assertEqual(outbound, [])
+
+
     def test_stake(self):
         thorchain = ThorchainState()
         txn = Transaction(
