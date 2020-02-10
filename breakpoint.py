@@ -36,19 +36,9 @@ class Breakpoint:
                 "LOK-3C0": 0,
                 "RUNE-A1F": 0,
             },
-            "VAULT": {
-                "BNB": 0,
-                "LOK-3C0": 0,
-                "RUNE-A1F": 0,
-            },
-            "POOL-BNB": {
-                "BNB": 0,
-                "RUNE-A1F": 0
-            },
-            "POOL-LOK": {
-                "LOK-3C0": 0,
-                "RUNE-A1F": 0
-            },
+            "VAULT": {},
+            "POOL-BNB": None,
+            "POOL-LOK": None,
         }
 
         for name, acct in self.bnb.accounts.items():
@@ -56,13 +46,12 @@ class Breakpoint:
                 snap[name][coin.asset] = coin.amount
 
         for pool in self.thorchain.pools:
-            asset = pool.asset
-            if asset == "BNB.BNB":
+            if pool.asset == "BNB.BNB":
                 snap["POOL-BNB"] = {
                     "BNB": pool.asset_balance,
                     "RUNE-A1F": pool.rune_balance,
                 }
-            elif asset == "BNB.LOK-3C0":
+            elif pool.asset == "BNB.LOK-3C0":
                 snap["POOL-LOK"] = {
                     "LOK-3C0": pool.asset_balance,
                     "RUNE-A1F": pool.rune_balance,

@@ -27,7 +27,7 @@ txns = [
 
     # Staking
     Transaction(Binance.chain, "STAKER-1", "VAULT",
-        [Coin("BNB", 150000000), Coin("RUNE", 50000000000)],
+        [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
     "STAKE:BNB.BNB")
 ]
 
@@ -42,22 +42,24 @@ def get_balance(idx):
 def main():
     bnb = Binance()
     thorchain = ThorchainState()
-    snaps = []
 
     for i, txn in enumerate(txns):
-        out = 0
+        out = 0 # number of outbound transaction to be expected
         if txn.memo == "SEED":
             bnb.seed(txn.toAddress, txn.coins)
             continue
         else:
-            bnb.transfer(txn)
-            refund, out = thorchain.handle(txn)
+            bnb.transfer(txn) # send transfer on binance chain
+            _, out = thorchain.handle(txn) # process transaction in thorchain
 
+        # generated a snapshop picture of thorchain and bnb
         snap = Breakpoint(thorchain, bnb).snapshot(i, out)
-        expected = get_balance(i+4)
-        snaps.append(snap)
-        print(snap)
-        print(DeepDiff(expected, snap))
+        expected = get_balance(i) # get the expected balance from json file
+
+        diff = DeepDiff(expected, snap, ignore_order=True) # empty dict if are equal
+        if len(diff) > 0:
+            print(diff)
+            raise Exception("did not match!")
 
 if __name__ == "__main__":
     main()
