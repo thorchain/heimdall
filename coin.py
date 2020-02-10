@@ -4,6 +4,9 @@ class Coin:
         self.asset = asset
         self.amount = amount
 
+    def is_rune(self):
+        return self.asset.startswith("RUNE")
+
     def equals(self, coin):
         return self.asset == coin.asset and self.amount == coin.amount
 
