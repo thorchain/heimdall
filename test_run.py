@@ -45,6 +45,18 @@ txns = [
     [Transaction(Binance.chain, "STAKER-2", "VAULT",
         [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
     "STAKE:BNB.TCAN-014"), 2],
+    [Transaction(Binance.chain, "STAKER-2", "VAULT",
+        [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+    "STAKE:RUNE-A1F"), 2],
+    [Transaction(Binance.chain, "STAKER-2", "VAULT",
+        [Coin("BNB", 30000000)],
+    "STAKE:BNB.BNB"), 0],
+    [Transaction(Binance.chain, "STAKER-2", "VAULT",
+        [Coin("RUNE-A1F", 10000000000)],
+    "STAKE:BNB.BNB"), 0],
+    [Transaction(Binance.chain, "STAKER-2", "VAULT",
+        [Coin("BNB", 90000000), Coin("RUNE-A1F", 30000000000)],
+    "STAKE:BNB.BNB"), 0],
 ]
 
 def get_balance(idx):
