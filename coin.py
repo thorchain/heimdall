@@ -7,11 +7,14 @@ class Coin:
     def is_rune(self):
         return self.asset.startswith("RUNE")
 
+    def is_zero(self):
+        return self.amount == 0
+
     def equals(self, coin):
         return self.asset == coin.asset and self.amount == coin.amount
 
     def __repr__(self):
-        return "<Coin %d%s>" % ((self.amount / 100000000), self.asset)
+        return "<Coin %d%s>" % ((self.amount), self.asset)
 
     def __str__(self):
-        return "%d%s" % ((self.amount / 100000000), self.asset)
+        return "%d%s" % ((self.amount), self.asset)

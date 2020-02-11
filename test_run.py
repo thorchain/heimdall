@@ -1,6 +1,7 @@
 import unittest
 
 import json
+import pprint
 from deepdiff import DeepDiff
 
 from chains import Binance
@@ -70,6 +71,50 @@ txns = [
     [Transaction(Binance.chain, "USER-1", "VAULT",
         [Coin("RUNE-A1F", 100000000)],
     "ABDG?"), 1],
+
+    # Swaps
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("BNB", 1)],
+    "SWAP:BNB.BNB"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("BNB", 30000000)],
+    "SWAP:BNB.BNB"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("BNB", 30000000), Coin("RUNE-A1F", 100000000)],
+    "SWAP:BNB.BNB"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("RUNE-A1F", 1)],
+    "SWAP:BNB.BNB"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("RUNE-A1F", 10000000000)],
+    "SWAP:BNB.BNB::26572599"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("RUNE-A1F", 10000000000)],
+    "SWAP:BNB.BNB"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("BNB", 10000000)],
+    "SWAP:BNB.RUNE-A1F"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("RUNE-A1F", 10000000000)],
+    "SWAP:BNB.BNB:STAKER-1:23853375"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("RUNE-A1F", 10000000000)],
+    "SWAP:BNB.BNB:STAKER-1:22460886"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("BNB", 10000000)],
+    "SWAP:BNB.RUNE-A1F:bnbSTAKER-1"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("LOK-3C0", 5000000000)],
+    "SWAP:BNB.RUNE-A1F"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("RUNE-A1F", 5000000000)],
+    "SWAP:BNB.LOK-3C0"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("LOK-3C0", 5000000000)],
+    "SWAP:BNB.BNB"), 1],
+    [Transaction(Binance.chain, "USER-1", "VAULT",
+        [Coin("BNB", 5000000)],
+    "SWAP:BNB.LOK-3C0"), 1],
 ]
 
 def get_balance(idx):
@@ -87,6 +132,7 @@ class TestRun(unittest.TestCase):
 
         for i, unit in enumerate(txns):
             txn, out = unit
+            print("{} {}".format(i, txn))
             if txn.memo == "SEED":
                 bnb.seed(txn.toAddress, txn.coins)
                 continue
@@ -101,12 +147,15 @@ class TestRun(unittest.TestCase):
             snap = Breakpoint(thorchain, bnb).snapshot(i, out)
             expected = get_balance(i) # get the expected balance from json file
 
-            diff = DeepDiff(expected, snap, ignore_order=True) # empty dict if are equal
+            diff = DeepDiff(snap, expected, ignore_order=True) # empty dict if are equal
             if len(diff) > 0:
                 print("Transaction:", i, txn)
-                print("Expected:", expected)
-                print("Obtained:", snap)
-                print("Diff:", diff)
+                print(">>>>>> Expected")
+                pprint.pprint(expected)
+                print(">>>>>> Obtained")
+                pprint.pprint(snap)
+                print(">>>>>> DIFF")
+                pprint.pprint(diff)
                 raise Exception("did not match!")
 
 
