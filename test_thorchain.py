@@ -1,12 +1,81 @@
 import unittest
 
-from thorchain import ThorchainState
+from thorchain import ThorchainState, Pool
 from chains import Binance
 
 from transaction import Transaction
 from coin import Coin
 
 class TestThorchainState(unittest.TestCase):
+
+    def test_swap(self):
+        # no pool, should emit a refund
+        thorchain = ThorchainState()
+        txn = Transaction(
+            Binance.chain, 
+            "STAKER-1", 
+            "VAULT", 
+            [Coin("RUNE", 1000000000)], 
+            "SWAP:BNB.BNB",
+        )
+
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "REFUND")
+
+        # do a regular swap
+        thorchain.pools = [Pool("BNB.BNB", 50*100000000,50*100000000)]
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].coins[0].asset, "BNB")
+        self.assertEqual(outbound[0].coins[0].amount, 694444444)
+
+        # swap with two coins on the inbound tx
+        txn.coins = [[Coin("BNB", 1000000000)], Coin("RUNE-A1F", 1000000000)]
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 2)
+        self.assertEqual(outbound[0].memo, "REFUND")
+
+        # swap with zero return, refunds and doesn't change pools
+        txn.coins = [Coin("RUNE-A1F", 1)]
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "REFUND")
+        self.assertEqual(thorchain.pools[0].rune_balance, 60*100000000)
+
+        # swap with limit
+        txn.coins = [Coin("RUNE-A1F", 50)]
+        txn.memo = "SWAP:BNB.BNB::999999999999999999999"
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "REFUND")
+        self.assertEqual(thorchain.pools[0].rune_balance, 60*100000000)
+
+        # swap with custom address
+        txn.coins = [Coin("RUNE-A1F", 50)]
+        txn.memo = "SWAP:BNB.BNB:NOMNOM:"
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].toAddress, "NOMNOM")
+
+        # refund swap when address is a differnet network
+        txn.coins = [Coin("RUNE-A1F", 50)]
+        txn.memo = "SWAP:BNB.BNB:BNBNOMNOM"
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "REFUND")
+
+        # do a double swap
+        txn.coins = [Coin("BNB", 1000000)] 
+        txn.memo = "SWAP:BNB.LOK-3C0"
+        thorchain.pools.append(Pool("BNB.LOK-3C0", 30*100000000,30*100000000))
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].coins[0].asset, "LOK-3C0")
+        self.assertEqual(outbound[0].coins[0].amount, 1391608)
 
     def test_add(self):
         thorchain = ThorchainState()

@@ -42,19 +42,23 @@ class Breakpoint:
         }
 
         for name, acct in self.bnb.accounts.items():
+            # ignore if is a new name
+            if not name in snap:
+                continue
+
             for coin in acct.balances:
-                snap[name][coin.asset] = coin.amount
+                snap[name][coin.asset] = int(coin.amount)
 
         for pool in self.thorchain.pools:
             if pool.asset == "BNB.BNB":
                 snap["POOL-BNB"] = {
-                    "BNB": pool.asset_balance,
-                    "RUNE-A1F": pool.rune_balance,
+                    "BNB": int(pool.asset_balance),
+                    "RUNE-A1F": int(pool.rune_balance),
                 }
             elif pool.asset == "BNB.LOK-3C0":
                 snap["POOL-LOK"] = {
-                    "LOK-3C0": pool.asset_balance,
-                    "RUNE-A1F": pool.rune_balance,
+                    "LOK-3C0": int(pool.asset_balance),
+                    "RUNE-A1F": int(pool.rune_balance),
                 }
 
         return snap

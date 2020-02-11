@@ -15,9 +15,8 @@ class Account:
                 if coin.asset == c.asset:
                     self.balances[i].amount -= coin.amount
                     if self.balances[i].amount < 0:
-                        print("Balance:", self.address, self.balances[i])
+                        print("Balance:", self.address, self.balances[i], coin.amount)
                         raise Exception("insufficient funds")
-
 
     def add(self, coins):
         if not isinstance(coins, list):
