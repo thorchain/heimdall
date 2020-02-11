@@ -240,7 +240,7 @@ class ThorchainState:
 
     def calc_asset_emission(self, X, x, Y):
         # ( x * X * Y ) / ( x + X )^2
-        return (x * X * Y) / (x + X)**2
+        return int((x * X * Y) / (x + X)**2)
 
 
 class Pool:
@@ -274,3 +274,8 @@ class Pool:
 
     def __str__(self):
         return "Pool %s Rune: %d | Asset: %d" % (self.asset, self.rune_balance, self.asset_balance)
+
+class Staker:
+    def __init__(self, address, units = 0):
+        self.address = address
+        self.units = 0
