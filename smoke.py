@@ -1,5 +1,7 @@
-from chains import Binance
-from thorchain import ThorchainState
+import argparse
+
+from chains import Binance, MockBinance
+from thorchain import ThorchainState, ThorchainClient
 
 from common import Transaction, Coin
 
@@ -122,3 +124,50 @@ txns = [
         [Coin("BNB", 1)],
     "WITHDRAW:BNB.LOK-3C0"), 2],
 ]
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--binance", default="http://localhost:26660", help="Mock binance server")
+    parser.add_argument("--thorchain", default="http://localhost:1317", help="Thorchain API url")
+    parser.add_argument("--generate-balances", default=False, type=bool, help="Generate balances (bool)")
+    parser.add_argument("--fast-fail", default=False, type=bool, help="Generate balances (bool)")
+
+    args = parser.parse_args()
+
+    smoker = Smoker(args.binance, args.thorchain, txns, args.generate_balances, args.fast_fail)
+    print("Vault Address:", smoker.thorchain_client.get_vault_address())
+    smoker.run()
+
+class Smoker:
+    def __init__(self, bnb, thor, txns=txns, gen_balances=False, fast_fail=False):
+        self.binance = Binance()
+        self.thorchain = ThorchainState()
+
+        self.txns = txns
+
+        self.mock_binance = MockBinance(bnb)
+        self.thorchain_client = ThorchainClient(thor)
+        self.generate_balances = gen_balances
+        self.fast_fail = fast_fail
+
+    def run(self):
+        print(self.txns[0])
+        for i, unit in enumerate(self.txns):
+            txn, out = unit # get transaction and expected number of outbound transactions
+            print("{} {}".format(i, txn))
+            if txn.memo == "SEED":
+                self.binance.seed(txn.toAddress, txn.coins)
+                self.mock_binance.seed(txn.toAddress, txn.coins)
+                continue
+            else:
+                self.mock_binance.transfer(txn) # trigger mock Binance transaction
+
+                self.binance.transfer(txn) # send transfer on binance chain
+                outbound = self.thorchain.handle(txn) # process transaction in thorchain
+                for txn in outbound:
+                    gas = self.binance.transfer(txn) # send outbound txns back to Binance
+                    self.thorchain.handle_gas(gas) # subtract gas from pool(s)
+
+
+if __name__ == '__main__':
+    main()

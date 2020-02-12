@@ -1,6 +1,16 @@
 from copy import deepcopy
 
-from common import Transaction, Coin, Asset, get_share
+from common import Transaction, Coin, Asset, get_share, requests_retry_session, HttpClient
+
+
+class ThorchainClient(HttpClient):
+    """
+    A client implementation to thorchain API
+    """
+    def get_vault_address(self):
+        data = self.fetch("/thorchain/pool_addresses")
+        return data['current'][0]['address']
+
 
 class ThorchainState:
     """

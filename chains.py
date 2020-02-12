@@ -1,6 +1,47 @@
 
-from common import Coin, Asset
+from common import Transaction, Coin, Asset, HttpClient
  
+class MockBinance(HttpClient):
+    """
+    An client implementation for a mock binance server
+    https://gitlab.com/thorchain/bepswap/mock-binance
+    """
+    aliases = {
+        "MASTER": "tbnb1ht7v08hv2lhtmk8y7szl2hjexqryc3hcldlztl",
+        "USER-1": "tbnb157dxmw9jz5emuf0apj4d6p3ee42ck0uwksxfff",
+        "STAKER-1": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q",
+        "STAKER-2": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx",
+        "VAULT": "tbnb1ht7v08hv2lhtmk8y7szl2hjexqryc3hcldlztl",
+    }
+
+    def transfer(self, txn):
+        """
+        Make a transaction/transfer on mock binance
+        """
+        if not isinstance(txn.coins, list):
+            txn.coins = [txn.coins]
+
+        if txn.toAddress in self.aliases:
+            txn.toAddress = self.aliases[txn.toAddress]
+
+        if txn.fromAddress in self.aliases:
+            txn.fromAddress = self.aliases[txn.fromAddress]
+
+        payload = {
+            "from": txn.fromAddress,
+            "to": txn.toAddress,
+            "memo": txn.memo,
+            "coins": [coin.to_dict() for coin in txn.coins],
+        }
+        print("Payload:", payload)
+        return self.post("/broadcast/easy", payload)
+
+    def seed(self, addr, coins):
+        return self.transfer(
+            Transaction(Binance.chain, "MASTER", addr, coins, "SEED")
+        )
+
+
 class Account:
     """
     An account is an address with a list of coin balances associated

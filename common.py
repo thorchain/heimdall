@@ -1,3 +1,28 @@
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
+def requests_retry_session(
+    retries=10,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    """
+    Creates a request session that has auto retry
+    """
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
 
 def get_share(part, total, alloc):
     """
@@ -5,6 +30,40 @@ def get_share(part, total, alloc):
     (Allocation / (Total / part))
     """
     return float(alloc) / (float(total) / float(part))
+
+
+class HttpClient:
+    """
+    An generic http client
+    """
+
+    def __init__(self, base_url):
+        self.base_url = base_url
+
+    def get_url(self, path):
+        """
+        Get fully qualified url with given path
+        """
+        return self.base_url + path
+
+    def fetch(self, path, args={}):
+        """
+        Make a get request
+        """
+        url = self.get_url(path)
+        resp = requests_retry_session().get(url, params=args)
+        resp.raise_for_status()
+        return resp.json()
+
+    def post(self, path, payload={}):
+        """
+        Make a post request
+        """
+        url = self.get_url(path)
+        resp = requests_retry_session().post(url, json=payload)
+        print("payload", payload)
+        resp.raise_for_status()
+        return resp.json()
 
 
 class Asset:
@@ -65,6 +124,16 @@ class Coin:
         Does this coin equal another?
         """
         return self.asset.is_equal(coin.asset) and self.amount == coin.amount
+
+    def to_dict(self):
+        """
+        Convert the class to an dictionary, specifically in a format for
+        mock-binance
+        """
+        return {
+            "denom": self.asset.symbol,
+            "amount": self.amount,
+        }
 
     def __repr__(self):
         return "<Coin %d%s>" % ((self.amount), self.asset)
