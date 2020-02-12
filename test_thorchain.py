@@ -20,13 +20,13 @@ class TestThorchainState(unittest.TestCase):
 
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "REFUND")
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
         # do a regular swap
         thorchain.pools = [Pool("BNB.BNB", 50*100000000,50*100000000)]
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND")
+        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
         self.assertEqual(outbound[0].coins[0].asset.is_equal("BNB"), True)
         self.assertEqual(outbound[0].coins[0].amount, 694444444)
 
@@ -34,13 +34,13 @@ class TestThorchainState(unittest.TestCase):
         txn.coins = [[Coin("BNB", 1000000000)], Coin("RUNE-A1F", 1000000000)]
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
-        self.assertEqual(outbound[0].memo, "REFUND")
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
         # swap with zero return, refunds and doesn't change pools
         txn.coins = [Coin("RUNE-A1F", 1)]
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "REFUND")
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
         self.assertEqual(thorchain.pools[0].rune_balance, 60*100000000)
 
         # swap with limit
@@ -48,7 +48,7 @@ class TestThorchainState(unittest.TestCase):
         txn.memo = "SWAP:BNB.BNB::999999999999999999999"
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "REFUND")
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
         self.assertEqual(thorchain.pools[0].rune_balance, 60*100000000)
 
         # swap with custom address
@@ -56,7 +56,7 @@ class TestThorchainState(unittest.TestCase):
         txn.memo = "SWAP:BNB.BNB:NOMNOM:"
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND")
+        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
         self.assertEqual(outbound[0].toAddress, "NOMNOM")
 
         # refund swap when address is a differnet network
@@ -64,7 +64,7 @@ class TestThorchainState(unittest.TestCase):
         txn.memo = "SWAP:BNB.BNB:BNBNOMNOM"
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "REFUND")
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
         # do a double swap
         txn.coins = [Coin("BNB", 1000000)] 
@@ -72,7 +72,7 @@ class TestThorchainState(unittest.TestCase):
         thorchain.pools.append(Pool("BNB.LOK-3C0", 30*100000000,30*100000000))
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND")
+        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
         self.assertEqual(outbound[0].coins[0].asset.is_equal("LOK-3C0"), True)
         self.assertEqual(outbound[0].coins[0].amount, 1391608)
 
@@ -217,18 +217,18 @@ class TestThorchainState(unittest.TestCase):
         txn.memo = "WITHDRAW:"
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "REFUND")
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
         # should error without a bad withdraw basis points, should be between 0
         # and 10,000
         txn.memo = "WITHDRAW::-4"
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "REFUND")
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
         txn.memo = "WITHDRAW::1000000000"
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "REFUND")
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
 
 if __name__ == '__main__':

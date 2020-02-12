@@ -4,7 +4,7 @@ from requests.packages.urllib3.util.retry import Retry
 
 def requests_retry_session(
     retries=10,
-    backoff_factor=0.3,
+    backoff_factor=1,
     status_forcelist=(500, 502, 504),
     session=None,
 ):
@@ -61,7 +61,6 @@ class HttpClient:
         """
         url = self.get_url(path)
         resp = requests_retry_session().post(url, json=payload)
-        print("payload", payload)
         resp.raise_for_status()
         return resp.json()
 

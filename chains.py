@@ -1,3 +1,4 @@
+import time
 
 from common import Transaction, Coin, Asset, HttpClient
  
@@ -13,6 +14,32 @@ class MockBinance(HttpClient):
         "STAKER-2": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx",
         "VAULT": "tbnb1ht7v08hv2lhtmk8y7szl2hjexqryc3hcldlztl",
     }
+
+    def set_vault_address(self, addr):
+        """
+        Set the vault bnb address
+        """
+        self.aliases['VAULT'] = addr
+
+    def get_block_height(self):
+        """
+        Get the current block height of mock binance
+        """
+        data = self.fetch("/block")
+        return int(data['result']['block']['header']['height'])
+
+    def wait_for_blocks(self, count):
+        """
+        Wait for the given number of blocks
+        """
+        start_block = self.get_block_height()
+        for x in range(0, 20):
+            time.sleep(1)
+            block = self.get_block_height()
+            print("Waiting for block:", block, start_block, count)
+            if block - start_block >= count:
+                return
+        raise Exception("failed waiting for mock binance transactions ({})", format(count))
 
     def transfer(self, txn):
         """
@@ -33,7 +60,6 @@ class MockBinance(HttpClient):
             "memo": txn.memo,
             "coins": [coin.to_dict() for coin in txn.coins],
         }
-        print("Payload:", payload)
         return self.post("/broadcast/easy", payload)
 
     def seed(self, addr, coins):

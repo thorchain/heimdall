@@ -1,3 +1,4 @@
+import time
 from copy import deepcopy
 
 from common import Transaction, Coin, Asset, get_share, requests_retry_session, HttpClient
@@ -7,6 +8,25 @@ class ThorchainClient(HttpClient):
     """
     A client implementation to thorchain API
     """
+    def get_block_height(self):
+        """
+        Get the current block height of mock binance
+        """
+        data = self.fetch("/thorchain/lastblock")
+        return int(data['statechain'])
+
+    def wait_for_blocks(self, count):
+        """
+        Wait for the given number of blocks
+        """
+        start_block = self.get_block_height()
+        for x in range(0, 100):
+            time.sleep(1)
+            block = self.get_block_height()
+            if block - start_block >= count:
+                return
+        raise Exception("failed waiting for thorchain blocks ({})", format(count))
+
     def get_vault_address(self):
         data = self.fetch("/thorchain/pool_addresses")
         return data['current'][0]['address']
@@ -60,7 +80,7 @@ class ThorchainState:
         """
         txns = []
         for coin in txn.coins:
-            txns.append(Transaction(txn.chain, txn.toAddress, txn.fromAddress, [coin], "REFUND"))
+            txns.append(Transaction(txn.chain, txn.toAddress, txn.fromAddress, [coin], "REFUND:TODO"))
         return txns
 
     def handle(self, txn):
@@ -176,8 +196,8 @@ class ThorchainState:
 
         chain, _from, _to = txn.chain, txn.fromAddress, txn.toAddress
         return [
-            Transaction(chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], "OUTBOUND"),
-            Transaction(chain, _to, _from, [Coin(asset, asset_amt)], "OUTBOUND"),
+            Transaction(chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], "OUTBOUND:TODO"),
+            Transaction(chain, _to, _from, [Coin(asset, asset_amt)], "OUTBOUND:TODO"),
         ]
 
     def handle_swap(self, txn):
@@ -248,7 +268,7 @@ class ThorchainState:
         # save pools
         for pool in pools:
             self.set_pool(pool)
-        return [Transaction(txn.chain, txn.toAddress, address, [emit], "OUTBOUND")]
+        return [Transaction(txn.chain, txn.toAddress, address, [emit], "OUTBOUND:TODO")]
 
     def swap(self, coin, target):
         """

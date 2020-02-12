@@ -145,8 +145,12 @@ class Smoker:
 
         self.txns = txns
 
-        self.mock_binance = MockBinance(bnb)
         self.thorchain_client = ThorchainClient(thor)
+        vault_address = self.thorchain_client.get_vault_address()
+
+        self.mock_binance = MockBinance(bnb)
+        self.mock_binance.set_vault_address(vault_address)
+
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
 
@@ -160,13 +164,15 @@ class Smoker:
                 self.mock_binance.seed(txn.toAddress, txn.coins)
                 continue
             else:
-                self.mock_binance.transfer(txn) # trigger mock Binance transaction
-
                 self.binance.transfer(txn) # send transfer on binance chain
                 outbound = self.thorchain.handle(txn) # process transaction in thorchain
                 for txn in outbound:
                     gas = self.binance.transfer(txn) # send outbound txns back to Binance
                     self.thorchain.handle_gas(gas) # subtract gas from pool(s)
+
+                self.mock_binance.transfer(txn) # trigger mock Binance transaction
+                self.mock_binance.wait_for_blocks(out)
+                self.thorchain_client.wait_for_blocks(1) # wait an additional block to pick up gas
 
 
 if __name__ == '__main__':
