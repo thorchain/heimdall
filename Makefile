@@ -1,5 +1,8 @@
 .PHONY: build test test-watch run
 
+clean:
+	rm *.pyc
+
 build:
 	@docker build -t heimdall .
 

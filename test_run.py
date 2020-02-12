@@ -8,8 +8,7 @@ from chains import Binance
 from thorchain import ThorchainState
 from breakpoint import Breakpoint
 
-from transaction import Transaction
-from coin import Coin
+from common import Transaction, Coin
 
 # A list of [inbound txn, expected # of outbound txns]
 txns = [
@@ -132,6 +131,9 @@ txns = [
 ]
 
 def get_balance(idx):
+    """
+    Retrieve expected balance with given id
+    """
     with open('data/balances.json') as f:
         balances = json.load(f)
         for bal in balances:
@@ -140,12 +142,18 @@ def get_balance(idx):
     raise Exception("could not find idx")
 
 class TestRun(unittest.TestCase):
+    """
+    This runs tests with a pre-determined list of transactions and an expected
+    balance after each transaction (/data/balance.json). These transactions and
+    balances were determined earlier via a google spreadsheet
+    https://docs.google.com/spreadsheets/d/1sLK0FE-s6LInWijqKgxAzQk2RiSDZO1GL58kAD62ch0/edit#gid=439437407
+    """
     def test_run(self):
-        bnb = Binance()
-        thorchain = ThorchainState()
+        bnb = Binance() # init local binance chain
+        thorchain = ThorchainState() # init local thorchain 
 
         for i, unit in enumerate(txns):
-            txn, out = unit
+            txn, out = unit # get transaction and expected number of outbound transactions
             print("{} {}".format(i, txn))
             if txn.memo == "SEED":
                 bnb.seed(txn.toAddress, txn.coins)
