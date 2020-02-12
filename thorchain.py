@@ -276,7 +276,10 @@ class ThorchainState:
         return emit, newPool
 
     def calc_asset_emission(self, X, x, Y):
-        # ( x * X * Y ) / ( x + X )^2
+        """
+        Calculates the amount of coins to be emitted in a swap
+        ( x * X * Y ) / ( x + X )^2
+        """
         return int((x * X * Y) / (x + X)**2)
 
 
@@ -364,7 +367,6 @@ class Pool:
         self.set_staker(staker)
         self.total_units -= units
         self.sub(rune_amt, asset_amt)
-        print("POOL", self, rune_amt, asset_amt)
         return rune_amt, asset_amt
 
     def _calc_stake_units(self, pool_rune, pool_asset, stake_rune, stake_asset):
