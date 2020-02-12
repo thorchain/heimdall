@@ -277,7 +277,7 @@ class ThorchainState:
 
     def calc_asset_emission(self, X, x, Y):
         # ( x * X * Y ) / ( x + X )^2
-        return int(round((x * X * Y) / (x + X)**2))
+        return int((x * X * Y) / (x + X)**2)
 
 
 class Pool:
