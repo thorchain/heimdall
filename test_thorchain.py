@@ -27,7 +27,7 @@ class TestThorchainState(unittest.TestCase):
         thorchain.pools = [Pool("BNB.BNB", 50*100000000,50*100000000)]
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].memo, "OUTBOUND")
         self.assertEqual(outbound[0].coins[0].asset, "BNB")
         self.assertEqual(outbound[0].coins[0].amount, 694444444)
 
@@ -57,7 +57,7 @@ class TestThorchainState(unittest.TestCase):
         txn.memo = "SWAP:BNB.BNB:NOMNOM:"
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].memo, "OUTBOUND")
         self.assertEqual(outbound[0].toAddress, "NOMNOM")
 
         # refund swap when address is a differnet network
@@ -73,7 +73,7 @@ class TestThorchainState(unittest.TestCase):
         thorchain.pools.append(Pool("BNB.LOK-3C0", 30*100000000,30*100000000))
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].memo, "OUTBOUND")
         self.assertEqual(outbound[0].coins[0].asset, "LOK-3C0")
         self.assertEqual(outbound[0].coins[0].amount, 1391608)
 
@@ -107,6 +107,8 @@ class TestThorchainState(unittest.TestCase):
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 50000000000)
         self.assertEqual(pool.asset_balance, 150000000)
+        self.assertEqual(pool.get_staker("STAKER-1").units, 25075000000)
+        self.assertEqual(pool.total_units, 25075000000)
 
         # should refund if no memo
         txn = Transaction(
@@ -155,13 +157,16 @@ class TestThorchainState(unittest.TestCase):
         # can stake with only asset
         txn = Transaction(
             Binance.chain, 
-            "STAKER-1", 
+            "STAKER-2", 
             "VAULT", 
             [Coin("BNB", 30000000)], 
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 0)
+        self.assertEqual(pool.get_staker("STAKER-2").units, 2090833333)
+        self.assertEqual(pool.total_units, 27165833333)
+
         txn = Transaction(
             Binance.chain, 
             "STAKER-1", 
@@ -181,6 +186,33 @@ class TestThorchainState(unittest.TestCase):
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 0)
+
+    def test_unstake(self):
+        thorchain = ThorchainState()
+        # stake some funds into a pool
+        txn = Transaction(
+            Binance.chain, 
+            "STAKER-1", 
+            "VAULT", 
+            [Coin("BNB", 150000000), Coin("RUNE", 50000000000)], 
+            "STAKE:BNB.BNB",
+        )
+        outbound = thorchain.handle(txn)
+        self.assertEqual(outbound, [])
+
+        txn = Transaction(
+            Binance.chain, 
+            "STAKER-1", 
+            "VAULT", 
+            [Coin("RUNE", 1)], 
+            "WITHDRAW:BNB.BNB:100",
+        )
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 2)
+        self.assertEqual(outbound[0].coins[0].asset, "RUNE-A1F")
+        self.assertEqual(outbound[0].coins[0].amount, 500000000)
+        self.assertEqual(outbound[1].coins[0].asset, "BNB")
+        self.assertEqual(outbound[1].coins[0].amount, 1500000)
 
 
 if __name__ == '__main__':
