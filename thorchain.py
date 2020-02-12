@@ -1,9 +1,11 @@
 from copy import deepcopy
 
-from transaction import Transaction
-from coin import Coin
+from common import Transaction, Coin, Asset, get_share
 
 class ThorchainState:
+    """
+    A complete implementation of the thorchain logic/behavior
+    """
     def __init__(self):
         self.pools = []
         self.reserve = 0
@@ -13,8 +15,7 @@ class ThorchainState:
         Fetch a specific pool by asset
         """
         for pool in self.pools:
-            # TODO: remove this BNB specific check
-            if pool.asset == asset or pool.asset == "BNB.{}".format(asset):
+            if pool.asset.is_equal(asset):
                 return pool
 
         return Pool(asset)
@@ -23,11 +24,8 @@ class ThorchainState:
         """
         Set a pool
         """
-        if not "." in pool.asset:
-            pool.asset = "BNB.{}".format(pool.asset)
-
         for i, p in enumerate(self.pools):
-            if p.asset == pool.asset:
+            if p.asset.is_equal(pool.asset):
                 self.pools[i] = pool
                 return
 
@@ -38,6 +36,8 @@ class ThorchainState:
         Subtracts gas from pool
         """
         pool = self.get_pool(gas.asset)
+        # TODO: this is a hacky way to avoid the problem of gas overdrawing a
+        # balance. clean this up later
         if pool.asset_balance <= gas.amount:
             pool.asset_balance = 0
         else:
@@ -73,25 +73,21 @@ class ThorchainState:
     def handle_add(self, txn):
         """
         Add assets to a pool
+        MEMO: ADD:<asset(req)>
         """
         # parse memo
         parts = txn.memo.split(":")
         if len(parts) < 2:
             return self.refund(txn)
 
-        asset = parts[1]
-        parts = asset.split(".")
-        if len(parts) < 2:
-            return self.refund(txn)
-        chain = parts[0]
-        symbol = parts[1]
+        asset = Asset(parts[1])
 
         # check that we have one rune and one asset
         if len(txn.coins) > 2:
             return self.refund(txn)
         for coin in txn.coins:
             if not coin.is_rune():
-                if symbol != coin.asset:
+                if not asset.is_equal(coin.asset):
                     return self.refund(txn) # mismatch coin asset and memo
 
         pool = self.get_pool(asset)
@@ -108,26 +104,24 @@ class ThorchainState:
     def handle_stake(self, txn):
         """
         handles a staking transaction
+        MEMO: STAKE:<asset(req)>
         """
         # parse memo
         parts = txn.memo.split(":")
         if len(parts) < 2:
             return self.refund(txn)
 
-        asset = parts[1]
-        parts = asset.split(".")
-        if len(parts) < 2:
-            return self.refund(txn)
-        chain = parts[0]
-        symbol = parts[1]
+        asset = Asset(parts[1])
 
         # check that we have one rune and one asset
         if len(txn.coins) > 2:
             return self.refund(txn)
+
+        # check for mismatch coin asset and memo
         for coin in txn.coins:
             if not coin.is_rune():
-                if symbol != coin.asset:
-                    return self.refund(txn) # mismatch coin asset and memo
+                if not asset.is_equal(coin.asset):
+                    return self.refund(txn)
 
         pool = self.get_pool(asset)
         rune_amt = 0
@@ -147,6 +141,7 @@ class ThorchainState:
     def handle_unstake(self, txn):
         """
         handles a unstaking transaction
+        MEMO: WITHDRAW:<asset(req)>:<address(op)>:<basis_points(op)>
         """
         withdraw_basis_points = 10000
 
@@ -155,17 +150,13 @@ class ThorchainState:
         if len(parts) < 2:
             return self.refund(txn)
 
+        # get withdrawal basis points, if it exists in the memo
         if len(parts) >= 3:
             withdraw_basis_points = int(parts[2])
 
-        asset = parts[1]
-        parts = asset.split(".")
-        if len(parts) < 2:
-            return self.refund(txn)
-        chain = parts[0]
-        symbol = parts[1]
+        asset = Asset(parts[1])
 
-        pool = self.get_pool(symbol)
+        pool = self.get_pool(asset)
         staker = pool.get_staker(txn.fromAddress)
         if staker.is_zero():
             return self.refund(txn)
@@ -176,51 +167,48 @@ class ThorchainState:
         chain, _from, _to = txn.chain, txn.fromAddress, txn.toAddress
         return [
             Transaction(chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], "OUTBOUND"),
-            Transaction(chain, _to, _from, [Coin(symbol, asset_amt)], "OUTBOUND"),
+            Transaction(chain, _to, _from, [Coin(asset, asset_amt)], "OUTBOUND"),
         ]
 
     def handle_swap(self, txn):
         """
         Does a swap (or double swap)
+        MEMO: SWAP:<asset(req)>:<address(op)>:<target_trade(op)>
         """
         # parse memo
         parts = txn.memo.split(":")
         if len(parts) < 2:
             return self.refund(txn)
 
-        address = None
+        # get address to send to
+        address = txn.fromAddress
         if len(parts) > 2:
             address = parts[2]
             # checking if address is for mainnet, not testnet
             if address.lower().startswith("bnb"):
                 return self.refund(txn)
 
-        limit = 0
+        # get trade target, if exists
+        target_trade = 0
         if len(parts) > 3:
-            limit = int(parts[3] or "0")
+            target_trade = int(parts[3] or "0")
 
-        asset = parts[1]
-        parts = asset.split(".")
-        if len(parts) < 2:
-            return self.refund(txn)
-
-        chain = parts[0]
-        symbol = parts[1]
+        asset = Asset(parts[1])
 
         # check that we have one coin
         if len(txn.coins) != 1:
             return self.refund(txn)
 
         source = txn.coins[0].asset
-        target = symbol
+        target = asset
 
         # refund if we're trying to swap with the coin we given ie swapping bnb
         # with bnb
-        if source == symbol:
+        if source.is_equal(asset):
             return self.refund(txn)
 
         pools = []
-        if not txn.coins[0].is_rune() and not Coin(symbol, 0).is_rune():
+        if not txn.coins[0].is_rune() and not asset.is_rune():
             # its a double swap
             pool = self.get_pool(source)
             if pool.is_zero():
@@ -229,28 +217,33 @@ class ThorchainState:
             emit, pool = self.swap(txn.coins[0], "RUNE-A1F")
             pools.append(pool)
             txn.coins[0] = emit
-            source = "RUNE-A1F"
-            target = symbol
+            source = Asset("RUNE-A1F")
+            target = asset
 
+        # set asset to non-rune asset
         asset = source
-        if Coin(asset, 0).is_rune():
+        if asset.is_rune():
             asset = target
 
         pool = self.get_pool(asset)
         if pool.is_zero():
             return self.refund(txn)
 
-        emit, pool = self.swap(txn.coins[0], symbol)
+        emit, pool = self.swap(txn.coins[0], asset)
         pools.append(pool)
-        if emit.is_zero() or (emit.amount < limit):
+        # check emit is non-zero and is not less than the target trade
+        if emit.is_zero() or (emit.amount < target_trade):
             return self.refund(txn)
 
         # save pools
         for pool in pools:
             self.set_pool(pool)
-        return [Transaction(txn.chain, txn.toAddress, address or txn.fromAddress, [emit], "OUTBOUND")]
+        return [Transaction(txn.chain, txn.toAddress, address, [emit], "OUTBOUND")]
 
     def swap(self, coin, target):
+        """
+        Does a swap returning amount of coins emitted and new pool
+        """
         asset = target
         if not coin.is_rune():
             asset = coin.asset
@@ -284,12 +277,14 @@ class ThorchainState:
 
     def calc_asset_emission(self, X, x, Y):
         # ( x * X * Y ) / ( x + X )^2
-        return int((x * X * Y) / (x + X)**2)
+        return int(round((x * X * Y) / (x + X)**2))
 
 
 class Pool:
     def __init__(self, asset, rune_amt=0, asset_amt=0):
         self.asset = asset
+        if isinstance(asset, str):
+            self.asset = Asset(asset)
         self.rune_balance = rune_amt
         self.asset_balance = asset_amt
         self.total_units = 0
@@ -388,21 +383,14 @@ class Pool:
         Calculate amount of rune/asset to unstake
         Returns staker units, rune amount, asset amount
         """
-        units_to_claim = int(round(self._share(withdraw_basis_points, 10000, staker_units)))
-        withdraw_rune = int(round(self._share(units_to_claim, self.total_units, self.rune_balance)))
-        withdraw_asset = int(round(self._share(units_to_claim, self.total_units, self.asset_balance)))
+        units_to_claim = int(round(get_share(withdraw_basis_points, 10000, staker_units)))
+        withdraw_rune = int(round(get_share(units_to_claim, self.total_units, self.rune_balance)))
+        withdraw_asset = int(round(get_share(units_to_claim, self.total_units, self.asset_balance)))
         units_after = staker_units - units_to_claim
         if units_after < 0:
             print("Overdrawn staker units", self)
             raise Exception("Overdrawn staker units")
         return units_to_claim, withdraw_rune, withdraw_asset
-
-    def _share(self, part, total, alloc):
-        """
-        Calculates the share of something
-        (Allocation / (Total / part))
-        """
-        return float(alloc) / (float(total) / float(part))
 
     def __repr__(self):
         return "<Pool %s Rune: %d | Asset: %d>" % (self.asset, self.rune_balance, self.asset_balance)

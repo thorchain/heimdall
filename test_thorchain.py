@@ -3,8 +3,7 @@ import unittest
 from thorchain import ThorchainState, Pool
 from chains import Binance
 
-from transaction import Transaction
-from coin import Coin
+from common import Transaction, Coin
 
 class TestThorchainState(unittest.TestCase):
 
@@ -15,7 +14,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain, 
             "STAKER-1", 
             "VAULT", 
-            [Coin("RUNE", 1000000000)], 
+            [Coin("RUNE-A1F", 1000000000)], 
             "SWAP:BNB.BNB",
         )
 
@@ -28,7 +27,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND")
-        self.assertEqual(outbound[0].coins[0].asset, "BNB")
+        self.assertEqual(outbound[0].coins[0].asset.is_equal("BNB"), True)
         self.assertEqual(outbound[0].coins[0].amount, 694444444)
 
         # swap with two coins on the inbound tx
@@ -74,7 +73,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND")
-        self.assertEqual(outbound[0].coins[0].asset, "LOK-3C0")
+        self.assertEqual(outbound[0].coins[0].asset.is_equal("LOK-3C0"), True)
         self.assertEqual(outbound[0].coins[0].amount, 1391608)
 
     def test_add(self):
@@ -83,7 +82,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain, 
             "STAKER-1", 
             "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE", 50000000000)], 
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
             "ADD:BNB.BNB",
         )
 
@@ -97,7 +96,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain, 
             "STAKER-1", 
             "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE", 50000000000)], 
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
             "STAKE:BNB.BNB",
         )
 
@@ -115,7 +114,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain, 
             "STAKER-1", 
             "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE", 50000000000)], 
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
             "",
         )
         outbound = thorchain.handle(txn)
@@ -126,7 +125,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain, 
             "STAKER-1", 
             "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE", 50000000000)], 
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
             "STAKE:",
         )
         outbound = thorchain.handle(txn)
@@ -137,7 +136,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain, 
             "STAKER-1", 
             "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE", 50000000000)], 
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
             "STAKE:BNB.TCAN-014",
         )
         outbound = thorchain.handle(txn)
@@ -148,7 +147,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain, 
             "STAKER-1", 
             "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE", 50000000000)], 
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
             "STAKE:RUNE-A1F",
         )
         outbound = thorchain.handle(txn)
@@ -194,7 +193,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain, 
             "STAKER-1", 
             "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE", 50000000000)], 
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
@@ -204,15 +203,32 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain, 
             "STAKER-1", 
             "VAULT", 
-            [Coin("RUNE", 1)], 
+            [Coin("RUNE-A1F", 1)], 
             "WITHDRAW:BNB.BNB:100",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
-        self.assertEqual(outbound[0].coins[0].asset, "RUNE-A1F")
+        self.assertEqual(outbound[0].coins[0].asset.is_equal("RUNE-A1F"), True)
         self.assertEqual(outbound[0].coins[0].amount, 500000000)
-        self.assertEqual(outbound[1].coins[0].asset, "BNB")
+        self.assertEqual(outbound[1].coins[0].asset.is_equal("BNB"), True)
         self.assertEqual(outbound[1].coins[0].amount, 1500000)
+
+        # should error without a pool referenced
+        txn.memo = "WITHDRAW:"
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "REFUND")
+
+        # should error without a bad withdraw basis points, should be between 0
+        # and 10,000
+        txn.memo = "WITHDRAW::-4"
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "REFUND")
+        txn.memo = "WITHDRAW::1000000000"
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "REFUND")
 
 
 if __name__ == '__main__':

@@ -2,8 +2,7 @@ import unittest
 
 from chains import Account, Binance
 
-from transaction import Transaction
-from coin import Coin
+from common import Transaction, Coin
 
 class TestAccount(unittest.TestCase):
 
@@ -24,7 +23,7 @@ class TestBinance(unittest.TestCase):
     def test_gas(self):
         bnb = Binance()
         self.assertEqual(bnb._calculateGas(
-            [Coin("BNB", 0)]
+            [Coin("BNB", 5757575)]
             ).equals(Coin("BNB", 37500)), 
             True,
         )

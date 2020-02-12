@@ -47,15 +47,15 @@ class Breakpoint:
                 continue
 
             for coin in acct.balances:
-                snap[name][coin.asset] = int(coin.amount)
+                snap[name][coin.asset.symbol] = coin.amount
 
         for pool in self.thorchain.pools:
-            if pool.asset == "BNB.BNB":
+            if pool.asset.is_equal("BNB.BNB"):
                 snap["POOL-BNB"] = {
                     "BNB": int(pool.asset_balance),
                     "RUNE-A1F": int(pool.rune_balance),
                 }
-            elif pool.asset == "BNB.LOK-3C0":
+            elif pool.asset.is_equal("BNB.LOK-3C0"):
                 snap["POOL-LOK"] = {
                     "LOK-3C0": int(pool.asset_balance),
                     "RUNE-A1F": int(pool.rune_balance),
