@@ -135,7 +135,6 @@ def main():
     args = parser.parse_args()
 
     smoker = Smoker(args.binance, args.thorchain, txns, args.generate_balances, args.fast_fail)
-    print("Vault Address:", smoker.thorchain_client.get_vault_address())
     smoker.run()
 
 class Smoker:
@@ -165,9 +164,9 @@ class Smoker:
                 continue
             else:
                 self.binance.transfer(txn) # send transfer on binance chain
-                outbound = self.thorchain.handle(txn) # process transaction in thorchain
-                for txn in outbound:
-                    gas = self.binance.transfer(txn) # send outbound txns back to Binance
+                outbounds = self.thorchain.handle(txn) # process transaction in thorchain
+                for outbound in outbounds:
+                    gas = self.binance.transfer(outbound) # send outbound txns back to Binance
                     self.thorchain.handle_gas(gas) # subtract gas from pool(s)
 
                 self.mock_binance.transfer(txn) # trigger mock Binance transaction

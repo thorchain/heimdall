@@ -33,10 +33,9 @@ class MockBinance(HttpClient):
         Wait for the given number of blocks
         """
         start_block = self.get_block_height()
-        for x in range(0, 20):
+        for x in range(0, 30):
             time.sleep(1)
             block = self.get_block_height()
-            print("Waiting for block:", block, start_block, count)
             if block - start_block >= count:
                 return
         raise Exception("failed waiting for mock binance transactions ({})", format(count))
