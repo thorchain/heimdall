@@ -30,4 +30,4 @@ integration:
     - make -C build/docker reset-mocknet-standalone
     - cd ..
   script:
-    - python3 smoke.py --binance docker:26660 --thorchain docker:1317
+    - python3 smoke.py --binance http://docker:26660 --thorchain http://docker:1317
