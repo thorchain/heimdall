@@ -11,3 +11,6 @@ test:
 
 test-watch:
 	@ptw
+
+smoke:
+	@docker run --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app heimdall python smoke.py

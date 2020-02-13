@@ -15,9 +15,10 @@ integration:
   image: docker:stable
   stage: integration
   before_script:
+    - apk add --no-cache git make
     - git clone https://gitlab.com/thorchain/thornode.git
     - cd thornode
     - make pull
     - make -C build/docker reset-mocknet-standalone
   script:
-    - python smoke.py
+    - make smoke
