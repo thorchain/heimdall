@@ -29,5 +29,6 @@ integration:
     - cd thornode
     - make pull
     - make -C build/docker reset-mocknet-standalone
+    - cd ..
   script:
     - python3 smoke.py
