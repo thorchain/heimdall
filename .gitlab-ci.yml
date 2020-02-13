@@ -2,6 +2,7 @@ image: python:3.8-alpine
 
 stages:
   - test
+  - integration
 
 before_script:
   - pip install -r requirements.txt
@@ -10,3 +11,13 @@ unit_tests:
   stage: test
   script:
     - python -m unittest -v
+
+integration:
+  stage: integration
+  script:
+    git clone https://gitlab.com/thorchain/thornode.git
+    cd thornode
+    make pull
+    make -C build/docker reset-mocknet-standalone
+    cd ..
+    python smoke.py
