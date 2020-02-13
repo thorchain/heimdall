@@ -32,5 +32,6 @@ integration:
   script:
     - python3 smoke.py
   after_script:
+    - netstat -tulpn
     - docker ps -a
     - docker logs thor-daemon
