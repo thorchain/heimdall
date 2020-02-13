@@ -30,8 +30,4 @@ integration:
     - make -C build/docker reset-mocknet-standalone
     - cd ..
   script:
-    - python3 smoke.py
-  after_script:
-    - netstat -tulpn
-    - docker ps -a
-    - docker logs thor-daemon
+    - python3 smoke.py --binance docker:26660 --thorchain docker:1317
