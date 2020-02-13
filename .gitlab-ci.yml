@@ -4,21 +4,20 @@ stages:
   - test
   - integration
 
-before_script:
-  - pip install -r requirements.txt
-  - apk add --no-cache git
-
 unit_tests:
   stage: test
+  before_script:
+    - pip install -r requirements.txt
   script:
     - python -m unittest -v
 
 integration:
+  image: docker:stable
   stage: integration
-  script:
+  before_script:
     - git clone https://gitlab.com/thorchain/thornode.git
     - cd thornode
     - make pull
     - make -C build/docker reset-mocknet-standalone
-    - cd ..
+  script:
     - python smoke.py
