@@ -25,8 +25,9 @@ integration:
     - pip3 install docker-compose
     - pip3 install -r requirements.txt
     - git clone --single-branch -b $CI_COMMIT_BRANCH https://gitlab.com/thorchain/thornode.git || git clone --single-branch -b master https://gitlab.com/thorchain/thornode.git
-    - make -C thornode pull
-    - test $CI_COMMIT_BRANCH = master && docker pull registry.gitlab.com/thorchain/thornode:mocknet
-    - make -C thornode/build/docker reset-mocknet-standalone
+    - cd thornode
+    - test master = $(git rev-parse --abbrev-ref HEAD) && docker pull registry.gitlab.com/thorchain/thornode:mocknet
+    - make -C build/docker reset-mocknet-standalone
+    - cd ..
   script:
     - python3 smoke.py
