@@ -22,6 +22,7 @@ integration:
   before_script:
     - apk update
     - apk add python3 py-pip make git jq curl
+    - pip install docker-compose
     - pip install -r requirements.txt
     - git clone https://gitlab.com/thorchain/thornode.git
     - cd thornode
