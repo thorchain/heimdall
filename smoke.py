@@ -1,18 +1,13 @@
-import unittest
+import argparse
 
-import json
-import pprint
-from deepdiff import DeepDiff
+from chains import Binance, MockBinance
+from thorchain import ThorchainState, ThorchainClient
 
-from chains import Binance
-from thorchain import ThorchainState
-from breakpoint import Breakpoint
+from common import Transaction, Coin, Asset
 
-from common import Transaction, Coin
-
-# A list of [inbound txn, expected # of outbound txns]
+# A list of smoke test transaction, [inbound txn, expected # of outbound txns]
 txns = [
-    # Seeding
+    # Seeding funds to various accounts
     [Transaction(Binance.chain, "MASTER", "MASTER",
         [Coin("BNB", 49730000), Coin("RUNE-A1F", 100000000000), Coin("LOK-3C0", 0)], 
     "SEED"), 0],
@@ -130,56 +125,79 @@ txns = [
     "WITHDRAW:BNB.LOK-3C0"), 2],
 ]
 
-def get_balance(idx):
-    """
-    Retrieve expected balance with given id
-    """
-    with open('data/balances.json') as f:
-        balances = json.load(f)
-        for bal in balances:
-            if idx == bal['TX']:
-                return bal
-    raise Exception("could not find idx")
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--binance", default="http://localhost:26660", help="Mock binance server")
+    parser.add_argument("--thorchain", default="http://localhost:1317", help="Thorchain API url")
+    parser.add_argument("--generate-balances", default=False, type=bool, help="Generate balances (bool)")
+    parser.add_argument("--fast-fail", default=False, type=bool, help="Generate balances (bool)")
 
-class TestRun(unittest.TestCase):
-    """
-    This runs tests with a pre-determined list of transactions and an expected
-    balance after each transaction (/data/balance.json). These transactions and
-    balances were determined earlier via a google spreadsheet
-    https://docs.google.com/spreadsheets/d/1sLK0FE-s6LInWijqKgxAzQk2RiSDZO1GL58kAD62ch0/edit#gid=439437407
-    """
-    def test_run(self):
-        bnb = Binance() # init local binance chain
-        thorchain = ThorchainState() # init local thorchain 
+    args = parser.parse_args()
 
-        for i, unit in enumerate(txns):
+    smoker = Smoker(args.binance, args.thorchain, txns, args.generate_balances, args.fast_fail)
+    smoker.run()
+
+class Smoker:
+    def __init__(self, bnb, thor, txns=txns, gen_balances=False, fast_fail=False):
+        self.binance = Binance()
+        self.thorchain = ThorchainState()
+
+        self.txns = txns
+
+        self.thorchain_client = ThorchainClient(thor)
+        vault_address = self.thorchain_client.get_vault_address()
+
+        self.mock_binance = MockBinance(bnb)
+        self.mock_binance.set_vault_address(vault_address)
+
+        self.generate_balances = gen_balances
+        self.fast_fail = fast_fail
+
+    def run(self):
+        for i, unit in enumerate(self.txns):
             txn, out = unit # get transaction and expected number of outbound transactions
             print("{} {}".format(i, txn))
             if txn.memo == "SEED":
-                bnb.seed(txn.toAddress, txn.coins)
+                self.binance.seed(txn.toAddress, txn.coins)
+                self.mock_binance.seed(txn.toAddress, txn.coins)
                 continue
-            else:
-                bnb.transfer(txn) # send transfer on binance chain
-                outbound = thorchain.handle(txn) # process transaction in thorchain
-                for txn in outbound:
-                    gas = bnb.transfer(txn) # send outbound txns back to Binance
-                    thorchain.handle_gas(gas) # subtract gas from pool(s)
 
-            # generated a snapshop picture of thorchain and bnb
-            snap = Breakpoint(thorchain, bnb).snapshot(i, out)
-            expected = get_balance(i) # get the expected balance from json file
+            self.binance.transfer(txn) # send transfer on binance chain
+            outbounds = self.thorchain.handle(txn) # process transaction in thorchain
+            for outbound in outbounds:
+                gas = self.binance.transfer(outbound) # send outbound txns back to Binance
+                self.thorchain.handle_gas(gas) # subtract gas from pool(s)
 
-            diff = DeepDiff(snap, expected, ignore_order=True) # empty dict if are equal
-            if len(diff) > 0:
-                print("Transaction:", i, txn)
-                print(">>>>>> Expected")
-                pprint.pprint(expected)
-                print(">>>>>> Obtained")
-                pprint.pprint(snap)
-                print(">>>>>> DIFF")
-                pprint.pprint(diff)
-                raise Exception("did not match!")
+            # update memo with actual address (over alias name)
+            for name, addr in self.mock_binance.aliases.items():
+                txn.memo = txn.memo.replace(name, addr)
+
+            self.mock_binance.transfer(txn) # trigger mock Binance transaction
+            self.mock_binance.wait_for_blocks(out)
+            self.thorchain_client.wait_for_blocks(1) # wait an additional block to pick up gas
+
+            # compare simulation pools vs real pools
+            real_pools = self.thorchain_client.get_pools()
+            for rpool in real_pools:
+                spool = self.thorchain.get_pool(Asset(rpool['asset']))
+                if int(spool.rune_balance) != int(rpool['balance_rune']):
+                    raise Exception("bad pool rune balance: {} {} != {}".format(rpool['asset'], spool.rune_balance, rpool['balance_rune']))
+                if int(spool.asset_balance) != int(rpool['balance_asset']):
+                    raise Exception("bad pool asset balance: {} {} != {}".format(rpool['asset'], spool.rune_balance, rpool['balance_rune']))
+
+            # compare simulation binance vs mock binance
+            mockAccounts = self.mock_binance.accounts()
+            for macct in mockAccounts:
+                for name, address in self.mock_binance.aliases.items():
+                    if name == "MASTER":
+                        continue # don't care to compare MASTER account
+                    if address == macct['address']:
+                        sacct = self.binance.get_account(name)
+                        for bal in macct['balances']:
+                            coin = Coin(bal['denom'], sacct.get(bal['denom']))
+                            if not coin.is_equal(Coin(bal['denom'], int(bal['amount']))):
+                                raise Exception("bad binance balance: {} {} != {}".format(bal['denom'], bal['amount'], coin))
 
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
