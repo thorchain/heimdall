@@ -30,7 +30,4 @@ integration:
     - make pull
     - make -C build/docker reset-mocknet-standalone
   script:
-    - pwd
-    - ls
-    - cd ..
-    - python smoke.py
+    - python3 smoke.py
