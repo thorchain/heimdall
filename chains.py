@@ -12,7 +12,7 @@ class MockBinance(HttpClient):
         "USER-1": "tbnb157dxmw9jz5emuf0apj4d6p3ee42ck0uwksxfff",
         "STAKER-1": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q",
         "STAKER-2": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx",
-        "VAULT": "tbnb1ht7v08hv2lhtmk8y7szl2hjexqryc3hcldlztl",
+        "VAULT": "tbnb14jg77k8nwcz577zwd2gvdnpe2yy46j0hkvdvlg",
     }
 
     def set_vault_address(self, addr):
@@ -39,6 +39,9 @@ class MockBinance(HttpClient):
             if block - start_block >= count:
                 return
         raise Exception("failed waiting for mock binance transactions ({})", format(count))
+
+    def accounts(self):
+        return self.fetch("/accounts")
 
     def transfer(self, txn):
         """
@@ -119,6 +122,12 @@ class Account:
                 return coin.amount
 
         return 0
+
+    def __repr__(self):
+        return "<Account %s: %s>" % (self.address, self.balances)
+
+    def __str__(self):
+        return "Account %s: %s" % (self.address, self.balances)
 
 
 class Binance:

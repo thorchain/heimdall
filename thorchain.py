@@ -31,6 +31,9 @@ class ThorchainClient(HttpClient):
         data = self.fetch("/thorchain/pool_addresses")
         return data['current'][0]['address']
 
+    def get_pools(self):
+        return self.fetch("/thorchain/pools")
+
 
 class ThorchainState:
     """

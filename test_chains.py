@@ -24,12 +24,12 @@ class TestBinance(unittest.TestCase):
         bnb = Binance()
         self.assertEqual(bnb._calculateGas(
             [Coin("BNB", 5757575)]
-            ).equals(Coin("BNB", 37500)), 
+            ).is_equal(Coin("BNB", 37500)), 
             True,
         )
         self.assertEqual(bnb._calculateGas(
             [Coin("BNB", 0), Coin("RUNE", 0)]
-            ).equals(Coin("BNB", 60000)), 
+            ).is_equal(Coin("BNB", 60000)), 
             True,
         )
 

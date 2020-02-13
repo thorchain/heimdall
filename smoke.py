@@ -3,7 +3,7 @@ import argparse
 from chains import Binance, MockBinance
 from thorchain import ThorchainState, ThorchainClient
 
-from common import Transaction, Coin
+from common import Transaction, Coin, Asset
 
 # A list of smoke test transaction, [inbound txn, expected # of outbound txns]
 txns = [
@@ -154,7 +154,6 @@ class Smoker:
         self.fast_fail = fast_fail
 
     def run(self):
-        print(self.txns[0])
         for i, unit in enumerate(self.txns):
             txn, out = unit # get transaction and expected number of outbound transactions
             print("{} {}".format(i, txn))
@@ -162,16 +161,42 @@ class Smoker:
                 self.binance.seed(txn.toAddress, txn.coins)
                 self.mock_binance.seed(txn.toAddress, txn.coins)
                 continue
-            else:
-                self.binance.transfer(txn) # send transfer on binance chain
-                outbounds = self.thorchain.handle(txn) # process transaction in thorchain
-                for outbound in outbounds:
-                    gas = self.binance.transfer(outbound) # send outbound txns back to Binance
-                    self.thorchain.handle_gas(gas) # subtract gas from pool(s)
+                
+            self.binance.transfer(txn) # send transfer on binance chain
+            outbounds = self.thorchain.handle(txn) # process transaction in thorchain
+            for outbound in outbounds:
+                gas = self.binance.transfer(outbound) # send outbound txns back to Binance
+                self.thorchain.handle_gas(gas) # subtract gas from pool(s)
 
-                self.mock_binance.transfer(txn) # trigger mock Binance transaction
-                self.mock_binance.wait_for_blocks(out)
-                self.thorchain_client.wait_for_blocks(1) # wait an additional block to pick up gas
+            # update memo with actual address (over alias name)
+            for name, addr in self.mock_binance.aliases.items():
+                txn.memo = txn.memo.replace(name, addr)
+
+            self.mock_binance.transfer(txn) # trigger mock Binance transaction
+            self.mock_binance.wait_for_blocks(out)
+            self.thorchain_client.wait_for_blocks(1) # wait an additional block to pick up gas
+
+            # compare simulation pools vs real pools
+            real_pools = self.thorchain_client.get_pools()
+            for rpool in real_pools:
+                spool = self.thorchain.get_pool(Asset(rpool['asset']))
+                if int(spool.rune_balance) != int(rpool['balance_rune']):
+                    raise Exception("bad pool rune balance: {} {} != {}".format(rpool['asset'], spool.rune_balance, rpool['balance_rune']))
+                if int(spool.asset_balance) != int(rpool['balance_asset']):
+                    raise Exception("bad pool asset balance: {} {} != {}".format(rpool['asset'], spool.rune_balance, rpool['balance_rune']))
+
+            # compare simulation binance vs mock binance
+            mockAccounts = self.mock_binance.accounts()
+            for macct in mockAccounts:
+                for name, address in self.mock_binance.aliases.items():
+                    if name == "MASTER":
+                        continue # don't care to compare MASTER account
+                    if address == macct['address']:
+                        sacct = self.binance.get_account(name)
+                        for bal in macct['balances']:
+                            coin = Coin(bal['denom'], sacct.get(bal['denom']))
+                            if not coin.is_equal(Coin(bal['denom'], int(bal['amount']))):
+                                raise Exception("bad binance balance: {} {} != {}".format(bal['denom'], bal['amount'], coin))
 
 
 if __name__ == '__main__':

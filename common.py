@@ -93,7 +93,7 @@ class Asset:
         return "<Asset %s.%s>" % (self.chain, self.symbol)
 
     def __str__(self):
-        return "%s%s" % (self.chain, self.symbol)
+        return "%s.%s" % (self.chain, self.symbol)
 
 
 class Coin:
@@ -118,7 +118,7 @@ class Coin:
         """
         return self.amount == 0
 
-    def equals(self, coin):
+    def is_equal(self, coin):
         """
         Does this coin equal another?
         """
