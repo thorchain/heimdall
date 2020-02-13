@@ -161,7 +161,7 @@ class Smoker:
                 self.binance.seed(txn.toAddress, txn.coins)
                 self.mock_binance.seed(txn.toAddress, txn.coins)
                 continue
-                
+
             self.binance.transfer(txn) # send transfer on binance chain
             outbounds = self.thorchain.handle(txn) # process transaction in thorchain
             for outbound in outbounds:

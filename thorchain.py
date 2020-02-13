@@ -87,21 +87,22 @@ class ThorchainState:
         return txns
 
     def handle(self, txn):
+        tx = deepcopy(txn) # copy of transaction
         """
         This is a router that sends a transaction to the correct handler. 
         It will return transactions to send
         """
-        if txn.memo.startswith("STAKE:"):
-            return self.handle_stake(txn)
-        elif txn.memo.startswith("ADD:"):
-            return self.handle_add(txn)
-        elif txn.memo.startswith("WITHDRAW:"):
-            return self.handle_unstake(txn)
-        elif txn.memo.startswith("SWAP:"):
-            return self.handle_swap(txn)
+        if tx.memo.startswith("STAKE:"):
+            return self.handle_stake(tx)
+        elif tx.memo.startswith("ADD:"):
+            return self.handle_add(tx)
+        elif tx.memo.startswith("WITHDRAW:"):
+            return self.handle_unstake(tx)
+        elif tx.memo.startswith("SWAP:"):
+            return self.handle_swap(tx)
         else:
             print("handler not recognized")
-            return self.refund(txn)
+            return self.refund(tx)
 
     def handle_add(self, txn):
         """
