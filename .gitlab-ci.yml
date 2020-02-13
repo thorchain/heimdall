@@ -31,3 +31,6 @@ integration:
     - cd ..
   script:
     - python3 smoke.py
+  after_script:
+    - docker ps -a
+    - for id in $(docker ps -q); do; docker logs $id; done
