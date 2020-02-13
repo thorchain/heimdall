@@ -14,6 +14,11 @@ unit_tests:
 integration:
   image: docker:stable
   stage: integration
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
   before_script:
     - apk add --no-cache git make
     - git clone https://gitlab.com/thorchain/thornode.git
