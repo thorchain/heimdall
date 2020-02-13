@@ -16,9 +16,9 @@ unit_tests:
 integration:
   stage: integration
   script:
-    git clone https://gitlab.com/thorchain/thornode.git
-    cd thornode
-    make pull
-    make -C build/docker reset-mocknet-standalone
-    cd ..
-    python smoke.py
+    - git clone https://gitlab.com/thorchain/thornode.git
+    - cd thornode
+    - make pull
+    - make -C build/docker reset-mocknet-standalone
+    - cd ..
+    - python smoke.py
