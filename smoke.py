@@ -381,11 +381,10 @@ class Smoker:
 
     def run(self):
         for i, unit in enumerate(self.txns):
-            (
-                txn,
-                out,
-            ) = unit  # get transaction and expected number of outbound transactions
+            # get transaction and expected number of outbound transactions
+            txn, out = unit
             print("{} {}".format(i, txn))
+
             if txn.memo == "SEED":
                 self.binance.seed(txn.toAddress, txn.coins)
                 self.mock_binance.seed(txn.toAddress, txn.coins)
@@ -422,7 +421,7 @@ class Smoker:
                 if int(spool.asset_balance) != int(rpool["balance_asset"]):
                     raise Exception(
                         "bad pool asset balance: {} {} != {}".format(
-                            rpool["asset"], spool.rune_balance, rpool["balance_rune"]
+                            rpool["asset"], spool.asset_balance, rpool["balance_asset"]
                         )
                     )
 
