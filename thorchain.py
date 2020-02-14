@@ -1,4 +1,5 @@
 import time
+import logging
 from copy import deepcopy
 
 from common import (
@@ -32,7 +33,7 @@ class ThorchainClient(HttpClient):
             block = self.get_block_height()
             if block - start_block >= count:
                 return
-        raise Exception("failed waiting for thorchain blocks ({})", format(count))
+        raise Exception(f"failed waiting for thorchain blocks ({count})")
 
     def get_vault_address(self):
         data = self.fetch("/thorchain/pool_addresses")
@@ -113,7 +114,7 @@ class ThorchainState:
         elif tx.memo.startswith("SWAP:"):
             return self.handle_swap(tx)
         else:
-            print("handler not recognized")
+            logging.warning("handler not recognized")
             return self.refund(tx)
 
     def handle_add(self, txn):
@@ -348,7 +349,7 @@ class Pool:
         self.rune_balance -= rune_amt
         self.asset_balance -= asset_amt
         if self.asset_balance < 0 or self.rune_balance < 0:
-            print("Overdrawn pool", self)
+            logging.error(f"Overdrawn pool: {self}")
             raise Exception("insufficient funds")
 
     def add(self, rune_amt, asset_amt):
@@ -455,7 +456,7 @@ class Pool:
         )
         units_after = staker_units - units_to_claim
         if units_after < 0:
-            print("Overdrawn staker units", self)
+            logging.error(f"Overdrawn staker units: {self}")
             raise Exception("Overdrawn staker units")
         return units_to_claim, withdraw_rune, withdraw_asset
 
@@ -491,7 +492,7 @@ class Staker:
         """
         self.units -= units
         if self.units < 0:
-            print("Overdrawn staker", self)
+            logging.error(f"Overdrawn staker: {self}")
             raise Exception("insufficient staker units")
 
     def is_zero(self):

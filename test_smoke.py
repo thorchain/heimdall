@@ -1,7 +1,8 @@
 import unittest
+import logging
 
 import json
-import pprint
+from pprint import pformat
 from deepdiff import DeepDiff
 
 from chains import Binance
@@ -36,11 +37,9 @@ class TestSmoke(unittest.TestCase):
         thorchain = ThorchainState()  # init local thorchain
 
         for i, unit in enumerate(txns):
-            (
-                txn,
-                out,
-            ) = unit  # get transaction and expected number of outbound transactions
-            print("{} {}".format(i, txn))
+            # get transaction and expected number of outbound transactions
+            txn, out = unit
+            logging.info(f"{i} {txn}")
             if txn.memo == "SEED":
                 bnb.seed(txn.toAddress, txn.coins)
                 continue
@@ -59,13 +58,13 @@ class TestSmoke(unittest.TestCase):
                 snap, expected, ignore_order=True
             )  # empty dict if are equal
             if len(diff) > 0:
-                print("Transaction:", i, txn)
-                print(">>>>>> Expected")
-                pprint.pprint(expected)
-                print(">>>>>> Obtained")
-                pprint.pprint(snap)
-                print(">>>>>> DIFF")
-                pprint.pprint(diff)
+                logging.info(f"Transaction: {i} {txn}")
+                logging.info(">>>>>> Expected")
+                logging.info(pformat(expected))
+                logging.info(">>>>>> Obtained")
+                logging.info(pformat(snap))
+                logging.info(">>>>>> DIFF")
+                logging.info(pformat(diff))
                 raise Exception("did not match!")
 
 

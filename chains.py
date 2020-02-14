@@ -1,4 +1,5 @@
 import time
+import logging
 
 from common import Transaction, Coin, Asset, HttpClient
 
@@ -40,9 +41,7 @@ class MockBinance(HttpClient):
             block = self.get_block_height()
             if block - start_block >= count:
                 return
-        raise Exception(
-            "failed waiting for mock binance transactions ({})", format(count)
-        )
+        raise Exception(f"failed waiting for mock binance transactions ({count})")
 
     def accounts(self):
         return self.fetch("/accounts")
@@ -93,7 +92,7 @@ class Account:
                 if coin.asset.is_equal(c.asset):
                     self.balances[i].amount -= coin.amount
                     if self.balances[i].amount < 0:
-                        print("Balance:", self.address, self.balances[i])
+                        logging.info(f"Balance: {self.address} {self.balances[i]}")
                         self.balances[i].amount = 0
                         # raise Exception("insufficient funds")
 
@@ -178,9 +177,7 @@ class Binance:
         Makes a transfer on the binance chain. Returns gas used
         """
         if txn.chain != Binance.chain:
-            raise Exception(
-                "Cannot transfer. {} is not {}".format(Binance.chain, txn.chain)
-            )
+            raise Exception(f"Cannot transfer. {Binance.chain} is not {txn.chain}")
 
         from_acct = self.get_account(txn.fromAddress)
         to_acct = self.get_account(txn.toAddress)

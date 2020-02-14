@@ -1,9 +1,17 @@
 import argparse
+import logging
+import os
 
 from chains import Binance, MockBinance
 from thorchain import ThorchainState, ThorchainClient
 
 from common import Transaction, Coin, Asset
+
+# Init logging
+logging.basicConfig(
+    format="%(asctime)s | %(levelname)-8s | %(message)s",
+    level=os.environ.get("LOGLEVEL", "INFO"),
+)
 
 # A list of smoke test transaction, [inbound txn, expected # of outbound txns]
 txns = [
@@ -383,8 +391,7 @@ class Smoker:
         for i, unit in enumerate(self.txns):
             # get transaction and expected number of outbound transactions
             txn, out = unit
-            print("{} {}".format(i, txn))
-
+            logging.info(f"{i} {txn}")
             if txn.memo == "SEED":
                 self.binance.seed(txn.toAddress, txn.coins)
                 self.mock_binance.seed(txn.toAddress, txn.coins)
@@ -414,15 +421,13 @@ class Smoker:
                 spool = self.thorchain.get_pool(Asset(rpool["asset"]))
                 if int(spool.rune_balance) != int(rpool["balance_rune"]):
                     raise Exception(
-                        "bad pool rune balance: {} {} != {}".format(
-                            rpool["asset"], spool.rune_balance, rpool["balance_rune"]
-                        )
+                        f"bad pool rune balance: {rpool['asset']} "
+                        f"{spool.rune_balance} != {rpool['balance_rune']}"
                     )
                 if int(spool.asset_balance) != int(rpool["balance_asset"]):
                     raise Exception(
-                        "bad pool asset balance: {} {} != {}".format(
-                            rpool["asset"], spool.asset_balance, rpool["balance_asset"]
-                        )
+                        f"bad pool asset balance: {rpool['asset']} "
+                        f"{spool.asset_balance} != {rpool['balance_asset']}"
                     )
 
             # compare simulation binance vs mock binance
@@ -439,9 +444,8 @@ class Smoker:
                                 Coin(bal["denom"], int(bal["amount"]))
                             ):
                                 raise Exception(
-                                    "bad binance balance: {} {} != {}".format(
-                                        bal["denom"], bal["amount"], coin
-                                    )
+                                    f"bad binance balance: {bal['denom']} "
+                                    f"{bal['amount']} != {coin}"
                                 )
 
 
