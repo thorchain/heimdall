@@ -1,6 +1,6 @@
 import unittest
+import os
 import logging
-
 import json
 from pprint import pformat
 from deepdiff import DeepDiff
@@ -33,8 +33,11 @@ class TestSmoke(unittest.TestCase):
     """
 
     def test_smoke(self):
-        bnb = Binance()  # init local binance chain
-        thorchain = ThorchainState()  # init local thorchain
+        export = os.environ.get("EXPORT", None)
+        failure = False
+        snaps = []
+        bnb = Binance() # init local binance chain
+        thorchain = ThorchainState() # init local thorchain 
 
         for i, unit in enumerate(txns):
             # get transaction and expected number of outbound transactions
@@ -53,7 +56,8 @@ class TestSmoke(unittest.TestCase):
 
             # generated a snapshop picture of thorchain and bnb
             snap = Breakpoint(thorchain, bnb).snapshot(i, out)
-            expected = get_balance(i)  # get the expected balance from json file
+            snaps.append(snap)
+            expected = get_balance(i) # get the expected balance from json file
 
             diff = DeepDiff(
                 snap, expected, ignore_order=True
@@ -66,8 +70,15 @@ class TestSmoke(unittest.TestCase):
                 logging.info(pformat(snap))
                 logging.info(">>>>>> DIFF")
                 logging.info(pformat(diff))
-                raise Exception("did not match!")
+                if not export:
+                    raise Exception("did not match!")
 
+        if export:
+            with open(export, 'w') as fp:
+                json.dump(snaps, fp, indent=4)
+
+        if failure:
+            raise Exception("Fail")
 
 if __name__ == "__main__":
     unittest.main()
