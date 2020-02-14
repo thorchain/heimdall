@@ -91,6 +91,8 @@ class ThorchainState:
         Returns a list of refund transactions based on given txn
         """
         txns = []
+        rune_fee = 100000000
+
         for coin in txn.coins:
             txns.append(
                 Transaction(
@@ -209,6 +211,17 @@ class ThorchainState:
             return self.refund(txn)
 
         rune_amt, asset_amt = pool.unstake(txn.fromAddress, withdraw_basis_points)
+
+        # deduct 1 rune transaction fee
+        if rune_amt < 100000000 and asset_amt < pool.get_asset_fee():
+            # we apparently don't have enough rune or asset to pay the fee
+            return []
+        else:
+            if rune_amt < 100000000:
+                rune_amt -= 100000000
+            else:
+                asset_amt -= pool.get_asset_fee()
+
         self.set_pool(pool)
 
         chain, _from, _to = txn.chain, txn.fromAddress, txn.toAddress
@@ -295,6 +308,7 @@ class ThorchainState:
         """
         asset = target
         if not coin.is_rune():
+            coin.amount - 100000000 # deduct 1 rune fee
             asset = coin.asset
 
         pool = self.get_pool(asset)
@@ -322,6 +336,9 @@ class ThorchainState:
             newPool.sub(emit, 0)
             emit = Coin("RUNE-A1F", emit)
 
+        if emit.is_rune():
+            emit.amount - 100000000 # deduct 1 rune fee
+
         return emit, newPool
 
     def calc_asset_emission(self, X, x, Y):
@@ -341,6 +358,12 @@ class Pool:
         self.asset_balance = asset_amt
         self.total_units = 0
         self.stakers = []
+
+    def get_asset_fee(self):
+        """
+        Calculates how much asset we need to pay for the 1 rune transaction fee
+        """
+        return int(round((float(100000000) / float(self.rune_balance)) * self.asset_balance))
 
     def sub(self, rune_amt, asset_amt):
         """
