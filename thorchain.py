@@ -86,13 +86,40 @@ class ThorchainState:
             pool.sub(0, gas.amount)
         self.set_pool(pool)
 
+    def handle_fee(self, txns):
+        """
+        Subtract transaction fee from given transactions
+        """
+        rune_fee = 100000000
+        outbound = []
+        if not isinstance(txns, list):
+            txns = [txns]
+
+        for txn in txns:
+            for coin in txn.coins:
+                if coin.is_rune():
+                    coin.amount -= rune_fee # deduct 1 rune transaction fee
+                    outbound.append(txn)
+                else:
+                    pool = self.get_pool(coin.asset)
+                    if not pool.is_zero():
+                        asset_fee = pool.get_asset_fee()
+
+                        # swap our asset_fee for rune
+                        pool.add(0, asset_fee)
+                        pool.sub(rune_fee, 0)
+                        self.set_pool(pool)
+
+                        coin.amount -= asset_fee
+                        outbound.append(txn)
+
+        return outbound
+
     def refund(self, txn):
         """
         Returns a list of refund transactions based on given txn
         """
         txns = []
-        rune_fee = 100000000
-
         for coin in txn.coins:
             txns.append(
                 Transaction(
@@ -211,17 +238,6 @@ class ThorchainState:
             return self.refund(txn)
 
         rune_amt, asset_amt = pool.unstake(txn.fromAddress, withdraw_basis_points)
-
-        # deduct 1 rune transaction fee
-        if rune_amt < 100000000 and asset_amt < pool.get_asset_fee():
-            # we apparently don't have enough rune or asset to pay the fee
-            return []
-        else:
-            if rune_amt < 100000000:
-                rune_amt -= 100000000
-            else:
-                asset_amt -= pool.get_asset_fee()
-
         self.set_pool(pool)
 
         chain, _from, _to = txn.chain, txn.fromAddress, txn.toAddress
@@ -308,7 +324,6 @@ class ThorchainState:
         """
         asset = target
         if not coin.is_rune():
-            coin.amount - 100000000 # deduct 1 rune fee
             asset = coin.asset
 
         pool = self.get_pool(asset)
@@ -335,9 +350,6 @@ class ThorchainState:
             newPool.add(0, x)
             newPool.sub(emit, 0)
             emit = Coin("RUNE-A1F", emit)
-
-        if emit.is_rune():
-            emit.amount - 100000000 # deduct 1 rune fee
 
         return emit, newPool
 
