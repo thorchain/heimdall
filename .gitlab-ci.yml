@@ -1,11 +1,10 @@
 stages:
-  - lint
   - test
   - integration
 
 lint:
   image: pipelinecomponents/flake8
-  stage: lint
+  stage: test
   script:
     - flake8
 
