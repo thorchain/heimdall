@@ -273,6 +273,7 @@ class Smoker:
 
             self.binance.transfer(txn)  # send transfer on binance chain
             outbounds = self.thorchain.handle(txn)  # process transaction in thorchain
+            outbounds = self.thorchain.handle_fee(outbounds)
             for outbound in outbounds:
                 gas = self.binance.transfer(
                     outbound
