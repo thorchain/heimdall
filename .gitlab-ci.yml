@@ -1,6 +1,13 @@
 stages:
+  - lint
   - test
   - integration
+
+lint:
+  image: pipelinecomponents/flake8
+  stage: lint
+  script:
+    - flake8
 
 unit_tests:
   image: python:3.8-alpine

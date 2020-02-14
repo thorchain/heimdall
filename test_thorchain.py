@@ -5,16 +5,16 @@ from chains import Binance
 
 from common import Transaction, Coin
 
-class TestThorchainState(unittest.TestCase):
 
+class TestThorchainState(unittest.TestCase):
     def test_swap(self):
         # no pool, should emit a refund
         thorchain = ThorchainState()
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("RUNE-A1F", 1000000000)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("RUNE-A1F", 1000000000)],
             "SWAP:BNB.BNB",
         )
 
@@ -23,7 +23,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
         # do a regular swap
-        thorchain.pools = [Pool("BNB.BNB", 50*100000000,50*100000000)]
+        thorchain.pools = [Pool("BNB.BNB", 50 * 100000000, 50 * 100000000)]
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
@@ -41,7 +41,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
-        self.assertEqual(thorchain.pools[0].rune_balance, 60*100000000)
+        self.assertEqual(thorchain.pools[0].rune_balance, 60 * 100000000)
 
         # swap with limit
         txn.coins = [Coin("RUNE-A1F", 50)]
@@ -49,7 +49,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
-        self.assertEqual(thorchain.pools[0].rune_balance, 60*100000000)
+        self.assertEqual(thorchain.pools[0].rune_balance, 60 * 100000000)
 
         # swap with custom address
         txn.coins = [Coin("RUNE-A1F", 50)]
@@ -67,9 +67,9 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
         # do a double swap
-        txn.coins = [Coin("BNB", 1000000)] 
+        txn.coins = [Coin("BNB", 1000000)]
         txn.memo = "SWAP:BNB.LOK-3C0"
-        thorchain.pools.append(Pool("BNB.LOK-3C0", 30*100000000,30*100000000))
+        thorchain.pools.append(Pool("BNB.LOK-3C0", 30 * 100000000, 30 * 100000000))
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
@@ -79,24 +79,23 @@ class TestThorchainState(unittest.TestCase):
     def test_add(self):
         thorchain = ThorchainState()
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
             "ADD:BNB.BNB",
         )
 
         outbound = thorchain.handle(txn)
         self.assertEqual(outbound, [])
 
-
     def test_stake(self):
         thorchain = ThorchainState()
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
             "STAKE:BNB.BNB",
         )
 
@@ -111,10 +110,10 @@ class TestThorchainState(unittest.TestCase):
 
         # should refund if no memo
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
             "",
         )
         outbound = thorchain.handle(txn)
@@ -122,10 +121,10 @@ class TestThorchainState(unittest.TestCase):
 
         # bad stake memo should refund
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
             "STAKE:",
         )
         outbound = thorchain.handle(txn)
@@ -133,10 +132,10 @@ class TestThorchainState(unittest.TestCase):
 
         # mismatch asset and memo
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
             "STAKE:BNB.TCAN-014",
         )
         outbound = thorchain.handle(txn)
@@ -144,10 +143,10 @@ class TestThorchainState(unittest.TestCase):
 
         # cannot stake with rune in memo
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
             "STAKE:RUNE-A1F",
         )
         outbound = thorchain.handle(txn)
@@ -155,10 +154,10 @@ class TestThorchainState(unittest.TestCase):
 
         # can stake with only asset
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-2", 
-            "VAULT", 
-            [Coin("BNB", 30000000)], 
+            Binance.chain,
+            "STAKER-2",
+            "VAULT",
+            [Coin("BNB", 30000000)],
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
@@ -167,20 +166,20 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.total_units, 27165833333)
 
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("RUNE-A1F", 10000000000)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("RUNE-A1F", 10000000000)],
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 0)
 
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("RUNE-A1F", 30000000000), Coin("BNB", 90000000)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("RUNE-A1F", 30000000000), Coin("BNB", 90000000)],
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
@@ -190,20 +189,20 @@ class TestThorchainState(unittest.TestCase):
         thorchain = ThorchainState()
         # stake some funds into a pool
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(outbound, [])
 
         txn = Transaction(
-            Binance.chain, 
-            "STAKER-1", 
-            "VAULT", 
-            [Coin("RUNE-A1F", 1)], 
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("RUNE-A1F", 1)],
             "WITHDRAW:BNB.BNB:100",
         )
         outbound = thorchain.handle(txn)
@@ -231,5 +230,5 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -1,12 +1,14 @@
 import time
 
 from common import Transaction, Coin, Asset, HttpClient
- 
+
+
 class MockBinance(HttpClient):
     """
     An client implementation for a mock binance server
     https://gitlab.com/thorchain/bepswap/mock-binance
     """
+
     aliases = {
         "MASTER": "tbnb1ht7v08hv2lhtmk8y7szl2hjexqryc3hcldlztl",
         "USER-1": "tbnb157dxmw9jz5emuf0apj4d6p3ee42ck0uwksxfff",
@@ -19,14 +21,14 @@ class MockBinance(HttpClient):
         """
         Set the vault bnb address
         """
-        self.aliases['VAULT'] = addr
+        self.aliases["VAULT"] = addr
 
     def get_block_height(self):
         """
         Get the current block height of mock binance
         """
         data = self.fetch("/block")
-        return int(data['result']['block']['header']['height'])
+        return int(data["result"]["block"]["header"]["height"])
 
     def wait_for_blocks(self, count):
         """
@@ -38,7 +40,9 @@ class MockBinance(HttpClient):
             block = self.get_block_height()
             if block - start_block >= count:
                 return
-        raise Exception("failed waiting for mock binance transactions ({})", format(count))
+        raise Exception(
+            "failed waiting for mock binance transactions ({})", format(count)
+        )
 
     def accounts(self):
         return self.fetch("/accounts")
@@ -65,15 +69,14 @@ class MockBinance(HttpClient):
         return self.post("/broadcast/easy", payload)
 
     def seed(self, addr, coins):
-        return self.transfer(
-            Transaction(Binance.chain, "MASTER", addr, coins, "SEED")
-        )
+        return self.transfer(Transaction(Binance.chain, "MASTER", addr, coins, "SEED"))
 
 
 class Account:
     """
     An account is an address with a list of coin balances associated
     """
+
     def __init__(self, address):
         self.address = address
         self.balances = []
@@ -92,7 +95,7 @@ class Account:
                     if self.balances[i].amount < 0:
                         print("Balance:", self.address, self.balances[i])
                         self.balances[i].amount = 0
-                        #raise Exception("insufficient funds")
+                        # raise Exception("insufficient funds")
 
     def add(self, coins):
         """
@@ -134,6 +137,7 @@ class Binance:
     """
     A local simple implementation of binance chain
     """
+
     chain = "Binance"
 
     def __init__(self):
@@ -152,7 +156,7 @@ class Binance:
         Retrieve an accout by address
         """
         if addr in self.accounts:
-            return self.accounts[addr] 
+            return self.accounts[addr]
         return Account(addr)
 
     def set_account(self, acct):
@@ -174,7 +178,9 @@ class Binance:
         Makes a transfer on the binance chain. Returns gas used
         """
         if txn.chain != Binance.chain:
-            raise Exception('Cannot transfer. {} is not {}'.format(Binance.chain, txn.chain))
+            raise Exception(
+                "Cannot transfer. {} is not {}".format(Binance.chain, txn.chain)
+            )
 
         from_acct = self.get_account(txn.fromAddress)
         to_acct = self.get_account(txn.toAddress)

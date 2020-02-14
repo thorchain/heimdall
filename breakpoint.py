@@ -1,4 +1,3 @@
-
 class Breakpoint:
     """
     This takes a snapshot picture of the chain(s) and generates json
@@ -16,26 +15,10 @@ class Breakpoint:
         snap = {
             "TX": txID,
             "OUT": out,
-            "MASTER": {
-                "BNB": 0,
-                "LOK-3C0": 0,
-                "RUNE-A1F": 0,
-            },
-            "USER-1": {
-                "BNB": 0,
-                "LOK-3C0": 0,
-                "RUNE-A1F": 0,
-            },
-            "STAKER-1": {
-                "BNB": 0,
-                "LOK-3C0": 0,
-                "RUNE-A1F": 0,
-            },
-            "STAKER-2": {
-                "BNB": 0,
-                "LOK-3C0": 0,
-                "RUNE-A1F": 0,
-            },
+            "MASTER": {"BNB": 0, "LOK-3C0": 0, "RUNE-A1F": 0},
+            "USER-1": {"BNB": 0, "LOK-3C0": 0, "RUNE-A1F": 0},
+            "STAKER-1": {"BNB": 0, "LOK-3C0": 0, "RUNE-A1F": 0},
+            "STAKER-2": {"BNB": 0, "LOK-3C0": 0, "RUNE-A1F": 0},
             "VAULT": {},
             "POOL-BNB": None,
             "POOL-LOK": None,
@@ -43,7 +26,7 @@ class Breakpoint:
 
         for name, acct in self.bnb.accounts.items():
             # ignore if is a new name
-            if not name in snap:
+            if name not in snap:
                 continue
 
             for coin in acct.balances:
