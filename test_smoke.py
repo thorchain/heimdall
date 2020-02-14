@@ -78,6 +78,8 @@ class TestSmoke(unittest.TestCase):
         if failure:
             raise Exception("Fail")
 
+        if failure:
+            raise Exception("Fail")
 
 if __name__ == "__main__":
     unittest.main()
