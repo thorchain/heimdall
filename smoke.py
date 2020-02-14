@@ -116,13 +116,13 @@ txns = [
     "WITHDRAW:BNB.BNB:5000"), 2],
     [Transaction(Binance.chain, "STAKER-1", "VAULT",
         [Coin("BNB", 1)],
+    "WITHDRAW:BNB.LOK-3C0"), 2],
+    [Transaction(Binance.chain, "STAKER-1", "VAULT",
+        [Coin("BNB", 1)],
     "WITHDRAW:BNB.BNB:10000"), 2],
     [Transaction(Binance.chain, "STAKER-2", "VAULT",
         [Coin("BNB", 1)],
     "WITHDRAW:BNB.BNB"), 2],
-    [Transaction(Binance.chain, "STAKER-1", "VAULT",
-        [Coin("BNB", 1)],
-    "WITHDRAW:BNB.LOK-3C0"), 2],
 ]
 
 def main():
