@@ -1,19 +1,26 @@
 import time
 from copy import deepcopy
 
-from common import Transaction, Coin, Asset, get_share, requests_retry_session, HttpClient
+from common import (
+    Transaction,
+    Coin,
+    Asset,
+    get_share,
+    HttpClient,
+)
 
 
 class ThorchainClient(HttpClient):
     """
     A client implementation to thorchain API
     """
+
     def get_block_height(self):
         """
         Get the current block height of mock binance
         """
         data = self.fetch("/thorchain/lastblock")
-        return int(data['statechain'])
+        return int(data["statechain"])
 
     def wait_for_blocks(self, count):
         """
@@ -29,7 +36,7 @@ class ThorchainClient(HttpClient):
 
     def get_vault_address(self):
         data = self.fetch("/thorchain/pool_addresses")
-        return data['current'][0]['address']
+        return data["current"][0]["address"]
 
     def get_pools(self):
         return self.fetch("/thorchain/pools")
@@ -39,6 +46,7 @@ class ThorchainState:
     """
     A complete implementation of the thorchain logic/behavior
     """
+
     def __init__(self):
         self.pools = []
         self.reserve = 0
@@ -83,13 +91,17 @@ class ThorchainState:
         """
         txns = []
         for coin in txn.coins:
-            txns.append(Transaction(txn.chain, txn.toAddress, txn.fromAddress, [coin], "REFUND:TODO"))
+            txns.append(
+                Transaction(
+                    txn.chain, txn.toAddress, txn.fromAddress, [coin], "REFUND:TODO"
+                )
+            )
         return txns
 
     def handle(self, txn):
-        tx = deepcopy(txn) # copy of transaction
+        tx = deepcopy(txn)  # copy of transaction
         """
-        This is a router that sends a transaction to the correct handler. 
+        This is a router that sends a transaction to the correct handler.
         It will return transactions to send
         """
         if tx.memo.startswith("STAKE:"):
@@ -122,7 +134,7 @@ class ThorchainState:
         for coin in txn.coins:
             if not coin.is_rune():
                 if not asset.is_equal(coin.asset):
-                    return self.refund(txn) # mismatch coin asset and memo
+                    return self.refund(txn)  # mismatch coin asset and memo
 
         pool = self.get_pool(asset)
         for coin in txn.coins:
@@ -200,7 +212,9 @@ class ThorchainState:
 
         chain, _from, _to = txn.chain, txn.fromAddress, txn.toAddress
         return [
-            Transaction(chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], "OUTBOUND:TODO"),
+            Transaction(
+                chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], "OUTBOUND:TODO"
+            ),
             Transaction(chain, _to, _from, [Coin(asset, asset_amt)], "OUTBOUND:TODO"),
         ]
 
@@ -291,20 +305,20 @@ class ThorchainState:
             Y = pool.rune_balance
 
         x = coin.amount
-        emit = self.calc_asset_emission(X,x,Y)
+        emit = self.calc_asset_emission(X, x, Y)
 
         # if we emit zero, return immediately
         if emit == 0:
             return Coin(asset, emit), pool
 
-        newPool = deepcopy(pool) # copy of pool
+        newPool = deepcopy(pool)  # copy of pool
         if coin.is_rune():
-            newPool.add(x,0)
-            newPool.sub(0,emit)
+            newPool.add(x, 0)
+            newPool.sub(0, emit)
             emit = Coin(asset, emit)
         else:
-            newPool.add(0,x)
-            newPool.sub(emit,0)
+            newPool.add(0, x)
+            newPool.sub(emit, 0)
             emit = Coin("RUNE-A1F", emit)
 
         return emit, newPool
@@ -314,7 +328,7 @@ class ThorchainState:
         Calculates the amount of coins to be emitted in a swap
         ( x * X * Y ) / ( x + X )^2
         """
-        return int((x * X * Y) / (x + X)**2)
+        return int((x * X * Y) / (x + X) ** 2)
 
 
 class Pool:
@@ -378,10 +392,7 @@ class Pool:
         staker = self.get_staker(address)
         self.add(rune_amt, asset_amt)
         units = self._calc_stake_units(
-            self.rune_balance, 
-            self.asset_balance, 
-            rune_amt, 
-            asset_amt,
+            self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
 
         self.total_units += units
@@ -396,7 +407,9 @@ class Pool:
             raise Exception("withdraw basis points should be between 0 - 10,000")
 
         staker = self.get_staker(address)
-        units, rune_amt, asset_amt = self._calc_unstake_units(staker.units, withdraw_basis_points)
+        units, rune_amt, asset_amt = self._calc_unstake_units(
+            staker.units, withdraw_basis_points
+        )
         staker.units -= units
         self.set_staker(staker)
         self.total_units -= units
@@ -412,16 +425,34 @@ class Pool:
         r = staked rune
         a = staked asset
         """
-        return int(round((float(((pool_rune + pool_asset) * (stake_rune * pool_asset + pool_rune * stake_asset)))/float((4 * pool_rune * pool_asset)))))
+        return int(
+            round(
+                (
+                    float(
+                        (
+                            (pool_rune + pool_asset)
+                            * (stake_rune * pool_asset + pool_rune * stake_asset)
+                        )
+                    )
+                    / float((4 * pool_rune * pool_asset))
+                )
+            )
+        )
 
     def _calc_unstake_units(self, staker_units, withdraw_basis_points):
         """
         Calculate amount of rune/asset to unstake
         Returns staker units, rune amount, asset amount
         """
-        units_to_claim = int(round(get_share(withdraw_basis_points, 10000, staker_units)))
-        withdraw_rune = int(round(get_share(units_to_claim, self.total_units, self.rune_balance)))
-        withdraw_asset = int(round(get_share(units_to_claim, self.total_units, self.asset_balance)))
+        units_to_claim = int(
+            round(get_share(withdraw_basis_points, 10000, staker_units))
+        )
+        withdraw_rune = int(
+            round(get_share(units_to_claim, self.total_units, self.rune_balance))
+        )
+        withdraw_asset = int(
+            round(get_share(units_to_claim, self.total_units, self.asset_balance))
+        )
         units_after = staker_units - units_to_claim
         if units_after < 0:
             print("Overdrawn staker units", self)
@@ -429,17 +460,25 @@ class Pool:
         return units_to_claim, withdraw_rune, withdraw_asset
 
     def __repr__(self):
-        return "<Pool %s Rune: %d | Asset: %d>" % (self.asset, self.rune_balance, self.asset_balance)
+        return "<Pool %s Rune: %d | Asset: %d>" % (
+            self.asset,
+            self.rune_balance,
+            self.asset_balance,
+        )
 
     def __str__(self):
-        return "Pool %s Rune: %d | Asset: %d" % (self.asset, self.rune_balance, self.asset_balance)
+        return "Pool %s Rune: %d | Asset: %d" % (
+            self.asset,
+            self.rune_balance,
+            self.asset_balance,
+        )
 
 
 class Staker:
-    def __init__(self, address, units = 0):
+    def __init__(self, address, units=0):
         self.address = address
         self.units = 0
-    
+
     def add(self, units):
         """
         Add staker units

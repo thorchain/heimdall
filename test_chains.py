@@ -4,8 +4,8 @@ from chains import Account, Binance
 
 from common import Transaction, Coin
 
-class TestAccount(unittest.TestCase):
 
+class TestAccount(unittest.TestCase):
     def test_addsub(self):
         acct = Account("tbnbA")
         acct.add(Coin("BNB", 25))
@@ -18,18 +18,18 @@ class TestAccount(unittest.TestCase):
         self.assertEqual(acct.get("BNB"), 25)
         self.assertEqual(acct.get("RUNE"), 0)
 
-class TestBinance(unittest.TestCase):
 
+class TestBinance(unittest.TestCase):
     def test_gas(self):
         bnb = Binance()
-        self.assertEqual(bnb._calculateGas(
-            [Coin("BNB", 5757575)]
-            ).is_equal(Coin("BNB", 37500)), 
+        self.assertEqual(
+            bnb._calculateGas([Coin("BNB", 5757575)]).is_equal(Coin("BNB", 37500)),
             True,
         )
-        self.assertEqual(bnb._calculateGas(
-            [Coin("BNB", 0), Coin("RUNE", 0)]
-            ).is_equal(Coin("BNB", 60000)), 
+        self.assertEqual(
+            bnb._calculateGas([Coin("BNB", 0), Coin("RUNE", 0)]).is_equal(
+                Coin("BNB", 60000)
+            ),
             True,
         )
 
@@ -42,7 +42,9 @@ class TestBinance(unittest.TestCase):
     def test_transfer(self):
         bnb = Binance()
         bnb.seed("tbnbA", Coin("BNB", 300000000))
-        txn = Transaction(bnb.chain, "tbnbA", "tbnbB", Coin("BNB", 200000000), "test transfer")
+        txn = Transaction(
+            bnb.chain, "tbnbA", "tbnbB", Coin("BNB", 200000000), "test transfer"
+        )
         bnb.transfer(txn)
 
         from_acct = bnb.get_account("tbnbA")
@@ -51,5 +53,6 @@ class TestBinance(unittest.TestCase):
         self.assertEqual(to_acct.get("BNB"), 200000000)
         self.assertEqual(from_acct.get("BNB"), 99962500)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

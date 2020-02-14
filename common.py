@@ -2,11 +2,9 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
+
 def requests_retry_session(
-    retries=6,
-    backoff_factor=1,
-    status_forcelist=(500, 502, 504),
-    session=None,
+    retries=6, backoff_factor=1, status_forcelist=(500, 502, 504), session=None,
 ):
     """
     Creates a request session that has auto retry
@@ -20,9 +18,10 @@ def requests_retry_session(
         status_forcelist=status_forcelist,
     )
     adapter = HTTPAdapter(max_retries=retry)
-    session.mount('http://', adapter)
-    session.mount('https://', adapter)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
     return session
+
 
 def get_share(part, total, alloc):
     """
@@ -69,7 +68,7 @@ class Asset:
     def __init__(self, asset_str):
         parts = asset_str.split(".")
         if len(parts) < 2:
-            self.chain = "BNB" # default to binance chain
+            self.chain = "BNB"  # default to binance chain
             self.symbol = parts[0]
         else:
             self.chain = parts[0]
@@ -100,6 +99,7 @@ class Coin:
     """
     A class that represents a coin and an amount
     """
+
     def __init__(self, asset, amount):
         self.asset = asset
         if isinstance(asset, str):
@@ -145,7 +145,8 @@ class Transaction:
     """
     A transaction on a block chain (ie Binance)
     """
-    def __init__(self, _chain, _from, _to, _coins, _memo = ""):
+
+    def __init__(self, _chain, _from, _to, _coins, _memo=""):
         self.chain = _chain
         self.toAddress = _to
         self.fromAddress = _from
@@ -157,7 +158,17 @@ class Transaction:
         self.coins = _coins
 
     def __repr__(self):
-        return "<Transaction %s ==> %s | %s | %s>" % (self.fromAddress, self.toAddress, self.coins, self.memo)
+        return "<Transaction %s ==> %s | %s | %s>" % (
+            self.fromAddress,
+            self.toAddress,
+            self.coins,
+            self.memo,
+        )
 
     def __str__(self):
-        return "Transaction %s ==> %s | %s | %s" % (self.fromAddress, self.toAddress, self.coins, self.memo)
+        return "Transaction %s ==> %s | %s | %s" % (
+            self.fromAddress,
+            self.toAddress,
+            self.coins,
+            self.memo,
+        )
