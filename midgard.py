@@ -13,4 +13,4 @@ class MidgardClient(HttpClient):
         :returns: Pool data
 
         """
-        return self.fetch("/v1/pools/{}".format(asset))
+        return self.fetch(f"/v1/pools/{asset}")

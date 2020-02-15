@@ -1,9 +1,18 @@
 import argparse
 import sys
+import os
+import logging
 
 from thorchain import ThorchainClient
 from midgard import MidgardClient
 from exceptions import MidgardPoolError
+
+
+# Init logging
+logging.basicConfig(
+    format="%(asctime)s | %(levelname)-8s | %(message)s",
+    level=os.environ.get("LOGLEVEL", "INFO"),
+)
 
 
 def main():
@@ -21,7 +30,7 @@ def main():
     try:
         health.run()
     except Exception as e:
-        print(e)
+        logging.error(e)
         sys.exit(1)
 
 
@@ -49,7 +58,7 @@ class Health:
         """Check errors and exit accordingly.
         """
         for error in self.errors:
-            print(error)
+            logging.error(error)
 
         if len(self.errors):
             raise Exception("Health checks failed")
@@ -90,7 +99,7 @@ class Health:
                 self.errors.append(
                     MidgardPoolError(
                         asset,
-                        "Balance {}".format(asset),
+                        f"Balance {asset}",
                         tpool["balance_asset"],
                         mpool["assetDepth"],
                     )
