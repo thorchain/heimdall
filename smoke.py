@@ -61,7 +61,7 @@ txns = [
             "STAKER-2",
             [
                 Coin("BNB", 200000000),
-                Coin("RUNE-A1F", 50000000000),
+                Coin("RUNE-A1F", 50900000000),
                 Coin("LOK-3C0", 10000000000),
             ],
             "SEED",
@@ -179,20 +179,20 @@ txns = [
     # Misc
     [
         Transaction(
-            Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 100000000)], " "
+            Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 200000000)], " "
         ),
         1,
     ],
     [
         Transaction(
-            Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 100000000)], "ABDG?"
+            Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 200000000)], "ABDG?"
         ),
         1,
     ],
     # Swaps
     [
-        Transaction(Binance.chain, "USER-1", "VAULT", [Coin("BNB", 1)], "SWAP:BNB.BNB"),
-        1,
+        Transaction(Binance.chain, "USER-1", "VAULT", [Coin("BNB", 30000000)], "SWAP:BNB.BNB"),
+        1, # cannot swap BNB for BNB
     ],
     [
         Transaction(
@@ -212,7 +212,7 @@ txns = [
     ],
     [
         Transaction(
-            Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 1)], "SWAP:BNB.BNB"
+            Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 100000001)], "SWAP:BNB.BNB"
         ),
         1,
     ],
