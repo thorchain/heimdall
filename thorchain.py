@@ -99,7 +99,8 @@ class ThorchainState:
             for coin in txn.coins:
                 if coin.is_rune():
                     coin.amount -= rune_fee # deduct 1 rune transaction fee
-                    outbound.append(txn)
+                    if coin.amount > 0:
+                        outbound.append(txn)
                 else:
                     pool = self.get_pool(coin.asset)
                     if not pool.is_zero():
@@ -111,7 +112,8 @@ class ThorchainState:
                         self.set_pool(pool)
 
                         coin.amount -= asset_fee
-                        outbound.append(txn)
+                        if coin.amount > 0:
+                            outbound.append(txn)
 
         return outbound
 
