@@ -36,13 +36,8 @@ class TestSmoke(unittest.TestCase):
         export = os.environ.get("EXPORT", None)
         failure = False
         snaps = []
-<<<<<<< HEAD
         bnb = Binance()  # init local binance chain
         thorchain = ThorchainState()  # init local thorchain
-=======
-        bnb = Binance() # init local binance chain
-        thorchain = ThorchainState() # init local thorchain 
->>>>>>> support updating balances.json
 
         for i, txn in enumerate(txns):
             logging.info(f"{i} {txn}")
