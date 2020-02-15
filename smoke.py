@@ -191,8 +191,10 @@ txns = [
     ],
     # Swaps
     [
-        Transaction(Binance.chain, "USER-1", "VAULT", [Coin("BNB", 30000000)], "SWAP:BNB.BNB"),
-        1, # cannot swap BNB for BNB
+        Transaction(
+            Binance.chain, "USER-1", "VAULT", [Coin("BNB", 30000000)], "SWAP:BNB.BNB"
+        ),
+        1,  # cannot swap BNB for BNB
     ],
     [
         Transaction(
@@ -212,7 +214,11 @@ txns = [
     ],
     [
         Transaction(
-            Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 100000001)], "SWAP:BNB.BNB"
+            Binance.chain,
+            "USER-1",
+            "VAULT",
+            [Coin("RUNE-A1F", 100000001)],
+            "SWAP:BNB.BNB",
         ),
         1,
     ],

@@ -36,8 +36,8 @@ class TestSmoke(unittest.TestCase):
         export = os.environ.get("EXPORT", None)
         failure = False
         snaps = []
-        bnb = Binance() # init local binance chain
-        thorchain = ThorchainState() # init local thorchain 
+        bnb = Binance()  # init local binance chain
+        thorchain = ThorchainState()  # init local thorchain
 
         for i, unit in enumerate(txns):
             # get transaction and expected number of outbound transactions
@@ -47,8 +47,8 @@ class TestSmoke(unittest.TestCase):
                 bnb.seed(txn.toAddress, txn.coins)
                 continue
             else:
-                bnb.transfer(txn) # send transfer on binance chain
-                outbound = thorchain.handle(txn) # process transaction in thorchain
+                bnb.transfer(txn)  # send transfer on binance chain
+                outbound = thorchain.handle(txn)  # process transaction in thorchain
                 outbound = thorchain.handle_fee(outbound)
                 for txn in outbound:
                     gas = bnb.transfer(txn)  # send outbound txns back to Binance
@@ -57,7 +57,7 @@ class TestSmoke(unittest.TestCase):
             # generated a snapshop picture of thorchain and bnb
             snap = Breakpoint(thorchain, bnb).snapshot(i, out)
             snaps.append(snap)
-            expected = get_balance(i) # get the expected balance from json file
+            expected = get_balance(i)  # get the expected balance from json file
 
             diff = DeepDiff(
                 snap, expected, ignore_order=True
@@ -74,11 +74,12 @@ class TestSmoke(unittest.TestCase):
                     raise Exception("did not match!")
 
         if export:
-            with open(export, 'w') as fp:
+            with open(export, "w") as fp:
                 json.dump(snaps, fp, indent=4)
 
         if failure:
             raise Exception("Fail")
+
 
 if __name__ == "__main__":
     unittest.main()
