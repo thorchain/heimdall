@@ -98,7 +98,7 @@ class ThorchainState:
         for txn in txns:
             for coin in txn.coins:
                 if coin.is_rune():
-                    coin.amount -= rune_fee # deduct 1 rune transaction fee
+                    coin.amount -= rune_fee  # deduct 1 rune transaction fee
                     if coin.amount > 0:
                         outbound.append(txn)
                 else:
@@ -377,7 +377,9 @@ class Pool:
         """
         Calculates how much asset we need to pay for the 1 rune transaction fee
         """
-        return int(round((float(100000000) / float(self.rune_balance)) * self.asset_balance))
+        return int(
+            round((float(100000000) / float(self.rune_balance)) * self.asset_balance)
+        )
 
     def sub(self, rune_amt, asset_amt):
         """

@@ -45,8 +45,8 @@ class TestSmoke(unittest.TestCase):
                 bnb.seed(txn.toAddress, txn.coins)
                 continue
             else:
-                bnb.transfer(txn) # send transfer on binance chain
-                outbound = thorchain.handle(txn) # process transaction in thorchain
+                bnb.transfer(txn)  # send transfer on binance chain
+                outbound = thorchain.handle(txn)  # process transaction in thorchain
                 outbound = thorchain.handle_fee(outbound)
                 for txn in outbound:
                     gas = bnb.transfer(txn)  # send outbound txns back to Binance
@@ -78,8 +78,6 @@ class TestSmoke(unittest.TestCase):
         if failure:
             raise Exception("Fail")
 
-        if failure:
-            raise Exception("Fail")
 
 if __name__ == "__main__":
     unittest.main()
