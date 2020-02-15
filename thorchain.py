@@ -105,7 +105,9 @@ class ThorchainState:
                     pool = self.get_pool(coin.asset)
 
                     if not pool.is_zero():
-                        asset_fee = pool.get_asset_fee() # default to zero if pool is empty
+                        asset_fee = (
+                            pool.get_asset_fee()
+                        )  # default to zero if pool is empty
                         pool.add(0, asset_fee)
                         pool.sub(rune_fee, 0)
                         self.set_pool(pool)
@@ -478,9 +480,15 @@ class Pool:
         Calculate amount of rune/asset to unstake
         Returns staker units, rune amount, asset amount
         """
-        units_to_claim = int( round(get_share(withdraw_basis_points, 10000, staker_units)))
-        withdraw_rune = int( round(get_share(units_to_claim, self.total_units, self.rune_balance)))
-        withdraw_asset = int( round(get_share(units_to_claim, self.total_units, self.asset_balance)))
+        units_to_claim = int(
+            round(get_share(withdraw_basis_points, 10000, staker_units))
+        )
+        withdraw_rune = int(
+            round(get_share(units_to_claim, self.total_units, self.rune_balance))
+        )
+        withdraw_asset = int(
+            round(get_share(units_to_claim, self.total_units, self.asset_balance))
+        )
         units_after = staker_units - units_to_claim
         if units_after < 0:
             logging.error(f"Overdrawn staker units: {self}")
