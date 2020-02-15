@@ -103,17 +103,16 @@ class ThorchainState:
                         outbound.append(txn)
                 else:
                     pool = self.get_pool(coin.asset)
-                    if not pool.is_zero():
-                        asset_fee = pool.get_asset_fee()
 
-                        # swap our asset_fee for rune
+                    if not pool.is_zero():
+                        asset_fee = pool.get_asset_fee() # default to zero if pool is empty
                         pool.add(0, asset_fee)
                         pool.sub(rune_fee, 0)
                         self.set_pool(pool)
-
                         coin.amount -= asset_fee
-                        if coin.amount > 0:
-                            outbound.append(txn)
+
+                    if coin.amount > 0:
+                        outbound.append(txn)
 
         return outbound
 
@@ -377,6 +376,9 @@ class Pool:
         """
         Calculates how much asset we need to pay for the 1 rune transaction fee
         """
+        if self.is_zero():
+            return 0
+
         return int(
             round((float(100000000) / float(self.rune_balance)) * self.asset_balance)
         )
@@ -465,34 +467,20 @@ class Pool:
         r = staked rune
         a = staked asset
         """
-        return int(
-            round(
-                (
-                    float(
-                        (
-                            (pool_rune + pool_asset)
-                            * (stake_rune * pool_asset + pool_rune * stake_asset)
-                        )
-                    )
-                    / float((4 * pool_rune * pool_asset))
-                )
-            )
-        )
+        part1 = pool_rune + pool_asset
+        part2 = stake_rune * pool_asset + pool_rune * stake_asset
+        part3 = 4 * pool_rune * pool_asset
+        answer = float(part1 * part2) / float(part3)
+        return int(answer)
 
     def _calc_unstake_units(self, staker_units, withdraw_basis_points):
         """
         Calculate amount of rune/asset to unstake
         Returns staker units, rune amount, asset amount
         """
-        units_to_claim = int(
-            round(get_share(withdraw_basis_points, 10000, staker_units))
-        )
-        withdraw_rune = int(
-            round(get_share(units_to_claim, self.total_units, self.rune_balance))
-        )
-        withdraw_asset = int(
-            round(get_share(units_to_claim, self.total_units, self.asset_balance))
-        )
+        units_to_claim = int( round(get_share(withdraw_basis_points, 10000, staker_units)))
+        withdraw_rune = int( round(get_share(units_to_claim, self.total_units, self.rune_balance)))
+        withdraw_asset = int( round(get_share(units_to_claim, self.total_units, self.asset_balance)))
         units_after = staker_units - units_to_claim
         if units_after < 0:
             logging.error(f"Overdrawn staker units: {self}")

@@ -217,7 +217,7 @@ txns = [
             Binance.chain,
             "USER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 100000001)],
+            [Coin("RUNE-A1F", 100001000)],
             "SWAP:BNB.BNB",
         ),
         1,
