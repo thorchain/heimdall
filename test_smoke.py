@@ -36,9 +36,7 @@ class TestSmoke(unittest.TestCase):
         bnb = Binance()  # init local binance chain
         thorchain = ThorchainState()  # init local thorchain
 
-        for i, unit in enumerate(txns):
-            # get transaction and expected number of outbound transactions
-            txn, out = unit
+        for i, txn in enumerate(txns):
             logging.info(f"{i} {txn}")
             if txn.memo == "SEED":
                 bnb.seed(txn.toAddress, txn.coins)
@@ -51,7 +49,7 @@ class TestSmoke(unittest.TestCase):
                     thorchain.handle_gas(gas)  # subtract gas from pool(s)
 
             # generated a snapshop picture of thorchain and bnb
-            snap = Breakpoint(thorchain, bnb).snapshot(i, out)
+            snap = Breakpoint(thorchain, bnb).snapshot(i, len(outbound))
             expected = get_balance(i)  # get the expected balance from json file
 
             diff = DeepDiff(
