@@ -30,7 +30,7 @@ class Breakpoint:
                 snap[name][coin.asset.symbol] = coin.amount
 
         for pool in self.thorchain.pools:
-            snap['POOL.' + str(pool.asset)] = {
+            snap["POOL." + str(pool.asset)] = {
                 str(pool.asset): int(pool.asset_balance),
                 "RUNE-A1F": int(pool.rune_balance),
             }
