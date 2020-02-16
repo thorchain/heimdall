@@ -23,7 +23,7 @@ format:
 	@docker run --rm -v ${PWD}:/app cytopia/black /app
 
 test:
-	@docker run --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python -m unittest
+	@docker run --rm -e EXPORT=${EXPORT} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python -m unittest
 
 test-watch:
 	@ptw
