@@ -136,7 +136,9 @@ txns = [
         Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 200000000)], "ABDG?"
     ),
     # Swaps
-    Transaction(Binance.chain, "USER-1", "VAULT", [Coin("BNB", 30000000)], "SWAP:BNB.BNB"),
+    Transaction(
+        Binance.chain, "USER-1", "VAULT", [Coin("BNB", 30000000)], "SWAP:BNB.BNB"
+    ),
     Transaction(
         Binance.chain, "USER-1", "VAULT", [Coin("BNB", 30000000)], "SWAP:BNB.BNB"
     ),
