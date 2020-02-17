@@ -12,6 +12,7 @@ class MockBinance(HttpClient):
 
     aliases = {
         "MASTER": "tbnb1ht7v08hv2lhtmk8y7szl2hjexqryc3hcldlztl",
+        "CONTRIBUTOR-1": "tbnb1lltanv67yztkpt5czw4ajsmg94dlqnnhrq7zqm",
         "USER-1": "tbnb157dxmw9jz5emuf0apj4d6p3ee42ck0uwksxfff",
         "STAKER-1": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q",
         "STAKER-2": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx",

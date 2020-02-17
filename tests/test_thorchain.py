@@ -239,6 +239,16 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(withdraw_asset, 72280966)
         self.assertEqual(after, 12537500000)
 
+    def test_get_asset_in_rune(self):
+        pool = Pool("BNB.BNB", 49900000000, 150225000)
+        self.assertEqual(pool.get_asset_in_rune(75000), 24912631)
+
+        pool = Pool("BNB.BNB", 49824912631, 150450902)
+        self.assertEqual(pool.get_asset_in_rune(75000), 24837794)
+
+    def test_get_asset_fee(self):
+        pool = Pool("BNB.BNB", 49900000000, 150225000)
+        self.assertEqual(pool.get_asset_fee(), 301052)
 
 if __name__ == "__main__":
     unittest.main()
