@@ -32,7 +32,6 @@ class TestSmoke(unittest.TestCase):
     https://docs.google.com/spreadsheets/d/1sLK0FE-s6LInWijqKgxAzQk2RiSDZO1GL58kAD62ch0/edit#gid=439437407
     """
 
-    @unittest.skip("demonstrating skipping")
     def test_smoke(self):
         export = os.environ.get("EXPORT", None)
         failure = False
