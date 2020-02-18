@@ -294,6 +294,7 @@ class Smoker:
                 )  # send outbound txns back to Binance
                 gas_amt += gas.amount
             # TODO: make this chain agnostic
+            self.thorchain.handle_rewards()
             self.thorchain.handle_gas(Coin("BNB.BNB", gas_amt))  # subtract gas from pool(s)
 
             # update memo with actual address (over alias name)

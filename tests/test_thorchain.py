@@ -239,6 +239,11 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(withdraw_asset, 72280966)
         self.assertEqual(after, 12537500000)
 
+    def test_calc_liquidity_fee(self):
+        thorchain = ThorchainState()
+        fee = thorchain._calc_liquidity_fee(94382619747, 100001000, 301902607)
+        self.assertEqual(fee, 338)
+
     def test_get_asset_in_rune(self):
         pool = Pool("BNB.BNB", 49900000000, 150225000)
         self.assertEqual(pool.get_asset_in_rune(75000), 24912631)
@@ -249,6 +254,15 @@ class TestThorchainState(unittest.TestCase):
     def test_get_asset_fee(self):
         pool = Pool("BNB.BNB", 49900000000, 150225000)
         self.assertEqual(pool.get_asset_fee(), 301052)
+
+    def test_handle_rewards(self):
+        thorchain = ThorchainState()
+        thorchain.pools.append(Pool("BNB.BNB", 94382620747, 301902605))
+        thorchain.pools.append(Pool("BNB.LOKI", 50000000000, 0))
+        thorchain.reserve = 40001517380253
+        thorchain.liquidity['BNB.BNB'] = 105668
+        thorchain.handle_rewards()
+        self.assertEqual(thorchain.pools[0].rune_balance, 94382515079)
 
 if __name__ == "__main__":
     unittest.main()
