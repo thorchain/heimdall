@@ -307,9 +307,12 @@ class Smoker:
             self.mock_binance.transfer(txn)  # trigger mock Binance transaction
 
             # wait for transactions to be executed on thorchain
-            for gas_asset in gas_assets:
-                pool = self.thorchain.get_pool(Asset(gas_asset))
-                self.wait_for_pool_asset(Coin(gas_asset, pool.asset_balance))
+            if len(outbounds) == 0:
+                self.thorchain_client.wait_for_blocks(1)
+            else:
+                for gas_asset in gas_assets:
+                    pool = self.thorchain.get_pool(Asset(gas_asset))
+                    self.wait_for_pool_asset(Coin(gas_asset, pool.asset_balance))
 
             # compare simulation pools vs real pools
             real_pools = self.thorchain_client.get_pools()
