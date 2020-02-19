@@ -275,7 +275,19 @@ class Smoker:
             for pool in pools:
                 if Asset(pool["asset"]).is_equal(target.asset):
                     if int(pool["balance_asset"]) == target.amount:
-                        return
+                        print(">>>>>>>> wait passed..")
+                        break
+            time.sleep(5)  # wait a block
+
+        for x in range(attempts):
+            mockAccounts = self.mock_binance.accounts()
+            for macct in mockAccounts:
+                for name, address in self.mock_binance.aliases.items():
+                    if name == "VAULT":
+                        for bal in macct['balances']:
+                            if bal['denom'] == "BNB" and target.amount == bal['amount']:
+                               print(">>>>>>>> wait passed2..")
+                               return 
             time.sleep(5)  # wait a block
 
         # if we get here, we've effectively timed out waiting for everything to
