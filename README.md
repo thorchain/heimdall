@@ -1,4 +1,6 @@
 [![pipeline status](https://gitlab.com/thorchain/heimdall/badges/master/pipeline.svg)](https://gitlab.com/thorchain/heimdall/commits/master)
+[![codecov](https://codecov.io/gl/thorchain/heimdall/branch/master/graph/badge.svg)](https://codecov.io/gl/thorchain/heimdall)
+
 
 Heimdall
 ========
