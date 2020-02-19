@@ -274,7 +274,7 @@ class Smoker:
             pools = self.thorchain_client.get_pools()
             for pool in pools:
                 if Asset(pool["asset"]).is_equal(target.asset):
-                    if pool["balance_asset"] == target.amount:
+                    if int(pool["balance_asset"]) == target.amount:
                         return
             time.sleep(5)  # wait a block
 
