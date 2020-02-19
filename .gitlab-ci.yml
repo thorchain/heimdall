@@ -13,6 +13,7 @@ unit_tests:
   stage: test
   before_script:
     - pip install -r requirements.txt
+    - apk add git
   script:
     - coverage run -m unittest tests/test_*
     - codecov
