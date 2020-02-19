@@ -29,7 +29,7 @@ test-coverage:
 	@docker run --rm -e EXPORT=${EXPORT} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} coverage run -m unittest tests/test_*
 
 test-watch:
-	@ptw tests/test_*
+	@PYTHONPATH=${PWD} ptw tests/test_*
 
 smoke:
 	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python smoke.py
