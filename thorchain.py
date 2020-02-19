@@ -111,8 +111,8 @@ class ThorchainState:
             for coin in txn.coins:
                 if coin.is_rune():
                     coin.amount -= rune_fee  # deduct 1 rune transaction fee
+                    self.reserve += rune_fee  # add to the reserve
                     if coin.amount > 0:
-                        self.reserve += rune_fee  # add to the reserve
                         outbound.append(txn)
                 else:
                     pool = self.get_pool(coin.asset)
@@ -126,8 +126,8 @@ class ThorchainState:
                         self.set_pool(pool)
                         coin.amount -= asset_fee
 
+                    self.reserve += rune_fee  # add to the reserve
                     if coin.amount > 0:
-                        self.reserve += rune_fee  # add to the reserve
                         outbound.append(txn)
 
         return outbound
@@ -155,7 +155,9 @@ class ThorchainState:
         # blocks in a year
         emission_curve = 6
         blocks_per_year = 6311390
-        block_rewards = float(self.reserve) / emission_curve / blocks_per_year
+        block_rewards = int(
+            round(float(self.reserve) / emission_curve / blocks_per_year)
+        )
 
         # total income made on the network
         system_income = block_rewards + self._total_liquidity()
@@ -181,7 +183,7 @@ class ThorchainState:
             factor = float(self.total_bonded + total_staked) / float(
                 self.total_bonded - total_staked
             )
-            staker_split = system_income / factor
+            staker_split = int(round(system_income / factor))
 
         bond_reward = system_income - staker_split
 
