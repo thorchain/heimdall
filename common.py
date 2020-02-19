@@ -1,4 +1,5 @@
 import requests
+import json
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -94,6 +95,9 @@ class Asset:
     def __str__(self):
         return "%s.%s" % (self.chain, self.symbol)
 
+    def to_json(self):
+        return json.dumps(self, default=lambda x: x.__dict__)
+
 
 class Coin:
     """
@@ -140,6 +144,9 @@ class Coin:
     def __str__(self):
         return "%d%s" % ((self.amount), self.asset)
 
+    def to_json(self):
+        return json.dumps(self, default=lambda x: x.__dict__)
+
 
 class Transaction:
     """
@@ -172,3 +179,6 @@ class Transaction:
             self.coins,
             self.memo,
         )
+
+    def to_json(self):
+        return json.dumps(self, default=lambda x: x.__dict__)

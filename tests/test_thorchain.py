@@ -108,6 +108,17 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.get_staker("STAKER-1").units, 25075000000)
         self.assertEqual(pool.total_units, 25075000000)
 
+        events = thorchain.get_events()
+        self.assertEqual(len(events), 1)
+        event = events[0]
+        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.type, "stake")
+        self.assertEqual(event.in_tx.to_json(), txn.to_json())
+        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.pool, pool.asset)
+        self.assertEqual(event.event.stake_units, pool.total_units)
+
         # should refund if no memo
         txn = Transaction(
             Binance.chain,
@@ -118,6 +129,9 @@ class TestThorchainState(unittest.TestCase):
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
+
+        # events = thorchain.get_events()
+        # self.assertEqual(len(events), 2)
 
         # bad stake memo should refund
         txn = Transaction(
