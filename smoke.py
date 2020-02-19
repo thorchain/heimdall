@@ -339,6 +339,13 @@ class Smoker:
                                     f"{bal['amount']} != {coin}"
                                 )
 
+            # check vault data
+            real_vault_data = self.thorchain_client.get_vault_data()
+            if int(real_vault_data['total_reserve']) != self.thorchain.reserve:
+                raise Exception(f"mismatching reserves: {self.thorchain.reserve} != {real_vault_data['total_reserve']}")
+            if int(real_vault_data['bond_reward_rune']) != self.thorchain.bond_reward:
+                raise Exception(f"mismatching bond reward: {self.thorchain.bond_reward} != {real_vault_data['bond_reward_rune']}")
+
 
 if __name__ == "__main__":
     main()

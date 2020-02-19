@@ -39,6 +39,9 @@ class ThorchainClient(HttpClient):
         data = self.fetch("/thorchain/pool_addresses")
         return data["current"][0]["address"]
 
+    def get_vault_data(self):
+        return self.fetch("/thorchain/vault")
+
     def get_pools(self):
         return self.fetch("/thorchain/pools")
 
@@ -191,7 +194,6 @@ class ThorchainState:
         else:
             staker_deficit = self._total_liquidity() - staker_split
 
-        # return bond_reward, pool_reward, staker_deficit
         if self.reserve < bond_reward + pool_reward:
             return
 
