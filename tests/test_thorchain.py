@@ -274,7 +274,7 @@ class TestThorchainState(unittest.TestCase):
         thorchain.liquidity["BNB.LOKI"] = 103
         thorchain.total_bonded = 5000000000000
         thorchain.handle_rewards()
-        self.assertEqual(thorchain.pools[1].rune_balance, 50000997032)
+        self.assertEqual(thorchain.pools[1].rune_balance, 50000997031)
 
 
 if __name__ == "__main__":
