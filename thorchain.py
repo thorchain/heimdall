@@ -175,8 +175,8 @@ class ThorchainState:
         # Zero payments to stakers when staked == bonded
         if total_staked < self.total_bonded:
             # (y + x) / (y - x)
-            factor = float(total_staked + self.total_bonded) / float(
-                total_staked - self.total_bonded
+            factor = float(self.total_bonded + total_staked) / float(
+                self.total_bonded - total_staked
             )
             staker_split = system_income / factor
 

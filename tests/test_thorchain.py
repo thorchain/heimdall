@@ -258,11 +258,23 @@ class TestThorchainState(unittest.TestCase):
     def test_handle_rewards(self):
         thorchain = ThorchainState()
         thorchain.pools.append(Pool("BNB.BNB", 94382620747, 301902605))
-        thorchain.pools.append(Pool("BNB.LOKI", 50000000000, 0))
+        thorchain.pools.append(Pool("BNB.LOKI", 50000000000, 100))
         thorchain.reserve = 40001517380253
+
+        # test minus rune from pools and add to bond rewards (too much rewards to pools)
         thorchain.liquidity["BNB.BNB"] = 105668
         thorchain.handle_rewards()
         self.assertEqual(thorchain.pools[0].rune_balance, 94382515079)
+
+        # test no swaps this block (no rewards)
+        thorchain.handle_rewards()
+        self.assertEqual(thorchain.pools[0].rune_balance, 94382515079)
+
+        # test add rune to pools (not enough funds to pools)
+        thorchain.liquidity["BNB.LOKI"] = 103
+        thorchain.total_bonded = 5000000000000
+        thorchain.handle_rewards()
+        self.assertEqual(thorchain.pools[1].rune_balance, 50000997032)
 
 
 if __name__ == "__main__":
