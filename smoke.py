@@ -266,7 +266,7 @@ class Smoker:
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
 
-    def wait_for_pool_asset(self, target, attempts=5):
+    def wait_for_pool_asset(self, target, attempts=10):
         """
         Waits until a pool asset amount is equal to given amount
         """
