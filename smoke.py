@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import time
 
 from chains import Binance, MockBinance
 from thorchain import ThorchainState, ThorchainClient
@@ -265,7 +266,24 @@ class Smoker:
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
 
+    def wait_for_pool_asset(self, target, attempts=5):
+        """
+        Waits until a pool asset amount is equal to given amount
+        """
+        for x in range(attempts):
+            pools = self.thorchain_client.get_pools()
+            for pool in pools:
+                if Asset(pool["asset"]).is_equal(target.asset):
+                    if pool["balance_asset"] == target.amount:
+                        return
+            time.sleep(5)  # wait a block
+
+        # if we get here, we've effectively timed out waiting for everything to
+        # match. Do nothing and let a comparison occur
+        logging.error(f"Timed out waiting for pool asset")
+
     def run(self):
+        gas_assets = ["BNB.BNB"]
         for i, txn in enumerate(self.txns):
             logging.info(f"{i} {txn}")
             if txn.memo == "SEED":
@@ -287,10 +305,11 @@ class Smoker:
                 txn.memo = txn.memo.replace(name, addr)
 
             self.mock_binance.transfer(txn)  # trigger mock Binance transaction
-            self.mock_binance.wait_for_blocks(len(outbounds))
-            self.thorchain_client.wait_for_blocks(
-                1
-            )  # wait an additional block to pick up gas
+
+            # wait for transactions to be executed on thorchain
+            for gas_asset in gas_assets:
+                pool = self.thorchain.get_pool(Asset(gas_asset))
+                self.wait_for_pool_asset(Coin(gas_asset, pool.asset_balance))
 
             # compare simulation pools vs real pools
             real_pools = self.thorchain_client.get_pools()
