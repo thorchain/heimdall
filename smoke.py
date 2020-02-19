@@ -19,10 +19,7 @@ txns = [
         Binance.chain,
         "MASTER",
         "CONTRIBUTOR-1",
-        [
-            Coin("BNB", 100000000),
-            Coin("RUNE-A1F", 400_000 * 100000000),
-        ],
+        [Coin("BNB", 100000000), Coin("RUNE-A1F", 400_000 * 100000000)],
         "SEED",
     ),
     Transaction(
@@ -295,7 +292,9 @@ class Smoker:
                 gas_amt += gas.amount
             # TODO: make this chain agnostic
             self.thorchain.handle_rewards()
-            self.thorchain.handle_gas(Coin("BNB.BNB", gas_amt))  # subtract gas from pool(s)
+            self.thorchain.handle_gas(
+                Coin("BNB.BNB", gas_amt)
+            )  # subtract gas from pool(s)
 
             # update memo with actual address (over alias name)
             for name, addr in self.mock_binance.aliases.items():

@@ -86,12 +86,12 @@ class ThorchainState:
         if pool.asset_balance <= gas.amount:
             pool.asset_balance = 0
         else:
-            pool.sub(0, gas.amount) # subtract gas from pool
+            pool.sub(0, gas.amount)  # subtract gas from pool
 
             # figure out how much rune is an equal amount to gas.amount
             rune_amt = pool.get_asset_in_rune(gas.amount)
-            self.reserve -= rune_amt # take rune from the reserve
-            pool.add(rune_amt, 0) # replenish gas costs with rune
+            self.reserve -= rune_amt  # take rune from the reserve
+            pool.add(rune_amt, 0)  # replenish gas costs with rune
 
         self.set_pool(pool)
 
@@ -109,7 +109,7 @@ class ThorchainState:
                 if coin.is_rune():
                     coin.amount -= rune_fee  # deduct 1 rune transaction fee
                     if coin.amount > 0:
-                        self.reserve += rune_fee # add to the reserve
+                        self.reserve += rune_fee  # add to the reserve
                         outbound.append(txn)
                 else:
                     pool = self.get_pool(coin.asset)
@@ -124,7 +124,7 @@ class ThorchainState:
                         coin.amount -= asset_fee
 
                     if coin.amount > 0:
-                        self.reserve += rune_fee # add to the reserve
+                        self.reserve += rune_fee  # add to the reserve
                         outbound.append(txn)
 
         return outbound
@@ -163,7 +163,7 @@ class ThorchainState:
         for pool in self.pools:
             total_staked += pool.rune_balance
 
-        if total_staked == 0: # nothing staked, no rewards
+        if total_staked == 0:  # nothing staked, no rewards
             return
 
         # Targets a linear change in rewards from 0% staked, 33% staked, 100% staked.
@@ -175,7 +175,9 @@ class ThorchainState:
         # Zero payments to stakers when staked == bonded
         if total_staked < self.total_bonded:
             # (y + x) / (y - x)
-            factor = float(total_staked + self.total_bonded) / float(total_staked - self.total_bonded)
+            factor = float(total_staked + self.total_bonded) / float(
+                total_staked - self.total_bonded
+            )
             staker_split = system_income / factor
 
         bond_reward = system_income - staker_split
@@ -189,27 +191,31 @@ class ThorchainState:
         else:
             staker_deficit = self._total_liquidity() - staker_split
 
-        #return bond_reward, pool_reward, staker_deficit
+        # return bond_reward, pool_reward, staker_deficit
         if self.reserve < bond_reward + pool_reward:
             return
 
         # subtract our rewards from the reserve
         self.reserve -= bond_reward + pool_reward
-        self.bond_reward += bond_reward # add to bond reward pool
+        self.bond_reward += bond_reward  # add to bond reward pool
 
         if pool_reward > 0:
             # TODO: subtract any remaining gas, from the pool rewards
             if self._total_liquidity() > 0:
                 for key, value in self.liquidity.items():
-                    share = int(round(get_share(value, self._total_liquidity(), pool_reward)))
+                    share = int(
+                        round(get_share(value, self._total_liquidity(), pool_reward))
+                    )
                     pool = self.get_pool(key)
                     pool.rune_balance += share
                     self.set_pool(pool)
             else:
-                pass # TODO: Pool Rewards are based on Depth Share
+                pass  # TODO: Pool Rewards are based on Depth Share
         else:
             for key, value in self.liquidity.items():
-                share = int(round(get_share(staker_deficit, self._total_liquidity(), value)))
+                share = int(
+                    round(get_share(staker_deficit, self._total_liquidity(), value))
+                )
                 pool = self.get_pool(key)
                 pool.rune_balance -= share
                 self.bond_reward += share
@@ -487,7 +493,7 @@ class ThorchainState:
         Calculate the liquidity fee from a trade
         ( x^2 *  Y ) / ( x + X )^2
         """
-        return int(float((x**2) *  Y ) / float(( x + X )**2 ))
+        return int(float((x ** 2) * Y) / float((x + X) ** 2))
 
     def _calc_asset_emission(self, X, x, Y):
         """
@@ -526,7 +532,6 @@ class Pool:
 
         share = get_share(self.asset_balance, self.rune_balance, val)
         return int(round(share))
-
 
     def get_asset_fee(self):
         """

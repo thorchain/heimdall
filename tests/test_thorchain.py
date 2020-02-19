@@ -260,9 +260,10 @@ class TestThorchainState(unittest.TestCase):
         thorchain.pools.append(Pool("BNB.BNB", 94382620747, 301902605))
         thorchain.pools.append(Pool("BNB.LOKI", 50000000000, 0))
         thorchain.reserve = 40001517380253
-        thorchain.liquidity['BNB.BNB'] = 105668
+        thorchain.liquidity["BNB.BNB"] = 105668
         thorchain.handle_rewards()
         self.assertEqual(thorchain.pools[0].rune_balance, 94382515079)
+
 
 if __name__ == "__main__":
     unittest.main()
