@@ -343,16 +343,12 @@ class Smoker:
             vdata = self.thorchain_client.get_vault_data()
             if int(vdata["total_reserve"]) != self.thorchain.reserve:
                 sim = self.thorchain.reserve
-                real = vdata['total_reserve']
-                raise Exception(
-                    f"mismatching reserves: {sim} != {real}"
-                )
+                real = vdata["total_reserve"]
+                raise Exception(f"mismatching reserves: {sim} != {real}")
             if int(vdata["bond_reward_rune"]) != self.thorchain.bond_reward:
                 sim = self.thorchain.bond_reward
-                real = vdata['bond_reward_rune']
-                raise Exception(
-                    f"mismatching bond reward: {sim} != {real}"
-                )
+                real = vdata["bond_reward_rune"]
+                raise Exception(f"mismatching bond reward: {sim} != {real}")
 
 
 if __name__ == "__main__":
