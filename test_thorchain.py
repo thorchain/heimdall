@@ -229,6 +229,16 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
+    def test_unstake_calc(self):
+        pool = Pool("BNB.BNB", 112928660551, 257196272)
+        pool.total_units = 44611997190
+        after, withdraw_rune, withdraw_asset = pool._calc_unstake_units(
+            25075000000, 5000
+        )
+        self.assertEqual(withdraw_rune, 31736823519)
+        self.assertEqual(withdraw_asset, 72280966)
+        self.assertEqual(after, 12537500000)
+
 
 if __name__ == "__main__":
     unittest.main()

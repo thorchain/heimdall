@@ -47,6 +47,7 @@ class TestSmoke(unittest.TestCase):
             else:
                 bnb.transfer(txn)  # send transfer on binance chain
                 outbound = thorchain.handle(txn)  # process transaction in thorchain
+                outbound = thorchain.handle_fee(outbound)
                 for txn in outbound:
                     gas = bnb.transfer(txn)  # send outbound txns back to Binance
                     thorchain.handle_gas(gas)  # subtract gas from pool(s)

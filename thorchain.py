@@ -86,6 +86,38 @@ class ThorchainState:
             pool.sub(0, gas.amount)
         self.set_pool(pool)
 
+    def handle_fee(self, txns):
+        """
+        Subtract transaction fee from given transactions
+        """
+        rune_fee = 100000000
+        outbound = []
+        if not isinstance(txns, list):
+            txns = [txns]
+
+        for txn in txns:
+            for coin in txn.coins:
+                if coin.is_rune():
+                    coin.amount -= rune_fee  # deduct 1 rune transaction fee
+                    if coin.amount > 0:
+                        outbound.append(txn)
+                else:
+                    pool = self.get_pool(coin.asset)
+
+                    if not pool.is_zero():
+                        asset_fee = (
+                            pool.get_asset_fee()
+                        )  # default to zero if pool is empty
+                        pool.add(0, asset_fee)
+                        pool.sub(rune_fee, 0)
+                        self.set_pool(pool)
+                        coin.amount -= asset_fee
+
+                    if coin.amount > 0:
+                        outbound.append(txn)
+
+        return outbound
+
     def refund(self, txn):
         """
         Returns a list of refund transactions based on given txn
@@ -342,6 +374,17 @@ class Pool:
         self.total_units = 0
         self.stakers = []
 
+    def get_asset_fee(self):
+        """
+        Calculates how much asset we need to pay for the 1 rune transaction fee
+        """
+        if self.is_zero():
+            return 0
+
+        return int(
+            round((float(100000000) / float(self.rune_balance)) * self.asset_balance)
+        )
+
     def sub(self, rune_amt, asset_amt):
         """
         Subtracts from pool
@@ -426,19 +469,11 @@ class Pool:
         r = staked rune
         a = staked asset
         """
-        return int(
-            round(
-                (
-                    float(
-                        (
-                            (pool_rune + pool_asset)
-                            * (stake_rune * pool_asset + pool_rune * stake_asset)
-                        )
-                    )
-                    / float((4 * pool_rune * pool_asset))
-                )
-            )
-        )
+        part1 = pool_rune + pool_asset
+        part2 = stake_rune * pool_asset + pool_rune * stake_asset
+        part3 = 4 * pool_rune * pool_asset
+        answer = float(part1 * part2) / float(part3)
+        return int(answer)
 
     def _calc_unstake_units(self, staker_units, withdraw_basis_points):
         """
