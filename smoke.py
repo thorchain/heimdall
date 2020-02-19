@@ -280,10 +280,13 @@ class Smoker:
                         for macct in mockAccounts:
                             for name, address in self.mock_binance.aliases.items():
                                 if name == "VAULT":
-                                    for bal in macct['balances']:
-                                        if bal['denom'] == "BNB" and target.amount == bal['amount']:
-                                           print(">>>>>>>> wait passed2..")
-                                           return 
+                                    for bal in macct["balances"]:
+                                        if (
+                                            bal["denom"] == "BNB"
+                                            and target.amount == bal["amount"]
+                                        ):
+                                            print(">>>>>>>> wait passed2..")
+                                            return
             time.sleep(5)  # wait a block
 
         # if we get here, we've effectively timed out waiting for everything to
