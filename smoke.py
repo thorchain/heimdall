@@ -275,7 +275,7 @@ class Smoker:
             for pool in pools:
                 if Asset(pool["asset"]).is_equal(target.asset):
                     if int(pool["balance_asset"]) == target.amount:
-                        logging.info((">>>>>>>> wait passed1..")
+                        logging.info(">>>>>>>> wait passed1..")
                         mockAccounts = self.mock_binance.accounts()
                         for macct in mockAccounts:
                             for name, address in self.mock_binance.aliases.items():
@@ -285,7 +285,7 @@ class Smoker:
                                             bal["denom"] == "BNB"
                                             and target.amount == bal["amount"]
                                         ):
-                                            logging.info((">>>>>>>> wait passed2..")
+                                            logging.info(">>>>>>>> wait passed2..")
                                             return
             time.sleep(5)  # wait a block
 
