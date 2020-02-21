@@ -16,7 +16,7 @@ def get_balance(idx):
     """
     Retrieve expected balance with given id
     """
-    with open("data/balances.json") as f:
+    with open("data/smoke_test_balances.json") as f:
         balances = json.load(f)
         for bal in balances:
             if idx == bal["TX"]:
