@@ -39,6 +39,9 @@ class ThorchainClient(HttpClient):
         data = self.fetch("/thorchain/pool_addresses")
         return data["current"][0]["address"]
 
+    def get_vault_data(self):
+        return self.fetch("/thorchain/vault")
+
     def get_pools(self):
         return self.fetch("/thorchain/pools")
 
@@ -51,6 +54,9 @@ class ThorchainState:
     def __init__(self):
         self.pools = []
         self.reserve = 0
+        self.liquidity = {}
+        self.total_bonded = 0
+        self.bond_reward = 0
 
     def get_pool(self, asset):
         """
@@ -83,7 +89,13 @@ class ThorchainState:
         if pool.asset_balance <= gas.amount:
             pool.asset_balance = 0
         else:
-            pool.sub(0, gas.amount)
+            pool.sub(0, gas.amount)  # subtract gas from pool
+
+            # figure out how much rune is an equal amount to gas.amount
+            rune_amt = pool.get_asset_in_rune(gas.amount)
+            self.reserve -= rune_amt  # take rune from the reserve
+            pool.add(rune_amt, 0)  # replenish gas costs with rune
+
         self.set_pool(pool)
 
     def handle_fee(self, txns):
@@ -99,6 +111,7 @@ class ThorchainState:
             for coin in txn.coins:
                 if coin.is_rune():
                     coin.amount -= rune_fee  # deduct 1 rune transaction fee
+                    self.reserve += rune_fee  # add to the reserve
                     if coin.amount > 0:
                         outbound.append(txn)
                 else:
@@ -113,10 +126,107 @@ class ThorchainState:
                         self.set_pool(pool)
                         coin.amount -= asset_fee
 
+                    self.reserve += rune_fee  # add to the reserve
                     if coin.amount > 0:
                         outbound.append(txn)
 
         return outbound
+
+    def _total_liquidity(self):
+        """
+        Total up the liquidity fees from all pools
+        """
+        total = 0
+        for value in self.liquidity.values():
+            total += value
+        return total
+
+    def handle_rewards(self):
+        """
+        Calculate block rewards
+        """
+        if self.reserve == 0:
+            return
+
+        if self._total_liquidity() == 0:
+            return
+
+        # calculate the block rewards based on the reserve, emission curve, and
+        # blocks in a year
+        emission_curve = 6
+        blocks_per_year = 6311390
+        block_rewards = int(
+            round(float(self.reserve) / emission_curve / blocks_per_year)
+        )
+
+        # total income made on the network
+        system_income = block_rewards + self._total_liquidity()
+
+        # get the total staked
+        # TODO: skip non-enabled pools
+        total_staked = 0
+        for pool in self.pools:
+            total_staked += pool.rune_balance
+
+        if total_staked == 0:  # nothing staked, no rewards
+            return
+
+        # Targets a linear change in rewards from 0% staked, 33% staked, 100% staked.
+        # 0% staked: All rewards to stakers, 0 to bonders
+        # 33% staked: 33% to stakers
+        # 100% staked: All rewards to Bonders, 0 to stakers
+
+        staker_split = 0
+        # Zero payments to stakers when staked == bonded
+        if total_staked < self.total_bonded:
+            # (y + x) / (y - x)
+            factor = float(self.total_bonded + total_staked) / float(
+                self.total_bonded - total_staked
+            )
+            staker_split = int(round(system_income / factor))
+
+        bond_reward = system_income - staker_split
+
+        # calculate if we need to move liquidity from the pools to the bonders,
+        # or move bond rewards to the pools
+        pool_reward = 0
+        staker_deficit = 0
+        if staker_split >= self._total_liquidity():
+            pool_reward = staker_split - self._total_liquidity()
+        else:
+            staker_deficit = self._total_liquidity() - staker_split
+
+        if self.reserve < bond_reward + pool_reward:
+            return
+
+        # subtract our rewards from the reserve
+        self.reserve -= bond_reward + pool_reward
+        self.bond_reward += bond_reward  # add to bond reward pool
+
+        if pool_reward > 0:
+            # TODO: subtract any remaining gas, from the pool rewards
+            if self._total_liquidity() > 0:
+                for key, value in self.liquidity.items():
+                    share = int(
+                        round(get_share(value, self._total_liquidity(), pool_reward))
+                    )
+                    pool = self.get_pool(key)
+                    pool.rune_balance += share
+                    self.set_pool(pool)
+            else:
+                pass  # TODO: Pool Rewards are based on Depth Share
+        else:
+            for key, value in self.liquidity.items():
+                share = int(
+                    round(get_share(staker_deficit, self._total_liquidity(), value))
+                )
+                pool = self.get_pool(key)
+                pool.rune_balance -= share
+                self.bond_reward += share
+                self.set_pool(pool)
+
+        # clear summed liquidity fees
+        self.liquidity = {}
 
     def refund(self, txn):
         """
@@ -145,9 +255,22 @@ class ThorchainState:
             return self.handle_unstake(tx)
         elif tx.memo.startswith("SWAP:"):
             return self.handle_swap(tx)
+        elif tx.memo.startswith("RESERVE"):
+            return self.handle_reserve(tx)
         else:
             logging.warning("handler not recognized")
             return self.refund(tx)
+
+    def handle_reserve(self, txn):
+        """
+        Add rune to the reserve
+        MEMO: RESERVE
+        """
+        for coin in txn.coins:
+            if coin.is_rune():
+                self.reserve += coin.amount
+
+        return []
 
     def handle_add(self, txn):
         """
@@ -295,7 +418,11 @@ class ThorchainState:
             if pool.is_zero():
                 return self.refund(txn)
 
-            emit, pool = self.swap(txn.coins[0], "RUNE-A1F")
+            emit, liquidity_fee, pool = self.swap(txn.coins[0], "RUNE-A1F")
+            if str(pool.asset) not in self.liquidity:
+                self.liquidity[str(pool.asset)] = 0
+            self.liquidity[str(pool.asset)] += liquidity_fee
+
             pools.append(pool)
             txn.coins[0] = emit
             source = Asset("RUNE-A1F")
@@ -310,11 +437,15 @@ class ThorchainState:
         if pool.is_zero():
             return self.refund(txn)
 
-        emit, pool = self.swap(txn.coins[0], asset)
+        emit, liquidity_fee, pool = self.swap(txn.coins[0], asset)
         pools.append(pool)
         # check emit is non-zero and is not less than the target trade
         if emit.is_zero() or (emit.amount < target_trade):
             return self.refund(txn)
+
+        if str(pool.asset) not in self.liquidity:
+            self.liquidity[str(pool.asset)] = 0
+        self.liquidity[str(pool.asset)] += liquidity_fee
 
         # save pools
         for pool in pools:
@@ -338,11 +469,16 @@ class ThorchainState:
             Y = pool.rune_balance
 
         x = coin.amount
-        emit = self.calc_asset_emission(X, x, Y)
+        emit = self._calc_asset_emission(X, x, Y)
+
+        # calculate the liquidity fee (in rune)
+        liquidity_fee = self._calc_liquidity_fee(X, x, Y)
+        if coin.is_rune():
+            liquidity_fee = pool.get_asset_in_rune(liquidity_fee)
 
         # if we emit zero, return immediately
         if emit == 0:
-            return Coin(asset, emit), pool
+            return Coin(asset, emit), 0, pool
 
         newPool = deepcopy(pool)  # copy of pool
         if coin.is_rune():
@@ -354,9 +490,16 @@ class ThorchainState:
             newPool.sub(emit, 0)
             emit = Coin("RUNE-A1F", emit)
 
-        return emit, newPool
+        return emit, liquidity_fee, newPool
 
-    def calc_asset_emission(self, X, x, Y):
+    def _calc_liquidity_fee(self, X, x, Y):
+        """
+        Calculate the liquidity fee from a trade
+        ( x^2 *  Y ) / ( x + X )^2
+        """
+        return int(float((x ** 2) * Y) / float((x + X) ** 2))
+
+    def _calc_asset_emission(self, X, x, Y):
         """
         Calculates the amount of coins to be emitted in a swap
         ( x * X * Y ) / ( x + X )^2
@@ -374,6 +517,26 @@ class Pool:
         self.total_units = 0
         self.stakers = []
 
+    def get_asset_in_rune(self, val):
+        """
+        Get an equal amount of given value in rune
+        """
+        if self.is_zero():
+            return 0
+
+        share = get_share(self.rune_balance, self.asset_balance, val)
+        return int(round(share))
+
+    def get_rune_in_asset(self, val):
+        """
+        Get an equal amount of given value in asset
+        """
+        if self.is_zero():
+            return 0
+
+        share = get_share(self.asset_balance, self.rune_balance, val)
+        return int(round(share))
+
     def get_asset_fee(self):
         """
         Calculates how much asset we need to pay for the 1 rune transaction fee
@@ -381,9 +544,7 @@ class Pool:
         if self.is_zero():
             return 0
 
-        return int(
-            round((float(100000000) / float(self.rune_balance)) * self.asset_balance)
-        )
+        return self.get_rune_in_asset(100000000)
 
     def sub(self, rune_amt, asset_amt):
         """

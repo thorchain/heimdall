@@ -18,8 +18,8 @@ txns = [
     Transaction(
         Binance.chain,
         "MASTER",
-        "MASTER",
-        [Coin("BNB", 49730000), Coin("RUNE-A1F", 100000000000), Coin("LOK-3C0", 0)],
+        "CONTRIBUTOR-1",
+        [Coin("BNB", 100000000), Coin("RUNE-A1F", 400_000 * 100000000)],
         "SEED",
     ),
     Transaction(
@@ -54,6 +54,14 @@ txns = [
             Coin("LOK-3C0", 10000000000),
         ],
         "SEED",
+    ),
+    # Contribute to the reserve
+    Transaction(
+        Binance.chain,
+        "CONTRIBUTOR-1",
+        "VAULT",
+        [Coin("RUNE-A1F", 400_000 * 100000000)],
+        "RESERVE",
     ),
     # Staking
     Transaction(
@@ -276,11 +284,17 @@ class Smoker:
             self.binance.transfer(txn)  # send transfer on binance chain
             outbounds = self.thorchain.handle(txn)  # process transaction in thorchain
             outbounds = self.thorchain.handle_fee(outbounds)
+            gas_amt = 0
             for outbound in outbounds:
                 gas = self.binance.transfer(
                     outbound
                 )  # send outbound txns back to Binance
-                self.thorchain.handle_gas(gas)  # subtract gas from pool(s)
+                gas_amt += gas.amount
+            # TODO: make this chain agnostic
+            self.thorchain.handle_rewards()
+            self.thorchain.handle_gas(
+                Coin("BNB.BNB", gas_amt)
+            )  # subtract gas from pool(s)
 
             # update memo with actual address (over alias name)
             for name, addr in self.mock_binance.aliases.items():
@@ -289,7 +303,7 @@ class Smoker:
             self.mock_binance.transfer(txn)  # trigger mock Binance transaction
             self.mock_binance.wait_for_blocks(len(outbounds))
             self.thorchain_client.wait_for_blocks(
-                1
+                2
             )  # wait an additional block to pick up gas
 
             # compare simulation pools vs real pools
@@ -321,9 +335,20 @@ class Smoker:
                                 Coin(bal["denom"], int(bal["amount"]))
                             ):
                                 raise Exception(
-                                    f"bad binance balance: {bal['denom']} "
+                                    f"bad binance balance: {name} {bal['denom']} "
                                     f"{bal['amount']} != {coin}"
                                 )
+
+            # check vault data
+            vdata = self.thorchain_client.get_vault_data()
+            if int(vdata["total_reserve"]) != self.thorchain.reserve:
+                sim = self.thorchain.reserve
+                real = vdata["total_reserve"]
+                raise Exception(f"mismatching reserves: {sim} != {real}")
+            if int(vdata["bond_reward_rune"]) != self.thorchain.bond_reward:
+                sim = self.thorchain.bond_reward
+                real = vdata["bond_reward_rune"]
+                raise Exception(f"mismatching bond reward: {sim} != {real}")
 
 
 if __name__ == "__main__":
