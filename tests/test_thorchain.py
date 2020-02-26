@@ -89,6 +89,17 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(txn)
         self.assertEqual(outbound, [])
 
+        # check event generated for successful add
+        events = thorchain.get_events()
+        self.assertEqual(len(events), 1)
+        event = events[0]
+        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.type, "add")
+        self.assertEqual(event.in_tx.to_json(), txn.to_json())
+        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.pool.is_equal("BNB.BNB"), True)
+
     def test_stake(self):
         thorchain = ThorchainState()
         txn = Transaction(
@@ -108,6 +119,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.get_staker("STAKER-1").units, 25075000000)
         self.assertEqual(pool.total_units, 25075000000)
 
+        # check event generated for successful stake
         events = thorchain.get_events()
         self.assertEqual(len(events), 1)
         event = events[0]
@@ -130,6 +142,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
 
+        # FIXME
         # events = thorchain.get_events()
         # self.assertEqual(len(events), 2)
 

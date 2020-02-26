@@ -84,9 +84,9 @@ class ThorchainState:
 
         self.pools.append(pool)
 
-    def set_event(self, event):
+    def append_event(self, event):
         """
-        Set an event
+        Append an event to thorchain state list
         """
         self.events.append(event)
 
@@ -330,6 +330,11 @@ class ThorchainState:
 
         self.set_pool(pool)
 
+        # generate event for add
+        add_event = AddEvent(pool.asset)
+        event = Event("add", txn, None, add_event)
+        self.append_event(event)
+
         return []
 
     def handle_stake(self, txn):
@@ -370,7 +375,7 @@ class ThorchainState:
         # generate event for stake
         stake_event = StakeEvent(pool.asset, pool.total_units)
         event = Event("stake", txn, None, stake_event)
-        self.set_event(event)
+        self.append_event(event)
 
         return []
 
@@ -560,11 +565,19 @@ class Event:
 
 class StakeEvent():
     """
-    Event stake class specific to stake events.
+    Event stake class specific to STAKE events.
     """
     def __init__(self, asset, pool_units):
         self.pool = asset
         self.stake_units = pool_units
+
+
+class AddEvent():
+    """
+    Event add class specific to ADD events.
+    """
+    def __init__(self, asset):
+        self.pool = asset
 
 
 class Pool:
