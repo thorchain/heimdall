@@ -330,7 +330,7 @@ class ThorchainState:
 
         self.set_pool(pool)
 
-        # generate event for add
+        # generate event for ADD transaction
         add_event = AddEvent(pool.asset)
         event = Event("add", txn, None, add_event)
         self.append_event(event)
@@ -372,7 +372,7 @@ class ThorchainState:
 
         self.set_pool(pool)
 
-        # generate event for stake
+        # generate event for STAKE transaction
         stake_event = StakeEvent(pool.asset, pool.total_units)
         event = Event("stake", txn, None, stake_event)
         self.append_event(event)
@@ -405,13 +405,23 @@ class ThorchainState:
         rune_amt, asset_amt = pool.unstake(txn.fromAddress, withdraw_basis_points)
         self.set_pool(pool)
 
+        # out transactions
         chain, _from, _to = txn.chain, txn.fromAddress, txn.toAddress
-        return [
+        out_txns = [
             Transaction(
                 chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], "OUTBOUND:TODO"
             ),
             Transaction(chain, _to, _from, [Coin(asset, asset_amt)], "OUTBOUND:TODO"),
         ]
+
+        # generate event for UNSTAKE transaction
+        unstake_event = UnstakeEvent(
+            pool.asset, pool.total_units, withdraw_basis_points, 0
+        )
+        event = Event("unstake", txn, out_txns, unstake_event)
+        self.append_event(event)
+
+        return out_txns
 
     def handle_swap(self, txn):
         """
@@ -570,6 +580,17 @@ class StakeEvent():
     def __init__(self, asset, pool_units):
         self.pool = asset
         self.stake_units = pool_units
+
+
+class UnstakeEvent():
+    """
+    Event unstake class specific to UNSTAKE events.
+    """
+    def __init__(self, asset, pool_units, basis_points, asymmetry):
+        self.pool = asset
+        self.stake_units = pool_units
+        self.basis_points = basis_points
+        self.asymmetry = asymmetry
 
 
 class AddEvent():
