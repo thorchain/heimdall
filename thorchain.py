@@ -84,12 +84,6 @@ class ThorchainState:
 
         self.pools.append(pool)
 
-    def append_event(self, event):
-        """
-        Append an event to thorchain state list
-        """
-        self.events.append(event)
-
     def get_events(self, id=1):
         """
         Get events starting from id
@@ -253,7 +247,7 @@ class ThorchainState:
         # clear summed liquidity fees
         self.liquidity = {}
 
-    def refund(self, txn):
+    def refund(self, txn, refund_event=None):
         """
         Returns a list of refund transactions based on given txn
         """
@@ -264,6 +258,10 @@ class ThorchainState:
                     txn.chain, txn.toAddress, txn.fromAddress, [coin], "REFUND:TODO"
                 )
             )
+
+        # generate event REFUND for the transaction
+        event = Event("refund", txn, txns, refund_event)
+        self.events.append(event)
         return txns
 
     def handle(self, txn):
@@ -288,7 +286,11 @@ class ThorchainState:
             return self.handle_reserve(tx)
         else:
             logging.warning("handler not recognized")
-            return self.refund(tx)
+            if tx.memo ==  "":
+                refund_event = RefundEvent(105, "memo can't be empty")
+            else:
+                refund_event = RefundEvent(105, f"invalid tx type: {tx.memo}")
+            return self.refund(tx, refund_event)
 
     def handle_reserve(self, txn):
         """
@@ -309,17 +311,26 @@ class ThorchainState:
         # parse memo
         parts = txn.memo.split(":")
         if len(parts) < 2:
-            return self.refund(txn)
+            if txn.memo == "":
+                refund_event = RefundEvent(105, "memo can't be empty")
+            else:
+                refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
+            return self.refund(txn, refund_event)
 
         asset = Asset(parts[1])
 
         # check that we have one rune and one asset
         if len(txn.coins) > 2:
-            return self.refund(txn)
+            # FIXME real world message
+            refund_event = RefundEvent(105, "refund reason message")
+            return self.refund(txn, refund_event)
+
         for coin in txn.coins:
             if not coin.is_rune():
                 if not asset.is_equal(coin.asset):
-                    return self.refund(txn)  # mismatch coin asset and memo
+                    # mismatch coin asset and memo
+                    refund_event = RefundEvent(105, "Invalid symbol")
+                    return self.refund(txn, refund_event)
 
         pool = self.get_pool(asset)
         for coin in txn.coins:
@@ -333,7 +344,7 @@ class ThorchainState:
         # generate event for ADD transaction
         add_event = AddEvent(pool.asset)
         event = Event("add", txn, None, add_event)
-        self.append_event(event)
+        self.events.append(event)
 
         return []
 
@@ -345,19 +356,36 @@ class ThorchainState:
         # parse memo
         parts = txn.memo.split(":")
         if len(parts) < 2:
-            return self.refund(txn)
+            if txn.memo == "":
+                refund_event = RefundEvent(105, "memo can't be empty")
+            else:
+                refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
+            return self.refund(txn, refund_event)
+
+        # empty asset
+        if parts[1] == "":
+            refund_event = RefundEvent(105, "Invalid symbol")
+            return self.refund(txn, refund_event)
 
         asset = Asset(parts[1])
 
+        # cant have rune memo
+        if asset.is_rune():
+            refund_event = RefundEvent(105, "invalid stake memo:invalid pool asset")
+            return self.refund(txn, refund_event)
+
         # check that we have one rune and one asset
         if len(txn.coins) > 2:
-            return self.refund(txn)
+            # FIXME real world message
+            refund_event = RefundEvent(105, "refund reason message")
+            return self.refund(txn, refund_event)
 
         # check for mismatch coin asset and memo
         for coin in txn.coins:
             if not coin.is_rune():
                 if not asset.is_equal(coin.asset):
-                    return self.refund(txn)
+                    refund_event = RefundEvent(105, f"invalid stake memo: did not find {asset}")
+                    return self.refund(txn, refund_event)
 
         pool = self.get_pool(asset)
         rune_amt = 0
@@ -375,7 +403,7 @@ class ThorchainState:
         # generate event for STAKE transaction
         stake_event = StakeEvent(pool.asset, pool.total_units)
         event = Event("stake", txn, None, stake_event)
-        self.append_event(event)
+        self.events.append(event)
 
         return []
 
@@ -389,18 +417,29 @@ class ThorchainState:
         # parse memo
         parts = txn.memo.split(":")
         if len(parts) < 2:
-            return self.refund(txn)
+            if txn.memo == "":
+                refund_event = RefundEvent(105, "memo can't be empty")
+            else:
+                refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
+            return self.refund(txn, refund_event)
 
         # get withdrawal basis points, if it exists in the memo
         if len(parts) >= 3:
             withdraw_basis_points = int(parts[2])
+
+        # empty asset
+        if parts[1] == "":
+            refund_event = RefundEvent(105, "Invalid symbol")
+            return self.refund(txn, refund_event)
 
         asset = Asset(parts[1])
 
         pool = self.get_pool(asset)
         staker = pool.get_staker(txn.fromAddress)
         if staker.is_zero():
-            return self.refund(txn)
+            # FIXME real world message
+            refund_event = RefundEvent(105, "refund reason message")
+            return self.refund(txn, refund_event)
 
         rune_amt, asset_amt = pool.unstake(txn.fromAddress, withdraw_basis_points)
         self.set_pool(pool)
@@ -419,7 +458,7 @@ class ThorchainState:
             pool.asset, pool.total_units, withdraw_basis_points, 0
         )
         event = Event("unstake", txn, out_txns, unstake_event)
-        self.append_event(event)
+        self.events.append(event)
 
         return out_txns
 
@@ -431,7 +470,11 @@ class ThorchainState:
         # parse memo
         parts = txn.memo.split(":")
         if len(parts) < 2:
-            return self.refund(txn)
+            if txn.memo == "":
+                refund_event = RefundEvent(105, "memo can't be empty")
+            else:
+                refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
+            return self.refund(txn, refund_event)
 
         # get address to send to
         address = txn.fromAddress
@@ -439,7 +482,9 @@ class ThorchainState:
             address = parts[2]
             # checking if address is for mainnet, not testnet
             if address.lower().startswith("bnb"):
-                return self.refund(txn)
+                # FIXME real world message
+                refund_event = RefundEvent(105, "refund reason message")
+                return self.refund(txn, refund_event)
 
         # get trade target, if exists
         target_trade = 0
@@ -450,7 +495,8 @@ class ThorchainState:
 
         # check that we have one coin
         if len(txn.coins) != 1:
-            return self.refund(txn)
+            refund_event = RefundEvent(105, "invalid swap memo:not expecting multiple coins in a swap")
+            return self.refund(txn, refund_event)
 
         source = txn.coins[0].asset
         target = asset
@@ -458,14 +504,17 @@ class ThorchainState:
         # refund if we're trying to swap with the coin we given ie swapping bnb
         # with bnb
         if source.is_equal(asset):
-            return self.refund(txn)
+            refund_event = RefundEvent(105, f"invalid swap memo:swap from {source} to {target} is noop, refund")
+            return self.refund(txn, refund_event)
 
         pools = []
         if not txn.coins[0].is_rune() and not asset.is_rune():
             # its a double swap
             pool = self.get_pool(source)
             if pool.is_zero():
-                return self.refund(txn)
+                # FIXME real world message
+                refund_event = RefundEvent(105, "refund reason message")
+                return self.refund(txn, refund_event)
 
             emit, liquidity_fee, pool = self.swap(txn.coins[0], "RUNE-A1F")
             if str(pool.asset) not in self.liquidity:
@@ -484,13 +533,16 @@ class ThorchainState:
 
         pool = self.get_pool(asset)
         if pool.is_zero():
-            return self.refund(txn)
+            # FIXME real world message
+            refund_event = RefundEvent(105, "refund reason message: pool is zero")
+            return self.refund(txn, refund_event)
 
         emit, liquidity_fee, pool = self.swap(txn.coins[0], asset)
         pools.append(pool)
         # check emit is non-zero and is not less than the target trade
         if emit.is_zero() or (emit.amount < target_trade):
-            return self.refund(txn)
+            refund_event = RefundEvent(105, f"emit asset {emit} less than price limit {target_trade}")
+            return self.refund(txn, refund_event)
 
         if str(pool.asset) not in self.liquidity:
             self.liquidity[str(pool.asset)] = 0
@@ -499,7 +551,17 @@ class ThorchainState:
         # save pools
         for pool in pools:
             self.set_pool(pool)
-        return [Transaction(txn.chain, txn.toAddress, address, [emit], "OUTBOUND:TODO")]
+
+        out_txns = [Transaction(txn.chain, txn.toAddress, address, [emit], "OUTBOUND:TODO")]
+
+        # generate event for SWAP transaction
+        # unstake_event = SwapEvent(
+        #     pool.asset, target_trade,
+        # )
+        # event = Event("swap", txn, out_txns, unstake_event)
+        # self.events.append(event)
+
+        return out_txns
 
     def swap(self, coin, target):
         """
@@ -571,6 +633,26 @@ class Event:
         self.gas = gas
         self.event = event
         self.status = status
+
+
+class RefundEvent():
+    """
+    Event refund class specific to REFUND events.
+    """
+    def __init__(self, code, reason):
+        self.code = code
+        self.reason = reason
+
+
+class SwapEvent():
+    """
+    Event swap class specific to SWAP events.
+    """
+    def __init__(self, pool, price_target, trade_slip, liquidity_fee):
+        self.pool = pool
+        self.price_target = price_target
+        self.trade_slip = trade_slip
+        self.liquidity_fee = liquidity_fee
 
 
 class StakeEvent():
