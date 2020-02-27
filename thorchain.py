@@ -532,9 +532,7 @@ class ThorchainState:
             out_txns = [
                 Transaction(txn.chain, address, txn.toAddress, [emit], txn.memo)
             ]
-            swap_event = SwapEvent(
-                pool.asset, 0, trade_slip, liquidity_fee
-            )
+            swap_event = SwapEvent(pool.asset, 0, trade_slip, liquidity_fee)
             event = Event("swap", deepcopy(txn), out_txns, swap_event)
             self.events.append(event)
 
@@ -577,9 +575,7 @@ class ThorchainState:
         ]
 
         # generate event for SWAP transaction
-        swap_event = SwapEvent(
-            pool.asset, target_trade, trade_slip, liquidity_fee
-        )
+        swap_event = SwapEvent(pool.asset, target_trade, trade_slip, liquidity_fee)
         event = Event("swap", txn, out_txns, swap_event)
         self.events.append(event)
 

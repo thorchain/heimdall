@@ -76,7 +76,10 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
-        self.assertEqual(event.event.reason, "invalid swap memo:not expecting multiple coins in a swap")
+        self.assertEqual(
+            event.event.reason,
+            "invalid swap memo:not expecting multiple coins in a swap",
+        )
 
         # swap with zero return, refunds and doesn't change pools
         txn.coins = [Coin("RUNE-A1F", 1)]
@@ -117,7 +120,10 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
-        self.assertEqual(event.event.reason, "emit asset 35 less than price limit 999999999999999999999")
+        self.assertEqual(
+            event.event.reason,
+            "emit asset 35 less than price limit 999999999999999999999",
+        )
 
         # swap with custom address
         txn.coins = [Coin("RUNE-A1F", 50)]
