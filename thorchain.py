@@ -1,5 +1,4 @@
 import time
-import json
 import logging
 import itertools
 from copy import deepcopy
