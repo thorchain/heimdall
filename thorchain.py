@@ -485,7 +485,7 @@ class ThorchainState:
             # checking if address is for mainnet, not testnet
             if address.lower().startswith("bnb"):
                 # FIXME real world message
-                refund_event = RefundEvent(105, "refund reason message")
+                refund_event = RefundEvent(105, "checksum failed. Expected ...")
                 return self.refund(txn, refund_event)
 
         # get trade target, if exists
@@ -514,6 +514,7 @@ class ThorchainState:
             return self.refund(txn, refund_event)
 
         pools = []
+
         if not txn.coins[0].is_rune() and not asset.is_rune():
             # its a double swap
             pool = self.get_pool(source)
@@ -522,10 +523,20 @@ class ThorchainState:
                 refund_event = RefundEvent(105, "refund reason message")
                 return self.refund(txn, refund_event)
 
-            emit, liquidity_fee, pool = self.swap(txn.coins[0], "RUNE-A1F")
+            emit, liquidity_fee, trade_slip, pool = self.swap(txn.coins[0], "RUNE-A1F")
             if str(pool.asset) not in self.liquidity:
                 self.liquidity[str(pool.asset)] = 0
             self.liquidity[str(pool.asset)] += liquidity_fee
+
+            # generate event for SWAP transaction
+            out_txns = [
+                Transaction(txn.chain, address, txn.toAddress, [emit], txn.memo)
+            ]
+            swap_event = SwapEvent(
+                pool.asset, 0, trade_slip, liquidity_fee
+            )
+            event = Event("swap", deepcopy(txn), out_txns, swap_event)
+            self.events.append(event)
 
             pools.append(pool)
             txn.coins[0] = emit
@@ -543,12 +554,13 @@ class ThorchainState:
             refund_event = RefundEvent(105, "refund reason message: pool is zero")
             return self.refund(txn, refund_event)
 
-        emit, liquidity_fee, pool = self.swap(txn.coins[0], asset)
+        emit, liquidity_fee, trade_slip, pool = self.swap(txn.coins[0], asset)
         pools.append(pool)
+
         # check emit is non-zero and is not less than the target trade
         if emit.is_zero() or (emit.amount < target_trade):
             refund_event = RefundEvent(
-                105, f"emit asset {emit} less than price limit {target_trade}"
+                105, f"emit asset {emit.amount} less than price limit {target_trade}"
             )
             return self.refund(txn, refund_event)
 
@@ -565,17 +577,26 @@ class ThorchainState:
         ]
 
         # generate event for SWAP transaction
-        # unstake_event = SwapEvent(
-        #     pool.asset, target_trade,
-        # )
-        # event = Event("swap", txn, out_txns, unstake_event)
-        # self.events.append(event)
+        swap_event = SwapEvent(
+            pool.asset, target_trade, trade_slip, liquidity_fee
+        )
+        event = Event("swap", txn, out_txns, swap_event)
+        self.events.append(event)
 
         return out_txns
 
     def swap(self, coin, target):
         """
         Does a swap returning amount of coins emitted and new pool
+
+        :param Coin coin: coin sent to swap
+        :param Asset target: target asset
+        :returns: list of events
+            - emit (int) - number of coins to be emitted for the swap
+            - liquidity_fee (int) - liquidity fee
+            - trade_slip (int) - trade slip
+            - pool (Pool) - pool with new values
+
         """
         asset = target
         if not coin.is_rune():
@@ -597,9 +618,12 @@ class ThorchainState:
         if coin.is_rune():
             liquidity_fee = pool.get_asset_in_rune(liquidity_fee)
 
+        # calculate trade slip
+        trade_slip = self._calc_trade_slip(X, x)
+
         # if we emit zero, return immediately
         if emit == 0:
-            return Coin(asset, emit), 0, pool
+            return Coin(asset, emit), 0, 0, pool
 
         newPool = deepcopy(pool)  # copy of pool
         if coin.is_rune():
@@ -611,19 +635,44 @@ class ThorchainState:
             newPool.sub(emit, 0)
             emit = Coin("RUNE-A1F", emit)
 
-        return emit, liquidity_fee, newPool
+        return emit, liquidity_fee, trade_slip, newPool
 
     def _calc_liquidity_fee(self, X, x, Y):
         """
         Calculate the liquidity fee from a trade
         ( x^2 *  Y ) / ( x + X )^2
+
+        :param int X: first balance
+        :param int x: asset amount
+        :param int Y: second balance
+        :returns: (int) liquidity fee
+
         """
         return int(float((x ** 2) * Y) / float((x + X) ** 2))
+
+    def _calc_trade_slip(self, X, x):
+        """
+        Calculate the trade slip from a trade
+        expressed in basis points (10,000)
+        x * (2*X + x) / (X * X)
+
+        :param int X: first balance
+        :param int x: asset amount
+        :returns: (int) trade slip
+
+        """
+        return int(10000 * (x * (2 * X + x) / (X ** 2)))
 
     def _calc_asset_emission(self, X, x, Y):
         """
         Calculates the amount of coins to be emitted in a swap
         ( x * X * Y ) / ( x + X )^2
+
+        :param int X: first balance
+        :param int x: asset amount
+        :param int Y: second balance
+        :returns: (int) asset emission
+
         """
         return int((x * X * Y) / (x + X) ** 2)
 
