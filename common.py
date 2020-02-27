@@ -80,49 +80,37 @@ class HttpClient:
         return resp.json()
 
 
-class Asset:
-    def __init__(self, asset_str):
-        parts = asset_str.split(".")
-        if len(parts) < 2:
-            self.chain = "BNB"  # default to binance chain
-            self.symbol = parts[0]
-        else:
-            self.chain = parts[0]
-            self.symbol = parts[1]
+class Jsonable:
+    def to_json(self):
+        return json.dumps(self, default=lambda x: x.__dict__)
+
+
+class Asset(str):
+    def __new__(cls, value, *args, **kwargs):
+        if len(value.split(".")) < 2:
+            value = f"BNB.{value}"  # default to binance chain
+        return super().__new__(cls, value)
 
     def is_rune(self):
         """
         Is this asset rune?
         """
-        return self.symbol.startswith("RUNE")
+        return self == "BNB.RUNE-A1F"
 
-    def is_equal(self, asset):
+    def get_symbol(self):
         """
-        Is this asset equal to given asset?
+        Return symbol part of the asset string
         """
-        if isinstance(asset, str):
-            asset = Asset(asset)
-        return self.chain == asset.chain and self.symbol == asset.symbol
-
-    def __repr__(self):
-        return "<Asset %s.%s>" % (self.chain, self.symbol)
-
-    def __str__(self):
-        return "%s.%s" % (self.chain, self.symbol)
-
-    def to_json(self):
-        return json.dumps(self, default=lambda x: x.__dict__)
+        return self.split(".")[1]
 
 
-class Coin:
+class Coin(Jsonable):
     """
     A class that represents a coin and an amount
     """
 
     def __init__(self, asset, amount):
-        self.asset = asset
-        if isinstance(asset, str):
-            self.asset = Asset(asset)
+        self.asset = Asset(asset)
         self.amount = amount
 
     def is_rune(self):
@@ -141,29 +129,26 @@ class Coin:
         """
         Does this coin equal another?
         """
-        return self.asset.is_equal(coin.asset) and self.amount == coin.amount
+        return self.asset == coin.asset and self.amount == coin.amount
 
-    def to_dict(self):
+    def to_binance_fmt(self):
         """
         Convert the class to an dictionary, specifically in a format for
         mock-binance
         """
         return {
-            "denom": self.asset.symbol,
+            "denom": self.asset.get_symbol(),
             "amount": self.amount,
         }
 
     def __repr__(self):
-        return "<Coin %d%s>" % ((self.amount), self.asset)
+        return f"<Coin {self.amount}{self.asset}>"
 
     def __str__(self):
-        return "%d%s" % ((self.amount), self.asset)
-
-    def to_json(self):
-        return json.dumps(self, default=lambda x: x.__dict__)
+        return f"{self.amount}{self.asset}"
 
 
-class Transaction:
+class Transaction(Jsonable):
     """
     A transaction on a block chain (ie Binance)
     """
@@ -194,6 +179,3 @@ class Transaction:
             self.coins,
             self.memo,
         )
-
-    def to_json(self):
-        return json.dumps(self, default=lambda x: x.__dict__)

@@ -40,7 +40,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
-        self.assertEqual(outbound[0].coins[0].asset.is_equal("BNB"), True)
+        self.assertEqual(outbound[0].coins[0].asset, "BNB.BNB")
         self.assertEqual(outbound[0].coins[0].amount, 694444444)
 
         # check swap event generated for successful swap
@@ -53,13 +53,13 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.pool.is_equal("BNB.BNB"), True)
+        self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.price_target, 0)
         self.assertEqual(event.event.liquidity_fee, 138888888)
         self.assertEqual(event.event.trade_slip, 4400)
 
         # swap with two coins on the inbound tx
-        txn.coins = [[Coin("BNB", 1000000000)], Coin("RUNE-A1F", 1000000000)]
+        txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
@@ -143,7 +143,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.pool.is_equal("BNB.BNB"), True)
+        self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.price_target, 0)
         self.assertEqual(event.event.liquidity_fee, 0)
         self.assertEqual(event.event.trade_slip, 0)
@@ -175,7 +175,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
-        self.assertEqual(outbound[0].coins[0].asset.is_equal("LOK-3C0"), True)
+        self.assertEqual(outbound[0].coins[0].asset, "BNB.LOK-3C0")
         self.assertEqual(outbound[0].coins[0].amount, 1391608)
 
         # check 2 swap events generated for double swap
@@ -189,12 +189,12 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].memo, "SWAP:BNB.LOK-3C0")
-        self.assertEqual(event.out_txs[0].coins[0].asset.is_equal("RUNE-A1F"), True)
+        self.assertEqual(event.out_txs[0].coins[0].asset, "BNB.RUNE-A1F")
         self.assertEqual(event.out_txs[0].coins[0].amount, 1392901)
         self.assertEqual(event.out_txs[0].from_address, txn.from_address)
         self.assertEqual(event.out_txs[0].to_address, txn.to_address)
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.pool.is_equal("BNB.BNB"), True)
+        self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.price_target, 0)
         self.assertEqual(event.event.liquidity_fee, 323)
         self.assertEqual(event.event.trade_slip, 4)
@@ -203,18 +203,18 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "swap")
         self.assertEqual(event.in_tx.memo, "SWAP:BNB.LOK-3C0")
-        self.assertEqual(event.in_tx.coins[0].asset.is_equal("RUNE-A1F"), True)
+        self.assertEqual(event.in_tx.coins[0].asset, "BNB.RUNE-A1F")
         self.assertEqual(event.in_tx.coins[0].amount, 1392901)
         self.assertEqual(event.in_tx.from_address, txn.from_address)
         self.assertEqual(event.in_tx.to_address, txn.to_address)
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].memo, "OUTBOUND:TODO")
-        self.assertEqual(event.out_txs[0].coins[0].asset.is_equal("LOK-3C0"), True)
+        self.assertEqual(event.out_txs[0].coins[0].asset, "BNB.LOK-3C0")
         self.assertEqual(event.out_txs[0].coins[0].amount, 1391608)
         self.assertEqual(event.out_txs[0].from_address, txn.to_address)
         self.assertEqual(event.out_txs[0].to_address, txn.from_address)
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.pool.is_equal("LOK-3C0"), True)
+        self.assertEqual(event.event.pool, "BNB.LOK-3C0")
         self.assertEqual(event.event.price_target, 0)
         self.assertEqual(event.event.liquidity_fee, 646)
         self.assertEqual(event.event.trade_slip, 9)
@@ -241,7 +241,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(event.out_txs, None)
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.pool.is_equal("BNB.BNB"), True)
+        self.assertEqual(event.event.pool, "BNB.BNB")
 
         # check add just rune
         txn = Transaction(
@@ -264,7 +264,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs, None)
         self.assertEqual(event.gas, None)
         # FIXME? do we have RUNE pool
-        self.assertEqual(event.event.pool.is_equal("BNB.RUNE-A1F"), True)
+        self.assertEqual(event.event.pool, "BNB.RUNE-A1F")
 
         # bad add memo should refund
         txn = Transaction(
@@ -658,9 +658,9 @@ class TestThorchainState(unittest.TestCase):
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
-        self.assertEqual(outbound[0].coins[0].asset.is_equal("RUNE-A1F"), True)
+        self.assertEqual(outbound[0].coins[0].asset, "BNB.RUNE-A1F")
         self.assertEqual(outbound[0].coins[0].amount, 500000000)
-        self.assertEqual(outbound[1].coins[0].asset.is_equal("BNB"), True)
+        self.assertEqual(outbound[1].coins[0].asset, "BNB.BNB")
         self.assertEqual(outbound[1].coins[0].amount, 1500000)
 
         pool = thorchain.get_pool("BNB.BNB")
@@ -680,7 +680,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.pool.is_equal("BNB.BNB"), True)
+        self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.stake_units, pool.total_units)
         self.assertEqual(event.event.basis_points, 100)
         self.assertEqual(event.event.asymmetry, 0)
@@ -752,9 +752,9 @@ class TestThorchainState(unittest.TestCase):
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
-        self.assertEqual(outbound[0].coins[0].asset.is_equal("RUNE-A1F"), True)
+        self.assertEqual(outbound[0].coins[0].asset, "BNB.RUNE-A1F")
         self.assertEqual(outbound[0].coins[0].amount, 49500000000)
-        self.assertEqual(outbound[1].coins[0].asset.is_equal("BNB"), True)
+        self.assertEqual(outbound[1].coins[0].asset, "BNB.BNB")
         self.assertEqual(outbound[1].coins[0].amount, 148500000)
 
         pool = thorchain.get_pool("BNB.BNB")
@@ -774,7 +774,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.pool.is_equal("BNB.BNB"), True)
+        self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.stake_units, pool.total_units)
         self.assertEqual(event.event.basis_points, 10000)
         self.assertEqual(event.event.asymmetry, 0)
@@ -789,7 +789,7 @@ class TestThorchainState(unittest.TestCase):
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].coins[0].asset.is_equal("RUNE-A1F"), True)
+        self.assertEqual(outbound[0].coins[0].asset, "BNB.RUNE-A1F")
         self.assertEqual(outbound[0].coins[0].amount, 1)
 
         pool = thorchain.get_pool("BNB.BNB")

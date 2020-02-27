@@ -64,7 +64,7 @@ class MockBinance(HttpClient):
             "from": txn.from_address,
             "to": txn.to_address,
             "memo": txn.memo,
-            "coins": [coin.to_dict() for coin in txn.coins],
+            "coins": [coin.to_binance_fmt() for coin in txn.coins],
         }
         return self.post("/broadcast/easy", payload)
 
@@ -90,7 +90,7 @@ class Account:
 
         for coin in coins:
             for i, c in enumerate(self.balances):
-                if coin.asset.is_equal(c.asset):
+                if coin.asset == c.asset:
                     self.balances[i].amount -= coin.amount
                     if self.balances[i].amount < 0:
                         logging.info(f"Balance: {self.address} {self.balances[i]}")
@@ -107,7 +107,7 @@ class Account:
         for coin in coins:
             found = False
             for i, c in enumerate(self.balances):
-                if coin.asset.is_equal(c.asset):
+                if coin.asset == c.asset:
                     self.balances[i].amount += coin.amount
                     found = True
                     break
@@ -121,7 +121,7 @@ class Account:
         if isinstance(asset, str):
             asset = Asset(asset)
         for coin in self.balances:
-            if asset.is_equal(coin.asset):
+            if asset == coin.asset:
                 return coin.amount
 
         return 0
