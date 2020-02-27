@@ -46,7 +46,7 @@ class ThorchainClient(HttpClient):
     def get_pools(self):
         return self.fetch("/thorchain/pools")
 
-    def get_events(self, id):
+    def get_events(self, id=1):
         return self.fetch(f"/thorchain/events/{id}")
 
 
@@ -297,9 +297,16 @@ class ThorchainState:
         Add rune to the reserve
         MEMO: RESERVE
         """
+        amount = 0
         for coin in txn.coins:
             if coin.is_rune():
                 self.reserve += coin.amount
+                amount += coin.amount
+
+        # generate event for RESERVE transaction
+        reserve_event = ReserveEvent(txn.fromAddress, amount)
+        event = Event("reserve", txn, None, reserve_event)
+        self.events.append(event)
 
         return []
 
@@ -679,7 +686,7 @@ class Event:
     after handling transactions.
     """
 
-    id_iter = itertools.count()
+    id_iter = itertools.count(1)
 
     def __init__(self, event_type, txn, txns_out, event, gas=None, status="Success"):
         self.id = next(Event.id_iter)
@@ -690,6 +697,27 @@ class Event:
         self.event = event
         self.status = status
 
+    def __repr__(self):
+        return "<Event [%s-%s] %s ==> %s | %s>" % (
+            self.id,
+            self.type,
+            self.in_tx,
+            self.out_txs,
+            self.event,
+        )
+
+    def __str__(self):
+        return "Event [%s-%s] %s ==> %s | %s" % (
+            self.id,
+            self.type,
+            self.in_tx,
+            self.out_txs,
+            self.event,
+        )
+
+    def to_json(self):
+        return json.dumps(self, default=lambda x: x.__dict__)
+
 
 class RefundEvent:
     """
@@ -699,6 +727,18 @@ class RefundEvent:
     def __init__(self, code, reason):
         self.code = code
         self.reason = reason
+
+
+class ReserveEvent:
+    """
+    Event reserve class specific to RESERVE events.
+    """
+
+    def __init__(self, address, amount):
+        self.reserve_contributor = {
+            "address": address,
+            "amount": amount,
+        }
 
 
 class SwapEvent:

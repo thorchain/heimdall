@@ -371,6 +371,33 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "refund reason message")  # FIXME
 
+    def test_reserve(self):
+        thorchain = ThorchainState()
+        txn = Transaction(
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("RUNE-A1F", 50000000000)],
+            "RESERVE",
+        )
+
+        outbound = thorchain.handle(txn)
+        self.assertEqual(outbound, [])
+
+        self.assertEqual(thorchain.reserve, 50000000000)
+
+        # check event generated for successful reserve
+        events = thorchain.get_events()
+        self.assertEqual(len(events), 1)
+        event = events[0]
+        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.type, "reserve")
+        self.assertEqual(event.in_tx.to_json(), txn.to_json())
+        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.reserve_contributor["address"], txn.fromAddress)
+        self.assertEqual(event.event.reserve_contributor["amount"], txn.coins[0].amount)
+
     def test_stake(self):
         thorchain = ThorchainState()
         txn = Transaction(
