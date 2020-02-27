@@ -215,7 +215,11 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000), Coin("BNB-LOK-3C0", 30000000000)],
+            [
+                Coin("BNB", 150000000),
+                Coin("RUNE-A1F", 50000000000),
+                Coin("BNB-LOK-3C0", 30000000000),
+            ],
             "ADD:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
@@ -234,7 +238,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[2].to_json(), outbound[2].to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
-        self.assertEqual(event.event.reason, "refund reason message") #FIXME
+        self.assertEqual(event.event.reason, "refund reason message")  # FIXME
 
     def test_stake(self):
         thorchain = ThorchainState()
@@ -340,7 +344,9 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
-        self.assertEqual(event.event.reason, "invalid stake memo: did not find BNB.TCAN-014")
+        self.assertEqual(
+            event.event.reason, "invalid stake memo: did not find BNB.TCAN-014"
+        )
 
         # cannot stake with rune in memo
         txn = Transaction(
@@ -372,7 +378,11 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000), Coin("BNB-LOK-3C0", 30000000000)],
+            [
+                Coin("BNB", 150000000),
+                Coin("RUNE-A1F", 50000000000),
+                Coin("BNB-LOK-3C0", 30000000000),
+            ],
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
@@ -391,7 +401,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[2].to_json(), outbound[2].to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
-        self.assertEqual(event.event.reason, "refund reason message") #FIXME
+        self.assertEqual(event.event.reason, "refund reason message")  # FIXME
 
         # can stake with only asset
         txn = Transaction(
@@ -503,8 +513,8 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful unstake
         events = thorchain.get_events()
-        self.assertEqual(len(events), 2) # stake + unstake events
-        event = events[1] # checking unstake event, last event
+        self.assertEqual(len(events), 2)  # stake + unstake events
+        event = events[1]  # checking unstake event, last event
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "unstake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
@@ -704,6 +714,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 0)
 
         # stake some funds into a pool
         txn = Transaction(
@@ -714,6 +725,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKE:BNB.LOK-3C0",
         )
         outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 0)
 
         # unstake
         txn = Transaction(
@@ -724,16 +736,17 @@ class TestThorchainState(unittest.TestCase):
             "WITHDRAW:BNB.BNB:100",
         )
         outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 2)
 
         # check get_event generated for for all actions
         events = thorchain.get_events()
-        self.assertEqual(len(events), 3) # 2 stake + 1 unstake events
+        self.assertEqual(len(events), 3)  # 2 stake + 1 unstake events
         # check auto count id
         self.assertEqual(events[0].id, events_first_id)
         self.assertEqual(events[1].id, events[0].id + 1)
         self.assertEqual(events[2].id, events[1].id + 1)
 
-        # check type events ordered correctly
+        #  check type events ordered correctly
         self.assertEqual(events[0].type, "stake")
         self.assertEqual(events[1].type, "stake")
         self.assertEqual(events[2].type, "unstake")
@@ -741,18 +754,19 @@ class TestThorchainState(unittest.TestCase):
         # check get_event from a specific id
         # default id 1 should return the same
         events = thorchain.get_events(events_first_id)
-        self.assertEqual(len(events), 3) # 2 stake + 1 unstake events
+        self.assertEqual(len(events), 3)  # 2 stake + 1 unstake events
 
         # check get_event from a specific id
         events = thorchain.get_events(events_first_id + 1)
-        self.assertEqual(len(events), 2) # 1 stake + 1 unstake events
+        self.assertEqual(len(events), 2)  # 1 stake + 1 unstake events
         self.assertEqual(events[0].type, "stake")
         self.assertEqual(events[1].type, "unstake")
 
         # check get_event from a specific id
         events = thorchain.get_events(events_first_id + 2)
-        self.assertEqual(len(events), 1) # 1 unstake
+        self.assertEqual(len(events), 1)  # 1 unstake
         self.assertEqual(events[0].type, "unstake")
+
 
 if __name__ == "__main__":
     unittest.main()
