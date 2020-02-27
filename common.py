@@ -1,6 +1,7 @@
 import requests
 import json
 
+from ast import literal_eval
 from collections import MutableMapping
 from contextlib import suppress
 from requests.adapters import HTTPAdapter
@@ -85,7 +86,7 @@ class Jsonable:
         return json.dumps(self, default=lambda x: x.__dict__)
 
 
-class Asset(str):
+class Asset(str, Jsonable):
     def __new__(cls, value, *args, **kwargs):
         if len(value.split(".")) < 2:
             value = f"BNB.{value}"  # default to binance chain
@@ -95,7 +96,7 @@ class Asset(str):
         """
         Is this asset rune?
         """
-        return self == "BNB.RUNE-A1F"
+        return self.get_symbol().startswith("RUNE")
 
     def get_symbol(self):
         """
@@ -103,13 +104,19 @@ class Asset(str):
         """
         return self.split(".")[1]
 
+    def get_chain(self):
+        """
+        Return chain part of the asset string
+        """
+        return self.split(".")[0]
+
 
 class Coin(Jsonable):
     """
     A class that represents a coin and an amount
     """
 
-    def __init__(self, asset, amount):
+    def __init__(self, asset, amount=0):
         self.asset = Asset(asset)
         self.amount = amount
 
@@ -142,10 +149,10 @@ class Coin(Jsonable):
         }
 
     def __repr__(self):
-        return f"<Coin {self.amount}{self.asset}>"
+        return f"<Coin {self.amount:0,.0f}{self.asset}>"
 
     def __str__(self):
-        return f"{self.amount}{self.asset}"
+        return f"{self.amount:0,.0f}{self.asset}"
 
 
 class Transaction(Jsonable):
@@ -155,8 +162,8 @@ class Transaction(Jsonable):
 
     def __init__(self, _chain, _from, _to, _coins, _memo=""):
         self.chain = _chain
-        self.to_address = _to
         self.from_address = _from
+        self.to_address = _to
         self.memo = _memo
 
         # ensure coins is a list of coins
@@ -176,6 +183,6 @@ class Transaction(Jsonable):
         return "Transaction %s ==> %s | %s | %s" % (
             self.from_address,
             self.to_address,
-            self.coins,
+            ", ".join([str(c) for c in self.coins]),
             self.memo,
         )
