@@ -1,5 +1,8 @@
 import requests
 import json
+
+from collections import MutableMapping
+from contextlib import suppress
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -30,6 +33,18 @@ def get_share(part, total, alloc):
     (Allocation / (Total / part))
     """
     return float(alloc) / (float(total) / float(part))
+
+
+def delete_keys_from_dict(dictionary, keys):
+    """
+    Delete values from dict if key in keys
+    """
+    for key in keys:
+        with suppress(KeyError):
+            del dictionary[key]
+    for value in dictionary.values():
+        if isinstance(value, MutableMapping):
+            delete_keys_from_dict(value, keys)
 
 
 class HttpClient:
@@ -155,8 +170,8 @@ class Transaction:
 
     def __init__(self, _chain, _from, _to, _coins, _memo=""):
         self.chain = _chain
-        self.toAddress = _to
-        self.fromAddress = _from
+        self.to_address = _to
+        self.from_address = _from
         self.memo = _memo
 
         # ensure coins is a list of coins
@@ -166,16 +181,16 @@ class Transaction:
 
     def __repr__(self):
         return "<Transaction %s ==> %s | %s | %s>" % (
-            self.fromAddress,
-            self.toAddress,
+            self.from_address,
+            self.to_address,
             self.coins,
             self.memo,
         )
 
     def __str__(self):
         return "Transaction %s ==> %s | %s | %s" % (
-            self.fromAddress,
-            self.toAddress,
+            self.from_address,
+            self.to_address,
             self.coins,
             self.memo,
         )

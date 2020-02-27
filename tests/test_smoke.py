@@ -42,7 +42,7 @@ class TestSmoke(unittest.TestCase):
         for i, txn in enumerate(txns):
             logging.info(f"{i} {txn}")
             if txn.memo == "SEED":
-                bnb.seed(txn.toAddress, txn.coins)
+                bnb.seed(txn.to_address, txn.coins)
                 continue
             else:
                 bnb.transfer(txn)  # send transfer on binance chain

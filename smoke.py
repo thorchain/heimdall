@@ -277,8 +277,8 @@ class Smoker:
         for i, txn in enumerate(self.txns):
             logging.info(f"{i} {txn}")
             if txn.memo == "SEED":
-                self.binance.seed(txn.toAddress, txn.coins)
-                self.mock_binance.seed(txn.toAddress, txn.coins)
+                self.binance.seed(txn.to_address, txn.coins)
+                self.mock_binance.seed(txn.to_address, txn.coins)
                 continue
 
             self.binance.transfer(txn)  # send transfer on binance chain

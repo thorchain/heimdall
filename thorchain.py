@@ -1,4 +1,5 @@
 import time
+import json
 import logging
 import itertools
 from copy import deepcopy
@@ -255,7 +256,7 @@ class ThorchainState:
         for coin in txn.coins:
             txns.append(
                 Transaction(
-                    txn.chain, txn.toAddress, txn.fromAddress, [coin], "REFUND:TODO"
+                    txn.chain, txn.to_address, txn.from_address, [coin], "REFUND:TODO"
                 )
             )
 
@@ -304,7 +305,7 @@ class ThorchainState:
                 amount += coin.amount
 
         # generate event for RESERVE transaction
-        reserve_event = ReserveEvent(txn.fromAddress, amount)
+        reserve_event = ReserveEvent(txn.from_address, amount)
         event = Event("reserve", txn, None, reserve_event)
         self.events.append(event)
 
@@ -405,7 +406,7 @@ class ThorchainState:
             else:
                 asset_amt = coin.amount
 
-        pool.stake(txn.fromAddress, rune_amt, asset_amt)
+        pool.stake(txn.from_address, rune_amt, asset_amt)
 
         self.set_pool(pool)
 
@@ -444,17 +445,17 @@ class ThorchainState:
         asset = Asset(parts[1])
 
         pool = self.get_pool(asset)
-        staker = pool.get_staker(txn.fromAddress)
+        staker = pool.get_staker(txn.from_address)
         if staker.is_zero():
             # FIXME real world message
             refund_event = RefundEvent(105, "refund reason message")
             return self.refund(txn, refund_event)
 
-        rune_amt, asset_amt = pool.unstake(txn.fromAddress, withdraw_basis_points)
+        rune_amt, asset_amt = pool.unstake(txn.from_address, withdraw_basis_points)
         self.set_pool(pool)
 
         # out transactions
-        chain, _from, _to = txn.chain, txn.fromAddress, txn.toAddress
+        chain, _from, _to = txn.chain, txn.from_address, txn.to_address
         out_txns = [
             Transaction(
                 chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], "OUTBOUND:TODO"
@@ -486,7 +487,7 @@ class ThorchainState:
             return self.refund(txn, refund_event)
 
         # get address to send to
-        address = txn.fromAddress
+        address = txn.from_address
         if len(parts) > 2:
             address = parts[2]
             # checking if address is for mainnet, not testnet
@@ -537,7 +538,7 @@ class ThorchainState:
 
             # generate event for SWAP transaction
             out_txns = [
-                Transaction(txn.chain, address, txn.toAddress, [emit], txn.memo)
+                Transaction(txn.chain, address, txn.to_address, [emit], txn.memo)
             ]
             swap_event = SwapEvent(pool.asset, 0, trade_slip, liquidity_fee)
             event = Event("swap", deepcopy(txn), out_txns, swap_event)
@@ -578,7 +579,7 @@ class ThorchainState:
             self.set_pool(pool)
 
         out_txns = [
-            Transaction(txn.chain, txn.toAddress, address, [emit], "OUTBOUND:TODO")
+            Transaction(txn.chain, txn.to_address, address, [emit], "OUTBOUND:TODO")
         ]
 
         # generate event for SWAP transaction

@@ -54,15 +54,15 @@ class MockBinance(HttpClient):
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
-        if txn.toAddress in self.aliases:
-            txn.toAddress = self.aliases[txn.toAddress]
+        if txn.to_address in self.aliases:
+            txn.to_address = self.aliases[txn.to_address]
 
-        if txn.fromAddress in self.aliases:
-            txn.fromAddress = self.aliases[txn.fromAddress]
+        if txn.from_address in self.aliases:
+            txn.from_address = self.aliases[txn.from_address]
 
         payload = {
-            "from": txn.fromAddress,
-            "to": txn.toAddress,
+            "from": txn.from_address,
+            "to": txn.to_address,
             "memo": txn.memo,
             "coins": [coin.to_dict() for coin in txn.coins],
         }
@@ -138,7 +138,7 @@ class Binance:
     A local simple implementation of binance chain
     """
 
-    chain = "Binance"
+    chain = "BNB"
 
     def __init__(self):
         self.accounts = {}
@@ -180,8 +180,8 @@ class Binance:
         if txn.chain != Binance.chain:
             raise Exception(f"Cannot transfer. {Binance.chain} is not {txn.chain}")
 
-        from_acct = self.get_account(txn.fromAddress)
-        to_acct = self.get_account(txn.toAddress)
+        from_acct = self.get_account(txn.from_address)
+        to_acct = self.get_account(txn.to_address)
 
         gas = self._calculateGas(txn.coins)
         from_acct.sub(gas)
