@@ -8,22 +8,13 @@ from chains import Binance
 class TestUtils(unittest.TestCase):
     def test_delete_keys_from_dict(self):
         data = {
-            "foo": {
-                "bar": "bar",
-                "list": [
-                    "item", "item", "item",
-                ],
-            },
+            "foo": {"bar": "bar", "list": ["item", "item", "item",],},
             "hello": "world",
             "data": "data",
         }
         delete_keys_from_dict(data, ["bar", "data"])
         expected = {
-            "foo": {
-                "list": [
-                    "item", "item", "item",
-                ],
-            },
+            "foo": {"list": ["item", "item", "item",],},
             "hello": "world",
         }
         self.assertEqual(data, expected)
@@ -159,15 +150,10 @@ class TestCoin(unittest.TestCase):
         coin = Coin("LOK-3C0", 1000000)
         self.assertEqual(coin.to_json(), '{"asset": "BNB.LOK-3C0", "amount": 1000000}')
 
+
 class TestTransaction(unittest.TestCase):
     def test_constructor(self):
-        txn = Transaction(
-            Binance.chain,
-            "USER",
-            "VAULT",
-            Coin("BNB.BNB", 100),
-            "MEMO",
-        )
+        txn = Transaction(Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "MEMO",)
         self.assertEqual(txn.chain, "BNB")
         self.assertEqual(txn.from_address, "USER")
         self.assertEqual(txn.to_address, "VAULT")
@@ -181,37 +167,35 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(txn.coins[1].amount, 1000000000)
 
     def test_str(self):
-        txn = Transaction(
-            Binance.chain,
-            "USER",
-            "VAULT",
-            Coin("BNB.BNB", 100),
-            "MEMO",
-        )
+        txn = Transaction(Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "MEMO",)
         self.assertEqual(str(txn), "Transaction USER ==> VAULT | 100BNB.BNB | MEMO")
         txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
-        self.assertEqual(str(txn), "Transaction USER ==> VAULT | 1,000,000,000BNB.BNB, 1,000,000,000BNB.RUNE-A1F | MEMO")
+        self.assertEqual(
+            str(txn),
+            "Transaction USER ==> VAULT | 1,000,000,000BNB.BNB, 1,000,000,000BNB.RUNE-A1F | MEMO",
+        )
 
     def test_repr(self):
-        txn = Transaction(
-            Binance.chain,
-            "USER",
-            "VAULT",
-            Coin("BNB.BNB", 100),
-            "MEMO",
+        txn = Transaction(Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "MEMO",)
+        self.assertEqual(
+            repr(txn), "<Transaction USER ==> VAULT | [<Coin 100BNB.BNB>] | MEMO>"
         )
-        self.assertEqual(repr(txn), "<Transaction USER ==> VAULT | [<Coin 100BNB.BNB>] | MEMO>")
         txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
-        self.assertEqual(repr(txn), "<Transaction USER ==> VAULT | [<Coin 1,000,000,000BNB.BNB>, <Coin 1,000,000,000BNB.RUNE-A1F>] | MEMO>")
+        self.assertEqual(
+            repr(txn),
+            "<Transaction USER ==> VAULT | [<Coin 1,000,000,000BNB.BNB>, <Coin 1,000,000,000BNB.RUNE-A1F>] | MEMO>",
+        )
 
     def test_to_json(self):
         txn = Transaction(
-            Binance.chain,
-            "USER",
-            "VAULT",
-            Coin("BNB.BNB", 100),
-            "STAKE:BNB",
+            Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "STAKE:BNB",
         )
-        self.assertEqual(txn.to_json(), '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT", "memo": "STAKE:BNB", "coins": [{"asset": "BNB.BNB", "amount": 100}]}')
+        self.assertEqual(
+            txn.to_json(),
+            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT", "memo": "STAKE:BNB", "coins": [{"asset": "BNB.BNB", "amount": 100}]}',
+        )
         txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
-        self.assertEqual(txn.to_json(), '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT", "memo": "STAKE:BNB", "coins": [{"asset": "BNB.BNB", "amount": 1000000000}, {"asset": "BNB.RUNE-A1F", "amount": 1000000000}]}')
+        self.assertEqual(
+            txn.to_json(),
+            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT", "memo": "STAKE:BNB", "coins": [{"asset": "BNB.BNB", "amount": 1000000000}, {"asset": "BNB.RUNE-A1F", "amount": 1000000000}]}',
+        )
