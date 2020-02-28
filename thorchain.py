@@ -707,7 +707,7 @@ class Event(Jsonable):
         self.id = int(id) if id is not None else next(Event.id_iter)
         self.type = event_type
         self.in_tx = deepcopy(txn)
-        self.out_txs = deepcopy(txns_out)
+        self.out_txs = txns_out
         self.gas = deepcopy(gas)
         self.event = deepcopy(event)
         self.status = status
