@@ -9,13 +9,13 @@ from exceptions import CoinError
 class TestUtils(unittest.TestCase):
     def test_delete_keys_from_dict(self):
         data = {
-            "foo": {"bar": "bar", "list": ["item", "item", "item",],},
+            "foo": {"bar": "bar", "list": ["item", "item", "item"]},
             "hello": "world",
             "data": "data",
         }
         delete_keys_from_dict(data, ["bar", "data"])
         expected = {
-            "foo": {"list": ["item", "item", "item",],},
+            "foo": {"list": ["item", "item", "item"]},
             "hello": "world",
         }
         self.assertEqual(data, expected)
@@ -189,7 +189,8 @@ class TestTransaction(unittest.TestCase):
         txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
         self.assertEqual(
             str(txn),
-            "Transaction USER ==> VAULT | 1,000,000,000BNB.BNB, 1,000,000,000BNB.RUNE-A1F | MEMO",
+            "Transaction USER ==> VAULT | 1,000,000,000BNB.BNB, "
+            "1,000,000,000BNB.RUNE-A1F | MEMO",
         )
         txn.coins = None
         self.assertEqual(
@@ -209,7 +210,8 @@ class TestTransaction(unittest.TestCase):
         txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
         self.assertEqual(
             repr(txn),
-            "<Transaction USER ==> VAULT | [<Coin 1,000,000,000BNB.BNB>, <Coin 1,000,000,000BNB.RUNE-A1F>] | MEMO>",
+            "<Transaction USER ==> VAULT | [<Coin 1,000,000,000BNB.BNB>,"
+            " <Coin 1,000,000,000BNB.RUNE-A1F>] | MEMO>",
         )
         txn.coins = None
         self.assertEqual(
@@ -218,7 +220,8 @@ class TestTransaction(unittest.TestCase):
         txn.gas = [Coin("BNB", 37500)]
         self.assertEqual(
             repr(txn),
-            "<Transaction USER ==> VAULT | No Coins | MEMO | Gas [<Coin 37,500BNB.BNB>]>",
+            "<Transaction USER ==> VAULT | No Coins | "
+            "MEMO | Gas [<Coin 37,500BNB.BNB>]>",
         )
 
     def test_to_json(self):
@@ -227,22 +230,30 @@ class TestTransaction(unittest.TestCase):
         )
         self.assertEqual(
             txn.to_json(),
-            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT", "memo": "STAKE:BNB", "coins": [{"asset": "BNB.BNB", "amount": 100}], "gas": null}',
+            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT",'
+            ' "memo": "STAKE:BNB", "coins": [{"asset": "BNB.BNB", '
+            '"amount": 100}], "gas": null}',
         )
         txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
         self.assertEqual(
             txn.to_json(),
-            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT", "memo": "STAKE:BNB", "coins": [{"asset": "BNB.BNB", "amount": 1000000000}, {"asset": "BNB.RUNE-A1F", "amount": 1000000000}], "gas": null}',
+            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT",'
+            ' "memo": "STAKE:BNB", "coins": ['
+            '{"asset": "BNB.BNB", "amount": 1000000000}, '
+            '{"asset": "BNB.RUNE-A1F", "amount": 1000000000}], "gas": null}',
         )
         txn.coins = None
         self.assertEqual(
             txn.to_json(),
-            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT", "memo": "STAKE:BNB", "coins": null, "gas": null}',
+            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT",'
+            ' "memo": "STAKE:BNB", "coins": null, "gas": null}',
         )
         txn.gas = [Coin("BNB", 37500)]
         self.assertEqual(
             txn.to_json(),
-            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT", "memo": "STAKE:BNB", "coins": null, "gas": [{"asset": "BNB.BNB", "amount": 37500}]}',
+            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT",'
+            ' "memo": "STAKE:BNB", "coins": null,'
+            ' "gas": [{"asset": "BNB.BNB", "amount": 37500}]}',
         )
 
     def test_from_dict(self):
@@ -251,8 +262,8 @@ class TestTransaction(unittest.TestCase):
             "from_address": "USER",
             "to_address": "VAULT",
             "coins": [
-                {"asset": "BNB.BNB", "amount": 1000,},
-                {"asset": "RUNE", "amount": "1000",},
+                {"asset": "BNB.BNB", "amount": 1000},
+                {"asset": "RUNE", "amount": "1000"},
             ],
             "memo": "STAKE:BNB.BNB",
         }
@@ -267,7 +278,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(txn.coins[1].amount, 1000)
         self.assertEqual(txn.gas, None)
         value["coins"] = None
-        value["gas"] = [{"asset": "BNB.BNB", "amount": "37500",}]
+        value["gas"] = [{"asset": "BNB.BNB", "amount": "37500"}]
         txn = Transaction.from_dict(value)
         self.assertEqual(txn.chain, "BNB")
         self.assertEqual(txn.from_address, "USER")

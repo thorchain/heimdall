@@ -1,12 +1,11 @@
 import requests
 import json
 
-from ast import literal_eval
 from collections import MutableMapping
 from contextlib import suppress
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-from exceptions import AssetError, CoinError, TransactionError
+from exceptions import CoinError, TransactionError
 
 
 def requests_retry_session(
@@ -228,7 +227,8 @@ class Transaction(Jsonable):
                 Coin.coins_equal(self.gas, txn.gas)
                 if self.from_address == txn.from_address:
                     raise TransactionError(
-                        f"From address mismatch {self.from_address} != {txn.from_address}"
+                        f"From address mismatch {self.from_address} != "
+                        f"{txn.from_address}"
                     )
                 if self.to_address == txn.to_address:
                     raise TransactionError(

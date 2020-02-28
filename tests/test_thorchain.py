@@ -1083,7 +1083,12 @@ Event RefundEvent Code 105 | Reason memo can't be empty
         event.id = 1
         self.assertEqual(
             event.to_json(),
-            '{"id": 1, "type": "refund", "in_tx": {"chain": "BNB", "from_address": "STAKER-1", "to_address": "VAULT", "memo": "ADD:RUNE-A1F", "coins": [{"asset": "BNB.RUNE-A1F", "amount": 50000000000}], "gas": null}, "out_txs": null, "gas": null, "event": {"code": 105, "reason": "memo can\'t be empty"}, "status": "Success"}',
+            '{"id": 1, "type": "refund", "in_tx": {"chain": "BNB", '
+            '"from_address": "STAKER-1", "to_address": "VAULT", '
+            '"memo": "ADD:RUNE-A1F", "coins": [{"asset": "BNB.RUNE-A1F", '
+            '"amount": 50000000000}], "gas": null}, "out_txs": null, '
+            '"gas": null, "event": {"code": 105, '
+            '"reason": "memo can\'t be empty"}, "status": "Success"}',
         )
 
     def test_from_dict(self):
@@ -1150,7 +1155,7 @@ Event RefundEvent Code 105 | Reason memo can't be empty
                 },
             ],
             "gas": None,
-            "event": {"code": "105", "reason": "memo can't be empty",},
+            "event": {"code": "105", "reason": "memo can't be empty"},
             "status": "Refund",
         }
         event = Event.from_dict(value)
