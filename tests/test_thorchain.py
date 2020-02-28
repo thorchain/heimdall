@@ -1,6 +1,6 @@
 import unittest
 
-from thorchain import ThorchainState, Pool, Event
+from thorchain import ThorchainState, Pool, Event, RefundEvent
 from chains import Binance
 
 from common import Transaction, Coin
@@ -26,7 +26,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 1)
         event = events[0]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -68,7 +68,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 3)
         event = events[2]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -92,7 +92,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 4)
         event = events[3]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -113,7 +113,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 5)
         event = events[4]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -159,7 +159,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 7)
         event = events[6]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -281,7 +281,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 3)
         event = events[2]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -306,7 +306,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 4)
         event = events[3]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -331,7 +331,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 5)
         event = events[4]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -360,7 +360,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 6)
         event = events[5]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -398,6 +398,89 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.event.reserve_contributor["address"], txn.from_address)
         self.assertEqual(event.event.reserve_contributor["amount"], txn.coins[0].amount)
 
+    def test_gas(self):
+        thorchain = ThorchainState()
+        txn = Transaction(
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            "STAKE:BNB.BNB",
+        )
+
+        outbound = thorchain.handle(txn)
+        self.assertEqual(outbound, [])
+
+        pool = thorchain.get_pool("BNB.BNB")
+        self.assertEqual(pool.rune_balance, 50000000000)
+        self.assertEqual(pool.asset_balance, 150000000)
+        self.assertEqual(pool.get_staker("STAKER-1").units, 25075000000)
+        self.assertEqual(pool.total_units, 25075000000)
+
+        # check event generated for successful stake
+        events = thorchain.get_events()
+        self.assertEqual(len(events), 1)
+        event = events[0]
+        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.type, "stake")
+        self.assertEqual(event.in_tx.to_json(), txn.to_json())
+        self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.pool, pool.asset)
+        self.assertEqual(event.event.stake_units, pool.total_units)
+
+        # should refund if no memo
+        txn = Transaction(
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            "",
+        )
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 2)
+
+        # check refund event generated for stake with no memo
+        events = thorchain.get_events()
+        self.assertEqual(len(events), 2)
+        event = events[1]
+        self.assertEqual(event.status, "Refund")
+        self.assertEqual(event.type, "refund")
+        self.assertEqual(event.in_tx.to_json(), txn.to_json())
+        self.assertEqual(len(event.out_txs), len(outbound))
+        self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
+        self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.code, 105)
+        self.assertEqual(event.event.reason, "memo can't be empty")
+
+        # check gas event generated after we sent to chain
+        outbound[0].gas = [Coin("BNB", 37500)]
+        outbound[1].gas = [Coin("BNB", 37500)]
+        thorchain.handle_gas(outbound)
+
+        events = thorchain.get_events()
+        self.assertEqual(len(events), 4)
+        # first new gas event
+        event = events[2]
+        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.type, "gas")
+        self.assertEqual(event.in_tx.to_json(), outbound[0].to_json())
+        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.gas[0].is_equal(outbound[0].gas[0]), True)
+        self.assertEqual(event.event.gas_type, "gas_spend")
+
+        # second new gas event
+        event = events[3]
+        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.type, "gas")
+        self.assertEqual(event.in_tx.to_json(), outbound[1].to_json())
+        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.gas[0].is_equal(outbound[1].gas[0]), True)
+        self.assertEqual(event.event.gas_type, "gas_spend")
+
     def test_stake(self):
         thorchain = ThorchainState()
         txn = Transaction(
@@ -424,7 +507,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "stake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
         self.assertEqual(event.event.stake_units, pool.total_units)
@@ -444,7 +527,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 2)
         event = events[1]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -469,7 +552,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 3)
         event = events[2]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -494,7 +577,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 4)
         event = events[3]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -521,7 +604,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 5)
         event = events[4]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -550,7 +633,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 6)
         event = events[5]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -581,7 +664,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "stake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
         self.assertEqual(event.event.stake_units, pool.total_units)
@@ -603,7 +686,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "stake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
         self.assertEqual(event.event.stake_units, pool.total_units)
@@ -625,7 +708,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "stake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
         self.assertEqual(event.event.stake_units, pool.total_units)
@@ -695,7 +778,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 3)
         event = events[2]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -715,7 +798,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 4)
         event = events[3]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -733,7 +816,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 5)
         event = events[4]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -802,7 +885,7 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events()
         self.assertEqual(len(events), 7)
         event = events[6]
-        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
@@ -820,6 +903,17 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(withdraw_rune, 31736823519)
         self.assertEqual(withdraw_asset, 72280966)
         self.assertEqual(after, 12537500000)
+
+    def test_stake_calc(self):
+        pool = Pool("BNB.BNB", 112928660551, 257196272)
+        stake_units = pool._calc_stake_units(
+            50000000000, 50000000000, 34500000000, 23400000000
+        )
+        self.assertEqual(stake_units, 28950000000)
+        stake_units = pool._calc_stake_units(
+            50000000000, 40000000000, 50000000000, 40000000000
+        )
+        self.assertEqual(stake_units, 45000000000)
 
     def test_calc_liquidity_fee(self):
         thorchain = ThorchainState()
@@ -931,6 +1025,171 @@ class TestThorchainState(unittest.TestCase):
         events = thorchain.get_events(events_first_id + 2)
         self.assertEqual(len(events), 1)  # 1 unstake
         self.assertEqual(events[0].type, "unstake")
+
+
+class TestEvent(unittest.TestCase):
+    def test_str(self):
+        refund_event = RefundEvent(105, "memo can't be empty")
+        txn = Transaction(
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("RUNE-A1F", 50000000000)],
+            "ADD:RUNE-A1F",
+        )
+        event = Event("refund", txn, None, refund_event)
+        event.id = 1
+        self.assertEqual(
+            str(event),
+            """
+Event #1 | Type REFUND | Status Success |
+InTx  Transaction STAKER-1 ==> VAULT | 50,000,000,000BNB.RUNE-A1F | ADD:RUNE-A1F
+OutTx None
+Event RefundEvent Code 105 | Reason memo can't be empty
+            """,
+        )
+
+    def test_repr(self):
+        refund_event = RefundEvent(105, "memo can't be empty")
+        txn = Transaction(
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("RUNE-A1F", 50000000000)],
+            "ADD:RUNE-A1F",
+        )
+        event = Event("refund", txn, None, refund_event, status="Refund")
+        event.id = 1
+        self.assertEqual(
+            repr(event),
+            """
+Event #1 | Type REFUND | Status Refund |
+InTx  Transaction STAKER-1 ==> VAULT | 50,000,000,000BNB.RUNE-A1F | ADD:RUNE-A1F
+OutTx None
+Event RefundEvent Code 105 | Reason memo can't be empty
+            """,
+        )
+
+    def test_to_json(self):
+        refund_event = RefundEvent(105, "memo can't be empty")
+        txn = Transaction(
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("RUNE-A1F", 50000000000)],
+            "ADD:RUNE-A1F",
+        )
+        event = Event("refund", txn, None, refund_event)
+        event.id = 1
+        self.assertEqual(
+            event.to_json(),
+            '{"id": 1, "type": "refund", "in_tx": {"chain": "BNB", "from_address": "STAKER-1", "to_address": "VAULT", "memo": "ADD:RUNE-A1F", "coins": [{"asset": "BNB.RUNE-A1F", "amount": 50000000000}], "gas": null}, "out_txs": null, "gas": null, "event": {"code": 105, "reason": "memo can\'t be empty"}, "status": "Success"}',
+        )
+
+    def test_from_dict(self):
+        value = {
+            "id": 1,
+            "type": "refund",
+            "in_tx": {
+                "chain": "BNB",
+                "from_address": "STAKER-1",
+                "to_address": "VAULT",
+                "memo": "ADD:RUNE-A1F",
+                "coins": [{"asset": "BNB.RUNE-A1F", "amount": 50000000000}],
+                "gas": None,
+            },
+            "out_txs": None,
+            "gas": None,
+            "event": {"code": 105, "reason": "memo can't be empty"},
+            "status": "Success",
+        }
+        event = Event.from_dict(value)
+        self.assertEqual(event.id, 1)
+        self.assertEqual(event.type, "refund")
+        self.assertEqual(event.in_tx.chain, "BNB")
+        self.assertEqual(event.in_tx.from_address, "STAKER-1")
+        self.assertEqual(event.in_tx.to_address, "VAULT")
+        self.assertEqual(event.in_tx.memo, "ADD:RUNE-A1F")
+        self.assertEqual(event.in_tx.coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(event.in_tx.coins[0].amount, 50000000000)
+        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.code, 105)
+        self.assertEqual(event.event.reason, "memo can't be empty")
+
+        value = {
+            "id": 1,
+            "type": "refund",
+            "in_tx": {
+                "chain": "BNB",
+                "from_address": "STAKER-1",
+                "to_address": "VAULT",
+                "memo": "",
+                "coins": [
+                    {"asset": "BNB.RUNE-A1F", "amount": 50000000000},
+                    {"asset": "BNB.BNB", "amount": 30000000000},
+                ],
+                "gas": [{"asset": "BNB.BNB", "amount": 60000}],
+            },
+            "out_txs": [
+                {
+                    "chain": "BNB",
+                    "from_address": "VAULT",
+                    "to_address": "STAKER-1",
+                    "memo": "REFUND:TODO",
+                    "coins": [{"asset": "BNB.RUNE-A1F", "amount": 50000000000}],
+                    "gas": [{"asset": "BNB.BNB", "amount": 35000}],
+                },
+                {
+                    "chain": "BNB",
+                    "from_address": "VAULT",
+                    "to_address": "STAKER-1",
+                    "memo": "REFUND:TODO",
+                    "coins": [{"asset": "BNB.BNB", "amount": 30000000000}],
+                    "gas": [{"asset": "BNB.BNB", "amount": 35000}],
+                },
+            ],
+            "gas": None,
+            "event": {"code": "105", "reason": "memo can't be empty",},
+            "status": "Refund",
+        }
+        event = Event.from_dict(value)
+        self.assertEqual(event.id, 1)
+        self.assertEqual(event.type, "refund")
+        # in_tx
+        self.assertEqual(event.in_tx.chain, "BNB")
+        self.assertEqual(event.in_tx.from_address, "STAKER-1")
+        self.assertEqual(event.in_tx.to_address, "VAULT")
+        self.assertEqual(event.in_tx.memo, "")
+        self.assertEqual(event.in_tx.coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(event.in_tx.coins[0].amount, 50000000000)
+        self.assertEqual(event.in_tx.coins[1].asset, "BNB.BNB")
+        self.assertEqual(event.in_tx.coins[1].amount, 30000000000)
+        self.assertEqual(event.in_tx.gas[0].asset, "BNB.BNB")
+        self.assertEqual(event.in_tx.gas[0].amount, 60000)
+        # out_tx 1
+        self.assertEqual(event.out_txs[0].chain, "BNB")
+        self.assertEqual(event.out_txs[0].from_address, "VAULT")
+        self.assertEqual(event.out_txs[0].to_address, "STAKER-1")
+        self.assertEqual(event.out_txs[0].memo, "REFUND:TODO")
+        self.assertEqual(event.out_txs[0].coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(event.out_txs[0].coins[0].amount, 50000000000)
+        self.assertEqual(event.out_txs[0].gas[0].asset, "BNB.BNB")
+        self.assertEqual(event.out_txs[0].gas[0].amount, 35000)
+        # out_tx 2
+        self.assertEqual(event.out_txs[1].chain, "BNB")
+        self.assertEqual(event.out_txs[1].from_address, "VAULT")
+        self.assertEqual(event.out_txs[1].to_address, "STAKER-1")
+        self.assertEqual(event.out_txs[1].memo, "REFUND:TODO")
+        self.assertEqual(event.out_txs[1].coins[0].asset, "BNB.BNB")
+        self.assertEqual(event.out_txs[1].coins[0].amount, 30000000000)
+        self.assertEqual(event.out_txs[1].gas[0].asset, "BNB.BNB")
+        self.assertEqual(event.out_txs[1].gas[0].amount, 35000)
+
+        self.assertEqual(event.gas, None)
+
+        self.assertEqual(event.event.code, 105)
+        self.assertEqual(event.event.reason, "memo can't be empty")
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ from common import (
     HttpClient,
     Jsonable,
 )
+from exceptions import EventError
 
 
 class ThorchainClient(HttpClient):
@@ -99,24 +100,35 @@ class ThorchainState:
                 events.append(event)
         return events
 
-    def handle_gas(self, gas):
+    def handle_gas(self, txns):
         """
         Subtracts gas from pool
+
+        :param list Transaction: list outbound transaction updated with gas
+
         """
-        pool = self.get_pool(gas.asset)
-        # TODO: this is a hacky way to avoid the problem of gas overdrawing a
-        # balance. clean this up later
-        if pool.asset_balance <= gas.amount:
-            pool.asset_balance = 0
-        else:
-            pool.sub(0, gas.amount)  # subtract gas from pool
+        for txn in txns:
+            if txn.gas:
+                for gas in txn.gas:
+                    pool = self.get_pool(gas.asset)
+                    # TODO: this is a hacky way to avoid the problem of gas overdrawing a
+                    # balance. clean this up later
+                    if pool.asset_balance <= gas.amount:
+                        pool.asset_balance = 0
+                    else:
+                        pool.sub(0, gas.amount)  # subtract gas from pool
 
-            # figure out how much rune is an equal amount to gas.amount
-            rune_amt = pool.get_asset_in_rune(gas.amount)
-            self.reserve -= rune_amt  # take rune from the reserve
-            pool.add(rune_amt, 0)  # replenish gas costs with rune
+                        # figure out how much rune is an equal amount to gas.amount
+                        rune_amt = pool.get_asset_in_rune(gas.amount)
+                        self.reserve -= rune_amt  # take rune from the reserve
+                        pool.add(rune_amt, 0)  # replenish gas costs with rune
 
-        self.set_pool(pool)
+                    self.set_pool(pool)
+
+                    # generate event for GAS in transaction
+                    gas_event = GasEvent(gas, "gas_spend")
+                    event = Event("gas", txn, None, gas_event)
+                    self.events.append(event)
 
     def handle_fee(self, txns):
         """
@@ -261,7 +273,7 @@ class ThorchainState:
             )
 
         # generate event REFUND for the transaction
-        event = Event("refund", txn, txns, refund_event)
+        event = Event("refund", txn, txns, refund_event, status="Refund")
         self.events.append(event)
         return txns
 
@@ -286,7 +298,7 @@ class ThorchainState:
         elif tx.memo.startswith("RESERVE"):
             return self.handle_reserve(tx)
         else:
-            logging.warning("handler not recognized")
+            logging.warning(f"Memo not recognized: '{txn.memo}'")
             if tx.memo == "":
                 refund_event = RefundEvent(105, "memo can't be empty")
             else:
@@ -412,7 +424,7 @@ class ThorchainState:
 
         # generate event for STAKE transaction
         stake_event = StakeEvent(pool.asset, pool.total_units)
-        event = Event("stake", txn, None, stake_event)
+        event = Event("stake", txn, [Transaction.empty_txn()], stake_event)
         self.events.append(event)
 
         return []
@@ -689,32 +701,93 @@ class Event(Jsonable):
 
     id_iter = itertools.count(1)
 
-    def __init__(self, event_type, txn, txns_out, event, gas=None, status="Success"):
-        self.id = next(Event.id_iter)
+    def __init__(
+        self, event_type, txn, txns_out, event, gas=None, status="Success", id=None
+    ):
+        self.id = int(id) if id is not None else next(Event.id_iter)
         self.type = event_type
-        self.in_tx = txn
-        self.out_txs = txns_out
-        self.gas = gas
-        self.event = event
+        self.in_tx = deepcopy(txn)
+        self.out_txs = deepcopy(txns_out)
+        self.gas = deepcopy(gas)
+        self.event = deepcopy(event)
         self.status = status
 
-    def __repr__(self):
-        return "<Event [%s-%s] %s ==> %s | %s>" % (
-            self.id,
-            self.type,
-            self.in_tx,
-            self.out_txs,
-            self.event,
-        )
-
     def __str__(self):
-        return "Event [%s-%s] %s ==> %s | %s" % (
-            self.id,
-            self.type,
-            self.in_tx,
-            self.out_txs,
-            self.event,
+        return f"""
+Event #{self.id} | Type {self.type.upper()} | Status {self.status} |
+InTx  {self.in_tx}
+OutTx {self.out_txs}
+Event {self.event}
+            """
+
+    def __repr__(self):
+        return str(self)
+
+    def is_equal(self, evt, strict=True):
+        try:
+            if self.type != evt.type:
+                raise EventError(f"Event type mismatch {self.type} != {evt.type}")
+            if self.status != evt.status:
+                raise EventError(f"Event status mismatch {self.status} != {evt.status}")
+            self.in_tx.is_equal(evt.in_tx, strict=strict)
+            Transaction.txns_equal(self.out_txs, evt.out_txs, strict=strict)
+            self.event.is_equal(evt.event, strict=strict)
+
+            if strict:
+                if self.id == evt.id:
+                    raise EventError(f"Event id mismatch {self.id} != {evt.id}")
+        except Exception as e:
+            logging.error(e)
+            raise EventError(f"Event mismatch {self} != {evt}")
+        else:
+            return True
+
+    @classmethod
+    def events_equal(cls, events1, events2, strict=True):
+        """
+        Compare 2 events list
+        """
+        events1 = events1 or []
+        events2 = events2 or []
+        if len(events1) != len(events2):
+            raise EventError(
+                f"Events list length mismatch {len(events1)} != {len(events2)}"
+            )
+        for evt1, evt2 in zip(events1, events2):
+            evt1.is_equal(evt2, strict=strict)
+        return True
+
+    @classmethod
+    def from_dict(cls, value):
+        event = cls(
+            value["type"],
+            Transaction.from_dict(value["in_tx"]),
+            None,
+            None,
+            gas=None,
+            status=value["status"],
+            id=value["id"],
         )
+        if "out_txs" in value and value["out_txs"]:
+            event.out_txs = [Transaction.from_dict(t) for t in value["out_txs"]]
+        if "gas" in value and value["gas"]:
+            event.gas = [Transaction.from_dict(g) for g in value["gas"]]
+        if "event" in value and value["event"]:
+            if value["type"] == "refund":
+                event.event = RefundEvent.from_dict(value["event"])
+            if value["type"] == "add":
+                event.event = AddEvent.from_dict(value["event"])
+            if value["type"] == "gas":
+                event.event = GasEvent.from_dict(value["event"])
+            if value["type"] == "stake":
+                event.event = StakeEvent.from_dict(value["event"])
+            if value["type"] == "unstake":
+                event.event = UnstakeEvent.from_dict(value["event"])
+            if value["type"] == "swap":
+                event.event = SwapEvent.from_dict(value["event"])
+            if value["type"] == "reserve":
+                event.event = ReserveEvent.from_dict(value["event"])
+        return event
 
 
 class RefundEvent(Jsonable):
@@ -726,6 +799,21 @@ class RefundEvent(Jsonable):
         self.code = code
         self.reason = reason
 
+    def is_equal(self, evt, strict=True):
+        if self.code != evt.code or self.reason != evt.reason:
+            raise EventError(f"RefundEvent mismatch {self} != {evt}")
+        return True
+
+    def __str__(self):
+        return f"RefundEvent Code {self.code} | Reason {self.reason}"
+
+    def __repr__(self):
+        return f"<RefundEvent Code {self.code} | Reason {self.reason}>"
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(int(value["code"]), value["reason"])
+
 
 class ReserveEvent(Jsonable):
     """
@@ -735,8 +823,68 @@ class ReserveEvent(Jsonable):
     def __init__(self, address, amount):
         self.reserve_contributor = {
             "address": address,
-            "amount": amount,
+            "amount": int(amount),
         }
+
+    def is_equal(self, evt, strict=True):
+        if self.reserve_contributor["amount"] != evt.reserve_contributor["amount"]:
+            raise EventError(
+                f"ReserveEvent amount mismatch {self.reserve_contributor['amount']:0,.0f} != {evt.reserve_contributor['amount']:0,.0f}"
+            )
+        if strict:
+            if (
+                self.reserve_contributor["address"]
+                != evt.reserve_contributor["address"]
+            ):
+                raise EventError(
+                    f"ReserveEvent address mismatch {self.reserve_contributor['address']} != {evt.reserve_contributor['address']}"
+                )
+
+    def __str__(self):
+        return f"ReserveEvent Address {self.reserve_contributor['address']} | Amount {self.reserve_contributor['amount']:0,.0f}"
+
+    def __repr__(self):
+        return f"<ReserveEvent Address {self.reserve_contributor['address']} | Amount {self.reserve_contributor['amount']:0,.0f}>"
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(
+            value["reserve_contributor"]["address"],
+            value["reserve_contributor"]["amount"],
+        )
+
+
+class GasEvent(Jsonable):
+    """
+    Event gas class specific to GAS events.
+    """
+
+    def __init__(self, gas, gas_type):
+        if gas and not isinstance(gas, list):
+            gas = [gas]
+        self.gas = gas
+        self.gas_type = gas_type
+
+    def is_equal(self, evt, strict=True):
+        try:
+            if self.gas_type != evt.gas_type:
+                raise EventError(f"Gas type mismatch {self.gas_type} != {evt.gas_type}")
+            Coin.coins_equal(self.gas, evt.gas)
+        except Exception as e:
+            raise EventError(f"Event mismatch {self} != {evt}")
+        else:
+            return True
+
+    def __str__(self):
+        return f"GasEvent {self.gas} | Type {self.gas_type}"
+
+    def __repr__(self):
+        return f"<GasEvent {self.gas} | Type {self.gas_type}>"
+
+    @classmethod
+    def from_dict(cls, value):
+        gas = [Coin.from_dict(g) for g in value["gas"]]
+        return cls(gas, value["gas_type"])
 
 
 class SwapEvent(Jsonable):
@@ -746,9 +894,45 @@ class SwapEvent(Jsonable):
 
     def __init__(self, pool, price_target, trade_slip, liquidity_fee):
         self.pool = pool
-        self.price_target = price_target
-        self.trade_slip = trade_slip
-        self.liquidity_fee = liquidity_fee
+        self.price_target = int(price_target)
+        self.trade_slip = int(trade_slip)
+        self.liquidity_fee = int(liquidity_fee)
+
+    def is_equal(self, evt, strict=True):
+        try:
+            if self.pool != evt.pool:
+                raise EventError(f"Event pool mismtach {self.pool} != {evt.pool}")
+            if self.price_target != evt.price_target:
+                raise EventError(
+                    f"Event price target mismtach {self.price_target:0,.0f} != {evt.price_target:0,.0f}"
+                )
+            if self.trade_slip != evt.trade_slip:
+                raise EventError(
+                    f"Event trade slip mismtach {self.trade_slip:0,.0f} != {evt.trade_slip:0,.0f}"
+                )
+            if self.liquidity_fee != evt.liquidity_fee:
+                raise EventError(
+                    f"Event liquidity fee mismtach {self.liquidity_fee:0,.0f} != {evt.liquidity_fee:0,.0f}"
+                )
+        except Exception as e:
+            raise EventError(f"Event mismatch {self} != {evt}")
+        else:
+            return True
+
+    def __str__(self):
+        return f"SwapEvent Pool {self.pool} | PriceTarget {self.price_target:0,.0f} | TradeSlip {self.trade_slip:0,.0f} | LiquidityFee {self.liquidity_fee:0,.0f}"
+
+    def __repr__(self):
+        return f"<SwapEvent Pool {self.pool} | PriceTarget {self.price_target:0,.0f} | TradeSlip {self.trade_slip:0,.0f} | LiquidityFee {self.liquidity_fee:0,.0f}>"
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(
+            value["pool"],
+            value["price_target"],
+            value["trade_slip"],
+            value["liquidity_fee"],
+        )
 
 
 class StakeEvent(Jsonable):
@@ -758,7 +942,30 @@ class StakeEvent(Jsonable):
 
     def __init__(self, asset, pool_units):
         self.pool = asset
-        self.stake_units = pool_units
+        self.stake_units = int(pool_units)
+
+    def is_equal(self, evt, strict=True):
+        try:
+            if self.pool != evt.pool:
+                raise EventError(f"Event pool mismtach {self.pool} != {evt.pool}")
+            if self.stake_units != evt.stake_units:
+                raise EventError(
+                    f"Event stake units mismtach {self.stake_units:0,.0f} != {evt.stake_units:0,.0f}"
+                )
+        except Exception as e:
+            raise EventError(f"Event mismatch {self} != {evt}")
+        else:
+            return True
+
+    def __str__(self):
+        return f"StakeEvent Pool {self.pool} | Units {self.stake_units:0,.0f}"
+
+    def __repr__(self):
+        return f"<StakeEvent Pool {self.pool} | Units {self.stake_units:0,.0f}>"
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(value["pool"], value["stake_units"])
 
 
 class UnstakeEvent(Jsonable):
@@ -768,9 +975,45 @@ class UnstakeEvent(Jsonable):
 
     def __init__(self, asset, pool_units, basis_points, asymmetry):
         self.pool = asset
-        self.stake_units = pool_units
-        self.basis_points = basis_points
-        self.asymmetry = asymmetry
+        self.stake_units = int(pool_units)
+        self.basis_points = int(basis_points)
+        self.asymmetry = int(asymmetry)
+
+    def is_equal(self, evt, strict=True):
+        try:
+            if self.pool != evt.pool:
+                raise EventError(f"Event pool mismtach {self.pool} != {evt.pool}")
+            if self.stake_units != evt.stake_units:
+                raise EventError(
+                    f"Event stake units mismtach {self.stake_units:0,.0f} != {evt.stake_units:0,.0f}"
+                )
+            if self.basis_points != evt.basis_points:
+                raise EventError(
+                    f"Event basis points mismtach {self.basis_points:0,.0f} != {evt.basis_points:0,.0f}"
+                )
+            if self.asymmetry != evt.asymmetry:
+                raise EventError(
+                    f"Event asymmetry mismtach {self.asymmetry} != {evt.asymmetry}"
+                )
+        except Exception as e:
+            raise EventError(f"Event mismatch {self} != {evt}")
+        else:
+            return True
+
+    def __str__(self):
+        return f"UnstakeEvent Pool {self.pool} | Units {self.stake_units:0,.0f} | BasisPoints {self.basis_points:0,.0f} | Asymmetry {self.Asymmetry}"
+
+    def __repr__(self):
+        return f"<UnstakeEvent Pool {self.pool} | Units {self.stake_units} | BasisPoints {self.basis_points} | Asymmetry {self.Asymmetry}>"
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(
+            value["pool"],
+            value["stake_units"],
+            value["basis_points"],
+            value["asymmetry"],
+        )
 
 
 class AddEvent(Jsonable):
@@ -780,6 +1023,21 @@ class AddEvent(Jsonable):
 
     def __init__(self, asset):
         self.pool = asset
+
+    def is_equal(self, evt, strict=True):
+        if self.pool != evt.pool:
+            raise EventError(f"Event pool mismtach {self.pool} != {evt.pool}")
+        return True
+
+    def __str__(self):
+        return f"AddEvent Pool {self.pool}"
+
+    def __repr__(self):
+        return f"<AddEvent Pool {self.pool}>"
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(value["pool"])
 
 
 class Pool(Jsonable):
@@ -908,7 +1166,7 @@ class Pool(Jsonable):
         part1 = pool_rune + pool_asset
         part2 = stake_rune * pool_asset + pool_rune * stake_asset
         part3 = 4 * pool_rune * pool_asset
-        answer = float(part1 * part2) / float(part3)
+        answer = part1 * part2 / part3
         return int(answer)
 
     def _calc_unstake_units(self, staker_units, withdraw_basis_points):

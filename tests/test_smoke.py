@@ -50,7 +50,8 @@ class TestSmoke(unittest.TestCase):
                 outbound = thorchain.handle_fee(outbound)
                 for txn in outbound:
                     gas = bnb.transfer(txn)  # send outbound txns back to Binance
-                    thorchain.handle_gas(gas)  # subtract gas from pool(s)
+                    txn.gas = [gas]
+                thorchain.handle_gas(outbound)  # subtract gas from pool(s)
 
             # generated a snapshop picture of thorchain and bnb
             snap = Breakpoint(thorchain, bnb).snapshot(i, len(outbound))

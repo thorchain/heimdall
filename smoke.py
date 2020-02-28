@@ -1,9 +1,11 @@
 import argparse
 import logging
 import os
+import json
+import sys
 
 from chains import Binance, MockBinance
-from thorchain import ThorchainState, ThorchainClient
+from thorchain import ThorchainState, ThorchainClient, Event
 
 from common import Transaction, Coin, Asset
 
@@ -254,7 +256,11 @@ def main():
     smoker = Smoker(
         args.binance, args.thorchain, txns, args.generate_balances, args.fast_fail
     )
-    smoker.run()
+    try:
+        smoker.run()
+    except Exception as e:
+        logging.fatal(e)
+        sys.exit(1)
 
 
 class Smoker:
@@ -284,17 +290,14 @@ class Smoker:
             self.binance.transfer(txn)  # send transfer on binance chain
             outbounds = self.thorchain.handle(txn)  # process transaction in thorchain
             outbounds = self.thorchain.handle_fee(outbounds)
-            gas_amt = 0
             for outbound in outbounds:
                 gas = self.binance.transfer(
                     outbound
                 )  # send outbound txns back to Binance
-                gas_amt += gas.amount
-            # TODO: make this chain agnostic
+                outbound.gas = [gas]
+
             self.thorchain.handle_rewards()
-            self.thorchain.handle_gas(
-                Coin("BNB.BNB", gas_amt)
-            )  # subtract gas from pool(s)
+            self.thorchain.handle_gas(outbounds)
 
             # update memo with actual address (over alias name)
             for name, addr in self.mock_binance.aliases.items():
@@ -330,13 +333,11 @@ class Smoker:
                     if address == macct["address"]:
                         sacct = self.binance.get_account(name)
                         for bal in macct["balances"]:
-                            coin = Coin(bal["denom"], sacct.get(bal["denom"]))
-                            if not coin.is_equal(
-                                Coin(bal["denom"], int(bal["amount"]))
-                            ):
+                            coin1 = Coin(bal["denom"], sacct.get(bal["denom"]))
+                            coin2 = Coin(bal["denom"], int(bal["amount"]))
+                            if not coin1.is_equal(coin2):
                                 raise Exception(
-                                    f"bad binance balance: {name} {bal['denom']} "
-                                    f"{bal['amount']} != {coin}"
+                                    f"bad binance balance: {name} {coin2} != {coin1}"
                                 )
 
             # check vault data
@@ -349,6 +350,19 @@ class Smoker:
                 sim = self.thorchain.bond_reward
                 real = vdata["bond_reward_rune"]
                 raise Exception(f"mismatching bond reward: {sim} != {real}")
+
+            # compare simulation events with real events
+            events = self.thorchain_client.get_events()
+            events = [
+                Event.from_dict(evt) for evt in events
+            ]  # convert to Event objects
+            sevents = self.thorchain.get_events()
+            try:
+                Event.events_equal(events, sevents, strict=False)
+            except Exception as e:
+                raise Exception(
+                    f"Event mismatch from Thorchain and Simulator State: {e}"
+                )
 
 
 if __name__ == "__main__":
