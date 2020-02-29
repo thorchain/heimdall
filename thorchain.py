@@ -11,7 +11,6 @@ from common import (
     HttpClient,
     Jsonable,
 )
-from exceptions import EventError
 
 
 class ThorchainClient(HttpClient):
@@ -724,39 +723,16 @@ Event {self.event}
     def __repr__(self):
         return str(self)
 
-    def is_equal(self, evt, strict=True):
-        try:
-            if self.type != evt.type:
-                raise EventError(f"Event type mismatch {self.type} != {evt.type}")
-            if self.status != evt.status:
-                raise EventError(f"Event status mismatch {self.status} != {evt.status}")
-            self.in_tx.is_equal(evt.in_tx, strict=strict)
-            Transaction.txns_equal(self.out_txs, evt.out_txs, strict=strict)
-            self.event.is_equal(evt.event, strict=strict)
-
-            if strict:
-                if self.id == evt.id:
-                    raise EventError(f"Event id mismatch {self.id} != {evt.id}")
-        except Exception as e:
-            logging.error(e)
-            raise EventError(f"Event mismatch {self} != {evt}")
-        else:
-            return True
-
-    @classmethod
-    def events_equal(cls, events1, events2, strict=True):
-        """
-        Compare 2 events list
-        """
-        events1 = events1 or []
-        events2 = events2 or []
-        if len(events1) != len(events2):
-            raise EventError(
-                f"Events list length mismatch {len(events1)} != {len(events2)}"
-            )
-        for evt1, evt2 in zip(events1, events2):
-            evt1.is_equal(evt2, strict=strict)
-        return True
+    def __eq__(self, other):
+        sout_txs = self.out_txs or []
+        oout_txs = other.out_txs or []
+        return (
+            self.type == other.type
+            and self.status == other.status
+            and self.in_tx == other.in_tx
+            and sorted(sout_txs) == sorted(oout_txs)
+            and self.event == other.event
+        )
 
     @classmethod
     def from_dict(cls, value):
@@ -800,10 +776,8 @@ class RefundEvent(Jsonable):
         self.code = code
         self.reason = reason
 
-    def is_equal(self, evt, strict=True):
-        if self.code != evt.code or self.reason != evt.reason:
-            raise EventError(f"RefundEvent mismatch {self} != {evt}")
-        return True
+    def __eq__(self, other):
+        return self.code == other.code and self.reason == other.reason
 
     def __str__(self):
         return f"RefundEvent Code {self.code} | Reason {self.reason}"
@@ -827,23 +801,8 @@ class ReserveEvent(Jsonable):
             "amount": int(amount),
         }
 
-    def is_equal(self, evt, strict=True):
-        if self.reserve_contributor["amount"] != evt.reserve_contributor["amount"]:
-            raise EventError(
-                f"ReserveEvent amount mismatch "
-                f"{self.reserve_contributor['amount']:0,.0f} != "
-                f"{evt.reserve_contributor['amount']:0,.0f}"
-            )
-        if strict:
-            if (
-                self.reserve_contributor["address"]
-                != evt.reserve_contributor["address"]
-            ):
-                raise EventError(
-                    f"ReserveEvent address mismatch "
-                    f"{self.reserve_contributor['address']} != "
-                    f"{evt.reserve_contributor['address']}"
-                )
+    def __eq__(self, other):
+        return self.reserve_contributor["amount"] == other.reserve_contributor["amount"]
 
     def __str__(self):
         return (
@@ -876,16 +835,10 @@ class GasEvent(Jsonable):
         self.gas = gas
         self.gas_type = gas_type
 
-    def is_equal(self, evt, strict=True):
-        try:
-            if self.gas_type != evt.gas_type:
-                raise EventError(f"Gas type mismatch {self.gas_type} != {evt.gas_type}")
-            Coin.coins_equal(self.gas, evt.gas)
-        except Exception as e:
-            logging.error(e)
-            raise EventError(f"Event mismatch {self} != {evt}")
-        else:
-            return True
+    def __eq__(self, other):
+        sgas = self.gas or []
+        ogas = other.gas or []
+        return self.gas_type == other.gas_type and sorted(sgas) == sorted(ogas)
 
     def __str__(self):
         return f"GasEvent {self.gas} | Type {self.gas_type}"
@@ -910,30 +863,13 @@ class SwapEvent(Jsonable):
         self.trade_slip = int(trade_slip)
         self.liquidity_fee = int(liquidity_fee)
 
-    def is_equal(self, evt, strict=True):
-        try:
-            if self.pool != evt.pool:
-                raise EventError(f"Event pool mismtach {self.pool} != {evt.pool}")
-            if self.price_target != evt.price_target:
-                raise EventError(
-                    f"Event price target mismtach {self.price_target:0,.0f} "
-                    f"!= {evt.price_target:0,.0f}"
-                )
-            if self.trade_slip != evt.trade_slip:
-                raise EventError(
-                    f"Event trade slip mismtach {self.trade_slip:0,.0f} "
-                    f"!= {evt.trade_slip:0,.0f}"
-                )
-            if self.liquidity_fee != evt.liquidity_fee:
-                raise EventError(
-                    f"Event liquidity fee mismtach {self.liquidity_fee:0,.0f}"
-                    f" != {evt.liquidity_fee:0,.0f}"
-                )
-        except Exception as e:
-            logging.error(e)
-            raise EventError(f"Event mismatch {self} != {evt}")
-        else:
-            return True
+    def __eq__(self, other):
+        return (
+            self.pool == other.pool
+            and self.price_target == other.price_target
+            and self.trade_slip == other.trade_slip
+            and self.liquidity_fee == other.liquidity_fee
+        )
 
     def __str__(self):
         return (
@@ -970,20 +906,8 @@ class StakeEvent(Jsonable):
         self.pool = asset
         self.stake_units = int(pool_units)
 
-    def is_equal(self, evt, strict=True):
-        try:
-            if self.pool != evt.pool:
-                raise EventError(f"Event pool mismtach {self.pool} != {evt.pool}")
-            if self.stake_units != evt.stake_units:
-                raise EventError(
-                    f"Event stake units mismtach {self.stake_units:0,.0f} "
-                    f"!= {evt.stake_units:0,.0f}"
-                )
-        except Exception as e:
-            logging.error(e)
-            raise EventError(f"Event mismatch {self} != {evt}")
-        else:
-            return True
+    def __eq__(self, other):
+        return self.pool == other.pool and self.stake_units == other.stake_units
 
     def __str__(self):
         return f"StakeEvent Pool {self.pool} | Units {self.stake_units:0,.0f}"
@@ -1007,29 +931,13 @@ class UnstakeEvent(Jsonable):
         self.basis_points = int(basis_points)
         self.asymmetry = int(asymmetry)
 
-    def is_equal(self, evt, strict=True):
-        try:
-            if self.pool != evt.pool:
-                raise EventError(f"Event pool mismtach {self.pool} != {evt.pool}")
-            if self.stake_units != evt.stake_units:
-                raise EventError(
-                    f"Event stake units mismtach {self.stake_units:0,.0f} "
-                    f"!= {evt.stake_units:0,.0f}"
-                )
-            if self.basis_points != evt.basis_points:
-                raise EventError(
-                    f"Event basis points mismtach {self.basis_points:0,.0f} "
-                    f"!= {evt.basis_points:0,.0f}"
-                )
-            if self.asymmetry != evt.asymmetry:
-                raise EventError(
-                    f"Event asymmetry mismtach {self.asymmetry} " f"!= {evt.asymmetry}"
-                )
-        except Exception as e:
-            logging.error(e)
-            raise EventError(f"Event mismatch {self} != {evt}")
-        else:
-            return True
+    def __eq__(self, other):
+        return (
+            self.pool == other.pool
+            and self.stake_units == other.stake_units
+            and self.basis_points == other.basis_points
+            and self.asymmetry == other.asymmetry
+        )
 
     def __str__(self):
         return (
@@ -1062,10 +970,8 @@ class AddEvent(Jsonable):
     def __init__(self, asset):
         self.pool = asset
 
-    def is_equal(self, evt, strict=True):
-        if self.pool != evt.pool:
-            raise EventError(f"Event pool mismtach {self.pool} != {evt.pool}")
-        return True
+    def __eq__(self, other):
+        return self.pool == other.pool
 
     def __str__(self):
         return f"AddEvent Pool {self.pool}"

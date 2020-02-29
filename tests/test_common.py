@@ -1,9 +1,9 @@
 import unittest
 import json
 
+from copy import deepcopy
 from common import Asset, Transaction, Coin, delete_keys_from_dict
 from chains import Binance
-from exceptions import CoinError
 
 
 class TestUtils(unittest.TestCase):
@@ -89,25 +89,42 @@ class TestCoin(unittest.TestCase):
         coin = Coin("RUNE-A1F", 0)
         self.assertEqual(coin.is_zero(), True)
 
-    def test_is_equal(self):
+    def test_eq(self):
         coin1 = Coin("BNB.BNB", 100)
         coin2 = Coin("BNB")
-        self.assertRaises(CoinError, coin1.is_equal, coin2)
+        self.assertNotEqual(coin1, coin2)
         coin1 = Coin("BNB.BNB", 100)
         coin2 = Coin("BNB", 100)
-        self.assertEqual(coin1.is_equal(coin2), True)
+        self.assertEqual(coin1, coin2)
         coin1 = Coin("BNB.LOK-3C0", 100)
         coin2 = Coin("RUNE-A1F", 100)
-        self.assertRaises(CoinError, coin1.is_equal, coin2)
+        self.assertNotEqual(coin1, coin2)
         coin1 = Coin("BNB.LOK-3C0", 100)
         coin2 = Coin("BNB.LOK-3C0", 100)
-        self.assertEqual(coin1.is_equal(coin2), True)
+        self.assertEqual(coin1, coin2)
         coin1 = Coin("LOK-3C0", 200)
         coin2 = Coin("LOK-3C0", 200)
-        self.assertEqual(coin1.is_equal(coin2), True)
+        self.assertEqual(coin1, coin2)
         coin1 = Coin("RUNE")
         coin2 = Coin("RUNE")
-        self.assertEqual(coin1.is_equal(coin2), True)
+        self.assertEqual(coin1, coin2)
+        # check list equality
+        list1 = [Coin("RUNE", 100), Coin("RUNE", 100)]
+        list2 = [Coin("RUNE", 100), Coin("RUNE", 100)]
+        self.assertEqual(list1, list2)
+        list1 = [Coin("RUNE", 100), Coin("RUNE", 100)]
+        list2 = [Coin("RUNE", 10), Coin("RUNE", 100)]
+        self.assertNotEqual(list1, list2)
+        # list not sorted are NOT equal
+        list1 = [Coin("RUNE", 100), Coin("BNB", 200)]
+        list2 = [Coin("BNB", 200), Coin("RUNE", 100)]
+        self.assertNotEqual(list1, list2)
+        self.assertEqual(sorted(list1), sorted(list2))
+        # check sets
+        list1 = [Coin("RUNE", 100), Coin("RUNE", 100)]
+        self.assertEqual(len(set(list1)), 1)
+        list1 = [Coin("RUNE", 100), Coin("RUNE", 10)]
+        self.assertEqual(len(set(list1)), 2)
 
     def test_is_rune(self):
         coin = Coin("BNB.BNB")
@@ -223,6 +240,105 @@ class TestTransaction(unittest.TestCase):
             "<Transaction USER ==> VAULT | No Coins | "
             "MEMO | Gas [<Coin 37,500BNB.BNB>]>",
         )
+
+    def test_eq(self):
+        tx1 = Transaction(
+            Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "STAKE:BNB",
+        )
+        tx2 = Transaction(
+            Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "STAKE:BNB",
+        )
+        self.assertEqual(tx1, tx2)
+        tx2.chain = "BTC"
+        self.assertNotEqual(tx1, tx2)
+        tx1 = Transaction(
+            Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "STAKE:BNB",
+        )
+        tx2 = Transaction(
+            Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "STAKE:BNB",
+        )
+        self.assertEqual(tx1, tx2)
+        tx1.memo = "STAKE:BNB"
+        tx2.memo = "ADD:BNB"
+        self.assertNotEqual(tx1, tx2)
+        tx1.memo = "STAKE"
+        tx2.memo = "ADD"
+        self.assertNotEqual(tx1, tx2)
+        tx1.memo = ""
+        tx2.memo = ""
+        self.assertEqual(tx1, tx2)
+        tx1.memo = "Hello"
+        tx2.memo = ""
+        self.assertNotEqual(tx1, tx2)
+        # we ignore addresses in memo
+        tx1.memo = "REFUND:ADDRESS"
+        tx2.memo = "REFUND:TODO"
+        self.assertEqual(tx1, tx2)
+        # we dont ignore different assets though
+        tx1.memo = "STAKE:BNB"
+        tx2.memo = "STAKE:RUNE"
+        self.assertNotEqual(tx1, tx2)
+        tx2.memo = "STAKE:BNB"
+        self.assertEqual(tx1, tx2)
+        tx2.coins = [Coin("BNB", 100)]
+        self.assertEqual(tx1, tx2)
+        tx2.coins = [Coin("BNB", 100), Coin("RUNE", 100)]
+        self.assertNotEqual(tx1, tx2)
+        # different list of coins not equal
+        tx1.coins = [Coin("RUNE", 200), Coin("RUNE", 100)]
+        tx2.coins = [Coin("BNB", 100), Coin("RUNE", 200)]
+        self.assertNotEqual(tx1, tx2)
+        # coins different order tx are still equal
+        tx1.coins = [Coin("RUNE", 200), Coin("BNB", 100)]
+        tx2.coins = [Coin("BNB", 100), Coin("RUNE", 200)]
+        self.assertEqual(tx1, tx2)
+        # we ignore from / to address for equality
+        tx1.to_address = "VAULT1"
+        tx2.to_address = "VAULT2"
+        tx1.from_address = "USER1"
+        tx2.from_address = "USER2"
+        self.assertEqual(tx1, tx2)
+        # check list of transactions equality
+        tx1 = Transaction(
+            Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "STAKE:BNB",
+        )
+        tx2 = deepcopy(tx1)
+        tx3 = deepcopy(tx1)
+        tx4 = deepcopy(tx1)
+        list1 = [tx1, tx2]
+        list2 = [tx3, tx4]
+        self.assertEqual(list1, list2)
+
+        # check sort list of transactions get sorted by smallest coin
+        # check list of 1 coin
+        # descending order in list1
+        tx1.coins = [Coin("RUNE", 200)]
+        tx2.coins = [Coin("BNB", 100)]
+        # ascrending order in list2
+        tx3.coins = [Coin("BNB", 100)]
+        tx4.coins = [Coin("RUNE", 200)]
+        self.assertNotEqual(list1, list2)
+        self.assertEqual(sorted(list1), list2)
+        self.assertEqual(sorted(list1), sorted(list2))
+
+        # check list of > 1 coin
+        # descending order in list1
+        tx1.coins = [Coin("RUNE", 200), Coin("BNB", 300)]
+        tx2.coins = [Coin("BNB", 100), Coin("LOK-3C0", 500)]
+        # ascrending order in list2
+        tx3.coins = [Coin("BNB", 100), Coin("LOK-3C0", 500)]
+        tx4.coins = [Coin("RUNE", 200), Coin("BNB", 300)]
+        self.assertNotEqual(list1, list2)
+        self.assertEqual(sorted(list1), list2)
+        self.assertEqual(sorted(list1), sorted(list2))
+
+        # check 1 tx with no coins
+        list1 = sorted(list1)
+        self.assertEqual(list1, list2)
+        list1[0].coins = None
+        self.assertNotEqual(list1, list2)
+        list2[0].coins = None
+        self.assertEqual(list1, list2)
 
     def test_to_json(self):
         txn = Transaction(

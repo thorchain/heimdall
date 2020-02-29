@@ -468,7 +468,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs, None)
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.gas[0].is_equal(outbound[0].gas[0]), True)
+        self.assertEqual(event.event.gas[0], outbound[0].gas[0])
         self.assertEqual(event.event.gas_type, "gas_spend")
 
         # second new gas event
@@ -478,7 +478,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), outbound[1].to_json())
         self.assertEqual(event.out_txs, None)
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.gas[0].is_equal(outbound[1].gas[0]), True)
+        self.assertEqual(event.event.gas[0], outbound[1].gas[0])
         self.assertEqual(event.event.gas_type, "gas_spend")
 
     def test_stake(self):

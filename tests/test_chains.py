@@ -23,14 +23,10 @@ class TestBinance(unittest.TestCase):
     def test_gas(self):
         bnb = Binance()
         self.assertEqual(
-            bnb._calculateGas([Coin("BNB", 5757575)]).is_equal(Coin("BNB", 37500)),
-            True,
+            bnb._calculateGas([Coin("BNB", 5757575)]), Coin("BNB", 37500),
         )
         self.assertEqual(
-            bnb._calculateGas([Coin("BNB", 0), Coin("RUNE", 0)]).is_equal(
-                Coin("BNB", 60000)
-            ),
-            True,
+            bnb._calculateGas([Coin("BNB", 0), Coin("RUNE", 0)]), Coin("BNB", 60000)
         )
 
     def test_seed(self):

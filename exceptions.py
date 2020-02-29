@@ -20,19 +20,3 @@ class MidgardPoolError(PoolError):
         self.field = field
         self.expected = expected
         self.obtained = obtained
-
-
-class CoinError(Exception):
-    pass
-
-
-class TransactionError(Exception):
-    pass
-
-
-class AssetError(Exception):
-    pass
-
-
-class EventError(Exception):
-    pass

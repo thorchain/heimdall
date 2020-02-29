@@ -334,7 +334,7 @@ class Smoker:
                         for bal in macct["balances"]:
                             coin1 = Coin(bal["denom"], sacct.get(bal["denom"]))
                             coin2 = Coin(bal["denom"], int(bal["amount"]))
-                            if not coin1.is_equal(coin2):
+                            if coin1 != coin2:
                                 raise Exception(
                                     f"bad binance balance: {name} {coin2} != {coin1}"
                                 )
@@ -356,12 +356,10 @@ class Smoker:
                 Event.from_dict(evt) for evt in events
             ]  # convert to Event objects
             sevents = self.thorchain.get_events()
-            try:
-                Event.events_equal(events, sevents, strict=False)
-            except Exception as e:
-                raise Exception(
-                    f"Event mismatch from Thorchain and Simulator State: {e}"
-                )
+
+            if events != sevents:
+                logging.error(list(set(events) - set(sevents)))
+                raise Exception("Events mismatch")
 
 
 if __name__ == "__main__":

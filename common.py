@@ -5,7 +5,6 @@ from collections import MutableMapping
 from contextlib import suppress
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-from exceptions import CoinError, TransactionError
 
 
 def requests_retry_session(
@@ -142,28 +141,14 @@ class Coin(Jsonable):
             "amount": self.amount,
         }
 
-    def is_equal(self, coin):
-        """
-        Does this coin equal another?
-        """
-        if self.asset != coin.asset or self.amount != coin.amount:
-            raise CoinError(f"Coin mismatch {self} != {coin}")
-        return True
+    def __eq__(self, other):
+        return self.asset == other.asset and self.amount == other.amount
 
-    @classmethod
-    def coins_equal(cls, coins1, coins2):
-        """
-        Compare 2 coins list
-        """
-        coins1 = coins1 or []
-        coins2 = coins2 or []
-        if len(coins1) != len(coins2):
-            raise CoinError(
-                f"Coins list length mismatch {len(coins1)} != {len(coins2)}"
-            )
-        for coin1, coin2 in zip(coins1, coins2):
-            coin1.is_equal(coin2)
-        return True
+    def __lt__(self, other):
+        return self.amount < other.amount
+
+    def __hash__(self):
+        return hash(str(self))
 
     @classmethod
     def from_dict(cls, value):
@@ -213,46 +198,34 @@ class Transaction(Jsonable):
             f"{coins} | {self.memo}{gas}"
         )
 
-    def is_equal(self, txn, strict=True):
+    def __eq__(self, other):
         """
-        Does this txn equal another?
+        Check transaction equals another one
+        Ignore from to address fields because our thorchain state
+        doesn't know the "real" addresses yet
         """
-        try:
-            if self.chain != txn.chain:
-                raise TransactionError(f"Chain mismatch {self.chain} != {txn.chain}")
-            Coin.coins_equal(self.coins, txn.coins)
-            if strict:
-                if self.memo != txn.memo:
-                    raise TransactionError(f"Memo mismatch {self.memo} != {txn.memo}")
-                Coin.coins_equal(self.gas, txn.gas)
-                if self.from_address == txn.from_address:
-                    raise TransactionError(
-                        f"From address mismatch {self.from_address} != "
-                        f"{txn.from_address}"
-                    )
-                if self.to_address == txn.to_address:
-                    raise TransactionError(
-                        f"To address mismatch {self.to_address} != {txn.to_address}"
-                    )
-        except Exception as e:
-            raise TransactionError(f"Transaction mismatch {self} != {txn} \n {e}")
-        else:
-            return True
+        scoins = self.coins or []
+        ocoins = other.coins or []
 
-    @classmethod
-    def txns_equal(cls, txns1, txns2, strict=True):
-        """
-        Compare 2 txns list
-        """
-        txns1 = txns1 or []
-        txns2 = txns2 or []
-        if len(txns1) != len(txns2):
-            raise TransactionError(
-                f"Transactions list length mismatch {len(txns1)} != {len(txns2)}"
-            )
-        for txn1, txn2 in zip(txns1, txns2):
-            txn1.is_equal(txn2, strict=strict)
-        return True
+        try:
+            # try to be smart with memo because it can also have addresses
+            s = self.memo.lower().split(":")
+            o = other.memo.lower().split(":")
+            if len(s) != len(o):
+                return False
+            if s[0] != o[0]:
+                return False
+            if s[0] in ["swap", "add", "stake", "unstake", "withdraw"] and s[1] != o[1]:
+                return False
+        except Exception:
+            return False
+        # then also compare basic fields chain and coins
+        return self.chain == other.chain and sorted(scoins) == sorted(ocoins)
+
+    def __lt__(self, other):
+        self_coins = self.coins or []
+        other_coins = other.coins or []
+        return sorted(self_coins) < sorted(other_coins)
 
     @classmethod
     def from_dict(cls, value):
