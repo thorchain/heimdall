@@ -424,12 +424,12 @@ class ThorchainState:
             else:
                 asset_amt = coin.amount
 
-        pool.stake(txn.from_address, rune_amt, asset_amt)
+        stake_units = pool.stake(txn.from_address, rune_amt, asset_amt)
 
         self.set_pool(pool)
 
         # generate event for STAKE transaction
-        stake_event = StakeEvent(pool.asset, pool.total_units)
+        stake_event = StakeEvent(pool.asset, stake_units)
         event = Event("stake", txn, [Transaction.empty_txn()], stake_event)
         self.events.append(event)
 
@@ -1094,6 +1094,7 @@ class Pool(Jsonable):
         self.total_units += units
         staker.units += units
         self.set_staker(staker)
+        return units
 
     def unstake(self, address, withdraw_basis_points):
         """

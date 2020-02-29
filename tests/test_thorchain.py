@@ -667,7 +667,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
-        self.assertEqual(event.event.stake_units, pool.total_units)
+        self.assertEqual(event.event.stake_units, 2090833333)
 
         txn = Transaction(
             Binance.chain,
@@ -689,7 +689,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
-        self.assertEqual(event.event.stake_units, pool.total_units)
+        self.assertEqual(event.event.stake_units, 2507500000)
 
         txn = Transaction(
             Binance.chain,
@@ -711,7 +711,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
-        self.assertEqual(event.event.stake_units, pool.total_units)
+        self.assertEqual(event.event.stake_units, 15045000000)
 
     def test_unstake(self):
         thorchain = ThorchainState()
