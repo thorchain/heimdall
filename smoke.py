@@ -351,14 +351,31 @@ class Smoker:
                 raise Exception(f"mismatching bond reward: {sim} != {real}")
 
             # compare simulation events with real events
-            events = self.thorchain_client.get_events()
-            events = [
-                Event.from_dict(evt) for evt in events
-            ]  # convert to Event objects
-            sevents = self.thorchain.get_events()
+            raw_events = self.thorchain_client.get_events()
+            # convert to Event objects
+            events = [Event.from_dict(evt) for evt in raw_events]
+            # get simulator events
+            sim_events = self.thorchain.get_events()
 
-            if events != sevents:
-                logging.error(list(set(events) - set(sevents)))
+            # filter out gas event cause the order is not guaranteed
+            gas_events = [e for e in events if e.type == "gas"]
+            gas_sim_events = [e for e in sim_events if e.type == "gas"]
+
+            events = [e for e in events if e.type != "gas"]
+            sim_events = [e for e in sim_events if e.type != "gas"]
+
+            # check ordered events
+            if events != sim_events:
+                mismatch_events = list(set(events) ^ set(sim_events))
+                for evt in mismatch_events:
+                    logging.error(f"Event {evt}")
+                raise Exception("Events mismatch")
+
+            # check ordered gas events
+            if sorted(gas_events) != sorted(gas_sim_events):
+                mismatch_events = list(set(gas_events) ^ set(gas_sim_events))
+                for evt in mismatch_events:
+                    logging.error(f"Event {evt}")
                 raise Exception("Events mismatch")
 
 

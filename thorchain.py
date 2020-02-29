@@ -106,29 +106,35 @@ class ThorchainState:
         :param list Transaction: list outbound transaction updated with gas
 
         """
+        gas_coins = {}
         for txn in txns:
             if txn.gas:
                 for gas in txn.gas:
-                    pool = self.get_pool(gas.asset)
-                    # TODO: this is a hacky way to avoid
-                    # the problem of gas overdrawing a
-                    # balance. clean this up later
-                    if pool.asset_balance <= gas.amount:
-                        pool.asset_balance = 0
-                    else:
-                        pool.sub(0, gas.amount)  # subtract gas from pool
-
-                        # figure out how much rune is an equal amount to gas.amount
-                        rune_amt = pool.get_asset_in_rune(gas.amount)
-                        self.reserve -= rune_amt  # take rune from the reserve
-                        pool.add(rune_amt, 0)  # replenish gas costs with rune
-
-                    self.set_pool(pool)
+                    if gas.asset not in gas_coins:
+                        gas_coins[gas.asset] = Coin(gas.asset)
+                    gas_coins[gas.asset].amount += gas.amount
 
                     # generate event for GAS in transaction
                     gas_event = GasEvent(gas, "gas_spend")
                     event = Event("gas", txn, None, gas_event)
                     self.events.append(event)
+
+        for asset, gas in gas_coins.items():
+            pool = self.get_pool(gas.asset)
+            # TODO: this is a hacky way to avoid
+            # the problem of gas overdrawing a
+            # balance. clean this up later
+            if pool.asset_balance <= gas.amount:
+                pool.asset_balance = 0
+            else:
+                pool.sub(0, gas.amount)  # subtract gas from pool
+
+                # figure out how much rune is an equal amount to gas.amount
+                rune_amt = pool.get_asset_in_rune(gas.amount)
+                self.reserve -= rune_amt  # take rune from the reserve
+                pool.add(rune_amt, 0)  # replenish gas costs with rune
+
+            self.set_pool(pool)
 
     def handle_fee(self, txns):
         """
@@ -298,7 +304,7 @@ class ThorchainState:
         elif tx.memo.startswith("RESERVE"):
             return self.handle_reserve(tx)
         else:
-            logging.warning(f"Memo not recognized: '{txn.memo}'")
+            logging.warning(f"Transaction memo not recognized: '{txn.memo}'")
             if tx.memo == "":
                 refund_event = RefundEvent(105, "memo can't be empty")
             else:
@@ -405,7 +411,7 @@ class ThorchainState:
             if not coin.is_rune():
                 if not asset == coin.asset:
                     refund_event = RefundEvent(
-                        105, f"invalid stake memo: did not find {asset}"
+                        105, f"invalid stake memo:did not find {asset} "
                     )
                     return self.refund(txn, refund_event)
 
@@ -712,6 +718,9 @@ class Event(Jsonable):
         self.event = deepcopy(event)
         self.status = status
 
+    def __hash__(self):
+        return hash(self.id)
+
     def __str__(self):
         return f"""
 Event #{self.id} | Type {self.type.upper()} | Status {self.status} |
@@ -733,6 +742,11 @@ Event {self.event}
             and sorted(sout_txs) == sorted(oout_txs)
             and self.event == other.event
         )
+
+    def __lt__(self, other):
+        self_coins = self.in_tx.coins or []
+        other_coins = other.in_tx.coins or []
+        return sorted(self_coins) < sorted(other_coins)
 
     @classmethod
     def from_dict(cls, value):

@@ -586,7 +586,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(
-            event.event.reason, "invalid stake memo: did not find BNB.TCAN-014"
+            event.event.reason, "invalid stake memo:did not find BNB.TCAN-014 "
         )
 
         # cannot stake with rune in memo
@@ -1069,6 +1069,24 @@ OutTx None
 Event RefundEvent Code 105 | Reason memo can't be empty
             """,
         )
+
+    def test_eq(self):
+        refund_event = RefundEvent(105, "memo can't be empty")
+        txn = Transaction(
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("RUNE-A1F", 50000000000)],
+            "ADD:RUNE-A1F",
+        )
+        event1 = Event("refund", txn, None, refund_event, status="Refund")
+        event2 = Event("refund", txn, None, refund_event, status="Refund")
+        self.assertEqual(event1, event2)
+        event2.in_tx.coins = [Coin("BNB", 10000)]
+        list_unsorted = [event1, event2]
+        list_sorted = [event2, event1]
+        self.assertNotEqual(list_unsorted, list_sorted)
+        self.assertEqual(sorted(list_unsorted), list_sorted)
 
     def test_to_json(self):
         refund_event = RefundEvent(105, "memo can't be empty")
