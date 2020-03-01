@@ -475,7 +475,9 @@ class ThorchainState:
             refund_event = RefundEvent(105, "refund reason message")
             return self.refund(txn, refund_event)
 
-        unstake_units, rune_amt, asset_amt = pool.unstake(txn.from_address, withdraw_basis_points)
+        unstake_units, rune_amt, asset_amt = pool.unstake(
+            txn.from_address, withdraw_basis_points
+        )
         self.set_pool(pool)
 
         # out transactions
