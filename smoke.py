@@ -354,6 +354,10 @@ class Smoker:
             raw_events = self.thorchain_client.get_events()
             # convert to Event objects
             events = [Event.from_dict(evt) for evt in raw_events]
+
+            # TODO handle reward events in simulator, for now filtering them out
+            events = [e for e in events if e.type != "rewards"]
+
             # get simulator events
             sim_events = self.thorchain.get_events()
 
@@ -365,18 +369,16 @@ class Smoker:
             sim_events = [e for e in sim_events if e.type != "gas"]
 
             # check ordered events
-            if events != sim_events:
-                mismatch_events = list(set(events) ^ set(sim_events))
-                for evt in mismatch_events:
-                    logging.error(f"Event {evt}")
-                raise Exception("Events mismatch")
+            for event, sim_event in zip(events, sim_events):
+                if event != sim_event:
+                    logging.error(f"Event Thorchain {event} \n   !=  \nEvent Simulator {sim_event}")
+                    raise Exception("Events mismatch")
 
             # check ordered gas events
-            if sorted(gas_events) != sorted(gas_sim_events):
-                mismatch_events = list(set(gas_events) ^ set(gas_sim_events))
-                for evt in mismatch_events:
-                    logging.error(f"Event {evt}")
-                raise Exception("Events mismatch")
+            for event, sim_event in zip(sorted(gas_events), sorted(gas_sim_events)):
+                if event != sim_event:
+                    logging.error(f"Event Thorchain {event} \n   !=  \nEvent Simulator {sim_event}")
+                    raise Exception("Events mismatch")
 
 
 if __name__ == "__main__":

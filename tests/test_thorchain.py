@@ -98,7 +98,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.code, 105)
+        self.assertEqual(event.event.code, 109)
         self.assertEqual(event.event.reason, "emit asset 0 less than price limit 0")
 
         # swap with limit
@@ -119,7 +119,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.gas, None)
-        self.assertEqual(event.event.code, 105)
+        self.assertEqual(event.event.code, 109)
         self.assertEqual(
             event.event.reason,
             "emit asset 35 less than price limit 999999999999999999999",
@@ -166,7 +166,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
-        self.assertEqual(event.event.reason, "checksum failed. Expected ...")
+        self.assertEqual(event.event.reason, "checksum failed. Expected lz2zxs, got h5mz6q.")
 
         # do a double swap
         txn.coins = [Coin("BNB", 1000000)]
@@ -197,7 +197,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.price_target, 0)
         self.assertEqual(event.event.liquidity_fee, 323)
-        self.assertEqual(event.event.trade_slip, 4)
+        self.assertEqual(event.event.trade_slip, 5)
         # second event of double swap
         event = events[8]
         self.assertEqual(event.status, "Success")
@@ -1035,6 +1035,8 @@ class TestThorchainState(unittest.TestCase):
         thorchain = ThorchainState()
         slip = thorchain._calc_trade_slip(10000000000, 1000000000)
         self.assertEqual(slip, 2100)
+        slip = thorchain._calc_trade_slip(94405967833, 10000000000)
+        self.assertEqual(slip, 2231)
 
     def test_get_asset_in_rune(self):
         pool = Pool("BNB.BNB", 49900000000, 150225000)
@@ -1154,7 +1156,7 @@ class TestEvent(unittest.TestCase):
 Event #1 | Type REFUND | Status Success |
 InTx  Transaction STAKER-1 ==> VAULT | 50,000,000,000BNB.RUNE-A1F | ADD:RUNE-A1F
 OutTx None
-Event RefundEvent Code 105 | Reason memo can't be empty
+Event RefundEvent Code 105 | Reason "memo can't be empty"
             """,
         )
 
@@ -1175,7 +1177,7 @@ Event RefundEvent Code 105 | Reason memo can't be empty
 Event #1 | Type REFUND | Status Refund |
 InTx  Transaction STAKER-1 ==> VAULT | 50,000,000,000BNB.RUNE-A1F | ADD:RUNE-A1F
 OutTx None
-Event RefundEvent Code 105 | Reason memo can't be empty
+Event RefundEvent Code 105 | Reason "memo can't be empty"
             """,
         )
 

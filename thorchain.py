@@ -517,7 +517,7 @@ class ThorchainState:
             # checking if address is for mainnet, not testnet
             if address.lower().startswith("bnb"):
                 # FIXME real world message
-                refund_event = RefundEvent(105, "checksum failed. Expected ...")
+                refund_event = RefundEvent(105, "checksum failed. Expected lz2zxs, got h5mz6q.")
                 return self.refund(txn, refund_event)
 
         # get trade target, if exists
@@ -590,7 +590,7 @@ class ThorchainState:
         # check emit is non-zero and is not less than the target trade
         if emit.is_zero() or (emit.amount < target_trade):
             refund_event = RefundEvent(
-                105, f"emit asset {emit.amount} less than price limit {target_trade}"
+                109, f"emit asset {emit.amount} less than price limit {target_trade}"
             )
             return self.refund(txn, refund_event)
 
@@ -689,7 +689,8 @@ class ThorchainState:
         :returns: (int) trade slip
 
         """
-        return int(10000 * (x * (2 * X + x) / (X ** 2)))
+        trade_slip = 10000 * (x * (2 * X + x) / (X ** 2))
+        return int(round(trade_slip))
 
     def _calc_asset_emission(self, X, x, Y):
         """
@@ -800,10 +801,10 @@ class RefundEvent(Jsonable):
         return self.code == other.code and self.reason == other.reason
 
     def __str__(self):
-        return f"RefundEvent Code {self.code} | Reason {self.reason}"
+        return f"RefundEvent Code {self.code} | Reason \"{self.reason}\""
 
     def __repr__(self):
-        return f"<RefundEvent Code {self.code} | Reason {self.reason}>"
+        return f"<RefundEvent Code {self.code} | Reason \"{self.reason}\">"
 
     @classmethod
     def from_dict(cls, value):
@@ -949,7 +950,7 @@ class UnstakeEvent(Jsonable):
         self.pool = asset
         self.stake_units = int(pool_units)
         self.basis_points = int(basis_points)
-        self.asymmetry = int(asymmetry)
+        self.asymmetry = asymmetry
 
     def __eq__(self, other):
         return (
