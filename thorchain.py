@@ -517,7 +517,9 @@ class ThorchainState:
             # checking if address is for mainnet, not testnet
             if address.lower().startswith("bnb"):
                 # FIXME real world message
-                refund_event = RefundEvent(105, "checksum failed. Expected lz2zxs, got h5mz6q.")
+                refund_event = RefundEvent(
+                    105, "checksum failed. Expected lz2zxs, got h5mz6q."
+                )
                 return self.refund(txn, refund_event)
 
         # get trade target, if exists
@@ -801,10 +803,10 @@ class RefundEvent(Jsonable):
         return self.code == other.code and self.reason == other.reason
 
     def __str__(self):
-        return f"RefundEvent Code {self.code} | Reason \"{self.reason}\""
+        return f'RefundEvent Code {self.code} | Reason "{self.reason}"'
 
     def __repr__(self):
-        return f"<RefundEvent Code {self.code} | Reason \"{self.reason}\">"
+        return f'<RefundEvent Code {self.code} | Reason "{self.reason}">'
 
     @classmethod
     def from_dict(cls, value):

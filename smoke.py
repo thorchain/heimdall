@@ -371,13 +371,19 @@ class Smoker:
             # check ordered events
             for event, sim_event in zip(events, sim_events):
                 if event != sim_event:
-                    logging.error(f"Event Thorchain {event} \n   !=  \nEvent Simulator {sim_event}")
+                    logging.error(
+                        f"Event Thorchain {event} \n   !="
+                        f"  \nEvent Simulator {sim_event}"
+                    )
                     raise Exception("Events mismatch")
 
             # check ordered gas events
             for event, sim_event in zip(sorted(gas_events), sorted(gas_sim_events)):
                 if event != sim_event:
-                    logging.error(f"Event Thorchain {event} \n   !=  \nEvent Simulator {sim_event}")
+                    logging.error(
+                        f"Event Thorchain {event} \n   !="
+                        f"  \nEvent Simulator {sim_event}"
+                    )
                     raise Exception("Events mismatch")
 
 

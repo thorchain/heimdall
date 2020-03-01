@@ -166,7 +166,9 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
-        self.assertEqual(event.event.reason, "checksum failed. Expected lz2zxs, got h5mz6q.")
+        self.assertEqual(
+            event.event.reason, "checksum failed. Expected lz2zxs, got h5mz6q."
+        )
 
         # do a double swap
         txn.coins = [Coin("BNB", 1000000)]
