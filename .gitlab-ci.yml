@@ -31,11 +31,11 @@ integration:
     - apk add --no-cache --virtual .build-deps g++ python3-dev libffi-dev openssl-dev
     - apk add python3 py-pip make git jq curl
     - pip3 install docker-compose
-    - pip3 install -r requirements.txt
     - git clone --single-branch -b $CI_COMMIT_BRANCH https://gitlab.com/thorchain/thornode.git || git clone --single-branch -b master https://gitlab.com/thorchain/thornode.git
     - cd thornode
     - test master = $(git rev-parse --abbrev-ref HEAD) && docker pull registry.gitlab.com/thorchain/thornode:mocknet
     - make -C build/docker reset-mocknet-standalone
     - cd ..
   script:
-    - python3 smoke.py --binance http://docker:26660 --thorchain http://docker:1317
+    - make build
+    - make smoke
