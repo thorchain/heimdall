@@ -168,6 +168,12 @@ class ThorchainState:
                     if coin.amount > 0:
                         outbound.append(txn)
 
+        # we also need to update the last event out_txs
+        # with the new outbound txs only if no stake, stake events have
+        # empty tx in outbound
+        if self.events[-1].type != "stake":
+            self.events[-1].out_txs = outbound
+
         return outbound
 
     def _total_liquidity(self):

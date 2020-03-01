@@ -219,6 +219,115 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.event.liquidity_fee, 646)
         self.assertEqual(event.event.trade_slip, 9)
 
+    def test_fee(self):
+        thorchain = ThorchainState()
+        thorchain.pools = [Pool("BNB.BNB", 50 * 100000000, 50 * 100000000)]
+
+        txn = Transaction(
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)],
+            "SWAP:BNB.BNB",
+        )
+
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 2)
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
+        self.assertEqual(outbound[0].coins[0], Coin("BNB", 1000000000))
+        self.assertEqual(outbound[1].memo, "REFUND:TODO")
+        self.assertEqual(outbound[1].coins[0], Coin("RUNE-A1F", 1000000000))
+
+        # check refund event generated for swap with two coins
+        events = thorchain.get_events()
+        self.assertEqual(len(events), 1)
+        event = events[0]
+        self.assertEqual(event.status, "Refund")
+        self.assertEqual(event.type, "refund")
+        self.assertEqual(event.in_tx.to_json(), txn.to_json())
+        self.assertEqual(len(event.out_txs), len(outbound))
+        self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
+        self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.code, 105)
+        self.assertEqual(
+            event.event.reason,
+            "invalid swap memo:not expecting multiple coins in a swap",
+        )
+
+        outbound = thorchain.handle_fee(outbound)
+        self.assertEqual(len(outbound), 2)
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
+        self.assertEqual(outbound[0].coins[0], Coin("BNB", 900000000))
+        self.assertEqual(outbound[1].memo, "REFUND:TODO")
+        self.assertEqual(outbound[1].coins[0], Coin("RUNE-A1F", 900000000))
+
+        # check refund event generated for swap with two coins
+        events = thorchain.get_events()
+        self.assertEqual(len(events), 1)
+        event = events[0]
+        self.assertEqual(event.status, "Refund")
+        self.assertEqual(event.type, "refund")
+        self.assertEqual(event.in_tx.to_json(), txn.to_json())
+        self.assertEqual(len(event.out_txs), len(outbound))
+        self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
+        self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.code, 105)
+        self.assertEqual(
+            event.event.reason,
+            "invalid swap memo:not expecting multiple coins in a swap",
+        )
+
+        # make RUNE coin same amount as fee, we should
+        # then only get 1 txn outbound after fee
+        txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 100000000)]
+
+        outbound = thorchain.handle(txn)
+        self.assertEqual(len(outbound), 2)
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
+        self.assertEqual(outbound[0].coins[0], Coin("BNB", 1000000000))
+        self.assertEqual(outbound[1].memo, "REFUND:TODO")
+        self.assertEqual(outbound[1].coins[0], Coin("RUNE-A1F", 100000000))
+
+        # check refund event generated for swap with two coins
+        events = thorchain.get_events()
+        self.assertEqual(len(events), 2)
+        event = events[1]
+        self.assertEqual(event.status, "Refund")
+        self.assertEqual(event.type, "refund")
+        self.assertEqual(event.in_tx.to_json(), txn.to_json())
+        self.assertEqual(len(event.out_txs), len(outbound))
+        self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
+        self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.code, 105)
+        self.assertEqual(
+            event.event.reason,
+            "invalid swap memo:not expecting multiple coins in a swap",
+        )
+
+        outbound = thorchain.handle_fee(outbound)
+        self.assertEqual(len(outbound), 1)
+        self.assertEqual(outbound[0].memo, "REFUND:TODO")
+        self.assertEqual(outbound[0].coins[0], Coin("BNB", 895918367))
+
+        # check refund event generated for swap with two coins
+        events = thorchain.get_events()
+        self.assertEqual(len(events), 2)
+        event = events[1]
+        self.assertEqual(event.status, "Refund")
+        self.assertEqual(event.type, "refund")
+        self.assertEqual(event.in_tx.to_json(), txn.to_json())
+        self.assertEqual(len(event.out_txs), len(outbound))
+        self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.code, 105)
+        self.assertEqual(
+            event.event.reason,
+            "invalid swap memo:not expecting multiple coins in a swap",
+        )
+
     def test_add(self):
         thorchain = ThorchainState()
         txn = Transaction(
