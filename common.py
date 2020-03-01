@@ -1,8 +1,6 @@
 import requests
 import json
 
-from collections import MutableMapping
-from contextlib import suppress
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -33,18 +31,6 @@ def get_share(part, total, alloc):
     (Allocation / (Total / part))
     """
     return float(alloc) / (float(total) / float(part))
-
-
-def delete_keys_from_dict(dictionary, keys):
-    """
-    Delete values from dict if key in keys
-    """
-    for key in keys:
-        with suppress(KeyError):
-            del dictionary[key]
-    for value in dictionary.values():
-        if isinstance(value, MutableMapping):
-            delete_keys_from_dict(value, keys)
 
 
 class HttpClient:

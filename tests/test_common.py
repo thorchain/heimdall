@@ -2,23 +2,8 @@ import unittest
 import json
 
 from copy import deepcopy
-from common import Asset, Transaction, Coin, delete_keys_from_dict
+from common import Asset, Transaction, Coin
 from chains import Binance
-
-
-class TestUtils(unittest.TestCase):
-    def test_delete_keys_from_dict(self):
-        data = {
-            "foo": {"bar": "bar", "list": ["item", "item", "item"]},
-            "hello": "world",
-            "data": "data",
-        }
-        delete_keys_from_dict(data, ["bar", "data"])
-        expected = {
-            "foo": {"list": ["item", "item", "item"]},
-            "hello": "world",
-        }
-        self.assertEqual(data, expected)
 
 
 class TestAsset(unittest.TestCase):
