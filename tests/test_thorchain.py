@@ -875,7 +875,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, "BNB.BNB")
-        self.assertEqual(event.event.stake_units, pool.total_units)
+        self.assertEqual(event.event.stake_units, 250750000)
         self.assertEqual(event.event.basis_points, 100)
         self.assertEqual(event.event.asymmetry, 0)
 
@@ -969,7 +969,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, "BNB.BNB")
-        self.assertEqual(event.event.stake_units, pool.total_units)
+        self.assertEqual(event.event.stake_units, 24824250000)
         self.assertEqual(event.event.basis_points, 10000)
         self.assertEqual(event.event.asymmetry, 0)
 

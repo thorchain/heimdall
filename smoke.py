@@ -355,8 +355,9 @@ class Smoker:
             # convert to Event objects
             events = [Event.from_dict(evt) for evt in raw_events]
 
-            # TODO handle reward events in simulator, for now filtering them out
-            events = [e for e in events if e.type != "rewards"]
+            # TODO ignore some un processed events type
+            not_implemented = ["rewards", "pool"]
+            events = [e for e in events if e.type not in not_implemented]
 
             # get simulator events
             sim_events = self.thorchain.get_events()

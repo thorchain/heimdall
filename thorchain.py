@@ -475,7 +475,7 @@ class ThorchainState:
             refund_event = RefundEvent(105, "refund reason message")
             return self.refund(txn, refund_event)
 
-        rune_amt, asset_amt = pool.unstake(txn.from_address, withdraw_basis_points)
+        unstake_units, rune_amt, asset_amt = pool.unstake(txn.from_address, withdraw_basis_points)
         self.set_pool(pool)
 
         # out transactions
@@ -489,7 +489,7 @@ class ThorchainState:
 
         # generate event for UNSTAKE transaction
         unstake_event = UnstakeEvent(
-            pool.asset, pool.total_units, withdraw_basis_points, 0
+            pool.asset, unstake_units, withdraw_basis_points, 0
         )
         event = Event("unstake", txn, out_txns, unstake_event)
         self.events.append(event)
@@ -952,7 +952,7 @@ class UnstakeEvent(Jsonable):
         self.pool = asset
         self.stake_units = int(pool_units)
         self.basis_points = int(basis_points)
-        self.asymmetry = asymmetry
+        self.asymmetry = int(float(asymmetry))
 
     def __eq__(self, other):
         return (
@@ -966,13 +966,13 @@ class UnstakeEvent(Jsonable):
         return (
             f"UnstakeEvent Pool {self.pool} | Units {self.stake_units:0,.0f} "
             f"| BasisPoints {self.basis_points:0,.0f} "
-            f"| Asymmetry {self.Asymmetry}"
+            f"| Asymmetry {self.asymmetry}"
         )
 
     def __repr__(self):
         return (
             f"<UnstakeEvent Pool {self.pool} | Units {self.stake_units} "
-            f"| BasisPoints {self.basis_points} | Asymmetry {self.Asymmetry}>"
+            f"| BasisPoints {self.basis_points} | Asymmetry {self.asymmetry}>"
         )
 
     @classmethod
@@ -1120,7 +1120,7 @@ class Pool(Jsonable):
         self.set_staker(staker)
         self.total_units -= units
         self.sub(rune_amt, asset_amt)
-        return rune_amt, asset_amt
+        return units, rune_amt, asset_amt
 
     def _calc_stake_units(self, pool_rune, pool_asset, stake_rune, stake_asset):
         """
