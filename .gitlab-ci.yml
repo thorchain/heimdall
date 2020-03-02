@@ -19,7 +19,7 @@ unit_tests:
     - coverage report -m
 
 integration:
-  image: docker:stable
+  image: docker/compose:alpine-1.25.4
   stage: integration
   services:
     - docker:dind
@@ -28,9 +28,7 @@ integration:
     DOCKER_DRIVER: overlay2
   before_script:
     - apk update
-    - apk add --no-cache --virtual .build-deps g++ python3-dev libffi-dev openssl-dev
-    - apk add python3 py-pip make git jq curl
-    - pip3 install docker-compose
+    - apk add git make
     - git clone --single-branch -b $CI_COMMIT_BRANCH https://gitlab.com/thorchain/thornode.git || git clone --single-branch -b master https://gitlab.com/thorchain/thornode.git
     - cd thornode
     - test master = $(git rev-parse --abbrev-ref HEAD) && docker pull registry.gitlab.com/thorchain/thornode:mocknet
