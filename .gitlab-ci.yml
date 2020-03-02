@@ -16,7 +16,7 @@ unit_tests:
     - apk add git
   script:
     - coverage run -m unittest tests/test_*
-    - codecov
+    - coverage report -m
 
 integration:
   image: docker:stable

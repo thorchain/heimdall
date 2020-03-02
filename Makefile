@@ -28,6 +28,9 @@ test:
 test-coverage:
 	@docker run --rm -e EXPORT=${EXPORT} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} coverage run -m unittest tests/test_*
 
+test-coverage-report:
+	@docker run --rm -e EXPORT=${EXPORT} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} coverage report -m
+
 test-watch:
 	@PYTHONPATH=${PWD} ptw tests/test_*
 
