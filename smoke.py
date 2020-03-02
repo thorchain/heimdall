@@ -1,9 +1,10 @@
 import argparse
 import logging
 import os
+import sys
 
 from chains import Binance, MockBinance
-from thorchain import ThorchainState, ThorchainClient
+from thorchain import ThorchainState, ThorchainClient, Event
 
 from common import Transaction, Coin, Asset
 
@@ -254,7 +255,11 @@ def main():
     smoker = Smoker(
         args.binance, args.thorchain, txns, args.generate_balances, args.fast_fail
     )
-    smoker.run()
+    try:
+        smoker.run()
+    except Exception as e:
+        logging.fatal(e)
+        sys.exit(1)
 
 
 class Smoker:
@@ -277,24 +282,21 @@ class Smoker:
         for i, txn in enumerate(self.txns):
             logging.info(f"{i} {txn}")
             if txn.memo == "SEED":
-                self.binance.seed(txn.toAddress, txn.coins)
-                self.mock_binance.seed(txn.toAddress, txn.coins)
+                self.binance.seed(txn.to_address, txn.coins)
+                self.mock_binance.seed(txn.to_address, txn.coins)
                 continue
 
             self.binance.transfer(txn)  # send transfer on binance chain
             outbounds = self.thorchain.handle(txn)  # process transaction in thorchain
             outbounds = self.thorchain.handle_fee(outbounds)
-            gas_amt = 0
             for outbound in outbounds:
                 gas = self.binance.transfer(
                     outbound
                 )  # send outbound txns back to Binance
-                gas_amt += gas.amount
-            # TODO: make this chain agnostic
+                outbound.gas = [gas]
+
             self.thorchain.handle_rewards()
-            self.thorchain.handle_gas(
-                Coin("BNB.BNB", gas_amt)
-            )  # subtract gas from pool(s)
+            self.thorchain.handle_gas(outbounds)
 
             # update memo with actual address (over alias name)
             for name, addr in self.mock_binance.aliases.items():
@@ -330,13 +332,11 @@ class Smoker:
                     if address == macct["address"]:
                         sacct = self.binance.get_account(name)
                         for bal in macct["balances"]:
-                            coin = Coin(bal["denom"], sacct.get(bal["denom"]))
-                            if not coin.is_equal(
-                                Coin(bal["denom"], int(bal["amount"]))
-                            ):
+                            coin1 = Coin(bal["denom"], sacct.get(bal["denom"]))
+                            coin2 = Coin(bal["denom"], int(bal["amount"]))
+                            if coin1 != coin2:
                                 raise Exception(
-                                    f"bad binance balance: {name} {bal['denom']} "
-                                    f"{bal['amount']} != {coin}"
+                                    f"bad binance balance: {name} {coin2} != {coin1}"
                                 )
 
             # check vault data
@@ -349,6 +349,43 @@ class Smoker:
                 sim = self.thorchain.bond_reward
                 real = vdata["bond_reward_rune"]
                 raise Exception(f"mismatching bond reward: {sim} != {real}")
+
+            # compare simulation events with real events
+            raw_events = self.thorchain_client.get_events()
+            # convert to Event objects
+            events = [Event.from_dict(evt) for evt in raw_events]
+
+            # TODO ignore some un processed events type
+            not_implemented = ["rewards", "pool"]
+            events = [e for e in events if e.type not in not_implemented]
+
+            # get simulator events
+            sim_events = self.thorchain.get_events()
+
+            # filter out gas event cause the order is not guaranteed
+            gas_events = [e for e in events if e.type == "gas"]
+            gas_sim_events = [e for e in sim_events if e.type == "gas"]
+
+            events = [e for e in events if e.type != "gas"]
+            sim_events = [e for e in sim_events if e.type != "gas"]
+
+            # check ordered events
+            for event, sim_event in zip(events, sim_events):
+                if event != sim_event:
+                    logging.error(
+                        f"Event Thorchain {event} \n   !="
+                        f"  \nEvent Simulator {sim_event}"
+                    )
+                    raise Exception("Events mismatch")
+
+            # check ordered gas events
+            for event, sim_event in zip(sorted(gas_events), sorted(gas_sim_events)):
+                if event != sim_event:
+                    logging.error(
+                        f"Event Thorchain {event} \n   !="
+                        f"  \nEvent Simulator {sim_event}"
+                    )
+                    raise Exception("Events mismatch")
 
 
 if __name__ == "__main__":

@@ -54,17 +54,17 @@ class MockBinance(HttpClient):
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
-        if txn.toAddress in self.aliases:
-            txn.toAddress = self.aliases[txn.toAddress]
+        if txn.to_address in self.aliases:
+            txn.to_address = self.aliases[txn.to_address]
 
-        if txn.fromAddress in self.aliases:
-            txn.fromAddress = self.aliases[txn.fromAddress]
+        if txn.from_address in self.aliases:
+            txn.from_address = self.aliases[txn.from_address]
 
         payload = {
-            "from": txn.fromAddress,
-            "to": txn.toAddress,
+            "from": txn.from_address,
+            "to": txn.to_address,
             "memo": txn.memo,
-            "coins": [coin.to_dict() for coin in txn.coins],
+            "coins": [coin.to_binance_fmt() for coin in txn.coins],
         }
         return self.post("/broadcast/easy", payload)
 
@@ -90,7 +90,7 @@ class Account:
 
         for coin in coins:
             for i, c in enumerate(self.balances):
-                if coin.asset.is_equal(c.asset):
+                if coin.asset == c.asset:
                     self.balances[i].amount -= coin.amount
                     if self.balances[i].amount < 0:
                         logging.info(f"Balance: {self.address} {self.balances[i]}")
@@ -107,7 +107,7 @@ class Account:
         for coin in coins:
             found = False
             for i, c in enumerate(self.balances):
-                if coin.asset.is_equal(c.asset):
+                if coin.asset == c.asset:
                     self.balances[i].amount += coin.amount
                     found = True
                     break
@@ -121,7 +121,7 @@ class Account:
         if isinstance(asset, str):
             asset = Asset(asset)
         for coin in self.balances:
-            if asset.is_equal(coin.asset):
+            if asset == coin.asset:
                 return coin.amount
 
         return 0
@@ -138,7 +138,7 @@ class Binance:
     A local simple implementation of binance chain
     """
 
-    chain = "Binance"
+    chain = "BNB"
 
     def __init__(self):
         self.accounts = {}
@@ -180,8 +180,8 @@ class Binance:
         if txn.chain != Binance.chain:
             raise Exception(f"Cannot transfer. {Binance.chain} is not {txn.chain}")
 
-        from_acct = self.get_account(txn.fromAddress)
-        to_acct = self.get_account(txn.toAddress)
+        from_acct = self.get_account(txn.from_address)
+        to_acct = self.get_account(txn.to_address)
 
         gas = self._calculateGas(txn.coins)
         from_acct.sub(gas)
