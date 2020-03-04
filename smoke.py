@@ -276,7 +276,7 @@ class Smoker:
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
 
-        time.Sleep(5)  # give thorchain extra time to start the blockchain
+        time.sleep(5)  # give thorchain extra time to start the blockchain
 
     def run(self):
         for i, txn in enumerate(self.txns):
