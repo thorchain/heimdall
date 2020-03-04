@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import time
 import sys
 
 from chains import Binance, MockBinance
@@ -149,9 +150,6 @@ txns = [
         Binance.chain, "USER-1", "VAULT", [Coin("BNB", 30000000)], "SWAP:BNB.BNB"
     ),
     Transaction(
-        Binance.chain, "USER-1", "VAULT", [Coin("BNB", 30000000)], "SWAP:BNB.BNB"
-    ),
-    Transaction(
         Binance.chain,
         "USER-1",
         "VAULT",
@@ -277,6 +275,8 @@ class Smoker:
 
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
+
+        time.sleep(5)  # give thorchain extra time to start the blockchain
 
     def run(self):
         for i, txn in enumerate(self.txns):
