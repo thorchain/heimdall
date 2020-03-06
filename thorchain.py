@@ -251,9 +251,7 @@ class ThorchainState:
             # TODO: subtract any remaining gas, from the pool rewards
             if self._total_liquidity() > 0:
                 for key, value in self.liquidity.items():
-                    share = int(
-                        round(get_share(value, self._total_liquidity(), pool_reward))
-                    )
+                    share = get_share(value, self._total_liquidity(), pool_reward)
                     pool = self.get_pool(key)
                     pool.rune_balance += share
                     self.set_pool(pool)
@@ -261,9 +259,7 @@ class ThorchainState:
                 pass  # TODO: Pool Rewards are based on Depth Share
         else:
             for key, value in self.liquidity.items():
-                share = int(
-                    round(get_share(staker_deficit, self._total_liquidity(), value))
-                )
+                share = get_share(staker_deficit, self._total_liquidity(), value)
                 pool = self.get_pool(key)
                 pool.rune_balance -= share
                 self.bond_reward += share
@@ -1026,8 +1022,7 @@ class Pool(Jsonable):
         if self.is_zero():
             return 0
 
-        share = get_share(self.rune_balance, self.asset_balance, val)
-        return int(round(share))
+        return get_share(self.rune_balance, self.asset_balance, val)
 
     def get_rune_in_asset(self, val):
         """
@@ -1036,8 +1031,7 @@ class Pool(Jsonable):
         if self.is_zero():
             return 0
 
-        share = get_share(self.asset_balance, self.rune_balance, val)
-        return int(round(share))
+        return get_share(self.asset_balance, self.rune_balance, val)
 
     def get_asset_fee(self):
         """
@@ -1144,15 +1138,9 @@ class Pool(Jsonable):
         Calculate amount of rune/asset to unstake
         Returns staker units, rune amount, asset amount
         """
-        units_to_claim = int(
-            round(get_share(withdraw_basis_points, 10000, staker_units))
-        )
-        withdraw_rune = int(
-            round(get_share(units_to_claim, self.total_units, self.rune_balance))
-        )
-        withdraw_asset = int(
-            round(get_share(units_to_claim, self.total_units, self.asset_balance))
-        )
+        units_to_claim = get_share(withdraw_basis_points, 10000, staker_units)
+        withdraw_rune = get_share(units_to_claim, self.total_units, self.rune_balance)
+        withdraw_asset = get_share(units_to_claim, self.total_units, self.asset_balance)
         units_after = staker_units - units_to_claim
         if units_after < 0:
             logging.error(f"Overdrawn staker units: {self}")
