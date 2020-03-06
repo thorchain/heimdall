@@ -255,6 +255,7 @@ def main():
     )
     try:
         smoker.run()
+        sys.exit(smoker.exit)
     except Exception as e:
         logging.fatal(e)
         sys.exit(1)
@@ -275,10 +276,12 @@ class Smoker:
 
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
+        self.exit = 0
 
         time.sleep(5)  # give thorchain extra time to start the blockchain
 
     def error(self, err):
+        self.exit = 1
         if self.fast_fail:
             raise Exception(err)
         else:
