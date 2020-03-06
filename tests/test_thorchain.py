@@ -1,6 +1,6 @@
 import unittest
 
-from thorchain import ThorchainState, Pool, Event, RefundEvent
+from thorchain import ThorchainState, Pool, Event, RefundEvent, RewardEvent
 from chains import Binance
 
 from common import Transaction, Coin
@@ -1201,6 +1201,20 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         self.assertNotEqual(list_unsorted, list_sorted)
         self.assertEqual(sorted(list_unsorted), list_sorted)
 
+        reward_event1 = RewardEvent(
+            1000, [Coin("BNB.BNB", 20000), Coin("BNB.LOK-3C0", 30000)]
+        )
+        reward_event2 = RewardEvent(
+            1000, [Coin("BNB.LOK-3C0", 30000), Coin("BNB.BNB", 20000)]
+        )
+        event1 = Event(
+            "rewards", Transaction.empty_txn(), None, reward_event1, status="Success"
+        )
+        event2 = Event(
+            "rewards", Transaction.empty_txn(), None, reward_event2, status="Success"
+        )
+        self.assertEqual(event1, event2)
+
     def test_to_json(self):
         refund_event = RefundEvent(105, "memo can't be empty")
         txn = Transaction(
@@ -1252,6 +1266,44 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "memo can't be empty")
+
+        value = {
+            "id": 1,
+            "type": "rewards",
+            "in_tx": {
+                "chain": "",
+                "from_address": "",
+                "to_address": "",
+                "memo": "",
+                "coins": None,
+                "gas": None,
+            },
+            "out_txs": None,
+            "gas": None,
+            "event": {
+                "bond_reward": "1161881",
+                "pool_rewards": [
+                    {"asset": "BNB.BNB", "amount": -105552},
+                    {"asset": "BNB.LOK-3C0", "amount": -577814631},
+                ],
+            },
+            "status": "Success",
+        }
+        event = Event.from_dict(value)
+        self.assertEqual(event.id, 1)
+        self.assertEqual(event.type, "rewards")
+        self.assertEqual(event.in_tx.chain, "")
+        self.assertEqual(event.in_tx.from_address, "")
+        self.assertEqual(event.in_tx.to_address, "")
+        self.assertEqual(event.in_tx.memo, "")
+        self.assertEqual(event.in_tx.coins, None)
+        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.bond_reward, 1161881)
+        self.assertEqual(event.event.pool_rewards[0].asset, "BNB.BNB")
+        self.assertEqual(event.event.pool_rewards[0].amount, -105552)
+        self.assertEqual(event.event.pool_rewards[1].asset, "BNB.LOK-3C0")
+        self.assertEqual(event.event.pool_rewards[1].amount, -577814631)
 
         value = {
             "id": 1,

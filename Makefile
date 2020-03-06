@@ -23,13 +23,13 @@ format:
 	@docker run --rm -v ${PWD}:/app cytopia/black /app
 
 test:
-	@docker run --rm -e EXPORT=${EXPORT} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python -m unittest tests/test_*
+	@docker run --rm -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python -m unittest tests/test_*
 
 test-coverage:
-	@docker run --rm -e EXPORT=${EXPORT} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} coverage run -m unittest tests/test_*
+	@docker run --rm -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} coverage run -m unittest tests/test_*
 
 test-coverage-report:
-	@docker run --rm -e EXPORT=${EXPORT} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} coverage report -m
+	@docker run --rm -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} coverage report -m
 
 test-watch:
 	@PYTHONPATH=${PWD} ptw tests/test_*
