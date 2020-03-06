@@ -1,5 +1,6 @@
 import requests
 import json
+from decimal import Decimal, getcontext
 
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
@@ -30,7 +31,8 @@ def get_share(part, total, alloc):
     Calculates the share of something
     (Allocation / (Total / part))
     """
-    return float(alloc) / (float(total) / float(part))
+    getcontext().prec = 18
+    return int(round(Decimal(alloc) / (Decimal(total) / Decimal(part))))
 
 
 class HttpClient:
