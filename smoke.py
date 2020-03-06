@@ -255,6 +255,7 @@ def main():
     )
     try:
         smoker.run()
+        sys.exit(smoker.exit)
     except Exception as e:
         logging.fatal(e)
         sys.exit(1)
@@ -275,8 +276,16 @@ class Smoker:
 
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
+        self.exit = 0
 
         time.sleep(5)  # give thorchain extra time to start the blockchain
+
+    def error(self, err):
+        self.exit = 1
+        if self.fast_fail:
+            raise Exception(err)
+        else:
+            logging.error(err)
 
     def run(self):
         for i, txn in enumerate(self.txns):
@@ -313,12 +322,12 @@ class Smoker:
             for rpool in real_pools:
                 spool = self.thorchain.get_pool(Asset(rpool["asset"]))
                 if int(spool.rune_balance) != int(rpool["balance_rune"]):
-                    raise Exception(
+                    self.error(
                         f"bad pool rune balance: {rpool['asset']} "
                         f"{spool.rune_balance} != {rpool['balance_rune']}"
                     )
                 if int(spool.asset_balance) != int(rpool["balance_asset"]):
-                    raise Exception(
+                    self.error(
                         f"bad pool asset balance: {rpool['asset']} "
                         f"{spool.asset_balance} != {rpool['balance_asset']}"
                     )
@@ -335,7 +344,7 @@ class Smoker:
                             coin1 = Coin(bal["denom"], sacct.get(bal["denom"]))
                             coin2 = Coin(bal["denom"], int(bal["amount"]))
                             if coin1 != coin2:
-                                raise Exception(
+                                self.error(
                                     f"bad binance balance: {name} {coin2} != {coin1}"
                                 )
 
@@ -344,11 +353,11 @@ class Smoker:
             if int(vdata["total_reserve"]) != self.thorchain.reserve:
                 sim = self.thorchain.reserve
                 real = vdata["total_reserve"]
-                raise Exception(f"mismatching reserves: {sim} != {real}")
+                self.error(f"mismatching reserves: {sim} != {real}")
             if int(vdata["bond_reward_rune"]) != self.thorchain.bond_reward:
                 sim = self.thorchain.bond_reward
                 real = vdata["bond_reward_rune"]
-                raise Exception(f"mismatching bond reward: {sim} != {real}")
+                self.error(f"mismatching bond reward: {sim} != {real}")
 
             # compare simulation events with real events
             raw_events = self.thorchain_client.get_events()
@@ -376,7 +385,7 @@ class Smoker:
                         f"Event Thorchain {event} \n   !="
                         f"  \nEvent Simulator {sim_event}"
                     )
-                    raise Exception("Events mismatch")
+                    self.error("Events mismatch")
 
             # check ordered gas events
             for event, sim_event in zip(sorted(gas_events), sorted(gas_sim_events)):
@@ -385,7 +394,7 @@ class Smoker:
                         f"Event Thorchain {event} \n   !="
                         f"  \nEvent Simulator {sim_event}"
                     )
-                    raise Exception("Events mismatch")
+                    self.error("Events mismatch")
 
 
 if __name__ == "__main__":
