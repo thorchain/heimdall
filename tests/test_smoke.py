@@ -6,7 +6,7 @@ from pprint import pformat
 from deepdiff import DeepDiff
 
 from chains import Binance
-from thorchain import ThorchainState
+from thorchain import ThorchainState, Event
 from breakpoint import Breakpoint
 
 from smoke import txns
@@ -24,6 +24,16 @@ def get_balance(idx):
     raise Exception("could not find idx")
 
 
+def get_events():
+    """
+    Retrieve expected events
+    """
+    with open("data/smoke_test_events.json") as f:
+        events = json.load(f)
+        return [Event.from_dict(evt) for evt in events]
+    raise Exception("could not load events")
+
+
 class TestSmoke(unittest.TestCase):
     """
     This runs tests with a pre-determined list of transactions and an expected
@@ -34,6 +44,8 @@ class TestSmoke(unittest.TestCase):
 
     def test_smoke(self):
         export = os.environ.get("EXPORT", None)
+        export_events = os.environ.get("EXPORT_EVENTS", None)
+
         failure = False
         snaps = []
         bnb = Binance()  # init local binance chain
@@ -51,6 +63,7 @@ class TestSmoke(unittest.TestCase):
                 for txn in outbound:
                     gas = bnb.transfer(txn)  # send outbound txns back to Binance
                     txn.gas = [gas]
+                thorchain.handle_rewards()
                 thorchain.handle_gas(outbound)  # subtract gas from pool(s)
 
             # generated a snapshop picture of thorchain and bnb
@@ -72,9 +85,23 @@ class TestSmoke(unittest.TestCase):
                 if not export:
                     raise Exception("did not match!")
 
+        # check events against expected
+        expected_events = get_events()
+        for event, expected_event in zip(thorchain.events, expected_events):
+            if event != expected_event:
+                logging.error(
+                    f"Event Thorchain {event} \n   !="
+                    f"  \nEvent Expected {expected_event}"
+                )
+                raise Exception("Events mismatch")
+
         if export:
             with open(export, "w") as fp:
                 json.dump(snaps, fp, indent=4)
+
+        if export_events:
+            with open(export_events, "w") as fp:
+                json.dump(thorchain.events, fp, default=lambda x: x.__dict__, indent=4)
 
         if failure:
             raise Exception("Fail")

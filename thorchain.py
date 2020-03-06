@@ -247,6 +247,10 @@ class ThorchainState:
         self.reserve -= bond_reward + pool_reward
         self.bond_reward += bond_reward  # add to bond reward pool
 
+        # Generate rewards event
+        reward_event = RewardEvent(0, [])
+        reward_event.bond_reward = bond_reward
+
         if pool_reward > 0:
             # TODO: subtract any remaining gas, from the pool rewards
             if self._total_liquidity() > 0:
@@ -255,6 +259,9 @@ class ThorchainState:
                     pool = self.get_pool(key)
                     pool.rune_balance += share
                     self.set_pool(pool)
+
+                    # Append pool reward to event
+                    reward_event.pool_rewards.append(Coin(pool.asset, share))
             else:
                 pass  # TODO: Pool Rewards are based on Depth Share
         else:
@@ -264,6 +271,15 @@ class ThorchainState:
                 pool.rune_balance -= share
                 self.bond_reward += share
                 self.set_pool(pool)
+
+                # Append pool reward to event
+                reward_event.pool_rewards.append(Coin(pool.asset, -share))
+
+        # generate event REWARDS
+        event = Event(
+            "rewards", Transaction.empty_txn(), None, reward_event, status="Success"
+        )
+        self.events.append(event)
 
         # clear summed liquidity fees
         self.liquidity = {}
@@ -785,6 +801,8 @@ Event {self.event}
                 event.event = SwapEvent.from_dict(value["event"])
             if value["type"] == "reserve":
                 event.event = ReserveEvent.from_dict(value["event"])
+            if value["type"] == "rewards":
+                event.event = RewardEvent.from_dict(value["event"])
         return event
 
 
@@ -794,7 +812,7 @@ class RefundEvent(Jsonable):
     """
 
     def __init__(self, code, reason):
-        self.code = code
+        self.code = int(code)
         self.reason = reason
 
     def __eq__(self, other):
@@ -808,7 +826,40 @@ class RefundEvent(Jsonable):
 
     @classmethod
     def from_dict(cls, value):
-        return cls(int(value["code"]), value["reason"])
+        return cls(value["code"], value["reason"])
+
+
+class RewardEvent(Jsonable):
+    """
+    Event reward class specific to REWARD events.
+    """
+
+    def __init__(self, bond_reward, pool_rewards):
+        self.bond_reward = int(bond_reward)
+        self.pool_rewards = pool_rewards
+
+    def __eq__(self, other):
+        return self.bond_reward == other.bond_reward and sorted(
+            self.pool_rewards
+        ) == sorted(other.pool_rewards)
+
+    def __str__(self):
+        return (
+            f"RewardEvent Bond Reward {self.bond_reward} | "
+            f"Pool Rewards {self.pool_rewards}"
+        )
+
+    def __repr__(self):
+        return (
+            f"<RewardEvent Bond Reward {self.bond_reward} | "
+            f"Pool Rewards {self.pool_rewards}>"
+        )
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(
+            value["bond_reward"], [Coin.from_dict(c) for c in value["pool_rewards"]]
+        )
 
 
 class ReserveEvent(Jsonable):
