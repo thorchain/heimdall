@@ -31,6 +31,9 @@ def main():
     parser.add_argument(
         "--fast-fail", default=False, type=bool, help="Generate balances (bool)"
     )
+    parser.add_argument(
+        "--no-verify", default=False, type=bool, help="Skip verifying results"
+    )
 
     args = parser.parse_args()
 
@@ -38,7 +41,7 @@ def main():
         txns = json.load(f)
 
     smoker = Smoker(
-        args.binance, args.thorchain, txns, args.generate_balances, args.fast_fail
+        args.binance, args.thorchain, txns, args.generate_balances, args.fast_fail, args.no_verify,
     )
     try:
         smoker.run()
@@ -49,7 +52,7 @@ def main():
 
 
 class Smoker:
-    def __init__(self, bnb, thor, txns, gen_balances=False, fast_fail=False):
+    def __init__(self, bnb, thor, txns, gen_balances=False, fast_fail=False, no_verify=False):
         self.binance = Binance()
         self.thorchain = ThorchainState()
 
@@ -63,6 +66,7 @@ class Smoker:
 
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
+        self.no_verify = no_verify
         self.exit = 0
 
         time.sleep(5)  # give thorchain extra time to start the blockchain
@@ -100,6 +104,11 @@ class Smoker:
                 txn.memo = txn.memo.replace(name, addr)
 
             self.mock_binance.transfer(txn)  # trigger mock Binance transaction
+
+            # check if we are verifying the results
+            if self.no_verify:
+                continue
+
             self.mock_binance.wait_for_blocks(len(outbounds))
             self.thorchain_client.wait_for_blocks(
                 2
