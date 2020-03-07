@@ -3,17 +3,19 @@ import logging
 import os
 import time
 import sys
+import json
 
 from chains import Binance, MockBinance
 from thorchain import ThorchainState, ThorchainClient, Event
 
-from common import Transaction, Coin, Asset
+from common import Coin, Asset
 
 # Init logging
 logging.basicConfig(
     format="%(asctime)s | %(levelname)-8s | %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -32,7 +34,7 @@ def main():
 
     args = parser.parse_args()
 
-    with open("data/smoke_test_transactions.json", 'r') as f:
+    with open("data/smoke_test_transactions.json", "r") as f:
         txns = json.load(f)
 
     smoker = Smoker(

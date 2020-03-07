@@ -11,6 +11,7 @@ from breakpoint import Breakpoint
 
 from common import Transaction
 
+
 def get_balance(idx):
     """
     Retrieve expected balance with given id
@@ -50,7 +51,7 @@ class TestSmoke(unittest.TestCase):
         bnb = Binance()  # init local binance chain
         thorchain = ThorchainState()  # init local thorchain
 
-        with open("data/smoke_test_transactions.json", 'r') as f:
+        with open("data/smoke_test_transactions.json", "r") as f:
             loaded = json.load(f)
 
         for i, txn in enumerate(loaded):
