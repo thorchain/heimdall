@@ -41,7 +41,12 @@ def main():
         txns = json.load(f)
 
     smoker = Smoker(
-        args.binance, args.thorchain, txns, args.generate_balances, args.fast_fail, args.no_verify,
+        args.binance,
+        args.thorchain,
+        txns,
+        args.generate_balances,
+        args.fast_fail,
+        args.no_verify,
     )
     try:
         smoker.run()
@@ -52,7 +57,9 @@ def main():
 
 
 class Smoker:
-    def __init__(self, bnb, thor, txns, gen_balances=False, fast_fail=False, no_verify=False):
+    def __init__(
+        self, bnb, thor, txns, gen_balances=False, fast_fail=False, no_verify=False
+    ):
         self.binance = Binance()
         self.thorchain = ThorchainState()
 
@@ -104,15 +111,14 @@ class Smoker:
                 txn.memo = txn.memo.replace(name, addr)
 
             self.mock_binance.transfer(txn)  # trigger mock Binance transaction
-
-            # check if we are verifying the results
-            if self.no_verify:
-                continue
-
             self.mock_binance.wait_for_blocks(len(outbounds))
             self.thorchain_client.wait_for_blocks(
                 2
             )  # wait an additional block to pick up gas
+
+            # check if we are verifying the results
+            if self.no_verify:
+                continue
 
             # compare simulation pools vs real pools
             real_pools = self.thorchain_client.get_pools()
