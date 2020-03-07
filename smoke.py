@@ -8,7 +8,7 @@ import json
 from chains import Binance, MockBinance
 from thorchain import ThorchainState, ThorchainClient, Event
 
-from common import Coin, Asset
+from common import Transaction, Coin, Asset
 
 # Init logging
 logging.basicConfig(
@@ -76,6 +76,7 @@ class Smoker:
 
     def run(self):
         for i, txn in enumerate(self.txns):
+            txn = Transaction.from_dict(txn)
             logging.info(f"{i} {txn}")
             if txn.memo == "SEED":
                 self.binance.seed(txn.to_address, txn.coins)
