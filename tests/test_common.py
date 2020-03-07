@@ -66,6 +66,11 @@ class TestCoin(unittest.TestCase):
         self.assertEqual(coin.amount, 1000000)
         self.assertEqual(coin.asset, "BNB.RUNE-A1F")
 
+        coin = Coin("RUNE-A1F", 400_000 * 100000000)
+        c = coin.__dict__
+        self.assertEqual(c["amount"], 400_000 * 100000000)
+        self.assertEqual(c["asset"], "BNB.RUNE-A1F")
+
     def test_is_zero(self):
         coin = Coin("BNB.BNB", 100)
         self.assertEqual(coin.is_zero(), False)

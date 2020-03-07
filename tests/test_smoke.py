@@ -9,7 +9,7 @@ from chains import Binance
 from thorchain import ThorchainState, Event
 from breakpoint import Breakpoint
 
-from smoke import txns
+from common import Transaction
 
 
 def get_balance(idx):
@@ -51,7 +51,11 @@ class TestSmoke(unittest.TestCase):
         bnb = Binance()  # init local binance chain
         thorchain = ThorchainState()  # init local thorchain
 
-        for i, txn in enumerate(txns):
+        with open("data/smoke_test_transactions.json", "r") as f:
+            loaded = json.load(f)
+
+        for i, txn in enumerate(loaded):
+            txn = Transaction.from_dict(txn)
             logging.info(f"{i} {txn}")
             if txn.memo == "SEED":
                 bnb.seed(txn.to_address, txn.coins)
