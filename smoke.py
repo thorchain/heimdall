@@ -15,224 +15,6 @@ logging.basicConfig(
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
-# A list of smoke test transaction
-txns = [
-    Transaction(
-        Binance.chain,
-        "MASTER",
-        "CONTRIBUTOR-1",
-        [Coin("BNB", 100000000), Coin("RUNE-A1F", 400_000 * 100000000)],
-        "SEED",
-    ),
-    Transaction(
-        Binance.chain,
-        "MASTER",
-        "USER-1",
-        [
-            Coin("BNB", 50000000),
-            Coin("RUNE-A1F", 50000000000),
-            Coin("LOK-3C0", 50000000000),
-        ],
-        "SEED",
-    ),
-    Transaction(
-        Binance.chain,
-        "MASTER",
-        "STAKER-1",
-        [
-            Coin("BNB", 200000000),
-            Coin("RUNE-A1F", 100000000000),
-            Coin("LOK-3C0", 40000000000),
-        ],
-        "SEED",
-    ),
-    Transaction(
-        Binance.chain,
-        "MASTER",
-        "STAKER-2",
-        [
-            Coin("BNB", 200000000),
-            Coin("RUNE-A1F", 50900000000),
-            Coin("LOK-3C0", 10000000000),
-        ],
-        "SEED",
-    ),
-    # Contribute to the reserve
-    Transaction(
-        Binance.chain,
-        "CONTRIBUTOR-1",
-        "VAULT",
-        [Coin("RUNE-A1F", 400_000 * 100000000)],
-        "RESERVE",
-    ),
-    # Staking
-    Transaction(
-        Binance.chain,
-        "STAKER-1",
-        "VAULT",
-        [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
-        "STAKE:BNB.BNB",
-    ),
-    Transaction(
-        Binance.chain,
-        "STAKER-1",
-        "VAULT",
-        [Coin("LOK-3C0", 40000000000), Coin("RUNE-A1F", 50000000000)],
-        "STAKE:BNB.LOK-3C0",
-    ),
-    Transaction(
-        Binance.chain,
-        "STAKER-2",
-        "VAULT",
-        [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
-        "",
-    ),
-    Transaction(
-        Binance.chain,
-        "STAKER-2",
-        "VAULT",
-        [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
-        "ABDG?",
-    ),
-    Transaction(
-        Binance.chain,
-        "STAKER-2",
-        "VAULT",
-        [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
-        "STAKE:",
-    ),
-    Transaction(
-        Binance.chain,
-        "STAKER-2",
-        "VAULT",
-        [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
-        "STAKE:BNB.TCAN-014",
-    ),
-    Transaction(
-        Binance.chain,
-        "STAKER-2",
-        "VAULT",
-        [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
-        "STAKE:RUNE-A1F",
-    ),
-    Transaction(
-        Binance.chain, "STAKER-2", "VAULT", [Coin("BNB", 30000000)], "STAKE:BNB.BNB"
-    ),
-    Transaction(
-        Binance.chain,
-        "STAKER-2",
-        "VAULT",
-        [Coin("RUNE-A1F", 10000000000)],
-        "STAKE:BNB.BNB",
-    ),
-    Transaction(
-        Binance.chain,
-        "STAKER-2",
-        "VAULT",
-        [Coin("BNB", 90000000), Coin("RUNE-A1F", 30000000000)],
-        "STAKE:BNB.BNB",
-    ),
-    # Adding
-    Transaction(
-        Binance.chain,
-        "STAKER-2",
-        "VAULT",
-        [Coin("BNB", 30000000), Coin("RUNE-A1F", 5000000000)],
-        "ADD:BNB.BNB",
-    ),
-    # Misc
-    Transaction(Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 200000000)], " "),
-    Transaction(
-        Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 200000000)], "ABDG?"
-    ),
-    # Swaps
-    Transaction(
-        Binance.chain, "USER-1", "VAULT", [Coin("BNB", 30000000)], "SWAP:BNB.BNB"
-    ),
-    Transaction(
-        Binance.chain,
-        "USER-1",
-        "VAULT",
-        [Coin("BNB", 30000000), Coin("RUNE-A1F", 100000000)],
-        "SWAP:BNB.BNB",
-    ),
-    Transaction(
-        Binance.chain, "USER-1", "VAULT", [Coin("RUNE-A1F", 100001000)], "SWAP:BNB.BNB"
-    ),
-    Transaction(
-        Binance.chain,
-        "USER-1",
-        "VAULT",
-        [Coin("RUNE-A1F", 10000000000)],
-        "SWAP:BNB.BNB::26572599",
-    ),
-    Transaction(
-        Binance.chain,
-        "USER-1",
-        "VAULT",
-        [Coin("RUNE-A1F", 10000000000)],
-        "SWAP:BNB.BNB",
-    ),
-    Transaction(
-        Binance.chain, "USER-1", "VAULT", [Coin("BNB", 10000000)], "SWAP:BNB.RUNE-A1F",
-    ),
-    Transaction(
-        Binance.chain,
-        "USER-1",
-        "VAULT",
-        [Coin("RUNE-A1F", 10000000000)],
-        "SWAP:BNB.BNB:STAKER-1:23853375",
-    ),
-    Transaction(
-        Binance.chain,
-        "USER-1",
-        "VAULT",
-        [Coin("RUNE-A1F", 10000000000)],
-        "SWAP:BNB.BNB:STAKER-1:22460886",
-    ),
-    Transaction(
-        Binance.chain,
-        "USER-1",
-        "VAULT",
-        [Coin("BNB", 10000000)],
-        "SWAP:BNB.RUNE-A1F:bnbSTAKER-1",
-    ),
-    Transaction(
-        Binance.chain,
-        "USER-1",
-        "VAULT",
-        [Coin("LOK-3C0", 5000000000)],
-        "SWAP:BNB.RUNE-A1F",
-    ),
-    Transaction(
-        Binance.chain,
-        "USER-1",
-        "VAULT",
-        [Coin("RUNE-A1F", 5000000000)],
-        "SWAP:BNB.LOK-3C0",
-    ),
-    Transaction(
-        Binance.chain, "USER-1", "VAULT", [Coin("LOK-3C0", 5000000000)], "SWAP:BNB.BNB",
-    ),
-    Transaction(
-        Binance.chain, "USER-1", "VAULT", [Coin("BNB", 5000000)], "SWAP:BNB.LOK-3C0"
-    ),
-    # Unstaking (withdrawing)
-    Transaction(
-        Binance.chain, "STAKER-1", "VAULT", [Coin("BNB", 1)], "WITHDRAW:BNB.BNB:5000",
-    ),
-    Transaction(
-        Binance.chain, "STAKER-1", "VAULT", [Coin("BNB", 1)], "WITHDRAW:BNB.LOK-3C0"
-    ),
-    Transaction(
-        Binance.chain, "STAKER-1", "VAULT", [Coin("BNB", 1)], "WITHDRAW:BNB.BNB:10000",
-    ),
-    Transaction(
-        Binance.chain, "STAKER-2", "VAULT", [Coin("BNB", 1)], "WITHDRAW:BNB.BNB"
-    ),
-]
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -250,6 +32,9 @@ def main():
 
     args = parser.parse_args()
 
+    with open("data/smoke_test_transactions.json", 'r') as f:
+        txns = json.load(f)
+
     smoker = Smoker(
         args.binance, args.thorchain, txns, args.generate_balances, args.fast_fail
     )
@@ -262,7 +47,7 @@ def main():
 
 
 class Smoker:
-    def __init__(self, bnb, thor, txns=txns, gen_balances=False, fast_fail=False):
+    def __init__(self, bnb, thor, txns, gen_balances=False, fast_fail=False):
         self.binance = Binance()
         self.thorchain = ThorchainState()
 
