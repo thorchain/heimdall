@@ -32,7 +32,9 @@ def get_share(part, total, alloc):
     (Allocation / (Total / part))
     """
     getcontext().prec = 18
-    return int(round(Decimal(alloc) / (Decimal(total) / Decimal(part))))
+    x = int(round(Decimal(alloc) / (Decimal(total) / Decimal(part))))
+    print("Get Share:", alloc, total, part, x)
+    return x
 
 
 class HttpClient:

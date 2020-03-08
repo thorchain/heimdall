@@ -35,7 +35,7 @@ test-watch:
 	@PYTHONPATH=${PWD} ptw tests/test_*
 
 smoke:
-	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python smoke.py
+	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python smoke.py --fast-fail=True
 
 health:
 	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python health.py
