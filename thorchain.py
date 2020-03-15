@@ -133,7 +133,8 @@ class ThorchainState:
                 # figure out how much rune is an equal amount to gas.amount
                 rune_amt = pool.get_asset_in_rune(gas.amount)
                 self.reserve -= rune_amt  # take rune from the reserve
-                self._add_gas_reimburse(pool.asset, rune_amt) # add the rune amount to gas reimburse 
+                # add the rune amount to gas reimburse
+                self._add_gas_reimburse(pool.asset, rune_amt)
                 pool.add(rune_amt, 0)  # replenish gas costs with rune
 
             self.set_pool(pool)
@@ -725,10 +726,12 @@ class ThorchainState:
 
     def handle_gas_reimburse(self):
         if self._gas_reimburse:
-            gas = [Coin("RUNE-A1F", rune_amt) for (_, rune_amt) in self._gas_reimburse.items()]
+            gas = [Coin("RUNE-A1F", rune_amt)
+                   for (_, rune_amt) in self._gas_reimburse.items()]
             reimburse_to = [asset for asset in self._gas_reimburse]
             gas_event = GasEvent(gas, "gas_reimburse", reimburse_to)
-            event = Event("gas", Transaction.empty_txn(), None, gas_event, status="Success")
+            event = Event("gas", Transaction.empty_txn(),
+                          None, gas_event, status="Success")
             self.events.append(event)
 
             self._gas_reimburse = {}
@@ -738,6 +741,7 @@ class ThorchainState:
             self._gas_reimburse[asset] = rune_amt
         else:
             self._gas_reimburse[asset] += rune_amt
+
 
 class Event(Jsonable):
     """
@@ -930,13 +934,24 @@ class GasEvent(Jsonable):
         sreimburse = self.reimburse_to or []
         ogas = other.gas or []
         oreimburse = other.reimburse_to or []
-        return self.gas_type == other.gas_type and sorted(zip(sgas, sreimburse)) == sorted(zip(ogas, oreimburse))
+        return (
+            self.gas_type == other.gas_type
+            and sorted(zip(sgas, sreimburse)) == sorted(zip(ogas, oreimburse))
+        )
 
     def __str__(self):
-        return f"GasEvent {self.gas} | Type {self.gas_type} | Reimburse {self.reimburse_to}"
+        return (
+            f"GasEvent {self.gas} | "
+            f"Type {self.gas_type} | "
+            f"Reimburse {self.reimburse_to}"
+        )
 
     def __repr__(self):
-        return f"<GasEvent {self.gas} | Type {self.gas_type} | Reimburse {self.reimburse_to}>"
+        return (
+            f"<GasEvent {self.gas} | "
+            f"Type {self.gas_type} | "
+            f"Reimburse {self.reimburse_to}>"
+        )
 
     @classmethod
     def from_dict(cls, value):
