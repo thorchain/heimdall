@@ -105,6 +105,7 @@ class Smoker:
 
             self.thorchain.handle_rewards()
             self.thorchain.handle_gas(outbounds)
+            self.thorchain.handle_gas_reimburse()
 
             # update memo with actual address (over alias name)
             for name, addr in self.mock_binance.aliases.items():

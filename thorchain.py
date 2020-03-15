@@ -63,6 +63,7 @@ class ThorchainState:
         self.liquidity = {}
         self.total_bonded = 0
         self.bond_reward = 0
+        self._gas_reimburse = dict()
 
     def get_pool(self, asset):
         """
@@ -132,6 +133,7 @@ class ThorchainState:
                 # figure out how much rune is an equal amount to gas.amount
                 rune_amt = pool.get_asset_in_rune(gas.amount)
                 self.reserve -= rune_amt  # take rune from the reserve
+                self._add_gas_reimburse(pool.asset, rune_amt) # add the rune amount to gas reimburse 
                 pool.add(rune_amt, 0)  # replenish gas costs with rune
 
             self.set_pool(pool)
@@ -721,6 +723,21 @@ class ThorchainState:
         """
         return int((x * X * Y) / (x + X) ** 2)
 
+    def handle_gas_reimburse(self):
+        if self._gas_reimburse:
+            gas = [Coin("RUNE-A1F", rune_amt) for (_, rune_amt) in self._gas_reimburse.items()]
+            reimburse_to = [asset for asset in self._gas_reimburse]
+            gas_event = GasEvent(gas, "gas_reimburse", reimburse_to)
+            event = Event("gas", Transaction.empty_txn(), None, gas_event, status="Success")
+            self.events.append(event)
+
+            self._gas_reimburse = {}
+
+    def _add_gas_reimburse(self, asset, rune_amt):
+        if asset not in self._gas_reimburse:
+            self._gas_reimburse[asset] = rune_amt
+        else:
+            self._gas_reimburse[asset] += rune_amt
 
 class Event(Jsonable):
     """
@@ -901,27 +918,33 @@ class GasEvent(Jsonable):
     Event gas class specific to GAS events.
     """
 
-    def __init__(self, gas, gas_type):
+    def __init__(self, gas, gas_type, reimburse_to=None):
         if gas and not isinstance(gas, list):
             gas = [gas]
         self.gas = gas
         self.gas_type = gas_type
+        self.reimburse_to = reimburse_to
 
     def __eq__(self, other):
         sgas = self.gas or []
+        sreimburse = self.reimburse_to or []
         ogas = other.gas or []
-        return self.gas_type == other.gas_type and sorted(sgas) == sorted(ogas)
+        oreimburse = other.reimburse_to or []
+        return self.gas_type == other.gas_type and sorted(zip(sgas, sreimburse)) == sorted(zip(ogas, oreimburse))
 
     def __str__(self):
-        return f"GasEvent {self.gas} | Type {self.gas_type}"
+        return f"GasEvent {self.gas} | Type {self.gas_type} | Reimburse {self.reimburse_to}"
 
     def __repr__(self):
-        return f"<GasEvent {self.gas} | Type {self.gas_type}>"
+        return f"<GasEvent {self.gas} | Type {self.gas_type} | Reimburse {self.reimburse_to}>"
 
     @classmethod
     def from_dict(cls, value):
         gas = [Coin.from_dict(g) for g in value["gas"]]
-        return cls(gas, value["gas_type"])
+        reimburse_to = None
+        if value["reimburse_to"]:
+            reimburse_to = [Asset(a) for a in value["reimburse_to"]]
+        return cls(gas, value["gas_type"], reimburse_to)
 
 
 class SwapEvent(Jsonable):
