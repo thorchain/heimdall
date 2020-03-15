@@ -67,8 +67,9 @@ class Health:
         """Retrieve data from APIs needed to run health checks.
         """
         self.thorchain_pools = self.thorchain_client.get_pools()
-        for pool in self.thorchain_pools:
-            self.midgard_pools.append(self.midgard_client.get_pool(pool["asset"]))
+
+        pool_assets = [p["asset"] for p in self.thorchain_pools]
+        self.midgard_pools = self.midgard_client.get_pool(pool_assets)
 
     def get_midgard_pool(self, asset):
         """Get midgard pool from class member.

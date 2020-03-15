@@ -6,11 +6,13 @@ class MidgardClient(HttpClient):
     A client implementation to midgard API
     """
 
-    def get_pool(self, asset):
-        """Get pool data for a specific asset.
+    def get_pool(self, assets):
+        """Get pool data for specific set of assets.
 
-        :param str asset: Asset name
+        :param str asset: Assets name
         :returns: Pool data
 
         """
-        return self.fetch(f"/v1/pools/{asset}")
+
+        assets = ",".join(assets)
+        return self.fetch(f"/v1/pools/detail?asset={assets}")
