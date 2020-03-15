@@ -957,7 +957,7 @@ class GasEvent(Jsonable):
     def from_dict(cls, value):
         gas = [Coin.from_dict(g) for g in value["gas"]]
         reimburse_to = None
-        if value["reimburse_to"]:
+        if "reimburse_to" in value and value["reimburse_to"]:
             reimburse_to = [Asset(a) for a in value["reimburse_to"]]
         return cls(gas, value["gas_type"], reimburse_to)
 
