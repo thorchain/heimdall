@@ -81,6 +81,17 @@ class ThorchainState:
         """
         for i, p in enumerate(self.pools):
             if p.asset == pool.asset:
+                if (
+                    pool.asset_balance == 0 or pool.rune_balance == 0
+                ) and pool.status == "Enabled":
+
+                    pool.status = "Bootstrap"
+
+                    # Generate pool event with new status
+                    pool_event = PoolEvent(pool.asset, pool.status)
+                    event = Event("pool", Transaction.empty_txn(), None, pool_event)
+                    self.events.append(event)
+
                 self.pools[i] = pool
                 return
 
@@ -726,12 +737,15 @@ class ThorchainState:
 
     def handle_gas_reimburse(self):
         if self._gas_reimburse:
-            gas = [Coin("RUNE-A1F", rune_amt)
-                   for (_, rune_amt) in self._gas_reimburse.items()]
+            gas = [
+                Coin("RUNE-A1F", rune_amt)
+                for (_, rune_amt) in self._gas_reimburse.items()
+            ]
             reimburse_to = [asset for asset in self._gas_reimburse]
             gas_event = GasEvent(gas, "gas_reimburse", reimburse_to)
-            event = Event("gas", Transaction.empty_txn(),
-                          None, gas_event, status="Success")
+            event = Event(
+                "gas", Transaction.empty_txn(), None, gas_event, status="Success"
+            )
             self.events.append(event)
 
             self._gas_reimburse = {}
@@ -824,6 +838,8 @@ Event {self.event}
                 event.event = ReserveEvent.from_dict(value["event"])
             if value["type"] == "rewards":
                 event.event = RewardEvent.from_dict(value["event"])
+            if value["type"] == "pool":
+                event.event = PoolEvent.from_dict(value["event"])
         return event
 
 
@@ -848,6 +864,29 @@ class RefundEvent(Jsonable):
     @classmethod
     def from_dict(cls, value):
         return cls(value["code"], value["reason"])
+
+
+class PoolEvent(Jsonable):
+    """
+    Event pool class specific to POOL events.
+    """
+
+    def __init__(self, pool, status):
+        self.pool = pool
+        self.status = status
+
+    def __eq__(self, other):
+        return self.pool == other.pool and self.status == other.status
+
+    def __str__(self):
+        return f'PoolEvent Pool {self.pool} | Status "{self.status}"'
+
+    def __repr__(self):
+        return f'<PoolEvent Pool {self.pool} | Status "{self.status}">'
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(value["pool"], value["status"])
 
 
 class RewardEvent(Jsonable):
@@ -934,10 +973,9 @@ class GasEvent(Jsonable):
         sreimburse = self.reimburse_to or []
         ogas = other.gas or []
         oreimburse = other.reimburse_to or []
-        return (
-            self.gas_type == other.gas_type
-            and sorted(zip(sgas, sreimburse)) == sorted(zip(ogas, oreimburse))
-        )
+        return self.gas_type == other.gas_type and sorted(
+            zip(sgas, sreimburse)
+        ) == sorted(zip(ogas, oreimburse))
 
     def __str__(self):
         return (
@@ -1095,7 +1133,7 @@ class AddEvent(Jsonable):
 
 
 class Pool(Jsonable):
-    def __init__(self, asset, rune_amt=0, asset_amt=0):
+    def __init__(self, asset, rune_amt=0, asset_amt=0, status="Enabled"):
         self.asset = asset
         if isinstance(asset, str):
             self.asset = Asset(asset)
@@ -1103,6 +1141,7 @@ class Pool(Jsonable):
         self.asset_balance = asset_amt
         self.total_units = 0
         self.stakers = []
+        self.status = status
 
     def get_asset_in_rune(self, val):
         """
@@ -1137,6 +1176,7 @@ class Pool(Jsonable):
         """
         self.rune_balance -= rune_amt
         self.asset_balance -= asset_amt
+
         if self.asset_balance < 0 or self.rune_balance < 0:
             logging.error(f"Overdrawn pool: {self}")
             raise Exception("insufficient funds")

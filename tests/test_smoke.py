@@ -11,6 +11,12 @@ from breakpoint import Breakpoint
 
 from common import Transaction
 
+# Init logging
+logging.basicConfig(
+    format="%(asctime)s | %(levelname)-8s | %(message)s",
+    level=os.environ.get("LOGLEVEL", "INFO"),
+)
+
 
 def get_balance(idx):
     """
@@ -69,6 +75,7 @@ class TestSmoke(unittest.TestCase):
                     txn.gas = [gas]
                 thorchain.handle_rewards()
                 thorchain.handle_gas(outbound)  # subtract gas from pool(s)
+                thorchain.handle_gas_reimburse()
 
             # generated a snapshop picture of thorchain and bnb
             snap = Breakpoint(thorchain, bnb).snapshot(i, len(outbound))
@@ -97,7 +104,8 @@ class TestSmoke(unittest.TestCase):
                     f"Event Thorchain {event} \n   !="
                     f"  \nEvent Expected {expected_event}"
                 )
-                raise Exception("Events mismatch")
+                if not export_events:
+                    raise Exception("Events mismatch")
 
         if export:
             with open(export, "w") as fp:
