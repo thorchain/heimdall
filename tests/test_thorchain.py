@@ -959,8 +959,21 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful unstake
         events = thorchain.get_events()
-        self.assertEqual(len(events), 6)
+        self.assertEqual(len(events), 7)
+        # we get 2 new events
+
+        # first new event = pool event bootstrap
         event = events[5]
+        self.assertEqual(event.status, "Success")
+        self.assertEqual(event.type, "pool")
+        self.assertEqual(event.in_tx.to_json(), Transaction.empty_txn().to_json())
+        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.gas, None)
+        self.assertEqual(event.event.pool, "BNB.BNB")
+        self.assertEqual(event.event.status, "Bootstrap")
+
+        # second new event = unstake event
+        event = events[6]
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "unstake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
@@ -994,8 +1007,8 @@ class TestThorchainState(unittest.TestCase):
 
         # check refund event generated for unstake with 0 units left
         events = thorchain.get_events()
-        self.assertEqual(len(events), 7)
-        event = events[6]
+        self.assertEqual(len(events), 8)
+        event = events[7]
         self.assertEqual(event.status, "Refund")
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
