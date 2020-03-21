@@ -1,0 +1,125 @@
+[
+    {
+        "chain": "BNB",
+        "from_address": "MASTER",
+        "to_address": "CONTRIBUTOR-1",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 100000000
+            },
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 40000000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "MASTER",
+        "to_address": "STAKER-1",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 20000000000
+            },
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 100000000000
+            },
+            {
+                "asset": "BNB.LOK-3C0",
+                "amount": 40000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "MASTER",
+        "to_address": "STAKER-2",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 20000000000
+            },
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 100000000000
+            },
+            {
+                "asset": "BNB.LOK-3C0",
+                "amount": 40000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "CONTRIBUTOR-1",
+        "to_address": "VAULT",
+        "memo": "RESERVE",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 40000000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:BNB.BNB",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 15000000000
+            },
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:BNB.LOK-3C0",
+        "coins": [
+            {
+                "asset": "BNB.LOK-3C0",
+                "amount": 40000000000
+            },
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-2",
+        "to_address": "VAULT",
+        "memo": "STAKE:BNB.BNB",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 90000000
+            },
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 30000000000
+            }
+        ],
+        "gas": null
+    }
+]
