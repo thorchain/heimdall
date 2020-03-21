@@ -47,6 +47,9 @@ class MockBinance(HttpClient):
     def accounts(self):
         return self.fetch("/accounts")
 
+    def get_account(self, acc):
+        return self.fetch("/accounts/" + acc)
+
     def transfer(self, txn):
         """
         Make a transaction/transfer on mock binance

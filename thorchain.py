@@ -47,6 +47,15 @@ class ThorchainClient(HttpClient):
     def get_pools(self):
         return self.fetch("/thorchain/pools")
 
+    def get_node_accounts(self):
+        return self.fetch("/thorchain/nodeaccounts")
+
+    def get_asgards(self):
+        return self.fetch("/thorchain/vaults/asgard")
+
+    def get_yggdrasil(self):
+        return self.fetch("/thorchain/vaults/yggdrasil")
+
     def get_events(self, id=1):
         return self.fetch(f"/thorchain/events/{id}")
 
