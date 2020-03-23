@@ -45,6 +45,9 @@ def calc(bnb_addr, thorchain_addr):
         total_bond += int(na['bond'])
 
     pools = thorchain_client.get_pools()
+    if len(pools) == 0:
+        print("no pools, exiting")
+        return
     pool_rune = 0
     pool_address = pools[0]['pool_address']
 
