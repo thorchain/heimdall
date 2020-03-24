@@ -477,7 +477,7 @@
         "memo": "WITHDRAW:BNB.BNB:5000",
         "coins": [
             {
-                "asset": "BNB.BNB",
+                "asset": "BNB.RUNE-A1F",
                 "amount": 1
             }
         ],
@@ -490,7 +490,7 @@
         "memo": "WITHDRAW:BNB.LOK-3C0",
         "coins": [
             {
-                "asset": "BNB.BNB",
+                "asset": "BNB.RUNE-A1F",
                 "amount": 1
             }
         ],
@@ -503,7 +503,7 @@
         "memo": "WITHDRAW:BNB.BNB:10000",
         "coins": [
             {
-                "asset": "BNB.BNB",
+                "asset": "BNB.RUNE-A1F",
                 "amount": 1
             }
         ],
@@ -516,7 +516,7 @@
         "memo": "WITHDRAW:BNB.BNB",
         "coins": [
             {
-                "asset": "BNB.BNB",
+                "asset": "BNB.RUNE-A1F",
                 "amount": 1
             }
         ],

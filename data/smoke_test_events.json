@@ -2928,7 +2928,7 @@
             "coins": [
                 {
                     "amount": 1,
-                    "asset": "BNB.BNB"
+                    "asset": "BNB.RUNE-A1F"
                 }
             ],
             "from_address": "STAKER-1",
@@ -3107,7 +3107,7 @@
             "coins": [
                 {
                     "amount": 1,
-                    "asset": "BNB.BNB"
+                    "asset": "BNB.RUNE-A1F"
                 }
             ],
             "from_address": "STAKER-1",
@@ -3267,7 +3267,7 @@
             "coins": [
                 {
                     "amount": 1,
-                    "asset": "BNB.BNB"
+                    "asset": "BNB.RUNE-A1F"
                 }
             ],
             "from_address": "STAKER-1",
@@ -3446,7 +3446,7 @@
             "coins": [
                 {
                     "amount": 1,
-                    "asset": "BNB.BNB"
+                    "asset": "BNB.RUNE-A1F"
                 }
             ],
             "from_address": "STAKER-2",
@@ -3477,7 +3477,7 @@
                 "chain": "BNB",
                 "coins": [
                     {
-                        "amount": 112799380,
+                        "amount": 112724380,
                         "asset": "BNB.BNB"
                     }
                 ],
@@ -3547,7 +3547,7 @@
             "chain": "BNB",
             "coins": [
                 {
-                    "amount": 112799380,
+                    "amount": 112724380,
                     "asset": "BNB.BNB"
                 }
             ],

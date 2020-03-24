@@ -949,11 +949,11 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(outbound[0].coins[0].asset, "BNB.RUNE-A1F")
         self.assertEqual(outbound[0].coins[0].amount, 49500000000)
         self.assertEqual(outbound[1].coins[0].asset, "BNB.BNB")
-        self.assertEqual(outbound[1].coins[0].amount, 148500000)
+        self.assertEqual(outbound[1].coins[0].amount, 148425000)
 
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 0)
-        self.assertEqual(pool.asset_balance, 0)
+        self.assertEqual(pool.asset_balance, 75000)
         self.assertEqual(pool.get_staker("STAKER-1").units, 0)
         self.assertEqual(pool.total_units, 0)
 
@@ -1001,7 +1001,7 @@ class TestThorchainState(unittest.TestCase):
 
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 0)
-        self.assertEqual(pool.asset_balance, 0)
+        self.assertEqual(pool.asset_balance, 75000)
         self.assertEqual(pool.get_staker("STAKER-1").units, 0)
         self.assertEqual(pool.total_units, 0)
 
