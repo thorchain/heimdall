@@ -174,7 +174,8 @@ class ThorchainState:
                             pool.get_asset_fee()
                         )  # default to zero if pool is empty
                         pool.add(0, asset_fee)
-                        pool.sub(rune_fee, 0)
+                        if pool.rune_balance >= rune_fee:
+                            pool.sub(rune_fee, 0)
                         self.set_pool(pool)
                         coin.amount -= asset_fee
 
@@ -494,6 +495,13 @@ class ThorchainState:
 
         asset = Asset(parts[1])
 
+        # add any rune to the reserve
+        for coin in txn.coins:
+            if coin.asset.is_rune():
+                self.reserve += coin.amount
+            else:
+                coin.amount = 0
+
         pool = self.get_pool(asset)
         staker = pool.get_staker(txn.from_address)
         if staker.is_zero():
@@ -504,6 +512,12 @@ class ThorchainState:
         unstake_units, rune_amt, asset_amt = pool.unstake(
             txn.from_address, withdraw_basis_points
         )
+
+        # if this is our last staker of bnb, subtract a little BNB for gas.
+        if pool.total_units == 0 and pool.asset.is_bnb():
+            asset_amt -= 75000
+            pool.asset_balance += 75000
+
         self.set_pool(pool)
 
         # out transactions

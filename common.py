@@ -31,6 +31,8 @@ def get_share(part, total, alloc):
     Calculates the share of something
     (Allocation / (Total / part))
     """
+    if total == 0:
+        return 0
     getcontext().prec = 18
     return int(round(Decimal(alloc) / (Decimal(total) / Decimal(part))))
 
@@ -78,6 +80,12 @@ class Asset(str, Jsonable):
         if len(value.split(".")) < 2:
             value = f"BNB.{value}"  # default to binance chain
         return super().__new__(cls, value)
+
+    def is_bnb(self):
+        """
+        Is this asset bnb?
+        """
+        return self.get_symbol().startswith("BNB")
 
     def is_rune(self):
         """
