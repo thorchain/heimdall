@@ -61,13 +61,15 @@ class Health:
             logging.error(error)
 
         if len(self.errors):
+            self.errors = []
             raise Exception("Health checks failed")
 
     def retrieve_data(self):
         """Retrieve data from APIs needed to run health checks.
         """
         self.thorchain_pools = self.thorchain_client.get_pools()
-
+        if len(self.thorchain_pools) == 0:
+            return
         pool_assets = [p["asset"] for p in self.thorchain_pools]
         self.midgard_pools = self.midgard_client.get_pool(pool_assets)
 

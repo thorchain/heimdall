@@ -40,4 +40,7 @@ smoke:
 health:
 	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python health.py
 
-.PHONY: build lint format test test-watch health smoke
+shell:
+	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app -it ${IMAGE_NAME} sh
+
+.PHONY: build lint format test test-watch health smoke shell
