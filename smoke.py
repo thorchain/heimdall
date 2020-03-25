@@ -5,7 +5,7 @@ import time
 import sys
 import json
 
-from tenacity import *
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 from chains import Binance, MockBinance
 from thorchain import ThorchainState, ThorchainClient, Event
@@ -18,8 +18,12 @@ logging.basicConfig(
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
+
 def log_health_retry(retry_state):
-    logging.warning("Health checks failed, waiting for Midgard to query new events and retry...")
+    logging.warning(
+        "Health checks failed, waiting for Midgard to query new events and retry..."
+    )
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -183,7 +187,12 @@ class Smoker:
                     )
                     self.error("Events mismatch")
 
-    @retry(stop=stop_after_attempt(5), wait=wait_fixed(1), reraise=True, after=log_health_retry)
+    @retry(
+        stop=stop_after_attempt(5),
+        wait=wait_fixed(1),
+        reraise=True,
+        after=log_health_retry,
+    )
     def run_health(self):
         self.health.run()
 
