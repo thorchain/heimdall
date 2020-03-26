@@ -51,7 +51,7 @@ def main():
     with open("data/smoke_test_transactions.json", "r") as f:
         txns = json.load(f)
 
-    health = Health(args.thorchain, args.midgard)
+    health = Health(args.thorchain, args.midgard, args.binance)
 
     smoker = Smoker(
         args.binance,
