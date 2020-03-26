@@ -44,6 +44,9 @@ class ThorchainClient(HttpClient):
     def get_vault_data(self):
         return self.fetch("/thorchain/vault")
 
+    def get_asgard_vault(self):
+        return self.fetch("/thorchain/vaults/asgard")[0]
+
     def get_pools(self):
         return self.fetch("/thorchain/pools")
 
