@@ -14,7 +14,7 @@ class MidgardPoolError(PoolError):
     """Pool midgard error"""
 
     def __init__(self, pool, field, expected, obtained):
-        msg = f"Midgard Pool [{pool}] || {field} ==> {expected} != {obtained}"
+        msg = f"Midgard Pool {pool} | {field} ==> {expected} != {obtained} Midgard"
         super().__init__(pool, msg=msg)
         self.msg = msg
         self.field = field
