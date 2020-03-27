@@ -113,7 +113,7 @@ class Smoker:
             self.mock_binance.transfer(txn)  # trigger mock Binance transaction
             self.mock_binance.wait_for_blocks(len(outbounds))
             self.thorchain_client.wait_for_blocks(
-                2
+                4
             )  # wait an additional block to pick up gas
 
             # check if we are verifying the results
@@ -168,7 +168,7 @@ class Smoker:
             events = [Event.from_dict(evt) for evt in raw_events]
 
             # TODO ignore some un processed events type
-            not_implemented = ["pool"]
+            not_implemented = ["pool", "gas_reimburse"]
             events = [e for e in events if e.type not in not_implemented]
 
             # get simulator events
