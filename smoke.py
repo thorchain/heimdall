@@ -170,20 +170,11 @@ class Smoker:
             # TODO ignore some un processed events type
             not_implemented = ["pool"]
             events = [e for e in events if e.type not in not_implemented]
-            tmpevts = []
-            for evt in events:
-                logging.info(evt)
-                if not isinstance(evt, GasEvent):
-                    tmpevts.append(evt)
-                    logging.info("added")
-                    continue
-                if evt.gas_type != "gas_reimburse":
-                    tmpevts.append(evt)
-                    logging.info("added")
-                    continue
-                logging.info("skipp!")
-
-            events = tmpevts
+            events = [
+                e
+                for e in events
+                if not isinstance(e.event, GasEvent) or (e.event.gas_type != "gas_reimburse")
+            ] # removing any "gas reimburse" events
 
             # get simulator events
             sim_events = self.thorchain.get_events()
@@ -197,8 +188,6 @@ class Smoker:
                         f"  \nEvent Simulator {sim_event}"
                     )
 
-                    logging.info(events)
-                    logging.info(sim_events)
                     self.error("Events mismatch")
 
 
