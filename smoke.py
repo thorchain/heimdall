@@ -225,7 +225,7 @@ class Smoker:
             self.mock_binance.transfer(txn)  # trigger mock Binance transaction
             self.mock_binance.wait_for_blocks(len(outbounds))
             self.thorchain_client.wait_for_blocks(
-                2
+                4
             )  # wait an additional block to pick up gas
 
             # check if we are verifying the results
