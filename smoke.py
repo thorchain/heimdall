@@ -170,6 +170,9 @@ class Smoker:
             # TODO ignore some un processed events type
             not_implemented = ["pool", "gas_reimburse"]
             events = [e for e in events if e.type not in not_implemented]
+            for evt in events:
+                logging.info("evt " + evt)
+                logging.info("type " + evt.type)
 
             # get simulator events
             sim_events = self.thorchain.get_events()
