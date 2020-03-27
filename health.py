@@ -136,8 +136,7 @@ class Health:
             if mpool_units != tpool_units:
                 self.errors.append(
                     Exception(
-                        f"Bad Midgard pool units: "
-                        f"{mpool_units} != {tpool_units}"
+                        f"Bad Midgard pool units: " f"{mpool_units} != {tpool_units}"
                     )
                 )
 
