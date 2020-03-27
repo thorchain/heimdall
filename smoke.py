@@ -173,7 +173,7 @@ class Smoker:
 
             # get simulator events
             sim_events = self.thorchain.get_events()
-            logging.info("Events: " + len(events) + "/" + len(sim_events))
+            logging.info("Events: " + str(len(events)) + "/" + str(len(sim_events)))
 
             # filter out gas event cause the order is not guaranteed
             gas_events = [e for e in events if e.type == "gas"]
