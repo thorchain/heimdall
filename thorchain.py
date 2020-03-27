@@ -526,10 +526,10 @@ class ThorchainState:
         # out transactions
         chain, _from, _to = txn.chain, txn.from_address, txn.to_address
         out_txns = [
+            Transaction(chain, _to, _from, [Coin(asset, asset_amt)], "OUTBOUND:TODO"),
             Transaction(
                 chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], "OUTBOUND:TODO"
             ),
-            Transaction(chain, _to, _from, [Coin(asset, asset_amt)], "OUTBOUND:TODO"),
         ]
 
         # generate event for UNSTAKE transaction

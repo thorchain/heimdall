@@ -116,12 +116,12 @@
         "memo": "STAKE:BNB.LOK-3C0",
         "coins": [
             {
-                "asset": "BNB.LOK-3C0",
-                "amount": 40000000000
-            },
-            {
                 "asset": "BNB.RUNE-A1F",
                 "amount": 50000000000
+            },
+            {
+                "asset": "BNB.LOK-3C0",
+                "amount": 40000000000
             }
         ],
         "gas": null
@@ -151,12 +151,12 @@
         "memo": "ABDG?",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 50000000000
-            },
-            {
                 "asset": "BNB.BNB",
                 "amount": 150000000
+            },
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 50000000000
             }
         ],
         "gas": null

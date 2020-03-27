@@ -178,7 +178,6 @@ class Smoker:
 
             # get simulator events
             sim_events = self.thorchain.get_events()
-            logging.info("Events: " + str(len(events)) + "/" + str(len(sim_events)))
 
             # check ordered events
             for event, sim_event in zip(events, sim_events):
