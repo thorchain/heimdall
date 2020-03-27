@@ -182,6 +182,9 @@ class Smoker:
                         f"Event Thorchain {event} \n   !="
                         f"  \nEvent Simulator {sim_event}"
                     )
+
+                    logging.info(events)
+                    logging.info(sim_events)
                     self.error("Events mismatch")
 
 
