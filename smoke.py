@@ -173,6 +173,7 @@ class Smoker:
             for evt in events:
                 logging.info("evt evt")
                 logging.info(evt.type)
+                logging.info(evt)
 
             # get simulator events
             sim_events = self.thorchain.get_events()
