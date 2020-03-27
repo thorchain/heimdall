@@ -8,7 +8,7 @@ import json
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from chains import Binance, MockBinance
-from thorchain import ThorchainState, ThorchainClient, Event
+from thorchain import ThorchainState, ThorchainClient, Event 
 from health import Health
 from common import Transaction, Coin, Asset
 
@@ -161,7 +161,7 @@ class Smoker:
 
         # get simulator events
         sim_events = self.thorchain.get_events()
-
+        
         # filter out gas event cause the order is not guaranteed
         gas_events = [e for e in events if e.type == "gas"]
         gas_sim_events = [e for e in sim_events if e.type == "gas"]
@@ -178,14 +178,16 @@ class Smoker:
                 )
                 self.error("Events mismatch")
 
-            # check ordered gas events
-            for event, sim_event in zip(sorted(gas_events), sorted(gas_sim_events)):
-                if event != sim_event:
-                    logging.error(
-                        f"Event Thorchain {event} \n   !="
-                        f"  \nEvent Simulator {sim_event}"
-                    )
-                    self.error("Events mismatch")
+        # check ordered gas events
+        for event, sim_event in zip(sorted(gas_events), sorted(gas_sim_events)):
+            if event != sim_event:
+                logging.error(
+                    f"Event Thorchain {event} \n   !="
+                    f"  \nEvent Simulator {sim_event}"
+                )
+                logging.info(gas_events)
+                logging.info(gas_sim_events)
+                self.error("Events gas mismatch")
 
     @retry(
         stop=stop_after_attempt(5),
