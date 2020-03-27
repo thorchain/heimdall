@@ -173,7 +173,7 @@ class Smoker:
             events = [
                 e
                 for e in events
-                if not isinstance(e, GasEvent) or (e.gas_type not in ["gas_reimburse"])
+                if not isinstance(e, GasEvent) or (e.gas_type != "gas_reimburse")
             ]
 
             # get simulator events
