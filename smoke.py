@@ -168,12 +168,9 @@ class Smoker:
             events = [Event.from_dict(evt) for evt in raw_events]
 
             # TODO ignore some un processed events type
-            not_implemented = ["pool", "gas_reimburse"]
+            not_implemented = ["pool"]
             events = [e for e in events if e.type not in not_implemented]
-            for evt in events:
-                logging.info("evt evt")
-                logging.info(evt.type)
-                logging.info(evt)
+            events = [e for e in events if e.gas_type not in ["gas_reimburse"]]
 
             # get simulator events
             sim_events = self.thorchain.get_events()
