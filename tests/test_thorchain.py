@@ -1,6 +1,6 @@
 import unittest
 
-from thorchain import ThorchainState, Pool, Event, RefundEvent, RewardEvent
+from thorchain import ThorchainState, Pool, Event, RefundEvent, RewardEvent, GasEvent
 from chains import Binance
 
 from common import Transaction, Coin
@@ -1154,6 +1154,23 @@ class TestThorchainState(unittest.TestCase):
 
 
 class TestEvent(unittest.TestCase):
+
+    def test_filt(self):
+
+        events = [
+                RefundEvent(105, "memo can't be empty"),
+                GasEvent(None, "gas_reimburse", ""),
+                GasEvent(None, "gas_spend", ""),
+                ]
+
+        events = [
+                e
+                for e in events
+                if not isinstance(e, GasEvent) or (e.gas_type != "gas_reimburse")
+            ]
+
+        self.assertEqual(len(events), 1)
+
     def test_str(self):
         refund_event = RefundEvent(105, "memo can't be empty")
         txn = Transaction(
