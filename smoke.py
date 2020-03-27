@@ -175,24 +175,8 @@ class Smoker:
             sim_events = self.thorchain.get_events()
             logging.info("Events: " + str(len(events)) + "/" + str(len(sim_events)))
 
-            # filter out gas event cause the order is not guaranteed
-            gas_events = [e for e in events if e.type == "gas"]
-            gas_sim_events = [e for e in sim_events if e.type == "gas"]
-
-            events = [e for e in events if e.type != "gas"]
-            sim_events = [e for e in sim_events if e.type != "gas"]
-
             # check ordered events
             for event, sim_event in zip(events, sim_events):
-                if event != sim_event:
-                    logging.error(
-                        f"Event Thorchain {event} \n   !="
-                        f"  \nEvent Simulator {sim_event}"
-                    )
-                    self.error("Events mismatch")
-
-            # check ordered gas events
-            for event, sim_event in zip(sorted(gas_events), sorted(gas_sim_events)):
                 if event != sim_event:
                     logging.error(
                         f"Event Thorchain {event} \n   !="
