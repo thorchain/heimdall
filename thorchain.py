@@ -704,7 +704,7 @@ class ThorchainState:
 
         # if we emit zero, return immediately
         if emit == 0:
-            return Coin(asset, emit), 0, 0, pool
+            return Coin(asset, emit), 0, 0, 0, pool
 
         newPool = deepcopy(pool)  # copy of pool
         if coin.is_rune():
@@ -1028,7 +1028,9 @@ class SwapEvent(Jsonable):
     Event swap class specific to SWAP events.
     """
 
-    def __init__(self, pool, price_target, trade_slip, liquidity_fee, liquidity_fee_in_rune):
+    def __init__(
+        self, pool, price_target, trade_slip, liquidity_fee, liquidity_fee_in_rune
+    ):
         self.pool = pool
         self.price_target = int(price_target)
         self.trade_slip = int(trade_slip)
