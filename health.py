@@ -3,7 +3,8 @@ import sys
 import os
 import logging
 
-from chains import MockBinance
+from segwit_addr import decode_address, address_from_public_key
+from chains import MockBinance, Account
 from thorchain import ThorchainClient
 from midgard import MidgardClient
 from common import Coin
@@ -43,14 +44,13 @@ class Health:
         self.errors = []
         self.thorchain_client = ThorchainClient(thor)
         self.thorchain_pools = []
-        self.thorchain_asgard_vault = None
-        self.thorchain_asgard_vault_address = None
+        self.thorchain_asgard_vaults = []
 
         self.midgard_client = MidgardClient(midgard)
         self.midgard_pools = []
 
-        self.mock_binance = MockBinance(binance)
-        self.mock_binance_accounts = []
+        self.binance_client = MockBinance(binance)
+        self.binance_accounts = []
 
     def run(self):
         """Run health checks
@@ -76,10 +76,20 @@ class Health:
     def retrieve_data(self):
         """Retrieve data from APIs needed to run health checks.
         """
-        self.thorchain_asgard_vault_address = self.thorchain_client.get_vault_address()
-        self.thorchain_asgard_vault = self.thorchain_client.get_asgard_vault()
+        self.thorchain_asgard_vaults = self.thorchain_client.get_asgard_vaults()
+        for vault in self.thorchain_asgard_vaults:
+            if vault["coins"]:
+                vault["coins"] = [Coin.from_dict(c) for c in vault["coins"]]
 
-        self.mock_binance_accounts = self.mock_binance.accounts()
+        self.binance_accounts = []
+        accounts = self.binance_client.accounts()
+        for acct in accounts:
+            account = Account(acct["address"])
+            if acct["balances"]:
+                account.balances = [
+                    Coin(b["denom"], b["amount"]) for b in acct["balances"]
+                ]
+                self.binance_accounts.append(account)
 
         self.thorchain_pools = self.thorchain_client.get_pools()
         if len(self.thorchain_pools) == 0:
@@ -117,7 +127,7 @@ class Health:
             if trune_coin != mrune_coin:
                 self.errors.append(
                     Exception(
-                        f"Bad Midgard pool balance: BNB.RUNE-A1F"
+                        f"Bad Midgard pool balance: BNB.RUNE-A1F "
                         f"{mrune_coin} != {trune_coin}"
                     )
                 )
@@ -136,28 +146,48 @@ class Health:
             if mpool_units != tpool_units:
                 self.errors.append(
                     Exception(
-                        f"Bad Midgard pool units: "
-                        f"{mpool_units} != {tpool_units}"
+                        f"Bad Midgard pool units: " f"{mpool_units} != {tpool_units}"
                     )
                 )
 
-    def check_asgard_vault(self):
-        for macct in self.mock_binance_accounts:
-            if macct["address"] != self.thorchain_asgard_vault_address:
+    def get_vault_address_from_pubkey(self, pubkey, hrp="tbnb"):
+        """
+        Get vault address for a specific hrp (human readable part)
+        bech32 encoded from a Bech32 encoded public key(secp256k1).
+        The vault pubkey is Bech32 encoded and amino encoded which means
+        when we bech32 decode, we also need to get rid of the first 5 bytes
+        used by amino encoding to figure out a type to unmarshal correctly.
+        Only then we get the raw pubkey bytes format secp256k1.
+
+        :param string pubkey: public key Bech32 encoded & amino encoded
+        :param string hrp: human readable part of the bech32 encoded result
+        :returns: string bech32 encoded address
+
+        """
+        raw_pubkey = decode_address(pubkey)[5:]
+        return address_from_public_key(raw_pubkey, hrp)
+
+    def check_binance_accounts(self, vault):
+        vault_addr = self.get_vault_address_from_pubkey(vault["pub_key"])
+        for acct in self.binance_accounts:
+            if acct.address != vault_addr:
                 continue
-            for bal in macct["balances"]:
-                macct_coin = Coin(bal["denom"], bal["amount"])
-                for coin in self.thorchain_asgard_vault["coins"]:
-                    asgard_coin = Coin.from_dict(coin)
-                    if asgard_coin.asset != macct_coin.asset:
+            for bcoin in acct.balances:
+                for vcoin in vault["coins"]:
+                    if vcoin.asset != bcoin.asset:
                         continue
-                    if asgard_coin != macct_coin:
+                    if vcoin != bcoin:
                         self.errors.append(
                             Exception(
-                                f"Bad Asgard vault balance: {asgard_coin.asset} "
-                                f"{asgard_coin} != {macct_coin} (Binance balance)"
+                                f"Bad Asgard vault balance: {vcoin.asset} "
+                                f"{vcoin} != {bcoin} (Binance balance)"
                             )
                         )
+
+    def check_asgard_vault(self):
+        for vault in self.thorchain_asgard_vaults:
+            # Check Binance balances
+            self.check_binance_accounts(vault)
 
 
 if __name__ == "__main__":
