@@ -255,4 +255,10 @@ class Transaction(Jsonable):
 
     @classmethod
     def empty_txn(self):
-        return Transaction("", "", "", None, id="0000000000000000000000000000000000000000000000000000000000000000")
+        return Transaction(
+            "",
+            "",
+            "",
+            None,
+            id="0000000000000000000000000000000000000000000000000000000000000000",
+        )

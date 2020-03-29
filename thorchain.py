@@ -619,6 +619,8 @@ class ThorchainState:
 
         pools = []
 
+        in_txn = txn
+
         if not txn.coins[0].is_rune() and not asset.is_rune():
             # its a double swap
             pool = self.get_pool(source)
@@ -636,12 +638,20 @@ class ThorchainState:
             out_txns = [
                 Transaction(txn.chain, address, txn.to_address, [emit], txn.memo)
             ]
+
+            # here we copy the txn to break references cause the tx is split in 2 events
+            # and gas is handled only once
+            in_txn = deepcopy(txn)
             swap_event = SwapEvent(pool.asset, 0, trade_slip, liquidity_fee)
-            event = Event("swap", deepcopy(txn), out_txns, swap_event)
+            event = Event("swap", in_txn, out_txns, swap_event)
             self.events.append(event)
 
+            # and we remove the gas on in_txn for the next event so we don't
+            # have it twice
+            in_txn.gas = None
+
             pools.append(pool)
-            txn.coins[0] = emit
+            in_txn.coins[0] = emit
             source = Asset("RUNE-A1F")
             target = asset
 
@@ -654,9 +664,9 @@ class ThorchainState:
         if pool.is_zero():
             # FIXME real world message
             refund_event = RefundEvent(105, "refund reason message: pool is zero")
-            return self.refund(txn, refund_event)
+            return self.refund(in_txn, refund_event)
 
-        emit, liquidity_fee, trade_slip, pool = self.swap(txn.coins[0], asset)
+        emit, liquidity_fee, trade_slip, pool = self.swap(in_txn.coins[0], asset)
         pools.append(pool)
 
         # check emit is non-zero and is not less than the target trade
@@ -664,7 +674,7 @@ class ThorchainState:
             refund_event = RefundEvent(
                 109, f"emit asset {emit.amount} less than price limit {target_trade}"
             )
-            return self.refund(txn, refund_event)
+            return self.refund(in_txn, refund_event)
 
         if str(pool.asset) not in self.liquidity:
             self.liquidity[str(pool.asset)] = 0
@@ -676,13 +686,14 @@ class ThorchainState:
 
         out_txns = [
             Transaction(
-                txn.chain, txn.to_address, address, [emit], f"OUTBOUND:{txn.id}"
+                in_txn.chain, in_txn.to_address, address, [emit], f"OUTBOUND:{txn.id}"
             )
         ]
 
         # generate event for SWAP transaction
         swap_event = SwapEvent(pool.asset, target_trade, trade_slip, liquidity_fee)
-        event = Event("swap", txn, out_txns, swap_event)
+
+        event = Event("swap", in_txn, out_txns, swap_event)
         self.events.append(event)
 
         return out_txns

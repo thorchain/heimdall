@@ -2854,12 +2854,7 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": [
-                {
-                    "amount": 37500,
-                    "asset": "BNB.BNB"
-                }
-            ],
+            "gas": null,
             "id": "TODO",
             "memo": "SWAP:BNB.BNB",
             "to_address": "VAULT"
@@ -3046,12 +3041,7 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": [
-                {
-                    "amount": 37500,
-                    "asset": "BNB.BNB"
-                }
-            ],
+            "gas": null,
             "id": "TODO",
             "memo": "SWAP:BNB.LOK-3C0",
             "to_address": "VAULT"
