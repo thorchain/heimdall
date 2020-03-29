@@ -1,5 +1,7 @@
 import requests
 import json
+import hashlib
+
 from decimal import Decimal, getcontext
 
 from requests.adapters import HTTPAdapter
@@ -162,7 +164,10 @@ class Transaction(Jsonable):
     A transaction on a block chain (ie Binance)
     """
 
-    def __init__(self, chain, from_address, to_address, coins, memo="", gas=None):
+    def __init__(
+        self, chain, from_address, to_address, coins, memo="", gas=None, id="TODO"
+    ):
+        self.id = id
         self.chain = chain
         self.from_address = from_address
         self.to_address = to_address
@@ -181,17 +186,19 @@ class Transaction(Jsonable):
     def __repr__(self):
         coins = self.coins if self.coins else "No Coins"
         gas = f" | Gas {self.gas}" if self.gas else ""
+        id = f" | ID {self.id}" if self.id != "TODO" else ""
         return (
             f"<Transaction {self.from_address} ==> {self.to_address} | "
-            f"{coins} | {self.memo}{gas}>"
+            f"{coins} | {self.memo}{gas}{id}>"
         )
 
     def __str__(self):
         coins = ", ".join([str(c) for c in self.coins]) if self.coins else "No Coins"
         gas = " | Gas " + ", ".join([str(g) for g in self.gas]) if self.gas else ""
+        id = f" | ID {self.id}" if self.id != "TODO" else ""
         return (
             f"Transaction {self.from_address} ==> {self.to_address} | "
-            f"{coins} | {self.memo}{gas}"
+            f"{coins} | {self.memo}{gas}{id}"
         )
 
     def __eq__(self, other):
@@ -222,6 +229,16 @@ class Transaction(Jsonable):
         self_coins = self.coins or []
         other_coins = other.coins or []
         return sorted(self_coins) < sorted(other_coins)
+
+    def custom_hash(self, pubkey):
+        coins = (
+            ",".join([f"{c.amount}{c.asset}" for c in self.coins])
+            if self.coins
+            else "<nil>."
+        )
+        in_hash = self.memo.split(":")[1]
+        tmp = f"{self.chain}|{self.to_address}|{pubkey}|{coins}|{self.memo}|{in_hash}"
+        return hashlib.new("sha256", tmp.encode()).digest().hex().upper()
 
     @classmethod
     def from_dict(cls, value):

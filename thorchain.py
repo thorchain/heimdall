@@ -41,6 +41,10 @@ class ThorchainClient(HttpClient):
         data = self.fetch("/thorchain/pool_addresses")
         return data["current"][0]["address"]
 
+    def get_vault_pubkey(self):
+        data = self.fetch("/thorchain/pool_addresses")
+        return data["current"][0]["pub_key"]
+
     def get_vault_data(self):
         return self.fetch("/thorchain/vault")
 
@@ -67,6 +71,14 @@ class ThorchainState:
         self.total_bonded = 0
         self.bond_reward = 0
         self._gas_reimburse = dict()
+        self.vault_pubkey = None
+
+    def set_vault_pubkey(self, pubkey):
+        """
+        Set vault pubkey bech32 encoded, used to generate hashes
+        to order broadcast of outbound transactions.
+        """
+        self.vault_pubkey = pubkey
 
     def get_pool(self, asset):
         """
@@ -310,7 +322,11 @@ class ThorchainState:
         for coin in txn.coins:
             txns.append(
                 Transaction(
-                    txn.chain, txn.to_address, txn.from_address, [coin], "REFUND:TODO"
+                    txn.chain,
+                    txn.to_address,
+                    txn.from_address,
+                    [coin],
+                    f"REFUND:{txn.id}",
                 )
             )
 
@@ -318,6 +334,13 @@ class ThorchainState:
         event = Event("refund", txn, txns, refund_event, status="Refund")
         self.events.append(event)
         return txns
+
+    def order_outbound_txns(self, txns):
+        """
+        Sort txns by tx custom hash function to replicate real thorchain order
+        """
+        if txns:
+            txns.sort(key=lambda tx: tx.custom_hash(self.vault_pubkey))
 
     def handle(self, txn):
         """
@@ -527,9 +550,11 @@ class ThorchainState:
         chain, _from, _to = txn.chain, txn.from_address, txn.to_address
         out_txns = [
             Transaction(
-                chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], "OUTBOUND:TODO"
+                chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], f"OUTBOUND:{txn.id}"
             ),
-            Transaction(chain, _to, _from, [Coin(asset, asset_amt)], "OUTBOUND:TODO"),
+            Transaction(
+                chain, _to, _from, [Coin(asset, asset_amt)], f"OUTBOUND:{txn.id}"
+            ),
         ]
 
         # generate event for UNSTAKE transaction
@@ -650,7 +675,9 @@ class ThorchainState:
             self.set_pool(pool)
 
         out_txns = [
-            Transaction(txn.chain, txn.to_address, address, [emit], "OUTBOUND:TODO")
+            Transaction(
+                txn.chain, txn.to_address, address, [emit], f"OUTBOUND:{txn.id}"
+            )
         ]
 
         # generate event for SWAP transaction

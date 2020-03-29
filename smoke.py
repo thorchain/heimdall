@@ -90,6 +90,9 @@ class Smoker:
 
         self.thorchain_client = ThorchainClient(thor)
         vault_address = self.thorchain_client.get_vault_address()
+        vault_pubkey = self.thorchain_client.get_vault_pubkey()
+
+        self.thorchain.set_vault_pubkey(vault_pubkey)
 
         self.mock_binance = MockBinance(bnb)
         self.mock_binance.set_vault_address(vault_address)
@@ -115,12 +118,12 @@ class Smoker:
             spool = self.thorchain.get_pool(Asset(rpool["asset"]))
             if int(spool.rune_balance) != int(rpool["balance_rune"]):
                 self.error(
-                    f"bad pool rune balance: {rpool['asset']} "
+                    f"Bad pool rune balance: {rpool['asset']} "
                     f"{spool.rune_balance} != {rpool['balance_rune']}"
                 )
                 if int(spool.asset_balance) != int(rpool["balance_asset"]):
                     self.error(
-                        f"bad pool asset balance: {rpool['asset']} "
+                        f"Bad pool asset balance: {rpool['asset']} "
                         f"{spool.asset_balance} != {rpool['balance_asset']}"
                     )
 
@@ -132,13 +135,13 @@ class Smoker:
                 if name == "MASTER":
                     continue  # don't care to compare MASTER account
                 if address == macct["address"]:
-                    sacct = self.binance.get_account(name)
+                    sacct = self.binance.get_account(address)
                     for bal in macct["balances"]:
-                        coin1 = Coin(bal["denom"], sacct.get(bal["denom"]))
-                        coin2 = Coin(bal["denom"], int(bal["amount"]))
-                        if coin1 != coin2:
+                        sim_coin = Coin(bal["denom"], sacct.get(bal["denom"]))
+                        bnb_coin = Coin(bal["denom"], bal["amount"])
+                        if sim_coin != bnb_coin:
                             self.error(
-                                f"bad binance balance: {name} {coin2} != {coin1}"
+                                f"Bad binance balance: {name} {bnb_coin} != {sim_coin}"
                             )
 
     def check_vaults(self):
@@ -147,11 +150,11 @@ class Smoker:
         if int(vdata["total_reserve"]) != self.thorchain.reserve:
             sim = self.thorchain.reserve
             real = vdata["total_reserve"]
-            self.error(f"mismatching reserves: {sim} != {real}")
+            self.error(f"Mismatching reserves: {sim} != {real}")
             if int(vdata["bond_reward_rune"]) != self.thorchain.bond_reward:
                 sim = self.thorchain.bond_reward
                 real = vdata["bond_reward_rune"]
-                self.error(f"mismatching bond reward: {sim} != {real}")
+                self.error(f"Mismatching bond reward: {sim} != {real}")
 
     def check_events(self):
         # compare simulation events with real events
@@ -162,13 +165,6 @@ class Smoker:
         # get simulator events
         sim_events = self.thorchain.get_events()
 
-        # filter out gas event cause the order is not guaranteed
-        gas_events = [e for e in events if e.type == "gas"]
-        gas_sim_events = [e for e in sim_events if e.type == "gas"]
-
-        events = [e for e in events if e.type != "gas"]
-        sim_events = [e for e in sim_events if e.type != "gas"]
-
         # check ordered events
         for event, sim_event in zip(events, sim_events):
             if event != sim_event:
@@ -177,15 +173,6 @@ class Smoker:
                     f"  \nEvent Simulator {sim_event}"
                 )
                 self.error("Events mismatch")
-
-            # check ordered gas events
-            for event, sim_event in zip(sorted(gas_events), sorted(gas_sim_events)):
-                if event != sim_event:
-                    logging.error(
-                        f"Event Thorchain {event} \n   !="
-                        f"  \nEvent Simulator {sim_event}"
-                    )
-                    self.error("Events mismatch")
 
     @retry(
         stop=stop_after_attempt(5),
@@ -199,15 +186,21 @@ class Smoker:
     def run(self):
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
+
             logging.info(f"{i} {txn}")
+
+            self.mock_binance.transfer(txn)  # trigger mock Binance transaction
+            self.binance.transfer(txn)  # send transfer on binance chain
+
             if txn.memo == "SEED":
-                self.binance.seed(txn.to_address, txn.coins)
-                self.mock_binance.seed(txn.to_address, txn.coins)
                 continue
 
-            self.binance.transfer(txn)  # send transfer on binance chain
             outbounds = self.thorchain.handle(txn)  # process transaction in thorchain
             outbounds = self.thorchain.handle_fee(outbounds)
+
+            # replicate order of outbounds broadcast from thorchain
+            self.thorchain.order_outbound_txns(outbounds)
+
             for outbound in outbounds:
                 gas = self.binance.transfer(
                     outbound
@@ -218,15 +211,9 @@ class Smoker:
             self.thorchain.handle_gas(outbounds)
             self.thorchain.handle_gas_reimburse()
 
-            # update memo with actual address (over alias name)
-            for name, addr in self.mock_binance.aliases.items():
-                txn.memo = txn.memo.replace(name, addr)
-
-            self.mock_binance.transfer(txn)  # trigger mock Binance transaction
+            # wait for blocks to be processed on real chains
             self.mock_binance.wait_for_blocks(len(outbounds))
-            self.thorchain_client.wait_for_blocks(
-                2
-            )  # wait an additional block to pick up gas
+            self.thorchain_client.wait_for_blocks(2)
 
             # check if we are verifying the results
             if self.no_verify:

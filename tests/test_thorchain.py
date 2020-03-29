@@ -1241,7 +1241,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         event.id = 1
         self.assertEqual(
             event.to_json(),
-            '{"id": 1, "type": "refund", "in_tx": {"chain": "BNB", '
+            '{"id": 1, "type": "refund", "in_tx": {"id": "TODO", "chain": "BNB", '
             '"from_address": "STAKER-1", "to_address": "VAULT", '
             '"memo": "ADD:RUNE-A1F", "coins": [{"asset": "BNB.RUNE-A1F", '
             '"amount": 50000000000}], "gas": null}, "out_txs": null, '
