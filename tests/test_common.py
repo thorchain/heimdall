@@ -263,7 +263,7 @@ class TestTransaction(unittest.TestCase):
         # we ignore addresses in memo
         tx1.memo = "REFUND:ADDRESS"
         tx2.memo = "REFUND:TODO"
-        self.assertEqual(tx1, tx2)
+        self.assertNotEqual(tx1, tx2)
         # we dont ignore different assets though
         tx1.memo = "STAKE:BNB"
         tx2.memo = "STAKE:RUNE"
@@ -287,7 +287,7 @@ class TestTransaction(unittest.TestCase):
         tx2.to_address = "VAULT2"
         tx1.from_address = "USER1"
         tx2.from_address = "USER2"
-        self.assertEqual(tx1, tx2)
+        self.assertNotEqual(tx1, tx2)
         # check list of transactions equality
         tx1 = Transaction(
             Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "STAKE:BNB",

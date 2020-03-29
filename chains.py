@@ -208,4 +208,6 @@ class Binance:
 
         self.set_account(from_acct)
         self.set_account(to_acct)
+
+        txn.gas = [gas]
         return gas

@@ -6,7 +6,7 @@
                 "amount": 40000000000000
             }
         },
-        "gas": null,
+        "fee": null,
         "id": 1,
         "in_tx": {
             "chain": "BNB",
@@ -17,7 +17,12 @@
                 }
             ],
             "from_address": "CONTRIBUTOR-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "RESERVE",
             "to_address": "VAULT"
@@ -31,7 +36,7 @@
             "pool": "BNB.BNB",
             "stake_units": 25075000000
         },
-        "gas": null,
+        "fee": null,
         "id": 2,
         "in_tx": {
             "chain": "BNB",
@@ -46,7 +51,12 @@
                 }
             ],
             "from_address": "STAKER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 60000,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "STAKE:BNB.BNB",
             "to_address": "VAULT"
@@ -57,7 +67,7 @@
                 "coins": null,
                 "from_address": "",
                 "gas": null,
-                "id": "TODO",
+                "id": "0000000000000000000000000000000000000000000000000000000000000000",
                 "memo": "",
                 "to_address": ""
             }
@@ -70,7 +80,7 @@
             "pool": "BNB.LOK-3C0",
             "stake_units": 45000000000
         },
-        "gas": null,
+        "fee": null,
         "id": 3,
         "in_tx": {
             "chain": "BNB",
@@ -85,7 +95,12 @@
                 }
             ],
             "from_address": "STAKER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 60000,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "STAKE:BNB.LOK-3C0",
             "to_address": "VAULT"
@@ -96,7 +111,7 @@
                 "coins": null,
                 "from_address": "",
                 "gas": null,
-                "id": "TODO",
+                "id": "0000000000000000000000000000000000000000000000000000000000000000",
                 "memo": "",
                 "to_address": ""
             }
@@ -109,7 +124,7 @@
             "code": 105,
             "reason": "memo can't be empty"
         },
-        "gas": null,
+        "fee": null,
         "id": 4,
         "in_tx": {
             "chain": "BNB",
@@ -124,7 +139,12 @@
                 }
             ],
             "from_address": "STAKER-2",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 60000,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "",
             "to_address": "VAULT"
@@ -183,7 +203,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 5,
         "in_tx": {
             "chain": "BNB",
@@ -219,7 +239,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 6,
         "in_tx": {
             "chain": "BNB",
@@ -257,14 +277,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 7,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -277,7 +297,7 @@
             "code": 105,
             "reason": "invalid tx type: ABDG?"
         },
-        "gas": null,
+        "fee": null,
         "id": 8,
         "in_tx": {
             "chain": "BNB",
@@ -292,7 +312,12 @@
                 }
             ],
             "from_address": "STAKER-2",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 60000,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "ABDG?",
             "to_address": "VAULT"
@@ -351,7 +376,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 9,
         "in_tx": {
             "chain": "BNB",
@@ -387,7 +412,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 10,
         "in_tx": {
             "chain": "BNB",
@@ -425,14 +450,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 11,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -445,7 +470,7 @@
             "code": 105,
             "reason": "Invalid symbol"
         },
-        "gas": null,
+        "fee": null,
         "id": 12,
         "in_tx": {
             "chain": "BNB",
@@ -460,7 +485,12 @@
                 }
             ],
             "from_address": "STAKER-2",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 60000,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "STAKE:",
             "to_address": "VAULT"
@@ -519,7 +549,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 13,
         "in_tx": {
             "chain": "BNB",
@@ -555,7 +585,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 14,
         "in_tx": {
             "chain": "BNB",
@@ -593,14 +623,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 15,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -613,7 +643,7 @@
             "code": 105,
             "reason": "invalid stake memo:did not find BNB.TCAN-014 "
         },
-        "gas": null,
+        "fee": null,
         "id": 16,
         "in_tx": {
             "chain": "BNB",
@@ -628,7 +658,12 @@
                 }
             ],
             "from_address": "STAKER-2",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 60000,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "STAKE:BNB.TCAN-014",
             "to_address": "VAULT"
@@ -687,7 +722,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 17,
         "in_tx": {
             "chain": "BNB",
@@ -723,7 +758,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 18,
         "in_tx": {
             "chain": "BNB",
@@ -761,14 +796,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 19,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -781,7 +816,7 @@
             "code": 105,
             "reason": "invalid stake memo:invalid pool asset"
         },
-        "gas": null,
+        "fee": null,
         "id": 20,
         "in_tx": {
             "chain": "BNB",
@@ -796,7 +831,12 @@
                 }
             ],
             "from_address": "STAKER-2",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 60000,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "STAKE:RUNE-A1F",
             "to_address": "VAULT"
@@ -855,7 +895,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 21,
         "in_tx": {
             "chain": "BNB",
@@ -891,7 +931,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 22,
         "in_tx": {
             "chain": "BNB",
@@ -929,14 +969,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 23,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -949,7 +989,7 @@
             "pool": "BNB.BNB",
             "stake_units": 2062213471
         },
-        "gas": null,
+        "fee": null,
         "id": 24,
         "in_tx": {
             "chain": "BNB",
@@ -960,7 +1000,12 @@
                 }
             ],
             "from_address": "STAKER-2",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "STAKE:BNB.BNB",
             "to_address": "VAULT"
@@ -971,7 +1016,7 @@
                 "coins": null,
                 "from_address": "",
                 "gas": null,
-                "id": "TODO",
+                "id": "0000000000000000000000000000000000000000000000000000000000000000",
                 "memo": "",
                 "to_address": ""
             }
@@ -984,7 +1029,7 @@
             "pool": "BNB.BNB",
             "stake_units": 2507594870
         },
-        "gas": null,
+        "fee": null,
         "id": 25,
         "in_tx": {
             "chain": "BNB",
@@ -995,7 +1040,12 @@
                 }
             ],
             "from_address": "STAKER-2",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "STAKE:BNB.BNB",
             "to_address": "VAULT"
@@ -1006,7 +1056,7 @@
                 "coins": null,
                 "from_address": "",
                 "gas": null,
-                "id": "TODO",
+                "id": "0000000000000000000000000000000000000000000000000000000000000000",
                 "memo": "",
                 "to_address": ""
             }
@@ -1019,7 +1069,7 @@
             "pool": "BNB.BNB",
             "stake_units": 14982601547
         },
-        "gas": null,
+        "fee": null,
         "id": 26,
         "in_tx": {
             "chain": "BNB",
@@ -1034,7 +1084,12 @@
                 }
             ],
             "from_address": "STAKER-2",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 60000,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "STAKE:BNB.BNB",
             "to_address": "VAULT"
@@ -1045,7 +1100,7 @@
                 "coins": null,
                 "from_address": "",
                 "gas": null,
-                "id": "TODO",
+                "id": "0000000000000000000000000000000000000000000000000000000000000000",
                 "memo": "",
                 "to_address": ""
             }
@@ -1057,7 +1112,7 @@
         "event": {
             "pool": "BNB.BNB"
         },
-        "gas": null,
+        "fee": null,
         "id": 27,
         "in_tx": {
             "chain": "BNB",
@@ -1072,7 +1127,12 @@
                 }
             ],
             "from_address": "STAKER-2",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 60000,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "ADD:BNB.BNB",
             "to_address": "VAULT"
@@ -1086,7 +1146,7 @@
             "code": 105,
             "reason": "invalid tx type:  "
         },
-        "gas": null,
+        "fee": null,
         "id": 28,
         "in_tx": {
             "chain": "BNB",
@@ -1097,7 +1157,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": " ",
             "to_address": "VAULT"
@@ -1137,7 +1202,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 29,
         "in_tx": {
             "chain": "BNB",
@@ -1175,14 +1240,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 30,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -1195,7 +1260,7 @@
             "code": 105,
             "reason": "invalid tx type: ABDG?"
         },
-        "gas": null,
+        "fee": null,
         "id": 31,
         "in_tx": {
             "chain": "BNB",
@@ -1206,7 +1271,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "ABDG?",
             "to_address": "VAULT"
@@ -1246,7 +1316,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 32,
         "in_tx": {
             "chain": "BNB",
@@ -1284,14 +1354,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 33,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -1304,7 +1374,7 @@
             "code": 105,
             "reason": "invalid swap memo:swap from BNB.BNB to BNB.BNB is noop, refund"
         },
-        "gas": null,
+        "fee": null,
         "id": 34,
         "in_tx": {
             "chain": "BNB",
@@ -1315,7 +1385,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.BNB",
             "to_address": "VAULT"
@@ -1355,7 +1430,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 35,
         "in_tx": {
             "chain": "BNB",
@@ -1393,14 +1468,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 36,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -1413,7 +1488,7 @@
             "code": 105,
             "reason": "invalid swap memo:not expecting multiple coins in a swap"
         },
-        "gas": null,
+        "fee": null,
         "id": 37,
         "in_tx": {
             "chain": "BNB",
@@ -1428,7 +1503,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 60000,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.BNB",
             "to_address": "VAULT"
@@ -1468,7 +1548,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 38,
         "in_tx": {
             "chain": "BNB",
@@ -1506,14 +1586,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 39,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -1528,7 +1608,7 @@
             "price_target": 0,
             "trade_slip": 21
         },
-        "gas": null,
+        "fee": null,
         "id": 40,
         "in_tx": {
             "chain": "BNB",
@@ -1539,7 +1619,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.BNB",
             "to_address": "VAULT"
@@ -1578,14 +1663,14 @@
                 }
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 41,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -1604,7 +1689,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 42,
         "in_tx": {
             "chain": "BNB",
@@ -1642,14 +1727,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 43,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -1662,7 +1747,7 @@
             "code": 109,
             "reason": "emit asset 26101859 less than price limit 26572599"
         },
-        "gas": null,
+        "fee": null,
         "id": 44,
         "in_tx": {
             "chain": "BNB",
@@ -1673,7 +1758,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.BNB::26572599",
             "to_address": "VAULT"
@@ -1713,7 +1803,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 45,
         "in_tx": {
             "chain": "BNB",
@@ -1751,14 +1841,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 46,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -1773,7 +1863,7 @@
             "price_target": 0,
             "trade_slip": 2229
         },
-        "gas": null,
+        "fee": null,
         "id": 47,
         "in_tx": {
             "chain": "BNB",
@@ -1784,7 +1874,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.BNB",
             "to_address": "VAULT"
@@ -1823,14 +1918,14 @@
                 }
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 48,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -1849,7 +1944,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 49,
         "in_tx": {
             "chain": "BNB",
@@ -1887,14 +1982,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 50,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -1909,7 +2004,7 @@
             "price_target": 0,
             "trade_slip": 739
         },
-        "gas": null,
+        "fee": null,
         "id": 51,
         "in_tx": {
             "chain": "BNB",
@@ -1920,7 +2015,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.RUNE-A1F",
             "to_address": "VAULT"
@@ -1959,14 +2059,14 @@
                 }
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 52,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -1985,7 +2085,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 53,
         "in_tx": {
             "chain": "BNB",
@@ -2023,14 +2123,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 54,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2043,7 +2143,7 @@
             "code": 109,
             "reason": "emit asset 23619702 less than price limit 23853375"
         },
-        "gas": null,
+        "fee": null,
         "id": 55,
         "in_tx": {
             "chain": "BNB",
@@ -2054,7 +2154,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.BNB:STAKER-1:23853375",
             "to_address": "VAULT"
@@ -2094,7 +2199,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 56,
         "in_tx": {
             "chain": "BNB",
@@ -2132,14 +2237,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 57,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2154,7 +2259,7 @@
             "price_target": 22460886,
             "trade_slip": 2101
         },
-        "gas": null,
+        "fee": null,
         "id": 58,
         "in_tx": {
             "chain": "BNB",
@@ -2165,7 +2270,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.BNB:STAKER-1:22460886",
             "to_address": "VAULT"
@@ -2204,14 +2314,14 @@
                 }
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 59,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2230,7 +2340,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 60,
         "in_tx": {
             "chain": "BNB",
@@ -2268,14 +2378,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 61,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2288,7 +2398,7 @@
             "code": 105,
             "reason": "checksum failed. Expected lz2zxs, got h5mz6q."
         },
-        "gas": null,
+        "fee": null,
         "id": 62,
         "in_tx": {
             "chain": "BNB",
@@ -2299,7 +2409,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.RUNE-A1F:bnbSTAKER-1",
             "to_address": "VAULT"
@@ -2339,7 +2454,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 63,
         "in_tx": {
             "chain": "BNB",
@@ -2377,14 +2492,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 64,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2399,7 +2514,7 @@
             "price_target": 0,
             "trade_slip": 2656
         },
-        "gas": null,
+        "fee": null,
         "id": 65,
         "in_tx": {
             "chain": "BNB",
@@ -2410,7 +2525,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.RUNE-A1F",
             "to_address": "VAULT"
@@ -2449,14 +2569,14 @@
                 }
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 66,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2475,7 +2595,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 67,
         "in_tx": {
             "chain": "BNB",
@@ -2513,14 +2633,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 68,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2535,7 +2655,7 @@
             "price_target": 0,
             "trade_slip": 2377
         },
-        "gas": null,
+        "fee": null,
         "id": 69,
         "in_tx": {
             "chain": "BNB",
@@ -2546,7 +2666,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.LOK-3C0",
             "to_address": "VAULT"
@@ -2585,14 +2710,14 @@
                 }
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 70,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2611,7 +2736,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 71,
         "in_tx": {
             "chain": "BNB",
@@ -2649,14 +2774,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 72,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2671,7 +2796,7 @@
             "price_target": 0,
             "trade_slip": 2588
         },
-        "gas": null,
+        "fee": null,
         "id": 73,
         "in_tx": {
             "chain": "BNB",
@@ -2682,7 +2807,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.BNB",
             "to_address": "VAULT"
@@ -2713,7 +2843,7 @@
             "price_target": 0,
             "trade_slip": 888
         },
-        "gas": null,
+        "fee": null,
         "id": 74,
         "in_tx": {
             "chain": "BNB",
@@ -2724,7 +2854,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.BNB",
             "to_address": "VAULT"
@@ -2767,14 +2902,14 @@
                 }
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 75,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2793,7 +2928,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 76,
         "in_tx": {
             "chain": "BNB",
@@ -2831,14 +2966,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 77,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2853,7 +2988,7 @@
             "price_target": 0,
             "trade_slip": 401
         },
-        "gas": null,
+        "fee": null,
         "id": 78,
         "in_tx": {
             "chain": "BNB",
@@ -2864,7 +2999,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.LOK-3C0",
             "to_address": "VAULT"
@@ -2895,7 +3035,7 @@
             "price_target": 0,
             "trade_slip": 1018
         },
-        "gas": null,
+        "fee": null,
         "id": 79,
         "in_tx": {
             "chain": "BNB",
@@ -2906,7 +3046,12 @@
                 }
             ],
             "from_address": "USER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "SWAP:BNB.LOK-3C0",
             "to_address": "VAULT"
@@ -2949,14 +3094,14 @@
                 }
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 80,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -2975,7 +3120,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 81,
         "in_tx": {
             "chain": "BNB",
@@ -3013,14 +3158,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 82,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -3035,7 +3180,7 @@
             "pool": "BNB.BNB",
             "stake_units": 12537500000
         },
-        "gas": null,
+        "fee": null,
         "id": 83,
         "in_tx": {
             "chain": "BNB",
@@ -3046,7 +3191,12 @@
                 }
             ],
             "from_address": "STAKER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "WITHDRAW:BNB.BNB:5000",
             "to_address": "VAULT"
@@ -3105,7 +3255,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 84,
         "in_tx": {
             "chain": "BNB",
@@ -3141,7 +3291,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 85,
         "in_tx": {
             "chain": "BNB",
@@ -3179,14 +3329,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 86,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -3199,14 +3349,14 @@
             "pool": "BNB.LOK-3C0",
             "status": "Bootstrap"
         },
-        "gas": null,
+        "fee": null,
         "id": 87,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -3221,7 +3371,7 @@
             "pool": "BNB.LOK-3C0",
             "stake_units": 45000000000
         },
-        "gas": null,
+        "fee": null,
         "id": 88,
         "in_tx": {
             "chain": "BNB",
@@ -3232,7 +3382,12 @@
                 }
             ],
             "from_address": "STAKER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "WITHDRAW:BNB.LOK-3C0",
             "to_address": "VAULT"
@@ -3291,7 +3446,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 89,
         "in_tx": {
             "chain": "BNB",
@@ -3327,7 +3482,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 90,
         "in_tx": {
             "chain": "BNB",
@@ -3365,14 +3520,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 91,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -3387,7 +3542,7 @@
             "pool": "BNB.BNB",
             "stake_units": 12537500000
         },
-        "gas": null,
+        "fee": null,
         "id": 92,
         "in_tx": {
             "chain": "BNB",
@@ -3398,7 +3553,12 @@
                 }
             ],
             "from_address": "STAKER-1",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "WITHDRAW:BNB.BNB:10000",
             "to_address": "VAULT"
@@ -3457,7 +3617,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 93,
         "in_tx": {
             "chain": "BNB",
@@ -3493,7 +3653,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 94,
         "in_tx": {
             "chain": "BNB",
@@ -3531,14 +3691,14 @@
                 "BNB.BNB"
             ]
         },
-        "gas": null,
+        "fee": null,
         "id": 95,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -3551,14 +3711,14 @@
             "pool": "BNB.BNB",
             "status": "Bootstrap"
         },
-        "gas": null,
+        "fee": null,
         "id": 96,
         "in_tx": {
             "chain": "",
             "coins": null,
             "from_address": "",
             "gas": null,
-            "id": "TODO",
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
             "memo": "",
             "to_address": ""
         },
@@ -3573,7 +3733,7 @@
             "pool": "BNB.BNB",
             "stake_units": 19552409888
         },
-        "gas": null,
+        "fee": null,
         "id": 97,
         "in_tx": {
             "chain": "BNB",
@@ -3584,7 +3744,12 @@
                 }
             ],
             "from_address": "STAKER-2",
-            "gas": null,
+            "gas": [
+                {
+                    "amount": 37500,
+                    "asset": "BNB.BNB"
+                }
+            ],
             "id": "TODO",
             "memo": "WITHDRAW:BNB.BNB",
             "to_address": "VAULT"
@@ -3643,7 +3808,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 98,
         "in_tx": {
             "chain": "BNB",
@@ -3679,7 +3844,7 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "gas": null,
+        "fee": null,
         "id": 99,
         "in_tx": {
             "chain": "BNB",

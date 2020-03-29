@@ -167,7 +167,7 @@ class Smoker:
 
         # check ordered events
         for event, sim_event in zip(events, sim_events):
-            if event != sim_event:
+            if sim_event != event:
                 logging.error(
                     f"Event Thorchain {event} \n   !="
                     f"  \nEvent Simulator {sim_event}"
@@ -202,9 +202,10 @@ class Smoker:
             self.thorchain.order_outbound_txns(outbounds)
 
             for outbound in outbounds:
+		# update binance simulator state with outbound txs
                 gas = self.binance.transfer(
                     outbound
-                )  # send outbound txns back to Binance
+                )  
                 outbound.gas = [gas]
 
             self.thorchain.handle_rewards()

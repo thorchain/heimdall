@@ -207,28 +207,24 @@ class Transaction(Jsonable):
         Ignore from to address fields because our thorchain state
         doesn't know the "real" addresses yet
         """
-        scoins = self.coins or []
-        ocoins = other.coins or []
-
-        try:
-            # try to be smart with memo because it can also have addresses
-            s = self.memo.lower().split(":")
-            o = other.memo.lower().split(":")
-            if len(s) != len(o):
-                return False
-            if s[0] != o[0]:
-                return False
-            if s[0] in ["swap", "add", "stake", "unstake", "withdraw"] and s[1] != o[1]:
-                return False
-        except Exception:
-            return False
-        # then also compare basic fields chain and coins
-        return self.chain == other.chain and sorted(scoins) == sorted(ocoins)
+        coins = self.coins or []
+        other_coins = other.coins or []
+        gas = self.gas or []
+        other_gas = other.gas or []
+        return (
+            (self.id == "TODO" or self.id == other.id)
+            and self.chain == other.chain
+            and self.memo == other.memo
+            and self.from_address == other.from_address
+            and self.to_address == other.to_address
+            and sorted(coins) == sorted(other_coins)
+            and sorted(gas) == sorted(other_gas)
+        )
 
     def __lt__(self, other):
-        self_coins = self.coins or []
+        coins = self.coins or []
         other_coins = other.coins or []
-        return sorted(self_coins) < sorted(other_coins)
+        return sorted(coins) < sorted(other_coins)
 
     def custom_hash(self, pubkey):
         coins = (
@@ -249,6 +245,8 @@ class Transaction(Jsonable):
             None,
             memo=value["memo"],
         )
+        if "id" in value and value["id"]:
+            txn.id = value["id"]
         if "coins" in value and value["coins"]:
             txn.coins = [Coin.from_dict(c) for c in value["coins"]]
         if "gas" in value and value["gas"]:
@@ -257,4 +255,4 @@ class Transaction(Jsonable):
 
     @classmethod
     def empty_txn(self):
-        return Transaction("", "", "", None)
+        return Transaction("", "", "", None, id="0000000000000000000000000000000000000000000000000000000000000000")

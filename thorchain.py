@@ -810,13 +810,13 @@ class Event(Jsonable):
     id_iter = itertools.count(1)
 
     def __init__(
-        self, event_type, txn, txns_out, event, gas=None, status="Success", id=None
+        self, event_type, txn, txns_out, event, fee=None, status="Success", id=None
     ):
         self.id = int(id) if id is not None else next(Event.id_iter)
         self.type = event_type
         self.in_tx = deepcopy(txn)
         self.out_txs = txns_out
-        self.gas = deepcopy(gas)
+        self.fee = deepcopy(fee)
         self.event = deepcopy(event)
         self.status = status
 
@@ -835,20 +835,20 @@ Event {self.event}
         return str(self)
 
     def __eq__(self, other):
-        sout_txs = self.out_txs or []
-        oout_txs = other.out_txs or []
+        out_txs = self.out_txs or []
+        other_out_txs = other.out_txs or []
         return (
             self.type == other.type
             and self.status == other.status
             and self.in_tx == other.in_tx
-            and sorted(sout_txs) == sorted(oout_txs)
+            and sorted(out_txs) == sorted(other_out_txs)
             and self.event == other.event
         )
 
     def __lt__(self, other):
-        self_coins = self.in_tx.coins or []
+        coins = self.in_tx.coins or []
         other_coins = other.in_tx.coins or []
-        return sorted(self_coins) < sorted(other_coins)
+        return sorted(coins) < sorted(other_coins)
 
     @classmethod
     def from_dict(cls, value):
@@ -857,14 +857,12 @@ Event {self.event}
             Transaction.from_dict(value["in_tx"]),
             None,
             None,
-            gas=None,
+            fee=None,
             status=value["status"],
             id=value["id"],
         )
         if "out_txs" in value and value["out_txs"]:
             event.out_txs = [Transaction.from_dict(t) for t in value["out_txs"]]
-        if "gas" in value and value["gas"]:
-            event.gas = [Transaction.from_dict(g) for g in value["gas"]]
         if "event" in value and value["event"]:
             if value["type"] == "refund":
                 event.event = RefundEvent.from_dict(value["event"])
