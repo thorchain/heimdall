@@ -31,7 +31,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "refund reason message: pool is zero")
 
@@ -52,7 +51,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.price_target, 0)
         self.assertEqual(event.event.liquidity_fee, 138888888)
@@ -74,7 +72,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(
             event.event.reason,
@@ -97,7 +94,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 109)
         self.assertEqual(event.event.reason, "emit asset 0 less than price limit 0")
 
@@ -118,7 +114,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 109)
         self.assertEqual(
             event.event.reason,
@@ -142,7 +137,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.price_target, 0)
         self.assertEqual(event.event.liquidity_fee, 0)
@@ -164,7 +158,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(
             event.event.reason, "checksum failed. Expected lz2zxs, got h5mz6q."
@@ -195,7 +188,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].coins[0].amount, 1392901)
         self.assertEqual(event.out_txs[0].from_address, txn.from_address)
         self.assertEqual(event.out_txs[0].to_address, txn.to_address)
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.price_target, 0)
         self.assertEqual(event.event.liquidity_fee, 323)
@@ -215,7 +207,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].coins[0].amount, 1391608)
         self.assertEqual(event.out_txs[0].from_address, txn.to_address)
         self.assertEqual(event.out_txs[0].to_address, txn.from_address)
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, "BNB.LOK-3C0")
         self.assertEqual(event.event.price_target, 0)
         self.assertEqual(event.event.liquidity_fee, 646)
@@ -250,7 +241,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(
             event.event.reason,
@@ -274,7 +264,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(
             event.event.reason,
@@ -302,7 +291,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(
             event.event.reason,
@@ -323,7 +311,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(
             event.event.reason,
@@ -351,7 +338,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "add")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, "BNB.BNB")
 
         # check add just rune
@@ -373,7 +359,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "add")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.gas, None)
         # FIXME? do we have RUNE pool
         self.assertEqual(event.event.pool, "BNB.RUNE-A1F")
 
@@ -398,7 +383,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "Invalid symbol")
 
@@ -423,7 +407,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "Invalid symbol")
 
@@ -448,7 +431,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "Invalid symbol")
 
@@ -478,7 +460,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
         self.assertEqual(event.out_txs[2].to_json(), outbound[2].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "refund reason message")  # FIXME
 
@@ -505,7 +486,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "reserve")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.reserve_contributor["address"], txn.from_address)
         self.assertEqual(event.event.reserve_contributor["amount"], txn.coins[0].amount)
 
@@ -536,7 +516,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "stake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
         self.assertEqual(event.event.stake_units, pool.total_units)
 
@@ -561,7 +540,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "memo can't be empty")
 
@@ -578,7 +556,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "gas")
         self.assertEqual(event.in_tx.to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.gas[0], outbound[0].gas[0])
         self.assertEqual(event.event.gas_type, "gas_spend")
 
@@ -588,7 +565,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "gas")
         self.assertEqual(event.in_tx.to_json(), outbound[1].to_json())
         self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.gas[0], outbound[1].gas[0])
         self.assertEqual(event.event.gas_type, "gas_spend")
 
@@ -619,7 +595,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "stake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
         self.assertEqual(event.event.stake_units, pool.total_units)
 
@@ -644,7 +619,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "memo can't be empty")
 
@@ -669,7 +643,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "Invalid symbol")
 
@@ -694,7 +667,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(
             event.event.reason, "invalid stake memo:did not find BNB.TCAN-014 "
@@ -721,7 +693,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "invalid stake memo:invalid pool asset")
 
@@ -751,7 +722,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
         self.assertEqual(event.out_txs[2].to_json(), outbound[2].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "refund reason message")  # FIXME
 
@@ -776,7 +746,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "stake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
         self.assertEqual(event.event.stake_units, 2090833333)
 
@@ -798,7 +767,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "stake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
         self.assertEqual(event.event.stake_units, 2507500000)
 
@@ -820,7 +788,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "stake")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(event.out_txs[0].to_json(), Transaction.empty_txn().to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, pool.asset)
         self.assertEqual(event.event.stake_units, 15045000000)
 
@@ -873,7 +840,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.stake_units, 250750000)
         self.assertEqual(event.event.basis_points, 100)
@@ -894,7 +860,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "Invalid symbol")
 
@@ -914,7 +879,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "Invalid symbol")
 
@@ -932,7 +896,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "Invalid symbol")
 
@@ -968,7 +931,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "pool")
         self.assertEqual(event.in_tx.to_json(), Transaction.empty_txn().to_json())
         self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.status, "Bootstrap")
 
@@ -980,7 +942,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.stake_units, 24824250000)
         self.assertEqual(event.event.basis_points, 10000)
@@ -1014,7 +975,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "refund reason message")
 
@@ -1241,11 +1201,11 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         event.id = 1
         self.assertEqual(
             event.to_json(),
-            '{"id": 1, "type": "refund", "in_tx": {"chain": "BNB", '
+            '{"id": 1, "type": "refund", "in_tx": {"id": "TODO", "chain": "BNB", '
             '"from_address": "STAKER-1", "to_address": "VAULT", '
             '"memo": "ADD:RUNE-A1F", "coins": [{"asset": "BNB.RUNE-A1F", '
             '"amount": 50000000000}], "gas": null}, "out_txs": null, '
-            '"gas": null, "event": {"code": 105, '
+            '"fee": null, "event": {"code": 105, '
             '"reason": "memo can\'t be empty"}, "status": "Success"}',
         )
 
@@ -1262,7 +1222,6 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
                 "gas": None,
             },
             "out_txs": None,
-            "gas": None,
             "event": {"code": 105, "reason": "memo can't be empty"},
             "status": "Success",
         }
@@ -1276,7 +1235,6 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         self.assertEqual(event.in_tx.coins[0].asset, "BNB.RUNE-A1F")
         self.assertEqual(event.in_tx.coins[0].amount, 50000000000)
         self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "memo can't be empty")
 
@@ -1292,7 +1250,6 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
                 "gas": None,
             },
             "out_txs": None,
-            "gas": None,
             "event": {
                 "bond_reward": "1161881",
                 "pool_rewards": [
@@ -1311,7 +1268,6 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         self.assertEqual(event.in_tx.memo, "")
         self.assertEqual(event.in_tx.coins, None)
         self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.gas, None)
         self.assertEqual(event.event.bond_reward, 1161881)
         self.assertEqual(event.event.pool_rewards[0].asset, "BNB.BNB")
         self.assertEqual(event.event.pool_rewards[0].amount, -105552)
@@ -1350,7 +1306,6 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
                     "gas": [{"asset": "BNB.BNB", "amount": 35000}],
                 },
             ],
-            "gas": None,
             "event": {"code": "105", "reason": "memo can't be empty"},
             "status": "Refund",
         }
@@ -1386,8 +1341,6 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         self.assertEqual(event.out_txs[1].coins[0].amount, 30000000000)
         self.assertEqual(event.out_txs[1].gas[0].asset, "BNB.BNB")
         self.assertEqual(event.out_txs[1].gas[0].amount, 35000)
-
-        self.assertEqual(event.gas, None)
 
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "memo can't be empty")

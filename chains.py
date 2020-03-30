@@ -1,7 +1,9 @@
 import time
 import logging
+import base64
+import hashlib
 
-from common import Transaction, Coin, Asset, HttpClient
+from common import Coin, Asset, HttpClient
 
 
 class MockBinance(HttpClient):
@@ -32,6 +34,13 @@ class MockBinance(HttpClient):
         data = self.fetch("/block")
         return int(data["result"]["block"]["header"]["height"])
 
+    def get_block_tx(self, height):
+        """
+        Get the current block tx from height of mock binance
+        """
+        data = self.fetch(f"/block?height={height}")
+        return data["result"]["block"]["data"]["txs"][0]
+
     def wait_for_blocks(self, count):
         """
         Wait for the given number of blocks
@@ -43,6 +52,19 @@ class MockBinance(HttpClient):
             if block - start_block >= count:
                 return
         raise Exception(f"failed waiting for mock binance transactions ({count})")
+
+    def get_tx_id_from_block(self, height):
+        """Get transaction hash ID from a block height.
+        We first retrieve tx data from block then generate id from tx data:
+        raw tx base 64 encoded -> base64 decode -> sha256sum = tx hash
+
+        :param str height: block height
+        :returns: tx hash id hex string
+
+        """
+        tx = self.get_block_tx(height)
+        decoded = base64.b64decode(tx)
+        return hashlib.new("sha256", decoded).digest().hex().upper()
 
     def accounts(self):
         return self.fetch("/accounts")
@@ -60,16 +82,18 @@ class MockBinance(HttpClient):
         if txn.from_address in self.aliases:
             txn.from_address = self.aliases[txn.from_address]
 
+        # update memo with actual address (over alias name)
+        for name, addr in self.aliases.items():
+            txn.memo = txn.memo.replace(name, addr)
+
         payload = {
             "from": txn.from_address,
             "to": txn.to_address,
             "memo": txn.memo,
             "coins": [coin.to_binance_fmt() for coin in txn.coins],
         }
-        return self.post("/broadcast/easy", payload)
-
-    def seed(self, addr, coins):
-        return self.transfer(Transaction(Binance.chain, "MASTER", addr, coins, "SEED"))
+        result = self.post("/broadcast/easy", payload)
+        txn.id = self.get_tx_id_from_block(result["height"])
 
 
 class Account:
@@ -143,7 +167,7 @@ class Binance:
     def __init__(self):
         self.accounts = {}
 
-    def _calculateGas(self, coins):
+    def _calculate_gas(self, coins):
         """
         With given coin set, calculates the gas owed
         """
@@ -165,25 +189,18 @@ class Binance:
         """
         self.accounts[acct.address] = acct
 
-    def seed(self, addr, coins):
-        """
-        Seed an account with coin(s)
-        """
-        acct = self.get_account(addr)
-        acct.add(coins)
-        self.accounts[addr] = acct
-
     def transfer(self, txn):
         """
         Makes a transfer on the binance chain. Returns gas used
         """
+
         if txn.chain != Binance.chain:
             raise Exception(f"Cannot transfer. {Binance.chain} is not {txn.chain}")
 
         from_acct = self.get_account(txn.from_address)
         to_acct = self.get_account(txn.to_address)
 
-        gas = self._calculateGas(txn.coins)
+        gas = self._calculate_gas(txn.coins)
         from_acct.sub(gas)
 
         from_acct.sub(txn.coins)
@@ -192,5 +209,5 @@ class Binance:
         self.set_account(from_acct)
         self.set_account(to_acct)
 
-        gas.asset = "BNB.BNB"
+        txn.gas = [gas]
         return gas

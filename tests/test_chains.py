@@ -23,27 +23,23 @@ class TestBinance(unittest.TestCase):
     def test_gas(self):
         bnb = Binance()
         self.assertEqual(
-            bnb._calculateGas([Coin("BNB", 5757575)]), Coin("BNB", 37500),
+            bnb._calculate_gas([Coin("BNB", 5757575)]), Coin("BNB", 37500),
         )
         self.assertEqual(
-            bnb._calculateGas([Coin("BNB", 0), Coin("RUNE", 0)]), Coin("BNB", 60000)
+            bnb._calculate_gas([Coin("BNB", 0), Coin("RUNE", 0)]), Coin("BNB", 60000)
         )
-
-    def test_seed(self):
-        bnb = Binance()
-        bnb.seed("tbnbA", Coin("BNB", 30))
-        acct = bnb.get_account("tbnbA")
-        self.assertEqual(acct.get("BNB"), 30)
 
     def test_transfer(self):
         bnb = Binance()
-        bnb.seed("tbnbA", Coin("BNB", 300000000))
+        from_acct = bnb.get_account("tbnbA")
+        from_acct.add(Coin("BNB", 300000000))
+        bnb.set_account(from_acct)
+
         txn = Transaction(
             bnb.chain, "tbnbA", "tbnbB", Coin("BNB", 200000000), "test transfer"
         )
         bnb.transfer(txn)
 
-        from_acct = bnb.get_account("tbnbA")
         to_acct = bnb.get_account("tbnbB")
 
         self.assertEqual(to_acct.get("BNB"), 200000000)

@@ -63,19 +63,21 @@ class TestSmoke(unittest.TestCase):
         for i, txn in enumerate(loaded):
             txn = Transaction.from_dict(txn)
             logging.info(f"{i} {txn}")
+
+            bnb.transfer(txn)  # send transfer on binance chain
+
             if txn.memo == "SEED":
-                bnb.seed(txn.to_address, txn.coins)
                 continue
-            else:
-                bnb.transfer(txn)  # send transfer on binance chain
-                outbound = thorchain.handle(txn)  # process transaction in thorchain
-                outbound = thorchain.handle_fee(outbound)
-                for txn in outbound:
-                    gas = bnb.transfer(txn)  # send outbound txns back to Binance
-                    txn.gas = [gas]
-                thorchain.handle_rewards()
-                thorchain.handle_gas(outbound)  # subtract gas from pool(s)
-                thorchain.handle_gas_reimburse()
+
+            outbound = thorchain.handle(txn)  # process transaction in thorchain
+            outbound = thorchain.handle_fee(outbound)
+            thorchain.order_outbound_txns(outbound)
+            for txn in outbound:
+                gas = bnb.transfer(txn)  # send outbound txns back to Binance
+                txn.gas = [gas]
+            thorchain.handle_rewards()
+            thorchain.handle_gas(outbound)  # subtract gas from pool(s)
+            thorchain.handle_gas_reimburse()
 
             # generated a snapshop picture of thorchain and bnb
             snap = Breakpoint(thorchain, bnb).snapshot(i, len(outbound))
