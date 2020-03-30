@@ -1789,7 +1789,8 @@
     },
     {
         "event": {
-            "liquidity_fee": 105552,
+            "liquidity_fee": 337,
+            "liquidity_fee_in_rune": 105552,
             "pool": "BNB.BNB",
             "price_target": 0,
             "trade_slip": 21
@@ -2075,7 +2076,8 @@
     },
     {
         "event": {
-            "liquidity_fee": 865406999,
+            "liquidity_fee": 2761647,
+            "liquidity_fee_in_rune": 865406999,
             "pool": "BNB.BNB",
             "price_target": 0,
             "trade_slip": 2229
@@ -2234,6 +2236,7 @@
     {
         "event": {
             "liquidity_fee": 126874182,
+            "liquidity_fee_in_rune": 126874182,
             "pool": "BNB.BNB",
             "price_target": 0,
             "trade_slip": 739
@@ -2519,7 +2522,8 @@
     },
     {
         "event": {
-            "liquidity_fee": 826820014,
+            "liquidity_fee": 2362712,
+            "liquidity_fee_in_rune": 826820014,
             "pool": "BNB.BNB",
             "price_target": 22460886,
             "trade_slip": 2101
@@ -2806,6 +2810,7 @@
     {
         "event": {
             "liquidity_fee": 617283950,
+            "liquidity_fee_in_rune": 617283950,
             "pool": "BNB.LOK-3C0",
             "price_target": 0,
             "trade_slip": 2656
@@ -2963,7 +2968,8 @@
     },
     {
         "event": {
-            "liquidity_fee": 454488069,
+            "liquidity_fee": 460169170,
+            "liquidity_fee_in_rune": 454488069,
             "pool": "BNB.LOK-3C0",
             "price_target": 0,
             "trade_slip": 2377
@@ -3122,6 +3128,7 @@
     {
         "event": {
             "liquidity_fee": 577814631,
+            "liquidity_fee_in_rune": 577814631,
             "pool": "BNB.LOK-3C0",
             "price_target": 0,
             "trade_slip": 2588
@@ -3171,7 +3178,8 @@
     },
     {
         "event": {
-            "liquidity_fee": 189119450,
+            "liquidity_fee": 455211,
+            "liquidity_fee_in_rune": 189119450,
             "pool": "BNB.BNB",
             "price_target": 0,
             "trade_slip": 888
@@ -3329,6 +3337,7 @@
     {
         "event": {
             "liquidity_fee": 42930628,
+            "liquidity_fee_in_rune": 42930628,
             "pool": "BNB.BNB",
             "price_target": 0,
             "trade_slip": 401
@@ -3378,7 +3387,8 @@
     },
     {
         "event": {
-            "liquidity_fee": 97533901,
+            "liquidity_fee": 102944772,
+            "liquidity_fee_in_rune": 97533901,
             "pool": "BNB.LOK-3C0",
             "price_target": 0,
             "trade_slip": 1018

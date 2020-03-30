@@ -648,10 +648,11 @@ class ThorchainState:
                 refund_event = RefundEvent(105, "refund reason message")
                 return self.refund(txn, refund_event)
 
-            emit, liquidity_fee, trade_slip, pool = self.swap(txn.coins[0], "RUNE-A1F")
+            emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
+                txn.coins[0], "RUNE-A1F")
             if str(pool.asset) not in self.liquidity:
                 self.liquidity[str(pool.asset)] = 0
-            self.liquidity[str(pool.asset)] += liquidity_fee
+            self.liquidity[str(pool.asset)] += liquidity_fee_in_rune
 
             # generate event for SWAP transaction
             out_txns = [
@@ -661,7 +662,8 @@ class ThorchainState:
             # here we copy the txn to break references cause the tx is split in 2 events
             # and gas is handled only once
             in_txn = deepcopy(txn)
-            swap_event = SwapEvent(pool.asset, 0, trade_slip, liquidity_fee)
+            swap_event = SwapEvent(pool.asset, 0, trade_slip,
+                                   liquidity_fee, liquidity_fee_in_rune)
             event = Event("swap", in_txn, out_txns, swap_event)
             self.events.append(event)
 
@@ -685,7 +687,8 @@ class ThorchainState:
             refund_event = RefundEvent(105, "refund reason message: pool is zero")
             return self.refund(in_txn, refund_event)
 
-        emit, liquidity_fee, trade_slip, pool = self.swap(in_txn.coins[0], asset)
+        emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
+            in_txn.coins[0], asset)
         pools.append(pool)
 
         # check emit is non-zero and is not less than the target trade
@@ -697,7 +700,7 @@ class ThorchainState:
 
         if str(pool.asset) not in self.liquidity:
             self.liquidity[str(pool.asset)] = 0
-        self.liquidity[str(pool.asset)] += liquidity_fee
+        self.liquidity[str(pool.asset)] += liquidity_fee_in_rune
 
         # save pools
         for pool in pools:
@@ -710,8 +713,8 @@ class ThorchainState:
         ]
 
         # generate event for SWAP transaction
-        swap_event = SwapEvent(pool.asset, target_trade, trade_slip, liquidity_fee)
-
+        swap_event = SwapEvent(pool.asset, target_trade, trade_slip,
+                               liquidity_fee, liquidity_fee_in_rune)
         event = Event("swap", in_txn, out_txns, swap_event)
         self.events.append(event)
 
@@ -726,6 +729,7 @@ class ThorchainState:
         :returns: list of events
             - emit (int) - number of coins to be emitted for the swap
             - liquidity_fee (int) - liquidity fee
+            - liquidity_fee_in_rune (int) - liquidity fee in rune
             - trade_slip (int) - trade slip
             - pool (Pool) - pool with new values
 
@@ -747,15 +751,16 @@ class ThorchainState:
 
         # calculate the liquidity fee (in rune)
         liquidity_fee = self._calc_liquidity_fee(X, x, Y)
+        liquidity_fee_in_rune = liquidity_fee
         if coin.is_rune():
-            liquidity_fee = pool.get_asset_in_rune(liquidity_fee)
+            liquidity_fee_in_rune = pool.get_asset_in_rune(liquidity_fee)
 
         # calculate trade slip
         trade_slip = self._calc_trade_slip(X, x)
 
         # if we emit zero, return immediately
         if emit == 0:
-            return Coin(asset, emit), 0, 0, pool
+            return Coin(asset, emit), 0, 0, 0, pool
 
         newPool = deepcopy(pool)  # copy of pool
         if coin.is_rune():
@@ -767,7 +772,7 @@ class ThorchainState:
             newPool.sub(emit, 0)
             emit = Coin("RUNE-A1F", emit)
 
-        return emit, liquidity_fee, trade_slip, newPool
+        return emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, newPool
 
     def _calc_liquidity_fee(self, X, x, Y):
         """
@@ -1114,11 +1119,14 @@ class SwapEvent(Jsonable):
     Event swap class specific to SWAP events.
     """
 
-    def __init__(self, pool, price_target, trade_slip, liquidity_fee):
+    def __init__(
+        self, pool, price_target, trade_slip, liquidity_fee, liquidity_fee_in_rune
+    ):
         self.pool = pool
         self.price_target = int(price_target)
         self.trade_slip = int(trade_slip)
         self.liquidity_fee = int(liquidity_fee)
+        self.liquidity_fee_in_rune = int(liquidity_fee_in_rune)
 
     def __eq__(self, other):
         return (
@@ -1126,6 +1134,7 @@ class SwapEvent(Jsonable):
             and self.price_target == other.price_target
             and self.trade_slip == other.trade_slip
             and self.liquidity_fee == other.liquidity_fee
+            and self.liquidity_fee_in_rune == other.liquidity_fee_in_rune
         )
 
     def __str__(self):
@@ -1133,7 +1142,8 @@ class SwapEvent(Jsonable):
             f"SwapEvent Pool {self.pool} | "
             f"PriceTarget {self.price_target:0,.0f} | "
             f"TradeSlip {self.trade_slip:0,.0f} | "
-            f"LiquidityFee {self.liquidity_fee:0,.0f}"
+            f"LiquidityFee {self.liquidity_fee:0,.0f} | "
+            f"LiquidityFeeInRune {self.liquidity_fee_in_rune: 0, .0f}"
         )
 
     def __repr__(self):
@@ -1141,7 +1151,8 @@ class SwapEvent(Jsonable):
             f"<SwapEvent Pool {self.pool} | "
             f"PriceTarget {self.price_target:0,.0f} | "
             f"TradeSlip {self.trade_slip:0,.0f} | "
-            f"LiquidityFee {self.liquidity_fee:0,.0f}>"
+            f"LiquidityFee {self.liquidity_fee:0,.0f} | "
+            f"LiquidityFeeInRune {self.liquidity_fee:0,.0f}>"
         )
 
     @classmethod
@@ -1151,6 +1162,7 @@ class SwapEvent(Jsonable):
             value["price_target"],
             value["trade_slip"],
             value["liquidity_fee"],
+            value["liquidity_fee_in_rune"]
         )
 
 
