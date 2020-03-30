@@ -203,8 +203,7 @@ class Smoker:
 
             for outbound in outbounds:
                 # update binance simulator state with outbound txs
-                gas = self.binance.transfer(outbound)
-                outbound.gas = [gas]
+                self.binance.transfer(outbound)
 
             self.thorchain.handle_rewards()
             self.thorchain.handle_gas(outbounds)
