@@ -1,5 +1,7 @@
 import requests
 import json
+import hashlib
+
 from decimal import Decimal, getcontext
 
 from requests.adapters import HTTPAdapter
@@ -162,7 +164,10 @@ class Transaction(Jsonable):
     A transaction on a block chain (ie Binance)
     """
 
-    def __init__(self, chain, from_address, to_address, coins, memo="", gas=None):
+    def __init__(
+        self, chain, from_address, to_address, coins, memo="", gas=None, id="TODO"
+    ):
+        self.id = id
         self.chain = chain
         self.from_address = from_address
         self.to_address = to_address
@@ -181,17 +186,19 @@ class Transaction(Jsonable):
     def __repr__(self):
         coins = self.coins if self.coins else "No Coins"
         gas = f" | Gas {self.gas}" if self.gas else ""
+        id = f" | ID {self.id}" if self.id != "TODO" else ""
         return (
             f"<Transaction {self.from_address} ==> {self.to_address} | "
-            f"{coins} | {self.memo}{gas}>"
+            f"{coins} | {self.memo}{gas}{id}>"
         )
 
     def __str__(self):
         coins = ", ".join([str(c) for c in self.coins]) if self.coins else "No Coins"
         gas = " | Gas " + ", ".join([str(g) for g in self.gas]) if self.gas else ""
+        id = f" | ID {self.id}" if self.id != "TODO" else ""
         return (
             f"Transaction {self.from_address} ==> {self.to_address} | "
-            f"{coins} | {self.memo}{gas}"
+            f"{coins} | {self.memo}{gas}{id}"
         )
 
     def __eq__(self, other):
@@ -200,28 +207,34 @@ class Transaction(Jsonable):
         Ignore from to address fields because our thorchain state
         doesn't know the "real" addresses yet
         """
-        scoins = self.coins or []
-        ocoins = other.coins or []
-
-        try:
-            # try to be smart with memo because it can also have addresses
-            s = self.memo.lower().split(":")
-            o = other.memo.lower().split(":")
-            if len(s) != len(o):
-                return False
-            if s[0] != o[0]:
-                return False
-            if s[0] in ["swap", "add", "stake", "unstake", "withdraw"] and s[1] != o[1]:
-                return False
-        except Exception:
-            return False
-        # then also compare basic fields chain and coins
-        return self.chain == other.chain and sorted(scoins) == sorted(ocoins)
+        coins = self.coins or []
+        other_coins = other.coins or []
+        gas = self.gas or []
+        other_gas = other.gas or []
+        return (
+            (self.id == "TODO" or self.id == other.id)
+            and self.chain == other.chain
+            and self.memo == other.memo
+            and self.from_address == other.from_address
+            and self.to_address == other.to_address
+            and sorted(coins) == sorted(other_coins)
+            and sorted(gas) == sorted(other_gas)
+        )
 
     def __lt__(self, other):
-        self_coins = self.coins or []
+        coins = self.coins or []
         other_coins = other.coins or []
-        return sorted(self_coins) < sorted(other_coins)
+        return sorted(coins) < sorted(other_coins)
+
+    def custom_hash(self, pubkey):
+        coins = (
+            ",".join([f"{c.amount}{c.asset}" for c in self.coins])
+            if self.coins
+            else "<nil>."
+        )
+        in_hash = self.memo.split(":")[1]
+        tmp = f"{self.chain}|{self.to_address}|{pubkey}|{coins}|{self.memo}|{in_hash}"
+        return hashlib.new("sha256", tmp.encode()).digest().hex().upper()
 
     @classmethod
     def from_dict(cls, value):
@@ -232,6 +245,8 @@ class Transaction(Jsonable):
             None,
             memo=value["memo"],
         )
+        if "id" in value and value["id"]:
+            txn.id = value["id"]
         if "coins" in value and value["coins"]:
             txn.coins = [Coin.from_dict(c) for c in value["coins"]]
         if "gas" in value and value["gas"]:
@@ -240,4 +255,10 @@ class Transaction(Jsonable):
 
     @classmethod
     def empty_txn(self):
-        return Transaction("", "", "", None)
+        return Transaction(
+            "",
+            "",
+            "",
+            None,
+            id="0000000000000000000000000000000000000000000000000000000000000000",
+        )

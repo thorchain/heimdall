@@ -263,7 +263,7 @@ class TestTransaction(unittest.TestCase):
         # we ignore addresses in memo
         tx1.memo = "REFUND:ADDRESS"
         tx2.memo = "REFUND:TODO"
-        self.assertEqual(tx1, tx2)
+        self.assertNotEqual(tx1, tx2)
         # we dont ignore different assets though
         tx1.memo = "STAKE:BNB"
         tx2.memo = "STAKE:RUNE"
@@ -287,7 +287,7 @@ class TestTransaction(unittest.TestCase):
         tx2.to_address = "VAULT2"
         tx1.from_address = "USER1"
         tx2.from_address = "USER2"
-        self.assertEqual(tx1, tx2)
+        self.assertNotEqual(tx1, tx2)
         # check list of transactions equality
         tx1 = Transaction(
             Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "STAKE:BNB",
@@ -330,35 +330,67 @@ class TestTransaction(unittest.TestCase):
         list2[0].coins = None
         self.assertEqual(list1, list2)
 
+    def test_custom_hash(self):
+        txn = Transaction(
+            Binance.chain,
+            "USER",
+            "tbnb1yxfyeda8pnlxlmx0z3cwx74w9xevspwdpzdxpj",
+            Coin("BNB.BNB", 194765912),
+            "REFUND:TODO",
+            id="9999A5A08D8FCF942E1AAAA01AB1E521B699BA3A009FA0591C011DC1FFDC5E68",
+        )
+        self.assertEqual(
+            txn.custom_hash(""),
+            "FE64709713A9F9D691CF2C5B144CA6DAA53E902800C1367C692FE7935BD029CE",
+        )
+        txn.coins = None
+        self.assertEqual(
+            txn.custom_hash(""),
+            "229BD31DB372A43FB71896BDE7512BFCA06731A4D825B4721A1D8DD800159DCD",
+        )
+        txn.to_address = "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"
+        txn.coins = [Coin("RUNE-A1F", 49900000000)]
+        txn.memo = (
+            "REFUND:CA3A36052DC2FC30B91AD3996012E9EF2E69EEA70D5FBBBD9364F6F97A056D7C"
+        )
+        pubkey = (
+            "thorpub1addwnpepqv7kdf473gc4jyls7hlx4rg"
+            "t2lqxm9qkfh5m3ua7wnzzzfhlpz49u4slu4g"
+        )
+        self.assertEqual(
+            txn.custom_hash(pubkey),
+            "2CA3A2B2A758ABD7F464C51071C0E0DAC39D7583F418D98FF9D30894CDB7FF49",
+        )
+
     def test_to_json(self):
         txn = Transaction(
             Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "STAKE:BNB",
         )
         self.assertEqual(
             txn.to_json(),
-            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT",'
-            ' "memo": "STAKE:BNB", "coins": [{"asset": "BNB.BNB", '
-            '"amount": 100}], "gas": null}',
+            '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
+            '"to_address": "VAULT", "memo": "STAKE:BNB", "coins": '
+            '[{"asset": "BNB.BNB", "amount": 100}], "gas": null}',
         )
         txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
         self.assertEqual(
             txn.to_json(),
-            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT",'
-            ' "memo": "STAKE:BNB", "coins": ['
+            '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
+            '"to_address": "VAULT", "memo": "STAKE:BNB", "coins": ['
             '{"asset": "BNB.BNB", "amount": 1000000000}, '
             '{"asset": "BNB.RUNE-A1F", "amount": 1000000000}], "gas": null}',
         )
         txn.coins = None
         self.assertEqual(
             txn.to_json(),
-            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT",'
-            ' "memo": "STAKE:BNB", "coins": null, "gas": null}',
+            '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
+            '"to_address": "VAULT", "memo": "STAKE:BNB", "coins": null, "gas": null}',
         )
         txn.gas = [Coin("BNB", 37500)]
         self.assertEqual(
             txn.to_json(),
-            '{"chain": "BNB", "from_address": "USER", "to_address": "VAULT",'
-            ' "memo": "STAKE:BNB", "coins": null,'
+            '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
+            '"to_address": "VAULT", "memo": "STAKE:BNB", "coins": null,'
             ' "gas": [{"asset": "BNB.BNB", "amount": 37500}]}',
         )
 
