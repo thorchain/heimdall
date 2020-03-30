@@ -6,7 +6,10 @@
                 "amount": 40000000000000
             }
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 1,
         "in_tx": {
             "chain": "BNB",
@@ -36,7 +39,10 @@
             "pool": "BNB.BNB",
             "stake_units": 25075000000
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 2,
         "in_tx": {
             "chain": "BNB",
@@ -80,7 +86,10 @@
             "pool": "BNB.LOK-3C0",
             "stake_units": 45000000000
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 3,
         "in_tx": {
             "chain": "BNB",
@@ -124,7 +133,19 @@
             "code": 105,
             "reason": "memo can't be empty"
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 300000,
+                    "asset": "BNB.BNB"
+                },
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 4,
         "in_tx": {
             "chain": "BNB",
@@ -203,7 +224,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 5,
         "in_tx": {
             "chain": "BNB",
@@ -239,7 +263,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 6,
         "in_tx": {
             "chain": "BNB",
@@ -277,7 +304,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 7,
         "in_tx": {
             "chain": "",
@@ -297,7 +327,19 @@
             "code": 105,
             "reason": "invalid tx type: ABDG?"
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 300902,
+                    "asset": "BNB.BNB"
+                },
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 8,
         "in_tx": {
             "chain": "BNB",
@@ -376,7 +418,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 9,
         "in_tx": {
             "chain": "BNB",
@@ -412,7 +457,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 10,
         "in_tx": {
             "chain": "BNB",
@@ -450,7 +498,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 11,
         "in_tx": {
             "chain": "",
@@ -470,7 +521,19 @@
             "code": 105,
             "reason": "Invalid symbol"
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 301809,
+                    "asset": "BNB.BNB"
+                },
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 12,
         "in_tx": {
             "chain": "BNB",
@@ -549,7 +612,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 13,
         "in_tx": {
             "chain": "BNB",
@@ -585,7 +651,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 14,
         "in_tx": {
             "chain": "BNB",
@@ -623,7 +692,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 15,
         "in_tx": {
             "chain": "",
@@ -643,7 +715,19 @@
             "code": 105,
             "reason": "invalid stake memo:did not find BNB.TCAN-014 "
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 302721,
+                    "asset": "BNB.BNB"
+                },
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 16,
         "in_tx": {
             "chain": "BNB",
@@ -722,7 +806,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 17,
         "in_tx": {
             "chain": "BNB",
@@ -758,7 +845,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 18,
         "in_tx": {
             "chain": "BNB",
@@ -796,7 +886,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 19,
         "in_tx": {
             "chain": "",
@@ -816,7 +909,19 @@
             "code": 105,
             "reason": "invalid stake memo:invalid pool asset"
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 303638,
+                    "asset": "BNB.BNB"
+                },
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 20,
         "in_tx": {
             "chain": "BNB",
@@ -895,7 +1000,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 21,
         "in_tx": {
             "chain": "BNB",
@@ -931,7 +1039,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 22,
         "in_tx": {
             "chain": "BNB",
@@ -969,7 +1080,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 23,
         "in_tx": {
             "chain": "",
@@ -989,7 +1103,10 @@
             "pool": "BNB.BNB",
             "stake_units": 2062213471
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 24,
         "in_tx": {
             "chain": "BNB",
@@ -1029,7 +1146,10 @@
             "pool": "BNB.BNB",
             "stake_units": 2507594870
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 25,
         "in_tx": {
             "chain": "BNB",
@@ -1069,7 +1189,10 @@
             "pool": "BNB.BNB",
             "stake_units": 14982601547
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 26,
         "in_tx": {
             "chain": "BNB",
@@ -1112,7 +1235,10 @@
         "event": {
             "pool": "BNB.BNB"
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 27,
         "in_tx": {
             "chain": "BNB",
@@ -1146,7 +1272,15 @@
             "code": 105,
             "reason": "invalid tx type:  "
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 0
+        },
         "id": 28,
         "in_tx": {
             "chain": "BNB",
@@ -1202,7 +1336,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 29,
         "in_tx": {
             "chain": "BNB",
@@ -1240,7 +1377,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 30,
         "in_tx": {
             "chain": "",
@@ -1260,7 +1400,15 @@
             "code": 105,
             "reason": "invalid tx type: ABDG?"
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 0
+        },
         "id": 31,
         "in_tx": {
             "chain": "BNB",
@@ -1316,7 +1464,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 32,
         "in_tx": {
             "chain": "BNB",
@@ -1354,7 +1505,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 33,
         "in_tx": {
             "chain": "",
@@ -1374,7 +1528,15 @@
             "code": 105,
             "reason": "invalid swap memo:swap from BNB.BNB to BNB.BNB is noop, refund"
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 318085,
+                    "asset": "BNB.BNB"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 34,
         "in_tx": {
             "chain": "BNB",
@@ -1430,7 +1592,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 35,
         "in_tx": {
             "chain": "BNB",
@@ -1468,7 +1633,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 36,
         "in_tx": {
             "chain": "",
@@ -1488,7 +1656,19 @@
             "code": 105,
             "reason": "invalid swap memo:not expecting multiple coins in a swap"
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 318678,
+                    "asset": "BNB.BNB"
+                },
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 37,
         "in_tx": {
             "chain": "BNB",
@@ -1548,7 +1728,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 38,
         "in_tx": {
             "chain": "BNB",
@@ -1586,7 +1769,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 39,
         "in_tx": {
             "chain": "",
@@ -1608,7 +1794,15 @@
             "price_target": 0,
             "trade_slip": 21
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 318599,
+                    "asset": "BNB.BNB"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 40,
         "in_tx": {
             "chain": "BNB",
@@ -1663,7 +1857,10 @@
                 }
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 41,
         "in_tx": {
             "chain": "",
@@ -1689,7 +1886,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 42,
         "in_tx": {
             "chain": "BNB",
@@ -1727,7 +1927,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 43,
         "in_tx": {
             "chain": "",
@@ -1747,7 +1950,15 @@
             "code": 109,
             "reason": "emit asset 26101859 less than price limit 26572599"
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 0
+        },
         "id": 44,
         "in_tx": {
             "chain": "BNB",
@@ -1803,7 +2014,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 45,
         "in_tx": {
             "chain": "BNB",
@@ -1841,7 +2055,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 46,
         "in_tx": {
             "chain": "",
@@ -1863,7 +2080,15 @@
             "price_target": 0,
             "trade_slip": 2229
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 263603,
+                    "asset": "BNB.BNB"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 47,
         "in_tx": {
             "chain": "BNB",
@@ -1918,7 +2143,10 @@
                 }
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 48,
         "in_tx": {
             "chain": "",
@@ -1944,7 +2172,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 49,
         "in_tx": {
             "chain": "BNB",
@@ -1982,7 +2213,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 50,
         "in_tx": {
             "chain": "",
@@ -2004,7 +2238,15 @@
             "price_target": 0,
             "trade_slip": 739
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 0
+        },
         "id": 51,
         "in_tx": {
             "chain": "BNB",
@@ -2059,7 +2301,10 @@
                 }
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 52,
         "in_tx": {
             "chain": "",
@@ -2085,7 +2330,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 53,
         "in_tx": {
             "chain": "BNB",
@@ -2123,7 +2371,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 54,
         "in_tx": {
             "chain": "",
@@ -2143,7 +2394,15 @@
             "code": 109,
             "reason": "emit asset 23619702 less than price limit 23853375"
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 0
+        },
         "id": 55,
         "in_tx": {
             "chain": "BNB",
@@ -2199,7 +2458,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 56,
         "in_tx": {
             "chain": "BNB",
@@ -2237,7 +2499,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 57,
         "in_tx": {
             "chain": "",
@@ -2259,7 +2524,15 @@
             "price_target": 22460886,
             "trade_slip": 2101
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 238290,
+                    "asset": "BNB.BNB"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 58,
         "in_tx": {
             "chain": "BNB",
@@ -2314,7 +2587,10 @@
                 }
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 59,
         "in_tx": {
             "chain": "",
@@ -2340,7 +2616,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 60,
         "in_tx": {
             "chain": "BNB",
@@ -2378,7 +2657,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 61,
         "in_tx": {
             "chain": "",
@@ -2398,7 +2680,15 @@
             "code": 105,
             "reason": "checksum failed. Expected lz2zxs, got h5mz6q."
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 240465,
+                    "asset": "BNB.BNB"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 62,
         "in_tx": {
             "chain": "BNB",
@@ -2454,7 +2744,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 63,
         "in_tx": {
             "chain": "BNB",
@@ -2492,7 +2785,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 64,
         "in_tx": {
             "chain": "",
@@ -2514,7 +2810,15 @@
             "price_target": 0,
             "trade_slip": 2656
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 0
+        },
         "id": 65,
         "in_tx": {
             "chain": "BNB",
@@ -2569,7 +2873,10 @@
                 }
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 66,
         "in_tx": {
             "chain": "",
@@ -2595,7 +2902,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 67,
         "in_tx": {
             "chain": "BNB",
@@ -2633,7 +2943,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 68,
         "in_tx": {
             "chain": "",
@@ -2655,7 +2968,15 @@
             "price_target": 0,
             "trade_slip": 2377
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 82738532,
+                    "asset": "BNB.LOK-3C0"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 69,
         "in_tx": {
             "chain": "BNB",
@@ -2710,7 +3031,10 @@
                 }
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 70,
         "in_tx": {
             "chain": "",
@@ -2736,7 +3060,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 71,
         "in_tx": {
             "chain": "BNB",
@@ -2774,7 +3101,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 72,
         "in_tx": {
             "chain": "",
@@ -2796,7 +3126,10 @@
             "price_target": 0,
             "trade_slip": 2588
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 73,
         "in_tx": {
             "chain": "BNB",
@@ -2843,7 +3176,15 @@
             "price_target": 0,
             "trade_slip": 888
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 221464,
+                    "asset": "BNB.BNB"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 74,
         "in_tx": {
             "chain": "BNB",
@@ -2897,7 +3238,10 @@
                 }
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 75,
         "in_tx": {
             "chain": "",
@@ -2923,7 +3267,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 76,
         "in_tx": {
             "chain": "BNB",
@@ -2961,7 +3308,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 77,
         "in_tx": {
             "chain": "",
@@ -2983,7 +3333,10 @@
             "price_target": 0,
             "trade_slip": 401
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 78,
         "in_tx": {
             "chain": "BNB",
@@ -3030,7 +3383,15 @@
             "price_target": 0,
             "trade_slip": 1018
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 96021931,
+                    "asset": "BNB.LOK-3C0"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 79,
         "in_tx": {
             "chain": "BNB",
@@ -3084,7 +3445,10 @@
                 }
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 80,
         "in_tx": {
             "chain": "",
@@ -3110,7 +3474,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 81,
         "in_tx": {
             "chain": "BNB",
@@ -3148,7 +3515,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 82,
         "in_tx": {
             "chain": "",
@@ -3170,7 +3540,19 @@
             "pool": "BNB.BNB",
             "stake_units": 12537500000
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                },
+                {
+                    "amount": 230993,
+                    "asset": "BNB.BNB"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 83,
         "in_tx": {
             "chain": "BNB",
@@ -3245,7 +3627,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 84,
         "in_tx": {
             "chain": "BNB",
@@ -3281,7 +3666,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 85,
         "in_tx": {
             "chain": "BNB",
@@ -3319,7 +3707,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 86,
         "in_tx": {
             "chain": "",
@@ -3339,7 +3730,10 @@
             "pool": "BNB.LOK-3C0",
             "status": "Bootstrap"
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 87,
         "in_tx": {
             "chain": "",
@@ -3361,7 +3755,15 @@
             "pool": "BNB.LOK-3C0",
             "stake_units": 45000000000
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                }
+            ],
+            "pool_deduct": 0
+        },
         "id": 88,
         "in_tx": {
             "chain": "BNB",
@@ -3436,7 +3838,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 89,
         "in_tx": {
             "chain": "BNB",
@@ -3472,7 +3877,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 90,
         "in_tx": {
             "chain": "BNB",
@@ -3510,7 +3918,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 91,
         "in_tx": {
             "chain": "",
@@ -3532,7 +3943,19 @@
             "pool": "BNB.BNB",
             "stake_units": 12537500000
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                },
+                {
+                    "amount": 231196,
+                    "asset": "BNB.BNB"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 92,
         "in_tx": {
             "chain": "BNB",
@@ -3607,7 +4030,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 93,
         "in_tx": {
             "chain": "BNB",
@@ -3643,7 +4069,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 94,
         "in_tx": {
             "chain": "BNB",
@@ -3681,7 +4110,10 @@
                 "BNB.BNB"
             ]
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 95,
         "in_tx": {
             "chain": "",
@@ -3701,7 +4133,10 @@
             "pool": "BNB.BNB",
             "status": "Bootstrap"
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 96,
         "in_tx": {
             "chain": "",
@@ -3723,7 +4158,19 @@
             "pool": "BNB.BNB",
             "stake_units": 19552409888
         },
-        "fee": null,
+        "fee": {
+            "coins": [
+                {
+                    "amount": 100000000,
+                    "asset": "BNB.RUNE-A1F"
+                },
+                {
+                    "amount": 0,
+                    "asset": "BNB.BNB"
+                }
+            ],
+            "pool_deduct": 100000000
+        },
         "id": 97,
         "in_tx": {
             "chain": "BNB",
@@ -3798,7 +4245,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 98,
         "in_tx": {
             "chain": "BNB",
@@ -3834,7 +4284,10 @@
             "gas_type": "gas_spend",
             "reimburse_to": null
         },
-        "fee": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
         "id": 99,
         "in_tx": {
             "chain": "BNB",
