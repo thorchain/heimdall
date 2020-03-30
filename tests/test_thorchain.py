@@ -178,7 +178,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.price_target, 0)
-        self.assertEqual(event.event.liquidity_fee, 36533132)
+        self.assertEqual(event.event.liquidity_fee_in_rune, 36533132)
         self.assertEqual(event.event.trade_slip, 1798)
         self.assertEqual(event.fee.coins, [Coin("BNB", 65496058)])
         self.assertEqual(event.fee.pool_deduct, 100000000)
