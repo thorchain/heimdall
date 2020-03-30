@@ -84,7 +84,9 @@ class TestThorchainState(unittest.TestCase):
             event.event.reason,
             "invalid swap memo:not expecting multiple coins in a swap",
         )
-        self.assertEqual(event.fee.coins, [Coin("BNB", 74191777), Coin("RUNE-A1F", 100000000)])
+        self.assertEqual(
+            event.fee.coins, [Coin("BNB", 74191777), Coin("RUNE-A1F", 100000000)]
+        )
         self.assertEqual(event.fee.pool_deduct, 100000000)
 
         # swap with zero return, refunds and doesn't change pools
@@ -1361,7 +1363,10 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
                     "gas": [{"asset": "BNB.BNB", "amount": 35000}],
                 },
             ],
-            "fee": {"coins": [{"asset": "BNB.BNB", "amount": "221464"}], "pool_deduct": "100000000"},
+            "fee": {
+                "coins": [{"asset": "BNB.BNB", "amount": "221464"}],
+                "pool_deduct": "100000000",
+            },
             "event": {"code": "105", "reason": "memo can't be empty"},
             "status": "Refund",
         }
