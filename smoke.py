@@ -207,7 +207,6 @@ class Smoker:
 
             self.thorchain.handle_rewards()
             self.thorchain.handle_gas(outbounds)
-            self.thorchain.handle_gas_reimburse()
 
             # wait for blocks to be processed on real chains
             self.mock_binance.wait_for_blocks(len(outbounds))

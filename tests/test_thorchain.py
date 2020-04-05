@@ -1,6 +1,13 @@
 import unittest
 
-from thorchain import ThorchainState, Pool, Event, RefundEvent, RewardEvent
+from thorchain import (
+    ThorchainState,
+    Pool,
+    Event,
+    RefundEvent,
+    RewardEvent,
+    EventGasPool,
+)
 from chains import Binance
 
 from common import Transaction, Coin
@@ -602,24 +609,14 @@ class TestThorchainState(unittest.TestCase):
         thorchain.handle_gas(outbound)
 
         events = thorchain.get_events()
-        self.assertEqual(len(events), 4)
+        self.assertEqual(len(events), 3)
         # first new gas event
         event = events[2]
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "gas")
-        self.assertEqual(event.in_tx.to_json(), outbound[0].to_json())
+        self.assertEqual(event.in_tx.to_json(), Transaction.empty_txn().to_json())
         self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.event.gas[0], outbound[0].gas[0])
-        self.assertEqual(event.event.gas_type, "gas_spend")
-
-        # second new gas event
-        event = events[3]
-        self.assertEqual(event.status, "Success")
-        self.assertEqual(event.type, "gas")
-        self.assertEqual(event.in_tx.to_json(), outbound[1].to_json())
-        self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.event.gas[0], outbound[1].gas[0])
-        self.assertEqual(event.event.gas_type, "gas_spend")
+        self.assertEqual(event.event.pools, [EventGasPool("BNB.BNB", 75000, 25012506)])
 
     def test_stake(self):
         thorchain = ThorchainState()
