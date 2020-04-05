@@ -134,6 +134,7 @@ class ThorchainState:
 
         """
         gas_coins = {}
+
         for txn in txns:
             if txn.gas:
                 for gas in txn.gas:
@@ -141,10 +142,10 @@ class ThorchainState:
                         gas_coins[gas.asset] = Coin(gas.asset)
                     gas_coins[gas.asset].amount += gas.amount
 
-                    # generate event for GAS in transaction
-                    gas_event = GasEvent(gas, "gas_spend")
-                    event = Event("gas", txn, None, gas_event)
-                    self.events.append(event)
+        if not len(gas_coins.items()):
+            return
+
+        gas_event = GasEvent([])
 
         for asset, gas in gas_coins.items():
             pool = self.get_pool(gas.asset)
@@ -153,6 +154,7 @@ class ThorchainState:
             # balance. clean this up later
             if pool.asset_balance <= gas.amount:
                 pool.asset_balance = 0
+                rune_amt = 0
             else:
                 pool.sub(0, gas.amount)  # subtract gas from pool
 
@@ -160,10 +162,17 @@ class ThorchainState:
                 rune_amt = pool.get_asset_in_rune(gas.amount)
                 self.reserve -= rune_amt  # take rune from the reserve
                 # add the rune amount to gas reimburse
-                self._add_gas_reimburse(pool.asset, rune_amt)
                 pool.add(rune_amt, 0)  # replenish gas costs with rune
 
+            # update gas event
+            gas_pool = EventGasPool(asset, gas.amount, rune_amt)
+            gas_event.pools.append(gas_pool)
+
             self.set_pool(pool)
+
+        # generate event GAS
+        event = Event("gas", Transaction.empty_txn(), None, gas_event)
+        self.events.append(event)
 
     def handle_fee(self, txns):
         """
@@ -649,7 +658,8 @@ class ThorchainState:
                 return self.refund(txn, refund_event)
 
             emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
-                txn.coins[0], "RUNE-A1F")
+                txn.coins[0], "RUNE-A1F"
+            )
             if str(pool.asset) not in self.liquidity:
                 self.liquidity[str(pool.asset)] = 0
             self.liquidity[str(pool.asset)] += liquidity_fee_in_rune
@@ -662,8 +672,9 @@ class ThorchainState:
             # here we copy the txn to break references cause the tx is split in 2 events
             # and gas is handled only once
             in_txn = deepcopy(txn)
-            swap_event = SwapEvent(pool.asset, 0, trade_slip,
-                                   liquidity_fee, liquidity_fee_in_rune)
+            swap_event = SwapEvent(
+                pool.asset, 0, trade_slip, liquidity_fee, liquidity_fee_in_rune
+            )
             event = Event("swap", in_txn, out_txns, swap_event)
             self.events.append(event)
 
@@ -688,7 +699,8 @@ class ThorchainState:
             return self.refund(in_txn, refund_event)
 
         emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
-            in_txn.coins[0], asset)
+            in_txn.coins[0], asset
+        )
         pools.append(pool)
 
         # check emit is non-zero and is not less than the target trade
@@ -713,8 +725,9 @@ class ThorchainState:
         ]
 
         # generate event for SWAP transaction
-        swap_event = SwapEvent(pool.asset, target_trade, trade_slip,
-                               liquidity_fee, liquidity_fee_in_rune)
+        swap_event = SwapEvent(
+            pool.asset, target_trade, trade_slip, liquidity_fee, liquidity_fee_in_rune
+        )
         event = Event("swap", in_txn, out_txns, swap_event)
         self.events.append(event)
 
@@ -813,27 +826,6 @@ class ThorchainState:
 
         """
         return int((x * X * Y) / (x + X) ** 2)
-
-    def handle_gas_reimburse(self):
-        if self._gas_reimburse:
-            gas = [
-                Coin("RUNE-A1F", rune_amt)
-                for (_, rune_amt) in self._gas_reimburse.items()
-            ]
-            reimburse_to = [asset for asset in self._gas_reimburse]
-            gas_event = GasEvent(gas, "gas_reimburse", reimburse_to)
-            event = Event(
-                "gas", Transaction.empty_txn(), None, gas_event, status="Success"
-            )
-            self.events.append(event)
-
-            self._gas_reimburse = {}
-
-    def _add_gas_reimburse(self, asset, rune_amt):
-        if asset not in self._gas_reimburse:
-            self._gas_reimburse[asset] = rune_amt
-        else:
-            self._gas_reimburse[asset] += rune_amt
 
 
 class EventFee(Jsonable):
@@ -1070,48 +1062,60 @@ class ReserveEvent(Jsonable):
         )
 
 
+class EventGasPool(Jsonable):
+    """
+    GasPool in Gas Event
+    """
+
+    def __init__(self, asset, asset_amt, rune_amt):
+        self.asset = asset
+        self.asset_amt = int(asset_amt)
+        self.rune_amt = int(rune_amt)
+
+    def __eq__(self, other):
+        return (
+            self.asset == other.asset
+            and self.asset_amt == other.asset_amt
+            and self.rune_amt == other.rune_amt
+        )
+
+    def __str__(self):
+        return (
+            f"GasPool {self.asset} | "
+            f"Asset {self.asset_amt:0,.0f} | Rune {self.rune_amt:0,.0f}"
+        )
+
+    def __repr__(self):
+        return str(self)
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls(value["asset"], value["asset_amt"], value["rune_amt"])
+
+
 class GasEvent(Jsonable):
     """
     Event gas class specific to GAS events.
     """
 
-    def __init__(self, gas, gas_type, reimburse_to=None):
-        if gas and not isinstance(gas, list):
-            gas = [gas]
-        self.gas = gas
-        self.gas_type = gas_type
-        self.reimburse_to = reimburse_to
+    def __init__(self, pools=None):
+        self.pools = pools
 
     def __eq__(self, other):
-        sgas = self.gas or []
-        sreimburse = self.reimburse_to or []
-        ogas = other.gas or []
-        oreimburse = other.reimburse_to or []
-        return self.gas_type == other.gas_type and sorted(
-            zip(sgas, sreimburse)
-        ) == sorted(zip(ogas, oreimburse))
+        return self.pools == other.pools
 
     def __str__(self):
-        return (
-            f"GasEvent {self.gas} | "
-            f"Type {self.gas_type} | "
-            f"Reimburse {self.reimburse_to}"
-        )
+        pools = ", ".join([str(p) for p in self.pools]) if self.pools else "No Pools"
+        return f"GasEvent {pools}"
 
     def __repr__(self):
-        return (
-            f"<GasEvent {self.gas} | "
-            f"Type {self.gas_type} | "
-            f"Reimburse {self.reimburse_to}>"
-        )
+        pools = ", ".join([str(p) for p in self.pools]) if self.pools else "No Pools"
+        return f"<GasEvent {pools}>"
 
     @classmethod
     def from_dict(cls, value):
-        gas = [Coin.from_dict(g) for g in value["gas"]]
-        reimburse_to = None
-        if "reimburse_to" in value and value["reimburse_to"]:
-            reimburse_to = [Asset(a) for a in value["reimburse_to"]]
-        return cls(gas, value["gas_type"], reimburse_to)
+        pools = [EventGasPool.from_dict(g) for g in value["pools"]]
+        return cls(pools)
 
 
 class SwapEvent(Jsonable):
@@ -1162,7 +1166,7 @@ class SwapEvent(Jsonable):
             value["price_target"],
             value["trade_slip"],
             value["liquidity_fee"],
-            value["liquidity_fee_in_rune"]
+            value["liquidity_fee_in_rune"],
         )
 
 
