@@ -211,7 +211,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.event.code, 105)
         self.assertEqual(
-            event.event.reason, "checksum failed. Expected lz2zxs, got h5mz6q."
+            event.event.reason, "address format not supported: BNBNOMNOM"
         )
         self.assertEqual(event.fee.coins, [Coin("RUNE-A1F", 100000000)])
         self.assertEqual(event.fee.pool_deduct, 0)

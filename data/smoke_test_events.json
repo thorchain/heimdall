@@ -1908,7 +1908,7 @@
         },
         "event": {
             "code": 105,
-            "reason": "checksum failed. Expected lz2zxs, got h5mz6q."
+            "reason": "address format not supported: bnbSTAKER-1"
         },
         "status": "Refund"
     },
