@@ -608,15 +608,14 @@ class ThorchainState:
                 refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
             return self.refund(txn, refund_event)
 
-        # get address to send to
         address = txn.from_address
+        # check address to send to from memo
         if len(parts) > 2:
             address = parts[2]
             # checking if address is for mainnet, not testnet
             if address.lower().startswith("bnb"):
-                # FIXME real world message
                 refund_event = RefundEvent(
-                    105, "checksum failed. Expected lz2zxs, got h5mz6q."
+                    105, f"address format not supported: {address}"
                 )
                 return self.refund(txn, refund_event)
 
