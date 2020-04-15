@@ -34,7 +34,7 @@ def main():
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
     )
     parser.add_argument(
-        "--midgard", default="http://localhost:8080", help="Midgard API url"
+        "--midgard", default="https://localhost:8080", help="Midgard API url"
     )
     parser.add_argument(
         "--generate-balances", default=False, type=bool, help="Generate balances (bool)"
