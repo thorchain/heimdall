@@ -57,8 +57,8 @@ class HttpClient:
         """
         Make a get request
         """
-        url = self.get_url(path, verify=False)
-        resp = requests_retry_session().get(url, params=args)
+        url = self.get_url(path)
+        resp = requests_retry_session().get(url, params=args, verify=False)
         resp.raise_for_status()
         return resp.json()
 
@@ -66,8 +66,8 @@ class HttpClient:
         """
         Make a post request
         """
-        url = self.get_url(path, verify=False)
-        resp = requests_retry_session().post(url, json=payload)
+        url = self.get_url(path)
+        resp = requests_retry_session().post(url, json=payload, verify=False)
         resp.raise_for_status()
         return resp.json()
 
