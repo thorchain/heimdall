@@ -5,7 +5,7 @@ import hashlib
 
 from common import Coin, Asset, HttpClient
 from segwit_addr import address_from_public_key
-from chains.bitcoin import MockBitcoin
+from chains.aliases import ALIASES_BTC, ALIASES_BNB
 
 
 class MockBinance(HttpClient):
@@ -14,20 +14,12 @@ class MockBinance(HttpClient):
     https://gitlab.com/thorchain/bepswap/mock-binance
     """
 
-    aliases = {
-        "MASTER": "tbnb1ht7v08hv2lhtmk8y7szl2hjexqryc3hcldlztl",
-        "CONTRIBUTOR-1": "tbnb1lltanv67yztkpt5czw4ajsmg94dlqnnhrq7zqm",
-        "USER-1": "tbnb157dxmw9jz5emuf0apj4d6p3ee42ck0uwksxfff",
-        "STAKER-1": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q",
-        "STAKER-2": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx",
-        "VAULT": "tbnb14jg77k8nwcz577zwd2gvdnpe2yy46j0hkvdvlg",
-    }
 
     def set_vault_address(self, addr):
         """
         Set the vault bnb address
         """
-        self.aliases["VAULT"] = addr
+        ALIASES_BNB["VAULT"] = addr
 
     def get_block_height(self):
         """
@@ -89,14 +81,14 @@ class MockBinance(HttpClient):
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
-        if txn.to_address in self.aliases:
-            txn.to_address = self.aliases[txn.to_address]
+        if txn.to_address in ALIASES_BNB:
+            txn.to_address = ALIASES_BNB[txn.to_address]
 
-        if txn.from_address in self.aliases:
-            txn.from_address = self.aliases[txn.from_address]
+        if txn.from_address in ALIASES_BNB:
+            txn.from_address = ALIASES_BNB[txn.from_address]
 
         # update memo with actual address (over alias name)
-        for name, addr in MockBitcoin.aliases.items():
+        for name, addr in ALIASES_BTC.items():
             txn.memo = txn.memo.replace(name, addr)
 
         payload = {

@@ -12,6 +12,7 @@ from bitcoin.core.script import CScript, OP_0
 from common import Coin, Asset
 from decimal import Decimal, getcontext
 from segwit_addr import address_from_public_key
+from chains.aliases import ALIASES_BTC, ALIASES_BNB
 
 
 class MockBitcoin():
@@ -26,15 +27,6 @@ class MockBitcoin():
         "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330",
         "9294f4d108465fd293f7fe299e6923ef71a77f2cb1eb6d4394839c64ec25d5c0",
     ]
-
-    aliases = {
-        "MASTER": "bcrt1qj08ys4ct2hzzc2hcz6h2hgrvlmsjynawhcf2xa",
-        "CONTRIBUTOR-1": "bcrt1qzupk5lmc84r2dh738a9g3zscavannjy3084p2x",
-        "USER-1": "bcrt1qqqnde7kqe5sf96j6zf8jpzwr44dh4gkd3ehaqh",
-        "STAKER-1": "bcrt1q0s4mg25tu6termrk8egltfyme4q7sg3h8kkydt",
-        "STAKER-2": "bcrt1qjw8h4l3dtz5xxc7uyh5ys70qkezspgfutyswxm",
-        "VAULT": "",
-    }
 
     def __init__(self, base_url):
         SelectParams("regtest")
@@ -59,7 +51,7 @@ class MockBitcoin():
         """
         Set the vault bnb address
         """
-        self.aliases["VAULT"] = addr
+        ALIASES_BTC["VAULT"] = addr
 
     def get_block_height(self):
         """
@@ -86,14 +78,14 @@ class MockBitcoin():
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
-        if txn.to_address in self.aliases:
-            txn.to_address = self.aliases[txn.to_address]
+        if txn.to_address in ALIASES_BTC:
+            txn.to_address = ALIASES_BTC[txn.to_address]
 
-        if txn.from_address in self.aliases:
-            txn.from_address = self.aliases[txn.from_address]
+        if txn.from_address in ALIASES_BTC:
+            txn.from_address = ALIASES_BTC[txn.from_address]
 
         # update memo with actual address (over alias name)
-        for name, addr in self.aliases.items():
+        for name, addr in ALIASES_BNB.items():
             txn.memo = txn.memo.replace(name, addr)
 
         # create transaction

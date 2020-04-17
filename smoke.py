@@ -13,6 +13,7 @@ from chains.bitcoin import MockBitcoin
 from thorchain import ThorchainState, ThorchainClient, Event
 from health import Health
 from common import Transaction, Coin, Asset
+from chains.aliases import ALIASES_BNB
 
 # Init logging
 logging.basicConfig(
@@ -146,7 +147,7 @@ class Smoker:
         # compare simulation binance vs mock binance
         mockAccounts = self.mock_binance.accounts()
         for macct in mockAccounts:
-            for name, address in self.mock_binance.aliases.items():
+            for name, address in ALIASES_BNB.items():
                 if name == "MASTER":
                     continue  # don't care to compare MASTER account
                 if address == macct["address"]:
@@ -256,8 +257,8 @@ class Smoker:
                 continue
 
             # self.check_pools()
-            # self.check_binance()
-            # self.check_vaults()
+            self.check_binance()
+            self.check_vaults()
             self.check_events()
             # self.run_health()
 
