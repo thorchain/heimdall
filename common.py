@@ -113,6 +113,8 @@ class Coin(Jsonable):
     A class that represents a coin and an amount
     """
 
+    ONE = 100000000
+
     def __init__(self, asset, amount=0):
         self.asset = Asset(asset)
         self.amount = int(amount)

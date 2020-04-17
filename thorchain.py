@@ -1383,6 +1383,8 @@ class Pool(Jsonable):
         part1 = pool_rune + pool_asset
         part2 = stake_rune * pool_asset + pool_rune * stake_asset
         part3 = 4 * pool_rune * pool_asset
+        if part3 == 0:
+            return 0
         answer = part1 * part2 / part3
         return int(answer)
 

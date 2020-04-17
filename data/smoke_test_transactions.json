@@ -80,6 +80,45 @@
         "gas": null
     },
     {
+        "chain": "BTC",
+        "from_address": "MASTER",
+        "to_address": "USER-1",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "BTC.BTC",
+                "amount": 500000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BTC",
+        "from_address": "MASTER",
+        "to_address": "STAKER-1",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "BTC.BTC",
+                "amount": 500000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BTC",
+        "from_address": "MASTER",
+        "to_address": "STAKER-2",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "BTC.BTC",
+                "amount": 500000000
+            }
+        ],
+        "gas": null
+    },
+    {
         "chain": "BNB",
         "from_address": "CONTRIBUTOR-1",
         "to_address": "VAULT",
@@ -105,6 +144,32 @@
             {
                 "asset": "BNB.RUNE-A1F",
                 "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:BTC.BTC:STAKER-1",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BTC",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:BTC.BTC:STAKER-1",
+        "coins": [
+            {
+                "asset": "BTC.BTC",
+                "amount": 150000000
             }
         ],
         "gas": null

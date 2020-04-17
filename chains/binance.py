@@ -4,6 +4,8 @@ import base64
 import hashlib
 
 from common import Coin, Asset, HttpClient
+from segwit_addr import address_from_public_key
+from chains.bitcoin import MockBitcoin
 
 
 class MockBinance(HttpClient):
@@ -69,6 +71,17 @@ class MockBinance(HttpClient):
     def accounts(self):
         return self.fetch("/accounts")
 
+
+    @classmethod
+    def get_address_from_pubkey(cls, pubkey):
+        """
+        Get bnb testnet address for a public key
+
+        :param string pubkey: public key
+        :returns: string bech32 encoded address
+        """
+        return address_from_public_key(pubkey, "tbnb")
+
     def transfer(self, txn):
         """
         Make a transaction/transfer on mock binance
@@ -83,7 +96,7 @@ class MockBinance(HttpClient):
             txn.from_address = self.aliases[txn.from_address]
 
         # update memo with actual address (over alias name)
-        for name, addr in self.aliases.items():
+        for name, addr in MockBitcoin.aliases.items():
             txn.memo = txn.memo.replace(name, addr)
 
         payload = {
