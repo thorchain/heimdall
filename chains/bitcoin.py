@@ -1,22 +1,18 @@
 import time
-import logging
-import base64
-import hashlib
 import codecs
 
 from bitcoin import SelectParams
 from bitcoin.rpc import Proxy
 from bitcoin.wallet import CBitcoinSecret, P2WPKHBitcoinAddress
-from bitcoin.core import x, CTransaction, Hash160
+from bitcoin.core import Hash160
 from bitcoin.core.script import CScript, OP_0
-from common import Coin, Asset
+from common import Coin
 from decimal import Decimal, getcontext
-from segwit_addr import address_from_public_key
 from chains.aliases import aliases_btc, get_aliases, get_alias_address
 from chains.account import Account
 
 
-class MockBitcoin():
+class MockBitcoin:
     """
     An client implementation for a regtest bitcoin server
     """
@@ -33,7 +29,7 @@ class MockBitcoin():
         SelectParams("regtest")
         self.connection = Proxy(service_url=base_url)
         for key in self.private_keys:
-            seckey = CBitcoinSecret.from_secret_bytes(codecs.decode(key, 'hex_codec'))
+            seckey = CBitcoinSecret.from_secret_bytes(codecs.decode(key, "hex_codec"))
             self.connection._call("importprivkey", str(seckey))
 
     @classmethod
@@ -101,7 +97,7 @@ class MockBitcoin():
 
         # get unspents UTXOs
         address = txn.from_address
-        min_amount = amount + 0.01 # add more for fee
+        min_amount = amount + 0.01  # add more for fee
         unspents = self.connection._call(
             "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
         )
@@ -113,7 +109,7 @@ class MockBitcoin():
 
         # choose the first UTXO
         unspent = unspents[0]
-        tx_in = [{ "txid": unspent["txid"], "vout": unspent["vout"] }]
+        tx_in = [{"txid": unspent["txid"], "vout": unspent["vout"]}]
         tx_out = [tx_out_dest]
 
         # create change output if needed
@@ -121,7 +117,7 @@ class MockBitcoin():
         getcontext().prec = 15
         amount_change = Decimal(amount_utxo) - Decimal(min_amount)
         if amount_change > 0:
-            tx_out.append({ txn.from_address: float(amount_change) })
+            tx_out.append({txn.from_address: float(amount_change)})
 
         tx_out.append(tx_out_op_return)
 

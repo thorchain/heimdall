@@ -1,9 +1,8 @@
 import time
-import logging
 import base64
 import hashlib
 
-from common import Coin, Asset, HttpClient
+from common import Coin, HttpClient
 from segwit_addr import address_from_public_key
 from chains.aliases import aliases_bnb, get_aliases, get_alias_address
 from chains.account import Account
@@ -62,7 +61,6 @@ class MockBinance(HttpClient):
 
     def accounts(self):
         return self.fetch("/accounts")
-
 
     @classmethod
     def get_address_from_pubkey(cls, pubkey):

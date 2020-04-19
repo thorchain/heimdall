@@ -16,8 +16,10 @@ aliases_bnb = {
     "VAULT": "tbnb14jg77k8nwcz577zwd2gvdnpe2yy46j0hkvdvlg",
 }
 
+
 def get_aliases():
     return aliases_btc.keys()
+
 
 def get_alias_address(chain, alias):
     if chain == "BNB":
@@ -25,6 +27,7 @@ def get_alias_address(chain, alias):
     if chain == "BTC":
         return aliases_btc[alias]
     raise Exception("Address for alias not found, chain not supported")
+
 
 def get_bnb_address(chain, addr):
     if chain == "BNB":

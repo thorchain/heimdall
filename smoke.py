@@ -34,7 +34,9 @@ def main():
         "--binance", default="http://localhost:26660", help="Mock binance server"
     )
     parser.add_argument(
-        "--bitcoin", default="http://thorchain:password@localhost:18443", help="Regtest bitcoin server"
+        "--bitcoin",
+        default="http://thorchain:password@localhost:18443",
+        help="Regtest bitcoin server",
     )
     parser.add_argument(
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
