@@ -2,7 +2,7 @@
     {
         "TX": 4,
         "OUT": 0,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -28,7 +28,7 @@
     {
         "TX": 5,
         "OUT": 0,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -59,7 +59,7 @@
     {
         "TX": 6,
         "OUT": 0,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -95,7 +95,7 @@
     {
         "TX": 7,
         "OUT": 2,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -131,7 +131,7 @@
     {
         "TX": 8,
         "OUT": 2,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -167,7 +167,7 @@
     {
         "TX": 9,
         "OUT": 2,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -203,7 +203,7 @@
     {
         "TX": 10,
         "OUT": 2,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -239,7 +239,7 @@
     {
         "TX": 11,
         "OUT": 2,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -275,7 +275,7 @@
     {
         "TX": 12,
         "OUT": 0,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -311,7 +311,7 @@
     {
         "TX": 13,
         "OUT": 0,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -347,7 +347,7 @@
     {
         "TX": 14,
         "OUT": 0,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -383,7 +383,7 @@
     {
         "TX": 15,
         "OUT": 0,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -419,7 +419,7 @@
     {
         "TX": 16,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -455,7 +455,7 @@
     {
         "TX": 17,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -491,7 +491,7 @@
     {
         "TX": 18,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -527,7 +527,7 @@
     {
         "TX": 19,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -563,7 +563,7 @@
     {
         "TX": 20,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -599,7 +599,7 @@
     {
         "TX": 21,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -635,7 +635,7 @@
     {
         "TX": 22,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -671,7 +671,7 @@
     {
         "TX": 23,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -707,7 +707,7 @@
     {
         "TX": 24,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -743,7 +743,7 @@
     {
         "TX": 25,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -779,7 +779,7 @@
     {
         "TX": 26,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -815,7 +815,7 @@
     {
         "TX": 27,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -851,7 +851,7 @@
     {
         "TX": 28,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -887,7 +887,7 @@
     {
         "TX": 29,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -923,7 +923,7 @@
     {
         "TX": 30,
         "OUT": 1,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -959,7 +959,7 @@
     {
         "TX": 31,
         "OUT": 2,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -995,7 +995,7 @@
     {
         "TX": 32,
         "OUT": 2,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -1031,7 +1031,7 @@
     {
         "TX": 33,
         "OUT": 2,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },
@@ -1067,7 +1067,7 @@
     {
         "TX": 34,
         "OUT": 2,
-        "CONTRIBUTOR-1": {
+        "CONTRIB": {
             "BNB.BNB": 99962500,
             "BNB.RUNE-A1F": 0
         },

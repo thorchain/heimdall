@@ -49,6 +49,7 @@ class MockBitcoin:
         Set the vault bnb address
         """
         aliases_btc["VAULT"] = addr
+        self.connection._call("importaddress", addr)
 
     def get_block_height(self):
         """
@@ -67,6 +68,13 @@ class MockBitcoin:
             if block - start_block >= count:
                 return
         raise Exception(f"failed waiting for mock binance transactions ({count})")
+
+    def get_balance(self, address):
+        """
+        Get BTC balance for an address
+        """
+        unspents = self.connection._call("listunspent", 1, 9999, [str(address)])
+        return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
 
     def transfer(self, txn):
         """
@@ -97,7 +105,7 @@ class MockBitcoin:
 
         # get unspents UTXOs
         address = txn.from_address
-        min_amount = amount + 0.01  # add more for fee
+        min_amount = amount + 0.00999999  # add more for fee
         unspents = self.connection._call(
             "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
         )

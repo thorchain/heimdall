@@ -156,10 +156,10 @@ class Coin(Jsonable):
         return cls(value["asset"], value["amount"])
 
     def __repr__(self):
-        return f"<Coin {self.amount:0,.0f}{self.asset}>"
+        return f"<Coin {self.amount:0,.0f}_{self.asset}>"
 
     def __str__(self):
-        return f"{self.amount:0,.0f}{self.asset}"
+        return f"{self.amount:0,.0f}_{self.asset}"
 
 
 class Transaction(Jsonable):
@@ -191,8 +191,8 @@ class Transaction(Jsonable):
         gas = f" | Gas {self.gas}" if self.gas else ""
         id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
         return (
-            f"<Transaction {self.from_address} ==> {self.to_address} | "
-            f"{coins} | {self.memo}{gas}{id}>"
+            f"<Tx {self.from_address:>8} ==> {self.to_address:8} | "
+            f"{self.memo} | {coins}{gas}{id}>"
         )
 
     def __str__(self):
@@ -200,8 +200,8 @@ class Transaction(Jsonable):
         gas = " | Gas " + ", ".join([str(g) for g in self.gas]) if self.gas else ""
         id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
         return (
-            f"Transaction {self.from_address} ==> {self.to_address} | "
-            f"{coins} | {self.memo}{gas}{id}"
+            f"Tx {self.from_address:>8} ==> {self.to_address:8} | "
+            f"{self.memo} | {coins}{gas}{id}"
         )
 
     def __eq__(self, other):

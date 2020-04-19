@@ -15,7 +15,7 @@ class Breakpoint:
         snap = {
             "TX": txID,
             "OUT": out,
-            "CONTRIBUTOR-1": {},
+            "CONTRIB": {},
             "USER-1": {},
             "STAKER-1": {},
             "STAKER-2": {},

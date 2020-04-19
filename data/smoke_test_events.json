@@ -5,7 +5,7 @@
         "in_tx": {
             "id": "TODO",
             "chain": "BNB",
-            "from_address": "CONTRIBUTOR-1",
+            "from_address": "CONTRIB",
             "to_address": "VAULT",
             "memo": "RESERVE",
             "coins": [
@@ -28,7 +28,7 @@
         },
         "event": {
             "reserve_contributor": {
-                "address": "CONTRIBUTOR-1",
+                "address": "CONTRIB",
                 "amount": 40000000000000
             }
         },

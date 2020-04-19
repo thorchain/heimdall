@@ -13,11 +13,11 @@ from chains.bitcoin import Bitcoin, MockBitcoin
 from thorchain import ThorchainState, ThorchainClient, Event
 from health import Health
 from common import Transaction, Coin, Asset
-from chains.aliases import aliases_bnb
+from chains.aliases import aliases_bnb, get_alias
 
 # Init logging
 logging.basicConfig(
-    format="%(asctime)s | %(levelname)-8s | %(message)s",
+    format="%(asctime)s | %(levelname).4s | %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
@@ -137,19 +137,19 @@ class Smoker:
             spool = self.thorchain.get_pool(Asset(rpool["asset"]))
             if int(spool.rune_balance) != int(rpool["balance_rune"]):
                 self.error(
-                    f"Bad pool rune balance: {rpool['asset']} "
+                    f"Bad Pool-{rpool['asset']} balance: BNB.RUNE-A1F "
                     f"{spool.rune_balance} != {rpool['balance_rune']}"
                 )
                 if int(spool.asset_balance) != int(rpool["balance_asset"]):
                     self.error(
-                        f"Bad pool asset balance: {rpool['asset']} "
+                        f"Bad Pool-{rpool['asset']} balance: {rpool['asset']} "
                         f"{spool.asset_balance} != {rpool['balance_asset']}"
                     )
 
     def check_binance(self):
         # compare simulation binance vs mock binance
-        mockAccounts = self.mock_binance.accounts()
-        for macct in mockAccounts:
+        mock_accounts = self.mock_binance.accounts()
+        for macct in mock_accounts:
             for name, address in aliases_bnb.items():
                 if name == "MASTER":
                     continue  # don't care to compare MASTER account
@@ -163,6 +163,19 @@ class Smoker:
                                 f"Bad binance balance: {name} {bnb_coin} != {sim_coin}"
                             )
 
+    def check_bitcoin(self):
+        # compare simulation bitcoin vs mock bitcoin
+        for addr, sim_acct in self.bitcoin.accounts.items():
+            name = get_alias(Bitcoin.chain, addr)
+            if name == "MASTER":
+                continue  # don't care to compare MASTER account
+            mock_coin = Coin("BTC.BTC", self.mock_bitcoin.get_balance(addr))
+            sim_coin = Coin("BTC.BTC", sim_acct.get("BTC.BTC"))
+            if sim_coin != mock_coin:
+                self.error(
+                    f"Bad bitcoin balance: {name} {mock_coin} != {sim_coin}"
+                )
+
     def check_vaults(self):
         # check vault data
         vdata = self.thorchain_client.get_vault_data()
@@ -170,10 +183,10 @@ class Smoker:
             sim = self.thorchain.reserve
             real = vdata["total_reserve"]
             self.error(f"Mismatching reserves: {sim} != {real}")
-            if int(vdata["bond_reward_rune"]) != self.thorchain.bond_reward:
-                sim = self.thorchain.bond_reward
-                real = vdata["bond_reward_rune"]
-                self.error(f"Mismatching bond reward: {sim} != {real}")
+        if int(vdata["bond_reward_rune"]) != self.thorchain.bond_reward:
+            sim = self.thorchain.bond_reward
+            real = vdata["bond_reward_rune"]
+            self.error(f"Mismatching bond reward: {sim} != {real}")
 
     def check_events(self):
         # compare simulation events with real events
@@ -232,7 +245,7 @@ class Smoker:
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
 
-            logging.info(f"{i} {txn}")
+            logging.info(f"{i:2} {txn}")
 
             self.broadcast_chain(txn)
             self.broadcast_simulator(txn)
@@ -263,9 +276,10 @@ class Smoker:
 
             self.check_pools()
             self.check_binance()
+            self.check_bitcoin()
             self.check_vaults()
             self.check_events()
-            self.run_health()
+            # self.run_health()
 
 
 if __name__ == "__main__":
