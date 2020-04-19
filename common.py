@@ -1,4 +1,5 @@
 import requests
+import re
 import json
 import hashlib
 
@@ -113,6 +114,8 @@ class Coin(Jsonable):
     A class that represents a coin and an amount
     """
 
+    ONE = 100000000
+
     def __init__(self, asset, amount=0):
         self.asset = Asset(asset)
         self.amount = int(amount)
@@ -186,7 +189,7 @@ class Transaction(Jsonable):
     def __repr__(self):
         coins = self.coins if self.coins else "No Coins"
         gas = f" | Gas {self.gas}" if self.gas else ""
-        id = f" | ID {self.id}" if self.id != "TODO" else ""
+        id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
         return (
             f"<Transaction {self.from_address} ==> {self.to_address} | "
             f"{coins} | {self.memo}{gas}{id}>"
@@ -195,7 +198,7 @@ class Transaction(Jsonable):
     def __str__(self):
         coins = ", ".join([str(c) for c in self.coins]) if self.coins else "No Coins"
         gas = " | Gas " + ", ".join([str(g) for g in self.gas]) if self.gas else ""
-        id = f" | ID {self.id}" if self.id != "TODO" else ""
+        id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
         return (
             f"Transaction {self.from_address} ==> {self.to_address} | "
             f"{coins} | {self.memo}{gas}{id}"
@@ -212,7 +215,7 @@ class Transaction(Jsonable):
         gas = self.gas or []
         other_gas = other.gas or []
         return (
-            (self.id == "TODO" or self.id == other.id)
+            (self.id == "TODO" or self.id.upper() == other.id.upper())
             and self.chain == other.chain
             and self.memo == other.memo
             and self.from_address == other.from_address
@@ -225,6 +228,12 @@ class Transaction(Jsonable):
         coins = self.coins or []
         other_coins = other.coins or []
         return sorted(coins) < sorted(other_coins)
+
+    def get_asset_from_memo(self):
+        chain_match = re.findall(":(.*):", self.memo)
+        if len(chain_match):
+            return Asset(chain_match[0])
+        return None
 
     def custom_hash(self, pubkey):
         coins = (

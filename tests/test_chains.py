@@ -1,6 +1,7 @@
 import unittest
 
-from chains import Account, Binance
+from chains.account import Account
+from chains.binance import Binance
 
 from common import Transaction, Coin
 

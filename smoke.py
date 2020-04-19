@@ -7,10 +7,13 @@ import json
 
 from tenacity import retry, stop_after_attempt, wait_fixed
 
-from chains import Binance, MockBinance
+from segwit_addr import decode_address
+from chains.binance import Binance, MockBinance
+from chains.bitcoin import Bitcoin, MockBitcoin
 from thorchain import ThorchainState, ThorchainClient, Event
 from health import Health
 from common import Transaction, Coin, Asset
+from chains.aliases import aliases_bnb
 
 # Init logging
 logging.basicConfig(
@@ -29,6 +32,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--binance", default="http://localhost:26660", help="Mock binance server"
+    )
+    parser.add_argument(
+        "--bitcoin",
+        default="http://thorchain:password@localhost:18443",
+        help="Regtest bitcoin server",
     )
     parser.add_argument(
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
@@ -55,6 +63,7 @@ def main():
 
     smoker = Smoker(
         args.binance,
+        args.bitcoin,
         args.thorchain,
         health,
         txns,
@@ -67,6 +76,7 @@ def main():
         sys.exit(smoker.exit)
     except Exception as e:
         logging.fatal(e)
+        raise e
         sys.exit(1)
 
 
@@ -74,6 +84,7 @@ class Smoker:
     def __init__(
         self,
         bnb,
+        btc,
         thor,
         health,
         txns,
@@ -82,6 +93,7 @@ class Smoker:
         no_verify=False,
     ):
         self.binance = Binance()
+        self.bitcoin = Bitcoin()
         self.thorchain = ThorchainState()
 
         self.health = health
@@ -96,6 +108,13 @@ class Smoker:
 
         self.mock_binance = MockBinance(bnb)
         self.mock_binance.set_vault_address(vault_address)
+
+        self.mock_bitcoin = MockBitcoin(btc)
+        # extract pubkey from bech32 encoded pubkey
+        # removing first 5 bytes used by amino encoding
+        raw_pubkey = decode_address(vault_pubkey)[5:]
+        bitcoin_address = MockBitcoin.get_address_from_pubkey(raw_pubkey)
+        self.mock_bitcoin.set_vault_address(bitcoin_address)
 
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
@@ -131,7 +150,7 @@ class Smoker:
         # compare simulation binance vs mock binance
         mockAccounts = self.mock_binance.accounts()
         for macct in mockAccounts:
-            for name, address in self.mock_binance.aliases.items():
+            for name, address in aliases_bnb.items():
                 if name == "MASTER":
                     continue  # don't care to compare MASTER account
                 if address == macct["address"]:
@@ -183,14 +202,40 @@ class Smoker:
     def run_health(self):
         self.health.run()
 
+    def broadcast_chain(self, txn):
+        """
+        Broadcast tx to respective chain mock server
+        """
+        if txn.chain == Binance.chain:
+            return self.mock_binance.transfer(txn)
+        if txn.chain == Bitcoin.chain:
+            return self.mock_bitcoin.transfer(txn)
+
+    def broadcast_simulator(self, txn):
+        """
+        Broadcast tx to simulator state chain
+        """
+        if txn.chain == Binance.chain:
+            return self.binance.transfer(txn)
+        if txn.chain == Bitcoin.chain:
+            return self.bitcoin.transfer(txn)
+
+    def wait_for_blocks_chain(self, txns):
+        count_bnb = len([tx for tx in txns if tx.chain == Binance.chain])
+        if count_bnb > 0:
+            self.mock_binance.wait_for_blocks(count_bnb)
+        count_btc = len([tx for tx in txns if tx.chain == Bitcoin.chain])
+        if count_btc > 0:
+            self.mock_bitcoin.wait_for_blocks(count_btc)
+
     def run(self):
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
 
             logging.info(f"{i} {txn}")
 
-            self.mock_binance.transfer(txn)  # trigger mock Binance transaction
-            self.binance.transfer(txn)  # send transfer on binance chain
+            self.broadcast_chain(txn)
+            self.broadcast_simulator(txn)
 
             if txn.memo == "SEED":
                 continue
@@ -202,14 +247,14 @@ class Smoker:
             self.thorchain.order_outbound_txns(outbounds)
 
             for outbound in outbounds:
-                # update binance simulator state with outbound txs
-                self.binance.transfer(outbound)
+                # update simulator state with outbound txs
+                self.broadcast_simulator(outbound)
 
             self.thorchain.handle_rewards()
             self.thorchain.handle_gas(outbounds)
 
             # wait for blocks to be processed on real chains
-            self.mock_binance.wait_for_blocks(len(outbounds))
+            self.wait_for_blocks_chain(outbounds)
             self.thorchain_client.wait_for_blocks(2)
 
             # check if we are verifying the results

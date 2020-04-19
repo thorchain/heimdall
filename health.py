@@ -3,12 +3,11 @@ import sys
 import os
 import logging
 
-from segwit_addr import decode_address, address_from_public_key
-from chains import MockBinance, Account
+from chains.binance import MockBinance, Account
 from thorchain import ThorchainClient
 from midgard import MidgardClient
 from common import Coin
-
+from segwit_addr import decode_address
 
 # Init logging
 logging.basicConfig(
@@ -150,25 +149,11 @@ class Health:
                     )
                 )
 
-    def get_vault_address_from_pubkey(self, pubkey, hrp="tbnb"):
-        """
-        Get vault address for a specific hrp (human readable part)
-        bech32 encoded from a Bech32 encoded public key(secp256k1).
-        The vault pubkey is Bech32 encoded and amino encoded which means
-        when we bech32 decode, we also need to get rid of the first 5 bytes
-        used by amino encoding to figure out a type to unmarshal correctly.
-        Only then we get the raw pubkey bytes format secp256k1.
-
-        :param string pubkey: public key Bech32 encoded & amino encoded
-        :param string hrp: human readable part of the bech32 encoded result
-        :returns: string bech32 encoded address
-
-        """
-        raw_pubkey = decode_address(pubkey)[5:]
-        return address_from_public_key(raw_pubkey, hrp)
-
     def check_binance_accounts(self, vault):
-        vault_addr = self.get_vault_address_from_pubkey(vault["pub_key"])
+        # get raw pubkey from bech32 + amino encoded key
+        # we need to get rid of the 5 first bytes used in amino encoding
+        pub_key = decode_address(vault["pub_key"])[5:]
+        vault_addr = MockBinance.get_address_from_pubkey(pub_key)
         for acct in self.binance_accounts:
             if acct.address != vault_addr:
                 continue

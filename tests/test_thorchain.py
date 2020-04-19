@@ -8,7 +8,7 @@ from thorchain import (
     RewardEvent,
     EventGasPool,
 )
-from chains import Binance
+from chains.binance import Binance
 
 from common import Transaction, Coin
 
@@ -210,9 +210,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.event.code, 105)
-        self.assertEqual(
-            event.event.reason, "address format not supported: BNBNOMNOM"
-        )
+        self.assertEqual(event.event.reason, "address format not supported: BNBNOMNOM")
         self.assertEqual(event.fee.coins, [Coin("RUNE-A1F", 100000000)])
         self.assertEqual(event.fee.pool_deduct, 0)
 
