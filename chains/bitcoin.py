@@ -12,7 +12,8 @@ from bitcoin.core.script import CScript, OP_0
 from common import Coin, Asset
 from decimal import Decimal, getcontext
 from segwit_addr import address_from_public_key
-from chains.aliases import ALIASES_BTC, ALIASES_BNB
+from chains.aliases import aliases_btc, get_aliases, get_alias_address
+from chains.account import Account
 
 
 class MockBitcoin():
@@ -51,7 +52,7 @@ class MockBitcoin():
         """
         Set the vault bnb address
         """
-        ALIASES_BTC["VAULT"] = addr
+        aliases_btc["VAULT"] = addr
 
     def get_block_height(self):
         """
@@ -78,15 +79,20 @@ class MockBitcoin():
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
-        if txn.to_address in ALIASES_BTC:
-            txn.to_address = ALIASES_BTC[txn.to_address]
+        if txn.to_address in get_aliases():
+            txn.to_address = get_alias_address(txn.chain, txn.to_address)
 
-        if txn.from_address in ALIASES_BTC:
-            txn.from_address = ALIASES_BTC[txn.from_address]
+        if txn.from_address in get_aliases():
+            txn.from_address = get_alias_address(txn.chain, txn.from_address)
 
         # update memo with actual address (over alias name)
-        for name, addr in ALIASES_BNB.items():
-            txn.memo = txn.memo.replace(name, addr)
+        for alias in get_aliases():
+            # we use RUNE BNB address to identify a cross chain stake
+            if txn.memo.startswith("STAKE"):
+                addr = get_alias_address("BNB", alias)
+            else:
+                addr = get_alias_address(txn.chain, alias)
+            txn.memo = txn.memo.replace(alias, addr)
 
         # create transaction
         amount = float(txn.coins[0].amount / Coin.ONE)
@@ -122,3 +128,57 @@ class MockBitcoin():
         tx = self.connection._call("createrawtransaction", tx_in, tx_out)
         tx = self.connection._call("signrawtransactionwithwallet", tx)
         txn.id = self.connection._call("sendrawtransaction", tx["hex"])
+
+
+class Bitcoin:
+    """
+    A local simple implementation of bitcoin chain
+    """
+
+    chain = "BTC"
+
+    def __init__(self):
+        self.accounts = {}
+
+    def _calculate_gas(self, coins):
+        """
+        With given coin set, calculates the gas owed
+        """
+        # TODO calculate gas properly
+        return Coin("BTC.BTC", 999999)
+
+    def get_account(self, addr):
+        """
+        Retrieve an accout by address
+        """
+        if addr in self.accounts:
+            return self.accounts[addr]
+        return Account(addr)
+
+    def set_account(self, acct):
+        """
+        Update a given account
+        """
+        self.accounts[acct.address] = acct
+
+    def transfer(self, txn):
+        """
+        Makes a transfer on the bitcoin chain. Returns gas used
+        """
+
+        if txn.chain != Bitcoin.chain:
+            raise Exception(f"Cannot transfer. {Bitcoin.chain} is not {txn.chain}")
+
+        from_acct = self.get_account(txn.from_address)
+        to_acct = self.get_account(txn.to_address)
+
+        gas = self._calculate_gas(txn.coins)
+        from_acct.sub(gas)
+
+        from_acct.sub(txn.coins)
+        to_acct.add(txn.coins)
+
+        self.set_account(from_acct)
+        self.set_account(to_acct)
+
+        txn.gas = [gas]

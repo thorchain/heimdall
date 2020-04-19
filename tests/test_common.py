@@ -3,7 +3,7 @@ import json
 
 from copy import deepcopy
 from common import Asset, Transaction, Coin
-from chains import Binance
+from chains.binance import Binance
 
 
 class TestAsset(unittest.TestCase):

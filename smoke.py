@@ -9,11 +9,11 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 
 from segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
-from chains.bitcoin import MockBitcoin
+from chains.bitcoin import Bitcoin, MockBitcoin
 from thorchain import ThorchainState, ThorchainClient, Event
 from health import Health
 from common import Transaction, Coin, Asset
-from chains.aliases import ALIASES_BNB
+from chains.aliases import aliases_bnb
 
 # Init logging
 logging.basicConfig(
@@ -91,6 +91,7 @@ class Smoker:
         no_verify=False,
     ):
         self.binance = Binance()
+        self.bitcoin = Bitcoin()
         self.thorchain = ThorchainState()
 
         self.health = health
@@ -147,7 +148,7 @@ class Smoker:
         # compare simulation binance vs mock binance
         mockAccounts = self.mock_binance.accounts()
         for macct in mockAccounts:
-            for name, address in ALIASES_BNB.items():
+            for name, address in aliases_bnb.items():
                 if name == "MASTER":
                     continue  # don't care to compare MASTER account
                 if address == macct["address"]:
@@ -203,23 +204,27 @@ class Smoker:
         """
         Broadcast tx to respective chain mock server
         """
-        if txn.chain == "BNB":
+        if txn.chain == Binance.chain:
             return self.mock_binance.transfer(txn)
-        if txn.chain == "BTC":
+        if txn.chain == Bitcoin.chain:
             return self.mock_bitcoin.transfer(txn)
 
     def broadcast_simulator(self, txn):
         """
         Broadcast tx to simulator state chain
         """
-        if txn.chain == "BNB":
+        if txn.chain == Binance.chain:
             return self.binance.transfer(txn)
+        if txn.chain == Bitcoin.chain:
+            return self.bitcoin.transfer(txn)
 
-    def wait_for_blocks_chain(self, txn):
-        if txn.chain == "BNB":
-            return self.mock_binance.wait_for_blocks(1)
-        if txn.chain == "BTC":
-            return self.mock_bitcoin.wait_for_blocks(1)
+    def wait_for_blocks_chain(self, txns):
+        count_bnb = len([tx for tx in txns if tx.chain == Binance.chain])
+        if count_bnb > 0:
+            self.mock_binance.wait_for_blocks(count_bnb)
+        count_btc = len([tx for tx in txns if tx.chain == Bitcoin.chain])
+        if count_btc > 0:
+            self.mock_bitcoin.wait_for_blocks(count_btc)
 
     def run(self):
         for i, txn in enumerate(self.txns):
@@ -247,20 +252,18 @@ class Smoker:
             self.thorchain.handle_gas(outbounds)
 
             # wait for blocks to be processed on real chains
-            for outbound in outbounds:
-                self.wait_for_blocks_chain(outbound)
-
+            self.wait_for_blocks_chain(outbounds)
             self.thorchain_client.wait_for_blocks(2)
 
             # check if we are verifying the results
             if self.no_verify:
                 continue
 
-            # self.check_pools()
+            self.check_pools()
             self.check_binance()
             self.check_vaults()
             self.check_events()
-            # self.run_health()
+            self.run_health()
 
 
 if __name__ == "__main__":

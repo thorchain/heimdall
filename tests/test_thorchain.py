@@ -8,7 +8,7 @@ from thorchain import (
     RewardEvent,
     EventGasPool,
 )
-from chains import Binance
+from chains.binance import Binance
 
 from common import Transaction, Coin
 

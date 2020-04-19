@@ -5,7 +5,8 @@ import hashlib
 
 from common import Coin, Asset, HttpClient
 from segwit_addr import address_from_public_key
-from chains.aliases import ALIASES_BTC, ALIASES_BNB
+from chains.aliases import aliases_bnb, get_aliases, get_alias_address
+from chains.account import Account
 
 
 class MockBinance(HttpClient):
@@ -14,12 +15,11 @@ class MockBinance(HttpClient):
     https://gitlab.com/thorchain/bepswap/mock-binance
     """
 
-
     def set_vault_address(self, addr):
         """
         Set the vault bnb address
         """
-        ALIASES_BNB["VAULT"] = addr
+        aliases_bnb["VAULT"] = addr
 
     def get_block_height(self):
         """
@@ -81,15 +81,22 @@ class MockBinance(HttpClient):
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
-        if txn.to_address in ALIASES_BNB:
-            txn.to_address = ALIASES_BNB[txn.to_address]
+        if txn.to_address in get_aliases():
+            txn.to_address = get_alias_address(txn.chain, txn.to_address)
 
-        if txn.from_address in ALIASES_BNB:
-            txn.from_address = ALIASES_BNB[txn.from_address]
+        if txn.from_address in get_aliases():
+            txn.from_address = get_alias_address(txn.chain, txn.from_address)
 
         # update memo with actual address (over alias name)
-        for name, addr in ALIASES_BTC.items():
-            txn.memo = txn.memo.replace(name, addr)
+        for alias in get_aliases():
+            chain = txn.chain
+            # if cross chain stake we identify the chain from the memo
+            if txn.memo.startswith("STAKE"):
+                asset = txn.get_asset_from_memo()
+                if asset:
+                    chain = asset.get_chain()
+            addr = get_alias_address(chain, alias)
+            txn.memo = txn.memo.replace(alias, addr)
 
         payload = {
             "from": txn.from_address,
@@ -99,67 +106,6 @@ class MockBinance(HttpClient):
         }
         result = self.post("/broadcast/easy", payload)
         txn.id = self.get_tx_id_from_block(result["height"])
-
-
-class Account:
-    """
-    An account is an address with a list of coin balances associated
-    """
-
-    def __init__(self, address):
-        self.address = address
-        self.balances = []
-
-    def sub(self, coins):
-        """
-        Subtract coins from balance
-        """
-        if not isinstance(coins, list):
-            coins = [coins]
-
-        for coin in coins:
-            for i, c in enumerate(self.balances):
-                if coin.asset == c.asset:
-                    self.balances[i].amount -= coin.amount
-                    if self.balances[i].amount < 0:
-                        logging.info(f"Balance: {self.address} {self.balances[i]}")
-                        self.balances[i].amount = 0
-                        # raise Exception("insufficient funds")
-
-    def add(self, coins):
-        """
-        Add coins to balance
-        """
-        if not isinstance(coins, list):
-            coins = [coins]
-
-        for coin in coins:
-            found = False
-            for i, c in enumerate(self.balances):
-                if coin.asset == c.asset:
-                    self.balances[i].amount += coin.amount
-                    found = True
-                    break
-            if not found:
-                self.balances.append(coin)
-
-    def get(self, asset):
-        """
-        Get a specific coin by asset
-        """
-        if isinstance(asset, str):
-            asset = Asset(asset)
-        for coin in self.balances:
-            if asset == coin.asset:
-                return coin.amount
-
-        return 0
-
-    def __repr__(self):
-        return "<Account %s: %s>" % (self.address, self.balances)
-
-    def __str__(self):
-        return "Account %s: %s" % (self.address, self.balances)
 
 
 class Binance:

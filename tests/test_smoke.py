@@ -5,7 +5,7 @@ import json
 from pprint import pformat
 from deepdiff import DeepDiff
 
-from chains import Binance
+from chains.binance import Binance
 from thorchain import ThorchainState, Event
 from breakpoint import Breakpoint
 

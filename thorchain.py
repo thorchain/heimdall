@@ -11,6 +11,7 @@ from common import (
     HttpClient,
     Jsonable,
 )
+from chains.aliases import get_bnb_address
 
 
 class ThorchainClient(HttpClient):
@@ -511,7 +512,10 @@ class ThorchainState:
             else:
                 asset_amt = coin.amount
 
-        stake_units = pool.stake(txn.from_address, rune_amt, asset_amt)
+        rune_addr = txn.from_address
+        if not asset.is_bnb():
+            rune_addr = get_bnb_address(txn.chain, txn.from_address)
+        stake_units = pool.stake(rune_addr, rune_amt, asset_amt, asset)
 
         self.set_pool(pool)
 
@@ -1339,11 +1343,22 @@ class Pool(Jsonable):
 
         self.stakers.append(staker)
 
-    def stake(self, address, rune_amt, asset_amt):
+    def stake(self, address, rune_amt, asset_amt, asset):
         """
         Stake rune/asset for an address
         """
         staker = self.get_staker(address)
+
+        # handle cross chain stake
+        if not asset.is_bnb():
+            if asset_amt == 0:
+                staker.pending_rune += rune_amt
+                self.set_staker(staker)
+                return 0
+
+            rune_amt += staker.pending_rune
+            staker.pending_rune = 0
+
         self.add(rune_amt, asset_amt)
         units = self._calc_stake_units(
             self.rune_balance, self.asset_balance, rune_amt, asset_amt,
@@ -1421,6 +1436,7 @@ class Staker(Jsonable):
     def __init__(self, address, units=0):
         self.address = address
         self.units = 0
+        self.pending_rune = 0
 
     def add(self, units):
         """
