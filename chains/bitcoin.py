@@ -10,6 +10,7 @@ from common import Coin
 from decimal import Decimal, getcontext
 from chains.aliases import aliases_btc, get_aliases, get_alias_address
 from chains.account import Account
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 
 class MockBitcoin:
@@ -77,6 +78,21 @@ class MockBitcoin:
         unspents = self.connection._call("listunspent", 1, 9999, [str(address)])
         return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
 
+    @retry(
+        stop=stop_after_attempt(10),
+        wait=wait_fixed(1),
+        reraise=True,
+    )
+    def get_unspents(self, address, min_amount):
+        unspents = self.connection._call(
+            "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
+        )
+        if len(unspents) == 0:
+            raise Exception(
+                f"Cannot transfer. No BTC UTXO available for {txn.from_address}"
+            )
+        return unspents
+
     def transfer(self, txn):
         """
         Make a transaction/transfer on regtest bitcoin
@@ -107,14 +123,7 @@ class MockBitcoin:
         # get unspents UTXOs
         address = txn.from_address
         min_amount = amount + (self.default_gas / Coin.ONE)  # add more for fee
-        unspents = self.connection._call(
-            "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
-        )
-
-        if len(unspents) == 0:
-            raise Exception(
-                f"Cannot transfer. No BTC UTXO available for {txn.from_address}"
-            )
+        unspents = self.get_unspents(address, min_amount)
 
         # choose the first UTXO
         unspent = unspents[0]
