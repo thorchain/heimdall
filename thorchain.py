@@ -11,7 +11,7 @@ from common import (
     HttpClient,
     Jsonable,
 )
-from chains.aliases import get_bnb_address
+from chains.aliases import get_bnb_address, get_alias, get_alias_address
 
 
 class ThorchainClient(HttpClient):
@@ -669,7 +669,14 @@ class ThorchainState:
 
             # generate event for SWAP transaction
             out_txns = [
-                Transaction(txn.chain, address, txn.to_address, [emit], txn.memo)
+                Transaction(
+                    txn.chain,
+                    txn.from_address,
+                    txn.to_address,
+                    [emit],
+                    txn.memo,
+                    id=Transaction.empty_id
+                )
             ]
 
             # here we copy the txn to break references cause the tx is split in 2 events
@@ -721,9 +728,12 @@ class ThorchainState:
         for pool in pools:
             self.set_pool(pool)
 
+        # get from address cross chain
+        from_alias = get_alias(in_txn.chain, in_txn.to_address)
+        from_address = get_alias_address(target.get_chain(), from_alias)
         out_txns = [
             Transaction(
-                in_txn.chain, in_txn.to_address, address, [emit], f"OUTBOUND:{txn.id}"
+                target.get_chain(), from_address, address, [emit], f"OUTBOUND:{txn.id}", id=txn.id
             )
         ]
 
@@ -736,12 +746,12 @@ class ThorchainState:
 
         return out_txns
 
-    def swap(self, coin, target):
+    def swap(self, coin, asset):
         """
         Does a swap returning amount of coins emitted and new pool
 
         :param Coin coin: coin sent to swap
-        :param Asset target: target asset
+        :param Asset asset: target asset
         :returns: list of events
             - emit (int) - number of coins to be emitted for the swap
             - liquidity_fee (int) - liquidity fee
@@ -750,7 +760,6 @@ class ThorchainState:
             - pool (Pool) - pool with new values
 
         """
-        asset = target
         if not coin.is_rune():
             asset = coin.asset
 
@@ -1150,7 +1159,7 @@ class SwapEvent(Jsonable):
             f"PriceTarget {self.price_target:0,.0f} | "
             f"TradeSlip {self.trade_slip:0,.0f} | "
             f"LiquidityFee {self.liquidity_fee:0,.0f} | "
-            f"LiquidityFeeInRune {self.liquidity_fee_in_rune: 0, .0f}"
+            f"LiquidityFeeInRune {self.liquidity_fee_in_rune:0,.0f}"
         )
 
     def __repr__(self):

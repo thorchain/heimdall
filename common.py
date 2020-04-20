@@ -167,6 +167,8 @@ class Transaction(Jsonable):
     A transaction on a block chain (ie Binance)
     """
 
+    empty_id = "0000000000000000000000000000000000000000000000000000000000000000"
+
     def __init__(
         self, chain, from_address, to_address, coins, memo="", gas=None, id="TODO"
     ):
@@ -263,11 +265,11 @@ class Transaction(Jsonable):
         return txn
 
     @classmethod
-    def empty_txn(self):
+    def empty_txn(cls):
         return Transaction(
             "",
             "",
             "",
             None,
-            id="0000000000000000000000000000000000000000000000000000000000000000",
+            id=cls.empty_id
         )

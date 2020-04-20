@@ -163,6 +163,19 @@
     },
     {
         "chain": "BNB",
+        "from_address": "USER-1",
+        "to_address": "VAULT",
+        "memo": "SWAP:BTC.BTC:USER-1",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 500000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.LOK-3C0",
@@ -298,19 +311,6 @@
             {
                 "asset": "BNB.RUNE-A1F",
                 "amount": 30000000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "BNB",
-        "from_address": "USER-1",
-        "to_address": "VAULT",
-        "memo": "SWAP:BTC.BTC:USER-1",
-        "coins": [
-            {
-                "asset": "BNB.BNB",
-                "amount": 500000
             }
         ],
         "gas": null
