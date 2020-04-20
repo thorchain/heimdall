@@ -79,7 +79,7 @@ class MockBitcoin:
         return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
 
     @retry(
-        stop=stop_after_attempt(10), wait=wait_fixed(1), reraise=True,
+        stop=stop_after_attempt(60), wait=wait_fixed(1), reraise=True,
     )
     def get_unspents(self, address, min_amount):
         unspents = self.connection._call(
