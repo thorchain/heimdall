@@ -24,6 +24,7 @@ class MockBitcoin:
         "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330",
         "9294f4d108465fd293f7fe299e6923ef71a77f2cb1eb6d4394839c64ec25d5c0",
     ]
+    default_gas = 999999
 
     def __init__(self, base_url):
         SelectParams("regtest")
@@ -105,7 +106,7 @@ class MockBitcoin:
 
         # get unspents UTXOs
         address = txn.from_address
-        min_amount = amount + 0.00999999  # add more for fee
+        min_amount = amount + (self.default_gas / Coin.ONE)  # add more for fee
         unspents = self.connection._call(
             "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
         )
@@ -132,6 +133,7 @@ class MockBitcoin:
         tx = self.connection._call("createrawtransaction", tx_in, tx_out)
         tx = self.connection._call("signrawtransactionwithwallet", tx)
         txn.id = self.connection._call("sendrawtransaction", tx["hex"])
+        txn.gas = [Coin("BTC.BTC", self.default_gas)]
 
 
 class Bitcoin:
@@ -144,12 +146,14 @@ class Bitcoin:
     def __init__(self):
         self.accounts = {}
 
-    def _calculate_gas(self, coins):
+    @classmethod
+    def calculate_gas(cls, pool, rune_fee):
         """
-        With given coin set, calculates the gas owed
+        Calculate gas according to RUNE thorchain fee
+        1 RUNE / 2 in BTC value
         """
-        # TODO calculate gas properly
-        return Coin("BTC.BTC", 999999)
+        btc_amount = pool.get_rune_in_asset(int(rune_fee / 2))
+        return Coin("BTC.BTC", btc_amount)
 
     def get_account(self, addr):
         """
@@ -176,13 +180,13 @@ class Bitcoin:
         from_acct = self.get_account(txn.from_address)
         to_acct = self.get_account(txn.to_address)
 
-        gas = self._calculate_gas(txn.coins)
-        from_acct.sub(gas)
+        if not txn.gas:
+            txn.gas = [Coin("BTC.BTC", MockBitcoin.default_gas)]
+
+        from_acct.sub(txn.gas[0])
 
         from_acct.sub(txn.coins)
         to_acct.add(txn.coins)
 
         self.set_account(from_acct)
         self.set_account(to_acct)
-
-        txn.gas = [gas]

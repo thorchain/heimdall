@@ -22,6 +22,8 @@ def get_aliases():
 
 
 def get_alias_address(chain, alias):
+    if not alias:
+        return
     if chain == "BNB":
         return aliases_bnb[alias]
     if chain == "BTC":
@@ -36,6 +38,7 @@ def get_bnb_address(chain, addr):
         for alias, btc_addr in aliases_btc.items():
             if addr == btc_addr:
                 return aliases_bnb[alias]
+    return addr
 
 
 def get_alias(chain, addr):
@@ -46,3 +49,4 @@ def get_alias(chain, addr):
     for name, alias_addr in aliases.items():
         if alias_addr == addr:
             return name
+    return addr

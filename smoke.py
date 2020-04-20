@@ -137,12 +137,12 @@ class Smoker:
             spool = self.thorchain.get_pool(Asset(rpool["asset"]))
             if int(spool.rune_balance) != int(rpool["balance_rune"]):
                 self.error(
-                    f"Bad Pool-{rpool['asset']} balance: BNB.RUNE-A1F "
+                    f"Bad Pool-{rpool['asset']} balance: RUNE "
                     f"{spool.rune_balance} != {rpool['balance_rune']}"
                 )
                 if int(spool.asset_balance) != int(rpool["balance_asset"]):
                     self.error(
-                        f"Bad Pool-{rpool['asset']} balance: {rpool['asset']} "
+                        f"Bad Pool-{rpool['asset']} balance: ASSET "
                         f"{spool.asset_balance} != {rpool['balance_asset']}"
                     )
 
@@ -172,9 +172,7 @@ class Smoker:
             mock_coin = Coin("BTC.BTC", self.mock_bitcoin.get_balance(addr))
             sim_coin = Coin("BTC.BTC", sim_acct.get("BTC.BTC"))
             if sim_coin != mock_coin:
-                self.error(
-                    f"Bad bitcoin balance: {name} {mock_coin} != {sim_coin}"
-                )
+                self.error(f"Bad bitcoin balance: {name} {mock_coin} != {sim_coin}")
 
     def check_vaults(self):
         # check vault data
@@ -196,6 +194,12 @@ class Smoker:
 
         # get simulator events
         sim_events = self.thorchain.get_events()
+
+        if len(events) != len(sim_events):
+            self.error(
+                f"Events count mismatch: "
+                f"Thorchain {len(events)} != {len(sim_events)} Simulator"
+            )
 
         # check ordered events
         for event, sim_event in zip(events, sim_events):
@@ -268,17 +272,17 @@ class Smoker:
 
             # wait for blocks to be processed on real chains
             self.wait_for_blocks_chain(outbounds)
-            self.thorchain_client.wait_for_blocks(2)
+            self.thorchain_client.wait_for_blocks(3)
 
             # check if we are verifying the results
             if self.no_verify:
                 continue
 
+            self.check_events()
             self.check_pools()
             self.check_binance()
             self.check_bitcoin()
             self.check_vaults()
-            self.check_events()
             # self.run_health()
 
 

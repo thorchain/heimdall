@@ -11,7 +11,9 @@ from common import (
     HttpClient,
     Jsonable,
 )
-from chains.aliases import get_bnb_address, get_alias, get_alias_address
+from chains.aliases import get_alias, get_alias_address
+from chains.bitcoin import Bitcoin
+from chains.binance import Binance
 
 
 class ThorchainClient(HttpClient):
@@ -63,6 +65,8 @@ class ThorchainState:
     """
     A complete implementation of the thorchain logic/behavior
     """
+
+    rune_fee = 100000000
 
     def __init__(self):
         self.pools = []
@@ -179,7 +183,6 @@ class ThorchainState:
         """
         Subtract transaction fee from given transactions
         """
-        rune_fee = 100000000
         outbound = []
         if not isinstance(txns, list):
             txns = [txns]
@@ -188,16 +191,16 @@ class ThorchainState:
         for txn in txns:
             for coin in txn.coins:
                 if coin.is_rune():
-                    coin.amount -= rune_fee  # deduct 1 rune transaction fee
+                    coin.amount -= self.rune_fee  # deduct 1 rune transaction fee
 
                     # update event fee
-                    coin_fee = Coin(coin.asset, rune_fee)
+                    coin_fee = Coin(coin.asset, self.rune_fee)
                     if event_fee.coins:
                         event_fee.coins.append(coin_fee)
                     else:
                         event_fee.coins = [coin_fee]
 
-                    self.reserve += rune_fee  # add to the reserve
+                    self.reserve += self.rune_fee  # add to the reserve
                     if coin.amount > 0:
                         outbound.append(txn)
 
@@ -209,8 +212,8 @@ class ThorchainState:
                             pool.get_asset_fee()
                         )  # default to zero if pool is empty
                         pool.add(0, asset_fee)
-                        if pool.rune_balance >= rune_fee:
-                            pool.sub(rune_fee, 0)
+                        if pool.rune_balance >= self.rune_fee:
+                            pool.sub(self.rune_fee, 0)
                         self.set_pool(pool)
                         coin.amount -= asset_fee
 
@@ -220,9 +223,9 @@ class ThorchainState:
                             event_fee.coins.append(coin_fee)
                         else:
                             event_fee.coins = [coin_fee]
-                        event_fee.pool_deduct += rune_fee
+                        event_fee.pool_deduct += self.rune_fee
 
-                    self.reserve += rune_fee  # add to the reserve
+                    self.reserve += self.rune_fee  # add to the reserve
                     if coin.amount > 0:
                         outbound.append(txn)
 
@@ -512,10 +515,12 @@ class ThorchainState:
             else:
                 asset_amt = coin.amount
 
-        rune_addr = txn.from_address
-        if not asset.is_bnb():
-            rune_addr = get_bnb_address(txn.chain, txn.from_address)
-        stake_units = pool.stake(rune_addr, rune_amt, asset_amt, asset)
+        # check address to stake to from memo
+        address = txn.from_address
+        if txn.chain != Binance.chain and len(parts) > 2:
+            address = parts[2]
+
+        stake_units = pool.stake(address, rune_amt, asset_amt, asset)
 
         self.set_pool(pool)
 
@@ -675,7 +680,7 @@ class ThorchainState:
                     txn.to_address,
                     [emit],
                     txn.memo,
-                    id=Transaction.empty_id
+                    id=Transaction.empty_id,
                 )
             ]
 
@@ -728,12 +733,26 @@ class ThorchainState:
         for pool in pools:
             self.set_pool(pool)
 
-        # get from address cross chain
-        from_alias = get_alias(in_txn.chain, in_txn.to_address)
-        from_address = get_alias_address(target.get_chain(), from_alias)
+        # get from address VAULT cross chain
+        from_address = in_txn.to_address
+        if from_address != "VAULT":  # don't replace for unit tests
+            from_alias = get_alias(in_txn.chain, from_address)
+            from_address = get_alias_address(target.get_chain(), from_alias)
+
+        gas = None
+
+        # calculate gas
+        if target.get_chain() == "BTC":
+            gas = Bitcoin.calculate_gas(pool, self.rune_fee)
+
         out_txns = [
             Transaction(
-                target.get_chain(), from_address, address, [emit], f"OUTBOUND:{txn.id}", id=txn.id
+                target.get_chain(),
+                from_address,
+                address,
+                [emit],
+                f"OUTBOUND:{txn.id}",
+                gas=[gas],
             )
         ]
 

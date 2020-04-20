@@ -266,10 +266,4 @@ class Transaction(Jsonable):
 
     @classmethod
     def empty_txn(cls):
-        return Transaction(
-            "",
-            "",
-            "",
-            None,
-            id=cls.empty_id
-        )
+        return Transaction("", "", "", None, id=cls.empty_id)

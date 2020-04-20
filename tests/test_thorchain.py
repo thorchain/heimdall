@@ -1177,7 +1177,7 @@ class TestEvent(unittest.TestCase):
             str(event),
             """
 Event #1 | Type REFUND | Status Success |
-InTx  Transaction STAKER-1 ==> VAULT | 50,000,000,000BNB.RUNE-A1F | ADD:RUNE-A1F
+InTx  Tx STAKER-1 ==> VAULT    | ADD:RUNE-A1F | 50,000,000,000_BNB.RUNE-A1F
 OutTx None
 Fee   Coins None | Pool deduct 0
 Event RefundEvent Code 105 | Reason "memo can't be empty"
@@ -1199,7 +1199,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
             repr(event),
             """
 Event #1 | Type REFUND | Status Refund |
-InTx  Transaction STAKER-1 ==> VAULT | 50,000,000,000BNB.RUNE-A1F | ADD:RUNE-A1F
+InTx  Tx STAKER-1 ==> VAULT    | ADD:RUNE-A1F | 50,000,000,000_BNB.RUNE-A1F
 OutTx None
 Fee   Coins None | Pool deduct 0
 Event RefundEvent Code 105 | Reason "memo can't be empty"
