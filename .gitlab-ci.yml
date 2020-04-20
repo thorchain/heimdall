@@ -17,6 +17,8 @@ unit_tests:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_DRIVER: overlay2
   before_script:
+    - apk update
+    - apk add git make
     - make build
   script:
     - make test-coverage
