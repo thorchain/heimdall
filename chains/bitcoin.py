@@ -79,18 +79,14 @@ class MockBitcoin:
         return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
 
     @retry(
-        stop=stop_after_attempt(10),
-        wait=wait_fixed(1),
-        reraise=True,
+        stop=stop_after_attempt(10), wait=wait_fixed(1), reraise=True,
     )
     def get_unspents(self, address, min_amount):
         unspents = self.connection._call(
             "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
         )
         if len(unspents) == 0:
-            raise Exception(
-                f"Cannot transfer. No BTC UTXO available for {txn.from_address}"
-            )
+            raise Exception(f"Cannot transfer. No BTC UTXO available for {address}")
         return unspents
 
     def transfer(self, txn):
