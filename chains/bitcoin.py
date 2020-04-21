@@ -79,7 +79,7 @@ class MockBitcoin:
         unspents = self.connection._call("listunspent", 1, 9999, [str(address)])
         return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
 
-    @retry(stop=stop_after_delay(300), wait=wait_fixed(1))
+    @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
     def wait_for_node(self):
         """
         Bitcoin regtest node is started with directly mining 100 blocks
