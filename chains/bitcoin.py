@@ -78,21 +78,26 @@ class MockBitcoin:
         unspents = self.connection._call("listunspent", 1, 9999, [str(address)])
         return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
 
-    @retry(
-        stop=stop_after_attempt(60), wait=wait_fixed(1), reraise=True,
-    )
-    def get_unspents(self, address, min_amount):
-        unspents = self.connection._call(
-            "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
-        )
-        if len(unspents) == 0:
-            raise Exception(f"Cannot transfer. No BTC UTXO available for {address}")
-        return unspents
+    @retry(stop=stop_after_attempt(60), wait=wait_fixed(1))
+    def wait_for_node(self):
+        """
+        Bitcoin regtest node is started with directly mining 500 blocks
+        to be able to start handling transactions and witness seg.
+        It can take a while depending on the machine specs so we retry.
+        """
+        current_height = self.get_block_height()
+        if current_height < 500:
+            logging.warning(
+                f"Bitcoin regtest not ready yet {current_height}<500, waiting..."
+            )
+            raise Exception
 
     def transfer(self, txn):
         """
         Make a transaction/transfer on regtest bitcoin
         """
+        self.wait_for_node()
+
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
@@ -119,7 +124,11 @@ class MockBitcoin:
         # get unspents UTXOs
         address = txn.from_address
         min_amount = amount + (self.default_gas / Coin.ONE)  # add more for fee
-        unspents = self.get_unspents(address, min_amount)
+        unspents = self.connection._call(
+            "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
+        )
+        if len(unspents) == 0:
+            raise Exception(f"Cannot transfer. No BTC UTXO available for {address}")
 
         # choose the first UTXO
         unspent = unspents[0]

@@ -194,13 +194,7 @@ class Smoker:
         # get simulator events
         sim_events = self.thorchain.get_events()
 
-        if len(events) != len(sim_events):
-            self.error(
-                f"Events count mismatch: "
-                f"Thorchain {len(events)} != {len(sim_events)} Simulator"
-            )
-
-        # check ordered events
+        # check events
         for event, sim_event in zip(events, sim_events):
             if sim_event != event:
                 logging.error(
@@ -244,6 +238,17 @@ class Smoker:
         if count_btc > 0:
             self.mock_bitcoin.wait_for_blocks(count_btc)
 
+    @retry(stop=stop_after_attempt(60), wait=wait_fixed(1), reraise=True)
+    def wait_count_events(self):
+        events = self.thorchain_client.get_events()
+        sim_events = self.thorchain.get_events()
+
+        if len(events) != len(sim_events):
+            self.error(
+                f"Events wait count mismatch: "
+                f"Thorchain {len(events)} != {len(sim_events)} Simulator"
+            )
+
     def run(self):
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
@@ -271,17 +276,18 @@ class Smoker:
 
             # wait for blocks to be processed on real chains
             self.wait_for_blocks_chain(outbounds)
-            self.thorchain_client.wait_for_blocks(3)
+            self.thorchain_client.wait_for_blocks(2)
+            self.wait_count_events()
 
             # check if we are verifying the results
             if self.no_verify:
                 continue
 
-            self.check_events()
             self.check_pools()
             self.check_binance()
             self.check_bitcoin()
             self.check_vaults()
+            self.check_events()
             # self.run_health()
 
 
