@@ -242,9 +242,8 @@ class Smoker:
     def wait_count_events(self):
         events = self.thorchain_client.get_events()
         sim_events = self.thorchain.get_events()
-
         if len(events) != len(sim_events):
-            self.error(
+            raise Exception(
                 f"Events wait count mismatch: "
                 f"Thorchain {len(events)} != {len(sim_events)} Simulator"
             )
