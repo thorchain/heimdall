@@ -9,14 +9,20 @@ lint:
     - flake8
 
 unit_tests:
-  image: python:3.8-alpine
+  image: docker/compose:alpine-1.25.4
   stage: test
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_DRIVER: overlay2
   before_script:
-    - pip install -r requirements.txt
-    - apk add git
+    - apk update
+    - apk add git make
+    - make build
   script:
-    - coverage run -m unittest tests/test_*
-    - coverage report -m
+    - make test-coverage
+    - make test-coverage-report
 
 integration:
   image: docker/compose:alpine-1.25.4
@@ -38,3 +44,5 @@ integration:
   script:
     - make build
     - make smoke
+  after_script:
+    - ./thornode/scripts/docker_logs.sh
