@@ -44,7 +44,6 @@ class MockBinance(HttpClient):
             block = self.get_block_height()
             if block - start_block >= count:
                 return
-        # raise Exception(f"failed waiting for mock binance transactions ({count})")
 
     def get_tx_id_from_block(self, height):
         """Get transaction hash ID from a block height.

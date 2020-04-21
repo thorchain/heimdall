@@ -70,7 +70,6 @@ class MockBitcoin:
             block = self.get_block_height()
             if block - start_block >= count:
                 return
-        raise Exception(f"failed waiting for mock binance transactions ({count})")
 
     def get_balance(self, address):
         """
