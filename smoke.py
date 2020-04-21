@@ -288,7 +288,7 @@ class Smoker:
             self.check_bitcoin()
             self.check_vaults()
             self.check_events()
-            # self.run_health()
+            self.run_health()
 
 
 if __name__ == "__main__":

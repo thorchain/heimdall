@@ -89,7 +89,7 @@ class MockBitcoin:
         current_height = self.get_block_height()
         if current_height < 100:
             logging.warning(
-                f"Bitcoin regtest starting {current_height}%"
+                f"Bitcoin regtest starting, waiting"
             )
             raise Exception
 
