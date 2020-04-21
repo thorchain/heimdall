@@ -1,5 +1,6 @@
 import time
 import codecs
+import logging
 
 from bitcoin import SelectParams
 from bitcoin.rpc import Proxy
