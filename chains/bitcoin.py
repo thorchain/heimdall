@@ -11,7 +11,7 @@ from common import Coin
 from decimal import Decimal, getcontext
 from chains.aliases import aliases_btc, get_aliases, get_alias_address
 from chains.account import Account
-from tenacity import retry, stop_after_attempt, wait_fixed
+from tenacity import retry, stop_after_delay, wait_fixed
 
 
 class MockBitcoin:
@@ -79,17 +79,17 @@ class MockBitcoin:
         unspents = self.connection._call("listunspent", 1, 9999, [str(address)])
         return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
 
-    @retry(stop=stop_after_attempt(60), wait=wait_fixed(1))
+    @retry(stop=stop_after_delay(300), wait=wait_fixed(1))
     def wait_for_node(self):
         """
-        Bitcoin regtest node is started with directly mining 500 blocks
-        to be able to start handling transactions and witness seg.
+        Bitcoin regtest node is started with directly mining 100 blocks
+        to be able to start handling transactions.
         It can take a while depending on the machine specs so we retry.
         """
         current_height = self.get_block_height()
-        if current_height < 500:
+        if current_height < 100:
             logging.warning(
-                f"Bitcoin regtest not ready yet {current_height}<500, waiting..."
+                f"Bitcoin regtest starting {current_height}%"
             )
             raise Exception
 

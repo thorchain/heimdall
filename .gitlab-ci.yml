@@ -45,5 +45,4 @@ integration:
     - make build
     - make smoke
   after_script:
-    - ls -l ./thornode/
     - ./thornode/scripts/docker_logs.sh
