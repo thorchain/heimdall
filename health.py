@@ -11,7 +11,7 @@ from segwit_addr import decode_address
 
 # Init logging
 logging.basicConfig(
-    format="%(asctime)s | %(levelname)-8s | %(message)s",
+    format="%(asctime)s | %(levelname).4s | %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
@@ -126,7 +126,7 @@ class Health:
             if trune_coin != mrune_coin:
                 self.errors.append(
                     Exception(
-                        f"Bad Midgard pool balance: BNB.RUNE-A1F "
+                        f"Bad Midgard Pool-{asset} balance: RUNE "
                         f"{mrune_coin} != {trune_coin}"
                     )
                 )
@@ -134,7 +134,7 @@ class Health:
             if tasset_coin != masset_coin:
                 self.errors.append(
                     Exception(
-                        f"Bad Midgard pool balance: {asset} "
+                        f"Bad Midgard Pool-{asset} balance: ASSET "
                         f"{masset_coin} != {tasset_coin}"
                     )
                 )
@@ -145,7 +145,8 @@ class Health:
             if mpool_units != tpool_units:
                 self.errors.append(
                     Exception(
-                        f"Bad Midgard pool units: " f"{mpool_units} != {tpool_units}"
+                        f"Bad Midgard Pool-{asset} units: "
+                        f"{mpool_units} != {tpool_units}"
                     )
                 )
 

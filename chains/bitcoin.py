@@ -1,5 +1,6 @@
 import time
 import codecs
+import logging
 
 from bitcoin import SelectParams
 from bitcoin.rpc import Proxy
@@ -10,6 +11,7 @@ from common import Coin
 from decimal import Decimal, getcontext
 from chains.aliases import aliases_btc, get_aliases, get_alias_address
 from chains.account import Account
+from tenacity import retry, stop_after_delay, wait_fixed
 
 
 class MockBitcoin:
@@ -24,6 +26,7 @@ class MockBitcoin:
         "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330",
         "9294f4d108465fd293f7fe299e6923ef71a77f2cb1eb6d4394839c64ec25d5c0",
     ]
+    default_gas = 999999
 
     def __init__(self, base_url):
         SelectParams("regtest")
@@ -49,6 +52,7 @@ class MockBitcoin:
         Set the vault bnb address
         """
         aliases_btc["VAULT"] = addr
+        self.connection._call("importaddress", addr)
 
     def get_block_height(self):
         """
@@ -66,12 +70,34 @@ class MockBitcoin:
             block = self.get_block_height()
             if block - start_block >= count:
                 return
-        raise Exception(f"failed waiting for mock binance transactions ({count})")
+
+    def get_balance(self, address):
+        """
+        Get BTC balance for an address
+        """
+        unspents = self.connection._call("listunspent", 1, 9999, [str(address)])
+        return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
+
+    @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
+    def wait_for_node(self):
+        """
+        Bitcoin regtest node is started with directly mining 100 blocks
+        to be able to start handling transactions.
+        It can take a while depending on the machine specs so we retry.
+        """
+        current_height = self.get_block_height()
+        if current_height < 100:
+            logging.warning(
+                f"Bitcoin regtest starting, waiting"
+            )
+            raise Exception
 
     def transfer(self, txn):
         """
         Make a transaction/transfer on regtest bitcoin
         """
+        self.wait_for_node()
+
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
@@ -97,15 +123,12 @@ class MockBitcoin:
 
         # get unspents UTXOs
         address = txn.from_address
-        min_amount = amount + 0.01  # add more for fee
+        min_amount = amount + (self.default_gas / Coin.ONE)  # add more for fee
         unspents = self.connection._call(
             "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
         )
-
         if len(unspents) == 0:
-            raise Exception(
-                f"Cannot transfer. No BTC UTXO available for {txn.from_address}"
-            )
+            raise Exception(f"Cannot transfer. No BTC UTXO available for {address}")
 
         # choose the first UTXO
         unspent = unspents[0]
@@ -124,6 +147,7 @@ class MockBitcoin:
         tx = self.connection._call("createrawtransaction", tx_in, tx_out)
         tx = self.connection._call("signrawtransactionwithwallet", tx)
         txn.id = self.connection._call("sendrawtransaction", tx["hex"])
+        txn.gas = [Coin("BTC.BTC", self.default_gas)]
 
 
 class Bitcoin:
@@ -136,12 +160,14 @@ class Bitcoin:
     def __init__(self):
         self.accounts = {}
 
-    def _calculate_gas(self, coins):
+    @classmethod
+    def calculate_gas(cls, pool, rune_fee):
         """
-        With given coin set, calculates the gas owed
+        Calculate gas according to RUNE thorchain fee
+        1 RUNE / 2 in BTC value
         """
-        # TODO calculate gas properly
-        return Coin("BTC.BTC", 999999)
+        btc_amount = pool.get_rune_in_asset(int(rune_fee / 2))
+        return Coin("BTC.BTC", btc_amount)
 
     def get_account(self, addr):
         """
@@ -168,13 +194,13 @@ class Bitcoin:
         from_acct = self.get_account(txn.from_address)
         to_acct = self.get_account(txn.to_address)
 
-        gas = self._calculate_gas(txn.coins)
-        from_acct.sub(gas)
+        if not txn.gas:
+            txn.gas = [Coin("BTC.BTC", MockBitcoin.default_gas)]
+
+        from_acct.sub(txn.gas[0])
 
         from_acct.sub(txn.coins)
         to_acct.add(txn.coins)
 
         self.set_account(from_acct)
         self.set_account(to_acct)
-
-        txn.gas = [gas]

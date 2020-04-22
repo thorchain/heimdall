@@ -6,6 +6,7 @@ from pprint import pformat
 from deepdiff import DeepDiff
 
 from chains.binance import Binance
+from chains.bitcoin import Bitcoin
 from thorchain import ThorchainState, Event
 from breakpoint import Breakpoint
 
@@ -13,7 +14,7 @@ from common import Transaction
 
 # Init logging
 logging.basicConfig(
-    format="%(asctime)s | %(levelname)-8s | %(message)s",
+    format="%(asctime)s | %(levelname).4s | %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
@@ -27,7 +28,6 @@ def get_balance(idx):
         for bal in balances:
             if idx == bal["TX"]:
                 return bal
-    raise Exception("could not find idx")
 
 
 def get_events():
@@ -55,6 +55,7 @@ class TestSmoke(unittest.TestCase):
         failure = False
         snaps = []
         bnb = Binance()  # init local binance chain
+        btc = Bitcoin()  # init local bitcoin chain
         thorchain = ThorchainState()  # init local thorchain
 
         with open("data/smoke_test_transactions.json", "r") as f:
@@ -64,7 +65,10 @@ class TestSmoke(unittest.TestCase):
             txn = Transaction.from_dict(txn)
             logging.info(f"{i} {txn}")
 
-            bnb.transfer(txn)  # send transfer on binance chain
+            if txn.chain == Binance.chain:
+                bnb.transfer(txn)  # send transfer on binance chain
+            if txn.chain == Bitcoin.chain:
+                btc.transfer(txn)  # send transfer on bitcoin chain
 
             if txn.memo == "SEED":
                 continue
@@ -72,8 +76,13 @@ class TestSmoke(unittest.TestCase):
             outbound = thorchain.handle(txn)  # process transaction in thorchain
             outbound = thorchain.handle_fee(outbound)
             thorchain.order_outbound_txns(outbound)
+
             for txn in outbound:
-                bnb.transfer(txn)  # send outbound txns back to Binance
+                if txn.chain == Binance.chain:
+                    bnb.transfer(txn)  # send outbound txns back to Binance
+                if txn.chain == Bitcoin.chain:
+                    btc.transfer(txn)  # send outbound txns back to Bitcoin
+
             thorchain.handle_rewards()
             thorchain.handle_gas(outbound)  # subtract gas from pool(s)
 

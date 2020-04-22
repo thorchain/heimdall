@@ -53,7 +53,6 @@ class Account:
         for coin in self.balances:
             if asset == coin.asset:
                 return coin.amount
-
         return 0
 
     def __repr__(self):

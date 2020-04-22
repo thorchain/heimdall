@@ -2,7 +2,7 @@ import unittest
 import json
 
 from copy import deepcopy
-from common import Asset, Transaction, Coin
+from common import Asset, Transaction, Coin, get_share
 from chains.binance import Binance
 
 
@@ -18,6 +18,13 @@ class TestAsset(unittest.TestCase):
         self.assertEqual(asset, "BNB.RUNE-A1F")
         asset = Asset("BNB.LOK-3C0")
         self.assertEqual(asset, "BNB.LOK-3C0")
+
+    def test_get_share(self):
+        alloc = 50000000
+        part = 149506590
+        total = 50165561086
+        share = get_share(part, total, alloc)
+        self.assertEqual(share, 149013)
 
     def test_get_symbol(self):
         asset = Asset("BNB.BNB")
@@ -136,19 +143,19 @@ class TestCoin(unittest.TestCase):
 
     def test_str(self):
         coin = Coin("BNB.BNB")
-        self.assertEqual(str(coin), "0BNB.BNB")
+        self.assertEqual(str(coin), "0_BNB.BNB")
         coin = Coin("RUNE", 1000000)
-        self.assertEqual(str(coin), "1,000,000BNB.RUNE")
+        self.assertEqual(str(coin), "1,000,000_BNB.RUNE")
         coin = Coin("LOK-3C0", 1000000)
-        self.assertEqual(str(coin), "1,000,000BNB.LOK-3C0")
+        self.assertEqual(str(coin), "1,000,000_BNB.LOK-3C0")
 
     def test_repr(self):
         coin = Coin("BNB.BNB")
-        self.assertEqual(repr(coin), "<Coin 0BNB.BNB>")
+        self.assertEqual(repr(coin), "<Coin 0_BNB.BNB>")
         coin = Coin("RUNE", 1000000)
-        self.assertEqual(repr(coin), "<Coin 1,000,000BNB.RUNE>")
+        self.assertEqual(repr(coin), "<Coin 1,000,000_BNB.RUNE>")
         coin = Coin("LOK-3C0", 1000000)
-        self.assertEqual(repr(coin), "<Coin 1,000,000BNB.LOK-3C0>")
+        self.assertEqual(repr(coin), "<Coin 1,000,000_BNB.LOK-3C0>")
 
     def test_to_json(self):
         coin = Coin("BNB.BNB")
@@ -192,43 +199,42 @@ class TestTransaction(unittest.TestCase):
 
     def test_str(self):
         txn = Transaction(Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "MEMO",)
-        self.assertEqual(str(txn), "Transaction USER ==> VAULT | 100BNB.BNB | MEMO")
+        self.assertEqual(str(txn), "Tx     USER ==> VAULT    | MEMO | 100_BNB.BNB")
         txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
         self.assertEqual(
             str(txn),
-            "Transaction USER ==> VAULT | 1,000,000,000BNB.BNB, "
-            "1,000,000,000BNB.RUNE-A1F | MEMO",
+            "Tx     USER ==> VAULT    | MEMO | 1,000,000,000_BNB.BNB"
+            ", 1,000,000,000_BNB.RUNE-A1F",
         )
         txn.coins = None
         self.assertEqual(
-            str(txn), "Transaction USER ==> VAULT | No Coins | MEMO",
+            str(txn), "Tx     USER ==> VAULT    | MEMO | No Coins",
         )
         txn.gas = [Coin("BNB", 37500)]
         self.assertEqual(
-            str(txn),
-            "Transaction USER ==> VAULT | No Coins | MEMO | Gas 37,500BNB.BNB",
+            str(txn), "Tx     USER ==> VAULT    | MEMO | No Coins | Gas 37,500_BNB.BNB",
         )
 
     def test_repr(self):
         txn = Transaction(Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "MEMO",)
         self.assertEqual(
-            repr(txn), "<Transaction USER ==> VAULT | [<Coin 100BNB.BNB>] | MEMO>"
+            repr(txn), "<Tx     USER ==> VAULT    | MEMO | [<Coin 100_BNB.BNB>]>"
         )
         txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
         self.assertEqual(
             repr(txn),
-            "<Transaction USER ==> VAULT | [<Coin 1,000,000,000BNB.BNB>,"
-            " <Coin 1,000,000,000BNB.RUNE-A1F>] | MEMO>",
+            "<Tx     USER ==> VAULT    | MEMO | [<Coin 1,000,000,000_BNB.BNB>,"
+            " <Coin 1,000,000,000_BNB.RUNE-A1F>]>",
         )
         txn.coins = None
         self.assertEqual(
-            repr(txn), "<Transaction USER ==> VAULT | No Coins | MEMO>",
+            repr(txn), "<Tx     USER ==> VAULT    | MEMO | No Coins>",
         )
         txn.gas = [Coin("BNB", 37500)]
         self.assertEqual(
             repr(txn),
-            "<Transaction USER ==> VAULT | No Coins | "
-            "MEMO | Gas [<Coin 37,500BNB.BNB>]>",
+            "<Tx     USER ==> VAULT    | MEMO | No Coins |"
+            " Gas [<Coin 37,500_BNB.BNB>]>",
         )
 
     def test_eq(self):
