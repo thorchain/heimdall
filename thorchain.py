@@ -751,7 +751,7 @@ class ThorchainState:
                 from_address,
                 address,
                 [emit],
-                f"OUTBOUND:{txn.id}",
+                f"OUTBOUND:{txn.id.upper()}",
                 gas=[gas],
             )
         ]

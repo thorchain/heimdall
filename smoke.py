@@ -204,7 +204,7 @@ class Smoker:
                 self.error("Events mismatch")
 
     @retry(
-        stop=stop_after_attempt(5),
+        stop=stop_after_attempt(10),
         wait=wait_fixed(1),
         reraise=True,
         after=log_health_retry,
@@ -248,6 +248,22 @@ class Smoker:
                 f"Thorchain {len(events)} != {len(sim_events)} Simulator"
             )
 
+    def status(self):
+        """
+        Display status
+        """
+        pools = self.thorchain_client.get_pools()
+        for pool in pools:
+            logging.info(f"======= Pool {pool['asset']} =======")
+            logging.info(f"Balance ASSET {pool['balance_asset']:0,.0f}")
+            logging.info(f"Balance RUNE  {pool['balance_rune']:0,.0f}")
+            logging.info("=================================")
+        vault = self.thorchain_client.get_vault_data()
+        logging.info("======== Vault ========")
+        logging.info(f"Reserve {vault['total_reserve']}")
+        logging.info(f"Bond Reward {vault['bond_reward_rune']}")
+        logging.info("=================================")
+
     def run(self):
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
@@ -288,6 +304,8 @@ class Smoker:
             self.check_vaults()
             self.check_events()
             self.run_health()
+
+        self.status()
 
 
 if __name__ == "__main__":
