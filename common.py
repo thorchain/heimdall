@@ -90,6 +90,12 @@ class Asset(str, Jsonable):
         """
         return self.get_symbol().startswith("BNB")
 
+    def is_btc(self):
+        """
+        Is this asset btc?
+        """
+        return self.get_symbol().startswith("BTC")
+
     def is_rune(self):
         """
         Is this asset rune?

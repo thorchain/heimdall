@@ -11,7 +11,7 @@ from common import (
     HttpClient,
     Jsonable,
 )
-from chains.aliases import get_alias, get_alias_address
+from chains.aliases import get_alias, get_alias_address, get_aliases
 from chains.bitcoin import Bitcoin
 from chains.binance import Binance
 
@@ -150,7 +150,8 @@ class ThorchainState:
         if not len(gas_coins.items()):
             return
 
-        gas_event = GasEvent([])
+        gas_pools = []
+        has_btc = False
 
         for asset, gas in gas_coins.items():
             pool = self.get_pool(gas.asset)
@@ -171,13 +172,31 @@ class ThorchainState:
 
             # update gas event
             gas_pool = EventGasPool(asset, gas.amount, rune_amt)
-            gas_event.pools.append(gas_pool)
-
+            gas_pools.append(gas_pool)
             self.set_pool(pool)
+            if asset.is_btc():
+                has_btc = True
 
         # generate event GAS
-        event = Event("gas", Transaction.empty_txn(), None, gas_event)
-        self.events.append(event)
+        if has_btc:
+            btc_pool = None
+            for gas_pool in gas_pools:
+                if gas_pool.asset.is_btc():
+                    btc_pool = gas_pool
+                    continue
+                gas_event = GasEvent([gas_pool])
+                event = Event("gas", Transaction.empty_txn(), None, gas_event)
+                self.events.append(event)
+
+            # BTC pool last
+            gas_event = GasEvent([btc_pool])
+            event = Event("gas", Transaction.empty_txn(), None, gas_event)
+            self.events.append(event)
+        else:
+            gas_event = GasEvent(gas_pools)
+            event = Event("gas", Transaction.empty_txn(), None, gas_event)
+            self.events.append(event)
+
 
     def handle_fee(self, txns):
         """
@@ -584,13 +603,41 @@ class ThorchainState:
         self.set_pool(pool)
 
         # out transactions
-        chain, _from, _to = txn.chain, txn.from_address, txn.to_address
+        gas = None
+        target = txn.get_asset_from_memo()
+
+        # get from address VAULT cross chain
+        from_address = txn.to_address
+        if from_address != "VAULT":  # don't replace for unit tests
+            from_alias = get_alias(txn.chain, from_address)
+            from_address = get_alias_address(target.get_chain(), from_alias)
+
+        # get to address cross chain
+        to_address = txn.from_address
+        if not to_address in get_aliases(): # don't replace for unit tests
+            to_alias = get_alias(txn.chain, to_address)
+            to_address = get_alias_address(target.get_chain(), to_alias)
+
+        # calculate gas if BTC
+        if target.get_chain() == "BTC":
+            gas = [Bitcoin.calculate_gas(pool, self.rune_fee)]
+
         out_txns = [
             Transaction(
-                chain, _to, _from, [Coin("RUNE-A1F", rune_amt)], f"OUTBOUND:{txn.id}"
+                Binance.chain,
+                txn.to_address,
+                txn.from_address,
+                [Coin("RUNE-A1F", rune_amt)],
+                f"OUTBOUND:{txn.id.upper()}",
+                gas=gas,
             ),
             Transaction(
-                chain, _to, _from, [Coin(asset, asset_amt)], f"OUTBOUND:{txn.id}"
+                target.get_chain(),
+                from_address,
+                to_address,
+                [Coin(asset, asset_amt)],
+                f"OUTBOUND:{txn.id.upper()}",
+                gas=gas
             ),
         ]
 
@@ -741,9 +788,9 @@ class ThorchainState:
 
         gas = None
 
-        # calculate gas
+        # calculate gas if BTC
         if target.get_chain() == "BTC":
-            gas = Bitcoin.calculate_gas(pool, self.rune_fee)
+            gas = [Bitcoin.calculate_gas(pool, self.rune_fee)]
 
         out_txns = [
             Transaction(
@@ -752,7 +799,7 @@ class ThorchainState:
                 address,
                 [emit],
                 f"OUTBOUND:{txn.id.upper()}",
-                gas=[gas],
+                gas=gas,
             )
         ]
 
