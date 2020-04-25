@@ -71,34 +71,39 @@ class MockBinance(HttpClient):
         """
         return address_from_public_key(pubkey, "tbnb")
 
-    def transfer(self, txn):
+    def transfer(self, txns):
         """
         Make a transaction/transfer on mock binance
         """
-        if not isinstance(txn.coins, list):
-            txn.coins = [txn.coins]
+        if not isinstance(txns, list):
+            txns = [txns]
 
-        if txn.to_address in get_aliases():
-            txn.to_address = get_alias_address(txn.chain, txn.to_address)
+        payload = []
+        for txn in txns:
+            if not isinstance(txn.coins, list):
+                txn.coins = [txn.coins]
 
-        if txn.from_address in get_aliases():
-            txn.from_address = get_alias_address(txn.chain, txn.from_address)
+            if txn.to_address in get_aliases():
+                txn.to_address = get_alias_address(txn.chain, txn.to_address)
 
-        # update memo with actual address (over alias name)
-        for alias in get_aliases():
-            chain = txn.chain
-            asset = txn.get_asset_from_memo()
-            if asset:
-                chain = asset.get_chain()
-            addr = get_alias_address(chain, alias)
-            txn.memo = txn.memo.replace(alias, addr)
+            if txn.from_address in get_aliases():
+                txn.from_address = get_alias_address(txn.chain, txn.from_address)
 
-        payload = {
-            "from": txn.from_address,
-            "to": txn.to_address,
-            "memo": txn.memo,
-            "coins": [coin.to_binance_fmt() for coin in txn.coins],
-        }
+            # update memo with actual address (over alias name)
+            for alias in get_aliases():
+                chain = txn.chain
+                asset = txn.get_asset_from_memo()
+                if asset:
+                    chain = asset.get_chain()
+                addr = get_alias_address(chain, alias)
+                txn.memo = txn.memo.replace(alias, addr)
+
+            payload.append({
+                "from": txn.from_address,
+                "to": txn.to_address,
+                "memo": txn.memo,
+                "coins": [coin.to_binance_fmt() for coin in txn.coins],
+            })
         result = self.post("/broadcast/easy", payload)
         txn.id = self.get_tx_id_from_block(result["height"])
 
