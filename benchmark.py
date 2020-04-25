@@ -27,15 +27,14 @@ def main():
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
     )
     parser.add_argument(
-        "--num-swaps", type=int, default=10, help="Number of swaps to perform"
+        "--tx-type", default="swap", help="Transactions type to perform (swap or stake)"
+    )
+    parser.add_argument(
+        "--num", type=int, default=100, help="Number of transactions to perform"
     )
     args = parser.parse_args()
 
-    benchie = Benchie(
-        args.binance,
-        args.thorchain,
-        args.num_swaps,
-    )
+    benchie = Benchie(args.binance, args.thorchain, args.tx_type, args.num,)
     try:
         benchie.run()
     except Exception as e:
@@ -45,10 +44,7 @@ def main():
 
 class Benchie:
     def __init__(
-        self,
-        bnb,
-        thor,
-        num_swaps,
+        self, bnb, thor, tx_type, num,
     ):
         self.thorchain = ThorchainState()
 
@@ -61,7 +57,11 @@ class Benchie:
         self.mock_binance = MockBinance(bnb)
         self.mock_binance.set_vault_address(vault_address)
 
-        self.num_swaps = num_swaps
+        self.num = num
+        self.tx_type = tx_type
+        if self.tx_type != "swap" and self.tx_type != "stake":
+            logging.error("invalid tx type: " + self.tx_type)
+            os.exit(1)
 
         time.sleep(5)  # give thorchain extra time to start the blockchain
 
@@ -73,44 +73,73 @@ class Benchie:
             logging.error(err)
 
     def run(self):
-        logging.info(f">>> Starting benchmark... (Swaps: {self.num_swaps})")
+        logging.info(f">>> Starting benchmark... ({self.tx_type}: {self.num})")
         logging.info(">>> setting up...")
         # seed staker
         self.mock_binance.transfer(
-            Transaction("BNB", get_alias("BNB", "MASTER"), get_alias("BNB", "STAKER-1"), [
-                Coin("BNB", self.num_swaps * 100 * Coin.ONE),
-                Coin("RUNE-A1F", self.num_swaps * 100 * Coin.ONE),
-            ])
+            Transaction(
+                "BNB",
+                get_alias("BNB", "MASTER"),
+                get_alias("BNB", "STAKER-1"),
+                [
+                    Coin("BNB", self.num * 100 * Coin.ONE),
+                    Coin("RUNE-A1F", self.num * 100 * Coin.ONE),
+                ],
+            )
         )
 
         # seed swapper
         self.mock_binance.transfer(
-            Transaction("BNB", get_alias("BNB", "MASTER"), get_alias("BNB", "USER-1"), [
-                Coin("BNB", self.num_swaps * 100 * Coin.ONE),
-                Coin("RUNE-A1F", self.num_swaps * 100 * Coin.ONE),
-            ])
+            Transaction(
+                "BNB",
+                get_alias("BNB", "MASTER"),
+                get_alias("BNB", "USER-1"),
+                [
+                    Coin("BNB", self.num * 100 * Coin.ONE),
+                    Coin("RUNE-A1F", self.num * 100 * Coin.ONE),
+                ],
+            )
         )
 
-        # stake BNB
-        #self.mock_binance.transfer(
-            #Transaction("BNB", get_alias("BNB", "STAKER-1"), get_alias("BNB", "VAULT"), [
-                #Coin("BNB", self.num_swaps * 100 * Coin.ONE),
-                #Coin("RUNE-A1F", self.num_swaps * 100 * Coin.ONE),
-            #], memo="STAKE:BNB.BNB")
-        #)
-        
+        if self.tx_type == "swap":
+            # stake BNB
+            self.mock_binance.transfer(
+                Transaction(
+                    "BNB",
+                    get_alias("BNB", "STAKER-1"),
+                    get_alias("BNB", "VAULT"),
+                    [
+                        Coin("BNB", self.num * 100 * Coin.ONE),
+                        Coin("RUNE-A1F", self.num * 100 * Coin.ONE),
+                    ],
+                    memo="STAKE:BNB.BNB",
+                )
+            )
+
         time.sleep(5)  # give thorchain extra time to start the blockchain
 
         logging.info("<<< done.")
         logging.info(">>> compiling transactions...")
         txns = []
-        memo = "STAKE:BNB.BNB"
-        for x in range(0, self.num_swaps):
-            txns.append(
-                Transaction("BNB", get_alias("BNB", "USER-1"), get_alias("BNB", "VAULT"), [
+        memo = f"{self.tx_type}:BNB.BNB"
+        for x in range(0, self.num):
+            if self.tx_type == "stake":
+                coins = [
                     Coin("RUNE-A1F", 10 * Coin.ONE),
                     Coin("BNB", 10 * Coin.ONE),
-                ], memo=memo)
+                ]
+            elif self.tx_type == "swap":
+                coins = [
+                    Coin("RUNE-A1F", 10 * Coin.ONE),
+                ]
+            txns.append(
+                Transaction(
+                    "BNB",
+                    get_alias("BNB", "USER-1"),
+                    get_alias("BNB", "VAULT"),
+                    coins,
+                    memo=memo,
+                )
             )
 
         logging.info("<<< done.")
@@ -124,14 +153,14 @@ class Benchie:
         completed = 0
         last_event_id = 1
 
-        pbar = tqdm(total=self.num_swaps)
-        while completed < self.num_swaps:
+        pbar = tqdm(total=self.num)
+        while completed < self.num:
             events = self.thorchain_client.get_events(last_event_id)
             if len(events) == 0:
                 time.sleep(1)
                 continue
-            last_event_id = events[-1]['id']
-            events = [e for e in events if e['type'] == memo.split(":")[0].lower()]
+            last_event_id = events[-1]["id"]
+            events = [e for e in events if e["type"] == memo.split(":")[0].lower()]
             completed += len(events)
             pbar.update(len(events))
             time.sleep(1)
@@ -141,7 +170,9 @@ class Benchie:
         end_block_height = self.thorchain_client.get_block_height()
         total_time = t2 - t1
         total_blocks = end_block_height - start_block_height
-        logging.info(f"<<< done. (Swaps: {completed} Blocks: {total_blocks}, {total_time} seconds)")
+        logging.info(
+            f"<<< done. ({self.tx_type}: {completed} Blocks: {total_blocks}, {total_time} seconds)"
+        )
 
 
 if __name__ == "__main__":
