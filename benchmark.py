@@ -3,12 +3,11 @@ import logging
 import os
 import time
 import sys
-import json
 from tqdm import tqdm
 
 from chains.binance import MockBinance
 from thorchain import ThorchainState, ThorchainClient
-from common import Transaction, Coin, Asset
+from common import Transaction, Coin
 from chains.aliases import get_alias
 
 # Init logging
@@ -171,7 +170,13 @@ class Benchie:
         total_time = t2 - t1
         total_blocks = end_block_height - start_block_height
         logging.info(
-            f"<<< done. ({self.tx_type}: {completed} Blocks: {total_blocks}, {total_time} seconds)"
+            "<<< done."
+        )
+        logging.info(
+            f"({self.tx_type}: {completed}"
+        )
+        logging.info(
+            f"Blocks: {total_blocks}, {total_time} seconds)"
         )
 
 
