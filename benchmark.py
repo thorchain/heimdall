@@ -169,15 +169,9 @@ class Benchie:
         end_block_height = self.thorchain_client.get_block_height()
         total_time = t2 - t1
         total_blocks = end_block_height - start_block_height
-        logging.info(
-            "<<< done."
-        )
-        logging.info(
-            f"({self.tx_type}: {completed}"
-        )
-        logging.info(
-            f"Blocks: {total_blocks}, {total_time} seconds)"
-        )
+        logging.info("<<< done.")
+        logging.info(f"({self.tx_type}: {completed}")
+        logging.info(f"Blocks: {total_blocks}, {total_time} seconds)")
 
 
 if __name__ == "__main__":
