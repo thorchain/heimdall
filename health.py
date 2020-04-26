@@ -61,7 +61,7 @@ class Health:
         self.check_pools()
         self.check_asgard_vault()
 
-    def error(self):
+    def error(self, err):
         """Check errors and exit accordingly.
         """
         self.exit = 1

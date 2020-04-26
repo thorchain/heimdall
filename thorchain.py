@@ -197,7 +197,6 @@ class ThorchainState:
             event = Event("gas", Transaction.empty_txn(), None, gas_event)
             self.events.append(event)
 
-
     def handle_fee(self, txns):
         """
         Subtract transaction fee from given transactions
@@ -622,7 +621,7 @@ class ThorchainState:
 
         # get to address cross chain
         to_address = txn.from_address
-        if not to_address in get_aliases(): # don't replace for unit tests
+        if to_address not in get_aliases():  # don't replace for unit tests
             to_alias = get_alias(txn.chain, to_address)
             to_address = get_alias_address(asset.get_chain(), to_alias)
 
@@ -645,7 +644,7 @@ class ThorchainState:
                 to_address,
                 [Coin(asset, asset_amt)],
                 f"OUTBOUND:{txn.id.upper()}",
-                gas=gas
+                gas=gas,
             ),
         ]
 

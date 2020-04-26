@@ -198,7 +198,7 @@ class Smoker:
                 )
                 self.error("Events mismatch")
 
-    @retry(stop=stop_after_attempt(10), wait=wait_fixed(1),reraise=True)
+    @retry(stop=stop_after_attempt(10), wait=wait_fixed(1), reraise=True)
     def run_health(self):
         self.health.run()
 

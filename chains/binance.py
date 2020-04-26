@@ -98,12 +98,14 @@ class MockBinance(HttpClient):
                 addr = get_alias_address(chain, alias)
                 txn.memo = txn.memo.replace(alias, addr)
 
-            payload.append({
-                "from": txn.from_address,
-                "to": txn.to_address,
-                "memo": txn.memo,
-                "coins": [coin.to_binance_fmt() for coin in txn.coins],
-            })
+            payload.append(
+                {
+                    "from": txn.from_address,
+                    "to": txn.to_address,
+                    "memo": txn.memo,
+                    "coins": [coin.to_binance_fmt() for coin in txn.coins],
+                }
+            )
         result = self.post("/broadcast/easy", payload)
         txn.id = self.get_tx_id_from_block(result["height"])
 
