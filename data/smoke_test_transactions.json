@@ -191,7 +191,7 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "WITHDRAW:BTC.BTC:9000",
+        "memo": "WITHDRAW:BTC.BTC:1000",
         "coins": [
             {
                 "asset": "BNB.RUNE-A1F",
@@ -588,6 +588,19 @@
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB:10000",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:BTC.BTC",
         "coins": [
             {
                 "asset": "BNB.RUNE-A1F",

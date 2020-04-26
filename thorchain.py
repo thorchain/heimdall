@@ -591,35 +591,44 @@ class ThorchainState:
             refund_event = RefundEvent(105, "refund reason message")
             return self.refund(txn, refund_event)
 
+        # calculate gas prior to update pool in case we empty the pool
+        # and need to subtract
+        btc_gas = 0
+        if asset.get_chain() == "BTC":
+            btc_gas = Bitcoin.calculate_gas(pool, self.rune_fee)
+
         unstake_units, rune_amt, asset_amt = pool.unstake(
             txn.from_address, withdraw_basis_points
         )
 
         # if this is our last staker of bnb, subtract a little BNB for gas.
-        if pool.total_units == 0 and pool.asset.is_bnb():
-            asset_amt -= 75000
-            pool.asset_balance += 75000
+        if pool.total_units == 0:
+            if pool.asset.is_bnb():
+                asset_amt -= 75000
+                pool.asset_balance += 75000
+            elif pool.asset.is_btc():
+                asset_amt -= btc_gas.amount
+                pool.asset_balance += btc_gas.amount
 
         self.set_pool(pool)
 
         # out transactions
         gas = None
-        target = txn.get_asset_from_memo()
 
         # get from address VAULT cross chain
         from_address = txn.to_address
         if from_address != "VAULT":  # don't replace for unit tests
             from_alias = get_alias(txn.chain, from_address)
-            from_address = get_alias_address(target.get_chain(), from_alias)
+            from_address = get_alias_address(asset.get_chain(), from_alias)
 
         # get to address cross chain
         to_address = txn.from_address
         if not to_address in get_aliases(): # don't replace for unit tests
             to_alias = get_alias(txn.chain, to_address)
-            to_address = get_alias_address(target.get_chain(), to_alias)
+            to_address = get_alias_address(asset.get_chain(), to_alias)
 
         # calculate gas if BTC
-        if target.get_chain() == "BTC":
+        if asset.get_chain() == "BTC":
             gas = [Bitcoin.calculate_gas(pool, self.rune_fee)]
 
         out_txns = [
@@ -632,7 +641,7 @@ class ThorchainState:
                 gas=gas,
             ),
             Transaction(
-                target.get_chain(),
+                asset.get_chain(),
                 from_address,
                 to_address,
                 [Coin(asset, asset_amt)],

@@ -238,9 +238,9 @@ class Transaction(Jsonable):
         return sorted(coins) < sorted(other_coins)
 
     def get_asset_from_memo(self):
-        chain_match = re.findall(":(.*):", self.memo)
-        if len(chain_match):
-            return Asset(chain_match[0])
+        parts = self.memo.split(":")
+        if len(parts) >= 2:
+            return Asset(parts[1])
         return None
 
     def custom_hash(self, pubkey):
