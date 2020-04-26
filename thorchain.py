@@ -414,7 +414,6 @@ class ThorchainState:
         elif tx.memo.startswith("RESERVE"):
             return self.handle_reserve(tx)
         else:
-            logging.warning(f"Transaction memo not recognized: '{txn.memo}'")
             if tx.memo == "":
                 refund_event = RefundEvent(105, "memo can't be empty")
             else:

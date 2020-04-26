@@ -34,7 +34,7 @@ def get_share(part, total, alloc):
     Calculates the share of something
     (Allocation / (Total / part))
     """
-    if total == 0:
+    if total == 0 or part == 0:
         return 0
     getcontext().prec = 18
     return int(round(Decimal(alloc) / (Decimal(total) / Decimal(part))))
