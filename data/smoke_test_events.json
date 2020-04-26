@@ -3403,7 +3403,7 @@
                 "gas": [
                     {
                         "asset": "BTC.BTC",
-                        "amount": 0
+                        "amount": 150647
                     }
                 ]
             },
@@ -3497,7 +3497,7 @@
             "pools": [
                 {
                     "asset": "BTC.BTC",
-                    "asset_amt": 0,
+                    "asset_amt": 150647,
                     "rune_amt": 0
                 }
             ]
