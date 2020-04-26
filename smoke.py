@@ -70,7 +70,6 @@ def main():
         sys.exit(smoker.exit)
     except Exception as e:
         logging.fatal(e)
-        raise e
         sys.exit(1)
 
 
