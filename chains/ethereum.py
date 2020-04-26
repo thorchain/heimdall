@@ -3,7 +3,7 @@ import codecs
 import logging
 
 from web3 import Web3, HTTPProvider
-from eth_keys import decode_hex         
+from eth_keys import KeyAPI     
 from common import Coin
 from decimal import Decimal, getcontext
 from chains.aliases import aliases_eth, get_aliases, get_alias_address
@@ -39,10 +39,11 @@ class MockEthereum:
         bech32 encoded from a public key(secp256k1).
 
         :param string pubkey: public key
-        :returns: string bech32 encoded address
+        :returns: string 0x encoded address
         """
-        eth_pubkey = decode_hex(pubkey)
-        return eth_pubkey.to_checksum_address()
+        enc = bytearray.fromhex(private_keys[i])
+        eth_pubkey = KeyAPI.PublicKey(enc)
+        return eth_pubkey.to_address()
 
     def set_vault_address(self, addr):
         """
