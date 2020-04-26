@@ -591,9 +591,9 @@ class ThorchainState:
 
         # calculate gas prior to update pool in case we empty the pool
         # and need to subtract
-        btc_gas = 0
+        btc_gas = None
         if asset.get_chain() == "BTC":
-            btc_gas = Bitcoin.calculate_gas(pool, self.rune_fee)
+            btc_gas = [Bitcoin.calculate_gas(pool, self.rune_fee)]
 
         unstake_units, rune_amt, asset_amt = pool.unstake(
             txn.from_address, withdraw_basis_points
@@ -605,13 +605,10 @@ class ThorchainState:
                 asset_amt -= 75000
                 pool.asset_balance += 75000
             elif pool.asset.is_btc():
-                asset_amt -= btc_gas.amount
-                pool.asset_balance += btc_gas.amount
+                asset_amt -= btc_gas[0].amount
+                pool.asset_balance += btc_gas[0].amount
 
         self.set_pool(pool)
-
-        # out transactions
-        gas = None
 
         # get from address VAULT cross chain
         from_address = txn.to_address
@@ -625,10 +622,6 @@ class ThorchainState:
             to_alias = get_alias(txn.chain, to_address)
             to_address = get_alias_address(asset.get_chain(), to_alias)
 
-        # calculate gas if BTC
-        if asset.get_chain() == "BTC":
-            gas = [Bitcoin.calculate_gas(pool, self.rune_fee)]
-
         out_txns = [
             Transaction(
                 Binance.chain,
@@ -636,7 +629,6 @@ class ThorchainState:
                 txn.from_address,
                 [Coin("RUNE-A1F", rune_amt)],
                 f"OUTBOUND:{txn.id.upper()}",
-                gas=gas,
             ),
             Transaction(
                 asset.get_chain(),
@@ -644,7 +636,7 @@ class ThorchainState:
                 to_address,
                 [Coin(asset, asset_amt)],
                 f"OUTBOUND:{txn.id.upper()}",
-                gas=gas,
+                gas=btc_gas,
             ),
         ]
 
