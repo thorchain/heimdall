@@ -175,6 +175,32 @@
         "gas": null
     },
     {
+        "chain": "BTC",
+        "from_address": "USER-1",
+        "to_address": "VAULT",
+        "memo": "SWAP:BNB.RUNE-A1F:USER-1",
+        "coins": [
+            {
+                "asset": "BTC.BTC",
+                "amount": 500000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:BTC.BTC:1000",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
@@ -562,6 +588,19 @@
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB:10000",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:BTC.BTC",
         "coins": [
             {
                 "asset": "BNB.RUNE-A1F",

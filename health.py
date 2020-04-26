@@ -39,8 +39,7 @@ def main():
 
 
 class Health:
-    def __init__(self, thor, midgard, binance):
-        self.errors = []
+    def __init__(self, thor, midgard, binance, fast_fail=False):
         self.thorchain_client = ThorchainClient(thor)
         self.thorchain_pools = []
         self.thorchain_asgard_vaults = []
@@ -50,6 +49,7 @@ class Health:
 
         self.binance_client = MockBinance(binance)
         self.binance_accounts = []
+        self.exit = 0
 
     def run(self):
         """Run health checks
@@ -60,17 +60,15 @@ class Health:
         self.retrieve_data()
         self.check_pools()
         self.check_asgard_vault()
-        self.check_errors()
 
-    def check_errors(self):
+    def error(self, err):
         """Check errors and exit accordingly.
         """
-        for error in self.errors:
-            logging.error(error)
-
-        if len(self.errors):
-            self.errors = []
-            raise Exception("Health checks failed")
+        self.exit = 1
+        if self.fast_fail:
+            raise Exception(err)
+        else:
+            logging.error(err)
 
     def retrieve_data(self):
         """Retrieve data from APIs needed to run health checks.
@@ -124,30 +122,24 @@ class Health:
 
             # Check balances
             if trune_coin != mrune_coin:
-                self.errors.append(
-                    Exception(
-                        f"Bad Midgard Pool-{asset} balance: RUNE "
-                        f"{mrune_coin} != {trune_coin}"
-                    )
+                self.error(
+                    f"Bad Midgard Pool-{asset} balance: RUNE "
+                    f"{mrune_coin} != {trune_coin}"
                 )
 
             if tasset_coin != masset_coin:
-                self.errors.append(
-                    Exception(
-                        f"Bad Midgard Pool-{asset} balance: ASSET "
-                        f"{masset_coin} != {tasset_coin}"
-                    )
+                self.error(
+                    f"Bad Midgard Pool-{asset} balance: ASSET "
+                    f"{masset_coin} != {tasset_coin}"
                 )
 
             # Check pool units
             mpool_units = int(mpool["poolUnits"])
             tpool_units = int(tpool["pool_units"])
             if mpool_units != tpool_units:
-                self.errors.append(
-                    Exception(
-                        f"Bad Midgard Pool-{asset} units: "
-                        f"{mpool_units} != {tpool_units}"
-                    )
+                self.error(
+                    f"Bad Midgard Pool-{asset} units: "
+                    f"{mpool_units} != {tpool_units}"
                 )
 
     def check_binance_accounts(self, vault):
@@ -163,7 +155,7 @@ class Health:
                     if vcoin.asset != bcoin.asset:
                         continue
                     if vcoin != bcoin:
-                        self.errors.append(
+                        self.error(
                             Exception(
                                 f"Bad Asgard vault balance: {vcoin.asset} "
                                 f"{vcoin} != {bcoin} (Binance balance)"

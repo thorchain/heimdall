@@ -13,6 +13,8 @@ from chains.aliases import aliases_btc, get_aliases, get_alias_address
 from chains.account import Account
 from tenacity import retry, stop_after_delay, wait_fixed
 
+getcontext().prec = 15
+
 
 class MockBitcoin:
     """
@@ -26,7 +28,7 @@ class MockBitcoin:
         "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330",
         "9294f4d108465fd293f7fe299e6923ef71a77f2cb1eb6d4394839c64ec25d5c0",
     ]
-    default_gas = 999999
+    default_gas = 1000000
 
     def __init__(self, base_url):
         SelectParams("regtest")
@@ -87,9 +89,7 @@ class MockBitcoin:
         """
         current_height = self.get_block_height()
         if current_height < 100:
-            logging.warning(
-                f"Bitcoin regtest starting, waiting"
-            )
+            logging.warning(f"Bitcoin regtest starting, waiting")
             raise Exception
 
     def transfer(self, txn):
@@ -109,11 +109,14 @@ class MockBitcoin:
 
         # update memo with actual address (over alias name)
         for alias in get_aliases():
+            chain = txn.chain
+            asset = txn.get_asset_from_memo()
+            if asset:
+                chain = asset.get_chain()
             # we use RUNE BNB address to identify a cross chain stake
             if txn.memo.startswith("STAKE"):
-                addr = get_alias_address("BNB", alias)
-            else:
-                addr = get_alias_address(txn.chain, alias)
+                chain = "BNB"
+            addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
 
         # create transaction
@@ -123,7 +126,7 @@ class MockBitcoin:
 
         # get unspents UTXOs
         address = txn.from_address
-        min_amount = amount + (self.default_gas / Coin.ONE)  # add more for fee
+        min_amount = float(amount + (self.default_gas / Coin.ONE))  # add more for fee
         unspents = self.connection._call(
             "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
         )
@@ -137,7 +140,6 @@ class MockBitcoin:
 
         # create change output if needed
         amount_utxo = float(unspent["amount"])
-        getcontext().prec = 15
         amount_change = Decimal(amount_utxo) - Decimal(min_amount)
         if amount_change > 0:
             tx_out.append({txn.from_address: float(amount_change)})

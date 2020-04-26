@@ -22,12 +22,6 @@ logging.basicConfig(
 )
 
 
-def log_health_retry(retry_state):
-    logging.warning(
-        "Health checks failed, waiting for Midgard to query new events and retry..."
-    )
-
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -59,7 +53,7 @@ def main():
     with open("data/smoke_test_transactions.json", "r") as f:
         txns = json.load(f)
 
-    health = Health(args.thorchain, args.midgard, args.binance)
+    health = Health(args.thorchain, args.midgard, args.binance, args.fast_fail)
 
     smoker = Smoker(
         args.binance,
@@ -203,12 +197,7 @@ class Smoker:
                 )
                 self.error("Events mismatch")
 
-    @retry(
-        stop=stop_after_attempt(5),
-        wait=wait_fixed(1),
-        reraise=True,
-        after=log_health_retry,
-    )
+    @retry(stop=stop_after_attempt(10), wait=wait_fixed(1), reraise=True)
     def run_health(self):
         self.health.run()
 
