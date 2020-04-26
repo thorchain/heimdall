@@ -7,6 +7,7 @@ from deepdiff import DeepDiff
 
 from chains.binance import Binance
 from chains.bitcoin import Bitcoin
+from chains.ethereum import Ethereum
 from thorchain import ThorchainState, Event
 from breakpoint import Breakpoint
 
@@ -56,6 +57,7 @@ class TestSmoke(unittest.TestCase):
         snaps = []
         bnb = Binance()  # init local binance chain
         btc = Bitcoin()  # init local bitcoin chain
+        eth = Ethereum() # init local ethereum chain
         thorchain = ThorchainState()  # init local thorchain
 
         with open("data/smoke_test_transactions.json", "r") as f:
@@ -69,6 +71,8 @@ class TestSmoke(unittest.TestCase):
                 bnb.transfer(txn)  # send transfer on binance chain
             if txn.chain == Bitcoin.chain:
                 btc.transfer(txn)  # send transfer on bitcoin chain
+            if txn.chain == Ethereum.chain:
+                eth.transfer(txn)  # send transfer on ethereum chain
 
             if txn.memo == "SEED":
                 continue
@@ -82,6 +86,8 @@ class TestSmoke(unittest.TestCase):
                     bnb.transfer(txn)  # send outbound txns back to Binance
                 if txn.chain == Bitcoin.chain:
                     btc.transfer(txn)  # send outbound txns back to Bitcoin
+                if txn.chain == Ethereum.chain:
+                    eth.transfer(txn)  # send outbound txns back to Ethereum
 
             thorchain.handle_rewards()
             thorchain.handle_gas(outbound)  # subtract gas from pool(s)

@@ -106,6 +106,19 @@
         "gas": null
     },
     {
+        "chain": "ETH",
+        "from_address": "MASTER",
+        "to_address": "STAKER-1",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "ETH.ETH",
+                "amount": 200000000
+            }
+        ],
+        "gas": null
+    },
+    {
         "chain": "BNB",
         "from_address": "CONTRIB",
         "to_address": "VAULT",
@@ -156,6 +169,19 @@
         "coins": [
             {
                 "asset": "BTC.BTC",
+                "amount": 150000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "ETH",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:ETH.ETH:STAKER-1",
+        "coins": [
+            {
+                "asset": "ETH.ETH",
                 "amount": 150000000
             }
         ],

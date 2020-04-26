@@ -89,6 +89,10 @@
         "POOL.BTC.BTC": {
             "BTC.BTC": 0,
             "RUNE-A1F": 0
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 0,
+            "RUNE-A1F": 0
         }
     },
     {
@@ -123,6 +127,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 150000000,
+            "RUNE-A1F": 50000000000
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 150000000,
             "RUNE-A1F": 50000000000
         }
     },
@@ -159,6 +167,10 @@
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
         }
     },
     {
@@ -194,6 +206,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -236,6 +252,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "RUNE-A1F": 50000000000
@@ -274,6 +294,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -316,6 +340,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "RUNE-A1F": 50000000000
@@ -354,6 +382,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -396,6 +428,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "RUNE-A1F": 50000000000
@@ -434,6 +470,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -476,6 +516,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "RUNE-A1F": 50000000000
@@ -514,6 +558,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -556,6 +604,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "RUNE-A1F": 50000000000
@@ -594,6 +646,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -636,6 +692,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "RUNE-A1F": 50000000000
@@ -674,6 +734,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -716,6 +780,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "RUNE-A1F": 50000000000
@@ -754,6 +822,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -796,6 +868,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "RUNE-A1F": 50000000000
@@ -834,6 +910,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -876,6 +956,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "RUNE-A1F": 50000000000
@@ -914,6 +998,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -956,6 +1044,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "RUNE-A1F": 50000000000
@@ -994,6 +1086,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -1036,6 +1132,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 45000000000,
             "RUNE-A1F": 44444444446
@@ -1074,6 +1174,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -1116,6 +1220,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 45992345905,
             "RUNE-A1F": 43574946302
@@ -1154,6 +1262,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -1196,6 +1308,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 44020824498,
             "RUNE-A1F": 45535642718
@@ -1234,6 +1350,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {
@@ -1276,6 +1396,10 @@
             "BTC.BTC": 149655603,
             "RUNE-A1F": 50114866797
         },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
+            "RUNE-A1F": 50114866797
+        },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 0,
             "RUNE-A1F": 0
@@ -1314,6 +1438,10 @@
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
+            "RUNE-A1F": 50114866797
+        },
+        "POOL.ETH.ETH": {
+            "ETH.ETH": 149655603,
             "RUNE-A1F": 50114866797
         },
         "POOL.BNB.LOK-3C0": {

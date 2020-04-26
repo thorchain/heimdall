@@ -10,6 +10,7 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 from segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
 from chains.bitcoin import Bitcoin, MockBitcoin
+from chains.ethereum_address import Ethereum, MockEthereum
 from thorchain import ThorchainState, ThorchainClient, Event
 from health import Health
 from common import Transaction, Coin, Asset
@@ -31,12 +32,19 @@ def log_health_retry(retry_state):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--binance", default="http://localhost:26660", help="Mock binance server"
+        "--binance",
+        default="http://localhost:26660",
+        help="Mock binance server",
     )
     parser.add_argument(
         "--bitcoin",
         default="http://thorchain:password@localhost:18443",
         help="Regtest bitcoin server",
+    )
+    parser.add_argument(
+        "--ethereum",
+        default="http://thorchain:password@localhost:8545",
+        help="Localnet ethereum server",
     )
     parser.add_argument(
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
@@ -64,6 +72,7 @@ def main():
     smoker = Smoker(
         args.binance,
         args.bitcoin,
+        args.ethereum,
         args.thorchain,
         health,
         txns,
@@ -84,6 +93,7 @@ class Smoker:
         self,
         bnb,
         btc,
+        eth,
         thor,
         health,
         txns,
@@ -93,6 +103,7 @@ class Smoker:
     ):
         self.binance = Binance()
         self.bitcoin = Bitcoin()
+        self.ethereum = Ethereum()
         self.thorchain = ThorchainState()
 
         self.health = health
@@ -114,6 +125,13 @@ class Smoker:
         raw_pubkey = decode_address(vault_pubkey)[5:]
         bitcoin_address = MockBitcoin.get_address_from_pubkey(raw_pubkey)
         self.mock_bitcoin.set_vault_address(bitcoin_address)
+
+        self.mock_ethereum = MockEthereum(eth)
+        # extract pubkey from bech32 encoded pubkey
+        # removing first 5 bytes used by amino encoding
+        raw_pubkey = decode_address(vault_pubkey)[5:]
+        ethereum_address = MockEthereum.get_address_from_pubkey(raw_pubkey)
+        self.mock_ethereum.set_vault_address(ethereum_address)
 
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
@@ -173,6 +191,17 @@ class Smoker:
             if sim_coin != mock_coin:
                 self.error(f"Bad bitcoin balance: {name} {mock_coin} != {sim_coin}")
 
+    def check_ethereum(self):
+        # compare simulation ethereum vs mock ethereum
+        for addr, sim_acct in self.ethereum.accounts.items():
+            name = get_alias(Ethereum.chain, addr)
+            if name == "MASTER":
+                continue  # don't care to compare MASTER account
+            mock_coin = Coin("ETH.ETH", self.mock_ethereum.get_balance(addr))
+            sim_coin = Coin("ETH.ETH", sim_acct.get("ETH.ETH"))
+            if sim_coin != mock_coin:
+                self.error(f"Bad ethereum balance: {name} {mock_coin} != {sim_coin}")
+
     def check_vaults(self):
         # check vault data
         vdata = self.thorchain_client.get_vault_data()
@@ -220,6 +249,8 @@ class Smoker:
             return self.mock_binance.transfer(txn)
         if txn.chain == Bitcoin.chain:
             return self.mock_bitcoin.transfer(txn)
+        if txn.chain == Ethereum.chain:
+            return self.mock_ethereum.transfer(txn)
 
     def broadcast_simulator(self, txn):
         """
@@ -229,6 +260,8 @@ class Smoker:
             return self.binance.transfer(txn)
         if txn.chain == Bitcoin.chain:
             return self.bitcoin.transfer(txn)
+        if txn.chain == Ethereum.chain:
+            return self.ethereum.transfer(txn)
 
     def wait_for_blocks_chain(self, txns):
         count_bnb = len([tx for tx in txns if tx.chain == Binance.chain])
@@ -237,6 +270,10 @@ class Smoker:
         count_btc = len([tx for tx in txns if tx.chain == Bitcoin.chain])
         if count_btc > 0:
             self.mock_bitcoin.wait_for_blocks(count_btc)
+        count_eth = len([tx for tx in txns if tx.chain == Ethereum.chain])
+        if count_eth > 0:
+            self.mock_ethereum.wait_for_blocks(count_eth)
+
 
     @retry(stop=stop_after_attempt(60), wait=wait_fixed(1), reraise=True)
     def wait_count_events(self):
@@ -285,6 +322,7 @@ class Smoker:
             self.check_pools()
             self.check_binance()
             self.check_bitcoin()
+            self.check_ethereum()
             self.check_vaults()
             self.check_events()
             self.run_health()

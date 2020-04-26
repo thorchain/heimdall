@@ -13,6 +13,7 @@ from common import (
 )
 from chains.aliases import get_alias, get_alias_address
 from chains.bitcoin import Bitcoin
+from chains.ethereum import Ethereum
 from chains.binance import Binance
 
 
@@ -744,6 +745,10 @@ class ThorchainState:
         # calculate gas
         if target.get_chain() == "BTC":
             gas = Bitcoin.calculate_gas(pool, self.rune_fee)
+
+        # calculate gas
+        if target.get_chain() == "ETH":
+            gas = Ethereum.calculate_gas(pool, self.rune_fee)
 
         out_txns = [
             Transaction(

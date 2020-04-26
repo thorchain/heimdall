@@ -168,6 +168,49 @@
         "status": "Success"
     },
     {
+        "id": 4,
+        "type": "stake",
+        "in_tx": {
+            "id": "TODO",
+            "chain": "ETH",
+            "from_address": "STAKER-1",
+            "to_address": "VAULT",
+            "memo": "STAKE:ETH.ETH:STAKER-1",
+            "coins": [
+                {
+                    "asset": "ETH.ETH",
+                    "amount": 150000000
+                }
+            ],
+            "gas": [
+                {
+                    "asset": "ETH.ETH",
+                    "amount": 21000
+                }
+            ]
+        },
+        "out_txs": [
+            {
+                "id": "0000000000000000000000000000000000000000000000000000000000000000",
+                "chain": "",
+                "from_address": "",
+                "to_address": "",
+                "memo": "",
+                "coins": null,
+                "gas": null
+            }
+        ],
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "pool": "ETH.ETH",
+            "stake_units": 25075000000
+        },
+        "status": "Success"
+    },
+    {
         "id": 5,
         "type": "swap",
         "in_tx": {
@@ -275,6 +318,62 @@
         "status": "Success"
     },
     {
+        "id": 6,
+        "type": "swap",
+        "in_tx": {
+            "id": "TODO",
+            "chain": "BNB",
+            "from_address": "USER-1",
+            "to_address": "VAULT",
+            "memo": "SWAP:ETH.ETH:USER-1",
+            "coins": [
+                {
+                    "asset": "BNB.RUNE-A1F",
+                    "amount": 165561086
+                }
+            ],
+            "gas": null
+        },
+        "out_txs": [
+            {
+                "id": "TODO",
+                "chain": "ETH",
+                "from_address": "VAULT",
+                "to_address": "USER-1",
+                "memo": "OUTBOUND:TODO",
+                "coins": [
+                    {
+                        "asset": "ETH.ETH",
+                        "amount": 195384
+                    }
+                ],
+                "gas": [
+                    {
+                        "asset": "ETH.ETH",
+                        "amount": 21000
+                    }
+                ]
+            }
+        ],
+        "fee": {
+            "coins": [
+                {
+                    "asset": "ETH.ETH",
+                    "amount": 298026
+                }
+            ],
+            "pool_deduct": 100000000
+        },
+        "event": {
+            "pool": "ETH.ETH",
+            "price_target": 0,
+            "trade_slip": 66,
+            "liquidity_fee": 1633,
+            "liquidity_fee_in_rune": 544333
+        },
+        "status": "Success"
+    },
+    {
         "id": 7,
         "type": "rewards",
         "in_tx": {
@@ -300,6 +399,10 @@
                 },
                 {
                     "asset": "BTC.BTC",
+                    "amount": -544333
+                },
+                {
+                    "asset": "ETH.ETH",
                     "amount": -544333
                 }
             ]
@@ -327,6 +430,34 @@
             "pools": [
                 {
                     "asset": "BTC.BTC",
+                    "asset_amt": 149013,
+                    "rune_amt": 49850044
+                }
+            ]
+        },
+        "status": "Success"
+    },
+    {
+        "id": 8,
+        "type": "gas",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "pools": [
+                {
+                    "asset": "ETH.ETH",
                     "asset_amt": 149013,
                     "rune_amt": 49850044
                 }
