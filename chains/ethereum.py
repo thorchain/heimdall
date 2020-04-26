@@ -69,7 +69,12 @@ class MockEthereum:
         :param string pubkey: public key
         :returns: string 0x encoded address
         """
+<<<<<<< HEAD
         eth_pubkey = KeyAPI.PublicKey.from_compressed_bytes(pubkey)
+=======
+        enc = bytearray.fromhex(private_keys[i])
+        eth_pubkey = KeyAPI.PublicKey(enc)
+>>>>>>> d184b05... Fix build
         return eth_pubkey.to_address()
 
     def set_vault_address(self, addr):
