@@ -1,15 +1,5 @@
 IMAGE_NAME = registry.gitlab.com/thorchain/heimdall
 
-ifeq ($(OS),Windows_NT)
-    uname_s := Windows
-else
-    uname_s := $(shell uname -s)
-endif
-
-# system specific variables, add more here
-DOCKER_OPTS.Linux := --network=host
-DOCKER_OPTS = $(DOCKER_OPTS.$(uname_s))
-
 clean:
 	rm *.pyc
 
@@ -34,13 +24,19 @@ test-coverage-report:
 test-watch:
 	@PYTHONPATH=${PWD} ptw tests/test_*
 
+benchmark-stake:
+	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python benchmark.py --binance="http://host.docker.internal:26660" --thorchain="http://host.docker.internal:1317" --tx-type=stake --num=${NUM}
+
+benchmark-swap:
+	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python benchmark.py --binance="http://host.docker.internal:26660" --thorchain="http://host.docker.internal:1317" --tx-type=swap --num=${NUM}
+
 smoke:
-	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python smoke.py --fast-fail=True
+	@docker run --network=host --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python smoke.py --fast-fail=True
 
 health:
-	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python health.py
+	@docker run --network=host --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python health.py
 
 shell:
-	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app -it ${IMAGE_NAME} sh
+	@docker run --network=host --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app -it ${IMAGE_NAME} sh
 
 .PHONY: build lint format test test-watch health smoke shell

@@ -1,5 +1,4 @@
 import requests
-import re
 import json
 import hashlib
 
@@ -34,7 +33,7 @@ def get_share(part, total, alloc):
     Calculates the share of something
     (Allocation / (Total / part))
     """
-    if total == 0:
+    if total == 0 or part == 0:
         return 0
     getcontext().prec = 18
     return int(round(Decimal(alloc) / (Decimal(total) / Decimal(part))))
@@ -89,6 +88,12 @@ class Asset(str, Jsonable):
         Is this asset bnb?
         """
         return self.get_symbol().startswith("BNB")
+
+    def is_btc(self):
+        """
+        Is this asset btc?
+        """
+        return self.get_symbol().startswith("BTC")
 
     def is_rune(self):
         """
@@ -232,9 +237,9 @@ class Transaction(Jsonable):
         return sorted(coins) < sorted(other_coins)
 
     def get_asset_from_memo(self):
-        chain_match = re.findall(":(.*):", self.memo)
-        if len(chain_match):
-            return Asset(chain_match[0])
+        parts = self.memo.split(":")
+        if len(parts) >= 2:
+            return Asset(parts[1])
         return None
 
     def custom_hash(self, pubkey):

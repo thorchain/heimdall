@@ -11,3 +11,4 @@ requests==2.22.0
 six==1.14.0
 tenacity==6.1.0
 urllib3==1.25.8
+tqdm==4.45.0
