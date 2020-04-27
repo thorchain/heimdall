@@ -57,7 +57,7 @@ class TestSmoke(unittest.TestCase):
         snaps = []
         bnb = Binance()  # init local binance chain
         btc = Bitcoin()  # init local bitcoin chain
-        eth = Ethereum() # init local ethereum chain
+        eth = Ethereum()  # init local ethereum chain
         thorchain = ThorchainState()  # init local thorchain
 
         with open("data/smoke_test_transactions.json", "r") as f:

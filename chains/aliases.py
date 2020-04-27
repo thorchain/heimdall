@@ -25,8 +25,10 @@ aliases_eth = {
     "VAULT": "",
 }
 
+
 def get_aliases():
     return aliases_btc.keys()
+
 
 def get_alias_address(chain, alias):
     if not alias:

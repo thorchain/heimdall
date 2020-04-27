@@ -1,5 +1,4 @@
 import time
-import codecs
 import logging
 
 from web3 import Web3, HTTPProvider
@@ -29,7 +28,7 @@ class MockEthereum:
     def __init__(self, base_url):
         self.web3 = Web3(HTTPProvider(base_url))
         for key in self.private_keys:
-            self.web3.geth.personal.import_raw_key(key, passphrase)
+            self.web3.geth.personal.import_raw_key(key, self.passphrase)
         self.accounts = self.web3.eth.accounts
 
     @classmethod
@@ -41,7 +40,7 @@ class MockEthereum:
         :param string pubkey: public key
         :returns: string 0x encoded address
         """
-        enc = bytearray.fromhex(private_keys[i])
+        enc = bytearray.fromhex(pubkey)
         eth_pubkey = KeyAPI.PublicKey(enc)
         return eth_pubkey.to_address()
 
@@ -56,7 +55,7 @@ class MockEthereum:
         Get the current block height of Ethereum localnet
         """
         block = self.web3.eth.getBlock(self.web3.eth.defaultBlock)
-        return block['number'] 
+        return block['number']
 
     def wait_for_blocks(self, count):
         """
@@ -116,10 +115,11 @@ class MockEthereum:
         amount = int(txn.coins[0].amount / Coin.ONE)
 
         # create and send transaction
-        nonce = self.web3.eth.getTransactionCount(from_address)
-        tx = {'nonce': nonce, "from": txn.from_address, "to": txn.to_address, "value": amount, "data": txn.memo.encode().hex(), "gas": default_gas, "gasPrice": 1}
+        nonce = self.web3.eth.getTransactionCount(txn.from_address)
+        tx = {'nonce': nonce, "from": txn.from_address, "to": txn.to_address, "value": amount,
+                "data": txn.memo.encode().hex(), "gas": self.default_gas, "gasPrice": 1}
 
-        self.web3.geth.personal.send_transaction(tx, passphrase)
+        self.web3.geth.personal.send_transaction(tx, self.passphrase)
 
 
 class Ethereum:

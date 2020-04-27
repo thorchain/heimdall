@@ -274,7 +274,6 @@ class Smoker:
         if count_eth > 0:
             self.mock_ethereum.wait_for_blocks(count_eth)
 
-
     @retry(stop=stop_after_attempt(60), wait=wait_fixed(1), reraise=True)
     def wait_count_events(self):
         events = self.thorchain_client.get_events()
