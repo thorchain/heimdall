@@ -120,7 +120,7 @@ class MockEthereum:
             "from": txn.from_address,
             "to": txn.to_address,
             "value": amount,
-            "data": txn.memo.encode().hex()
+            "data": txn.memo.encode().hex(),
             "gas": self.default_gas,
             "gasPrice": 1,
         }
