@@ -2,9 +2,8 @@ import time
 import logging
 
 from web3 import Web3, HTTPProvider
-from eth_keys import KeyAPI     
+from eth_keys import KeyAPI
 from common import Coin
-from decimal import Decimal, getcontext
 from chains.aliases import aliases_eth, get_aliases, get_alias_address
 from chains.account import Account
 from tenacity import retry, stop_after_delay, wait_fixed
@@ -116,8 +115,15 @@ class MockEthereum:
 
         # create and send transaction
         nonce = self.web3.eth.getTransactionCount(txn.from_address)
-        tx = {'nonce': nonce, "from": txn.from_address, "to": txn.to_address, "value": amount,
-                "data": txn.memo.encode().hex(), "gas": self.default_gas, "gasPrice": 1}
+        tx = {
+            "nonce": nonce,
+            "from": txn.from_address,
+            "to": txn.to_address,
+            "value": amount,
+            "data": txn.memo.encode().hex()
+            "gas": self.default_gas,
+            "gasPrice": 1,
+        }
 
         self.web3.geth.personal.send_transaction(tx, self.passphrase)
 
