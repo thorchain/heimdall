@@ -25,10 +25,10 @@ test-watch:
 	@PYTHONPATH=${PWD} ptw tests/test_*
 
 benchmark-stake:
-	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python benchmark.py --binance="http://host.docker.internal:26660" --thorchain="http://host.docker.internal:1317" --tx-type=stake --num=1280
+	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python benchmark.py --binance="http://host.docker.internal:26660" --thorchain="http://host.docker.internal:1317" --tx-type=stake --num=${NUM}
 
 benchmark-swap:
-	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python benchmark.py --binance="http://host.docker.internal:26660" --thorchain="http://host.docker.internal:1317" --tx-type=swap --num=160
+	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python benchmark.py --binance="http://host.docker.internal:26660" --thorchain="http://host.docker.internal:1317" --tx-type=swap --num=${NUM}
 
 smoke:
 	@docker run --network=host --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python smoke.py --fast-fail=True
