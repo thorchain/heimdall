@@ -292,7 +292,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 102152497,
+            "bond_reward": 102152494,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
@@ -1775,7 +1775,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1415162429,
+            "bond_reward": 1415162394,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
