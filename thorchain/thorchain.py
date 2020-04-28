@@ -284,7 +284,7 @@ class ThorchainState:
             round(float(self.reserve) / emission_curve / blocks_per_year)
         )
         if self.reserve > self.reserve_contribs:
-            block_rewards += self.reserve_contribs - self.reserve
+            block_rewards += self.reserve - self.reserve_contribs
             self.reserve = self.reserve_contribs
 
         # total income made on the network
