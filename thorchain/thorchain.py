@@ -285,7 +285,9 @@ class ThorchainState:
         emission_curve = 6
         blocks_per_year = 6311390
         block_rewards = int(
-            round(float(self.reserve-surplus_reserve) / emission_curve / blocks_per_year)
+            round(
+                float(self.reserve - surplus_reserve) / emission_curve / blocks_per_year
+            )
         )
 
         # total income made on the network
