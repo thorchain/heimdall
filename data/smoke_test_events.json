@@ -413,7 +413,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1611968,
+            "bond_reward": 49609431,
             "pool_rewards": [
                 {
                     "asset": "BTC.BTC",
@@ -1775,7 +1775,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1415162394,
+            "bond_reward": 1467164931,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
@@ -1978,7 +1978,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 867609055,
+            "bond_reward": 1043025833,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
@@ -2095,7 +2095,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 127386793,
+            "bond_reward": 127386826,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
@@ -2298,7 +2298,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 828860765,
+            "bond_reward": 828860798,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
@@ -2501,7 +2501,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 618340172,
+            "bond_reward": 618340205,
             "pool_rewards": [
                 {
                     "asset": "BNB.LOK-3C0",
@@ -2618,7 +2618,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 455544277,
+            "bond_reward": 455544309,
             "pool_rewards": [
                 {
                     "asset": "BNB.LOK-3C0",
@@ -2781,7 +2781,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 768223464,
+            "bond_reward": 768223497,
             "pool_rewards": [
                 {
                     "asset": "BNB.LOK-3C0",
@@ -2948,7 +2948,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 140899937,
+            "bond_reward": 140899970,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
