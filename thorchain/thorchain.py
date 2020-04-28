@@ -276,6 +276,11 @@ class ThorchainState:
         if self._total_liquidity() == 0:
             return
 
+        surplus_reserve = 0
+        if self.reserve > self.reserve_contribs:
+            surplus_reserve += self.reserve - self.reserve_contribs
+            self.reserve -= surplus_reserve
+
         # calculate the block rewards based on the reserve, emission curve, and
         # blocks in a year
         emission_curve = 6
@@ -283,12 +288,9 @@ class ThorchainState:
         block_rewards = int(
             round(float(self.reserve) / emission_curve / blocks_per_year)
         )
-        if self.reserve > self.reserve_contribs:
-            block_rewards += self.reserve - self.reserve_contribs
-            self.reserve = self.reserve_contribs
 
         # total income made on the network
-        system_income = block_rewards + self._total_liquidity()
+        system_income = surplus_reserve + block_rewards + self._total_liquidity()
 
         # get the total staked
         # TODO: skip non-enabled pools
