@@ -73,12 +73,14 @@ class MockBitcoin:
             if block - start_block >= count:
                 return
 
+    @retry(stop=stop_after_delay(5), wait=wait_fixed(1))
     def get_balance(self, address):
         """
         Get BTC balance for an address
         """
         unspents = self.connection._call("listunspent", 1, 9999, [str(address)])
         return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
+
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
     def wait_for_node(self):

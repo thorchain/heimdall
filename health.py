@@ -49,6 +49,7 @@ class Health:
 
         self.binance_client = MockBinance(binance)
         self.binance_accounts = []
+        self.fast_fail = fast_fail
         self.exit = 0
 
     def run(self):
