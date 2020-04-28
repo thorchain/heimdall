@@ -279,14 +279,13 @@ class ThorchainState:
         surplus_reserve = 0
         if self.reserve > self.reserve_contribs:
             surplus_reserve += self.reserve - self.reserve_contribs
-            self.reserve -= surplus_reserve
 
         # calculate the block rewards based on the reserve, emission curve, and
         # blocks in a year
         emission_curve = 6
         blocks_per_year = 6311390
         block_rewards = int(
-            round(float(self.reserve) / emission_curve / blocks_per_year)
+            round(float(self.reserve-surplus_reserve) / emission_curve / blocks_per_year)
         )
 
         # total income made on the network
