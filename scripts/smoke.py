@@ -232,6 +232,12 @@ class Smoker:
         events = self.thorchain_client.get_events()
         sim_events = self.thorchain.get_events()
         if len(events) != len(sim_events):
+            print("----------")
+            for evt in events:
+                print(evt['type'])
+            print("=======")
+            for evt in sim_events:
+                print(evt.type)
             raise Exception(
                 f"Events wait count mismatch: "
                 f"Thorchain {len(events)} != {len(sim_events)} Simulator"
@@ -259,12 +265,18 @@ class Smoker:
                 # update simulator state with outbound txs
                 self.broadcast_simulator(outbound)
 
-            self.thorchain.handle_rewards()
+            if len(outbounds) > 0:
+                # looks like we have at least one outbound tx, give it a block
+                self.thorchain.handle_rewards()
+
             self.thorchain.handle_gas(outbounds)
 
             # wait for blocks to be processed on real chains
             self.wait_for_blocks_chain(outbounds)
-            self.thorchain_client.wait_for_blocks(2)
+            wait_blocks = 2
+            self.thorchain_client.wait_for_blocks(wait_blocks)
+            for x in range(0, wait_blocks):
+                self.thorchain.handle_rewards()
             self.wait_count_events()
 
             # check if we are verifying the results

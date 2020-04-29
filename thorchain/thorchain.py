@@ -273,9 +273,6 @@ class ThorchainState:
         if self.reserve == 0:
             return
 
-        if self._total_liquidity() == 0:
-            return
-
         surplus_reserve = 0
         if self.reserve > self.reserve_contribs:
             surplus_reserve += self.reserve - self.reserve_contribs
@@ -332,6 +329,7 @@ class ThorchainState:
 
         # subtract our rewards from the reserve
         self.reserve -= bond_reward + pool_reward
+        print(">>>>>> New Reserve:", self.reserve)
         self.bond_reward += bond_reward  # add to bond reward pool
 
         # Generate rewards event
@@ -1010,7 +1008,7 @@ Event {self.event}
         )
 
         if "out_txs" in value and value["out_txs"]:
-            event.out_txs = [Transaction.from_dict(t) for t in value["out_txs"]]
+            event.out_txs = [Transaction.from_dict(t) for t in value["out_txs"] or []]
 
         if "event" in value and value["event"]:
             if value["type"] == "refund":
@@ -1109,7 +1107,7 @@ class RewardEvent(Jsonable):
     @classmethod
     def from_dict(cls, value):
         return cls(
-            value["bond_reward"], [Coin.from_dict(c) for c in value["pool_rewards"]]
+            value["bond_reward"], [Coin.from_dict(c) for c in value["pool_rewards"] or []]
         )
 
 
