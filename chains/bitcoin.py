@@ -84,7 +84,6 @@ class MockBitcoin:
         unspents = self.call("listunspent", 1, 9999, [str(address)])
         return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
 
-
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
     def wait_for_node(self):
         """
