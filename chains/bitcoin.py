@@ -33,6 +33,7 @@ class MockBitcoin:
     def __init__(self, base_url):
         SelectParams("regtest")
         self.connection = Proxy(service_url=base_url)
+        self.wait_for_node()
         for key in self.private_keys:
             seckey = CBitcoinSecret.from_secret_bytes(codecs.decode(key, "hex_codec"))
             self.call("importprivkey", str(seckey))
@@ -100,8 +101,6 @@ class MockBitcoin:
         """
         Make a transaction/transfer on regtest bitcoin
         """
-        self.wait_for_node()
-
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
