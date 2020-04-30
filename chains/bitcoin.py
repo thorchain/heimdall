@@ -35,7 +35,7 @@ class MockBitcoin:
         self.connection = Proxy(service_url=base_url)
         for key in self.private_keys:
             seckey = CBitcoinSecret.from_secret_bytes(codecs.decode(key, "hex_codec"))
-            self.connection._call("importprivkey", str(seckey))
+            self.call("importprivkey", str(seckey))
 
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
@@ -49,18 +49,22 @@ class MockBitcoin:
         script_pubkey = CScript([OP_0, Hash160(pubkey)])
         return str(P2WPKHBitcoinAddress.from_scriptPubKey(script_pubkey))
 
+    @retry(stop=stop_after_delay(3), wait=wait_fixed(0.5))
+    def call(self, *args):
+        return self.connection._call(*args)
+
     def set_vault_address(self, addr):
         """
         Set the vault bnb address
         """
         aliases_btc["VAULT"] = addr
-        self.connection._call("importaddress", addr)
+        self.call("importaddress", addr)
 
     def get_block_height(self):
         """
         Get the current block height of bitcoin regtest
         """
-        return self.connection.getblockcount()
+        return self.call("getblockcount")
 
     def wait_for_blocks(self, count):
         """
@@ -73,14 +77,12 @@ class MockBitcoin:
             if block - start_block >= count:
                 return
 
-    @retry(stop=stop_after_delay(5), wait=wait_fixed(1))
     def get_balance(self, address):
         """
         Get BTC balance for an address
         """
-        unspents = self.connection._call("listunspent", 1, 9999, [str(address)])
+        unspents = self.call("listunspent", 1, 9999, [str(address)])
         return int(sum(float(u["amount"]) for u in unspents) * Coin.ONE)
-
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
     def wait_for_node(self):
@@ -129,7 +131,7 @@ class MockBitcoin:
         # get unspents UTXOs
         address = txn.from_address
         min_amount = float(amount + (self.default_gas / Coin.ONE))  # add more for fee
-        unspents = self.connection._call(
+        unspents = self.call(
             "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
         )
         if len(unspents) == 0:
@@ -148,9 +150,9 @@ class MockBitcoin:
 
         tx_out.append(tx_out_op_return)
 
-        tx = self.connection._call("createrawtransaction", tx_in, tx_out)
-        tx = self.connection._call("signrawtransactionwithwallet", tx)
-        txn.id = self.connection._call("sendrawtransaction", tx["hex"])
+        tx = self.call("createrawtransaction", tx_in, tx_out)
+        tx = self.call("signrawtransactionwithwallet", tx)
+        txn.id = self.call("sendrawtransaction", tx["hex"])
         txn.gas = [Coin("BTC.BTC", self.default_gas)]
 
 
