@@ -57,8 +57,17 @@ class ThorchainClient(HttpClient):
     def get_pools(self):
         return self.fetch("/thorchain/pools")
 
-    def get_events(self, id=1):
-        return self.fetch(f"/thorchain/events/{id}")
+    def get_events(self, evtID=1):
+        events = []
+        while True:
+            new_events = self.fetch(f"/thorchain/events/{evtID}")
+            events += new_events
+            if len(new_events) < 100:
+                break
+            else:
+                evtID = int(new_events[-1]['id']) + 1
+        return events
+
 
 
 class ThorchainState:
@@ -163,13 +172,12 @@ class ThorchainState:
                 pool.asset_balance = 0
                 rune_amt = 0
             else:
-                pool.sub(0, gas.amount)  # subtract gas from pool
-
                 # figure out how much rune is an equal amount to gas.amount
                 rune_amt = pool.get_asset_in_rune(gas.amount)
                 self.reserve -= rune_amt  # take rune from the reserve
-                # add the rune amount to gas reimburse
+
                 pool.add(rune_amt, 0)  # replenish gas costs with rune
+                pool.sub(0, gas.amount)  # subtract gas from pool
 
             # update gas event
             gas_pool = EventGasPool(asset, gas.amount, rune_amt)
@@ -275,7 +283,7 @@ class ThorchainState:
 
         surplus_reserve = 0
         if self.reserve > self.reserve_contribs:
-            surplus_reserve += self.reserve - self.reserve_contribs
+            pass # surplus_reserve += self.reserve - self.reserve_contribs
 
         # calculate the block rewards based on the reserve, emission curve, and
         # blocks in a year
@@ -329,7 +337,6 @@ class ThorchainState:
 
         # subtract our rewards from the reserve
         self.reserve -= bond_reward + pool_reward
-        print(">>>>>> New Reserve:", self.reserve)
         self.bond_reward += bond_reward  # add to bond reward pool
 
         # Generate rewards event
@@ -1152,6 +1159,8 @@ class EventGasPool(Jsonable):
 
     def __init__(self, asset, asset_amt, rune_amt):
         self.asset = asset
+        if isinstance(asset, str):
+            self.asset = Asset(asset)
         self.asset_amt = int(asset_amt)
         self.rune_amt = int(rune_amt)
 
