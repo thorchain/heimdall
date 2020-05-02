@@ -84,7 +84,17 @@ class TestSmoke(unittest.TestCase):
                     btc.transfer(txn)  # send outbound txns back to Bitcoin
 
             thorchain.handle_rewards()
-            thorchain.handle_gas(outbound)  # subtract gas from pool(s)
+
+            bnbOut = []
+            for out in outbound:
+                if out.coins[0].asset.get_chain() == "BNB":
+                    bnbOut.append(out)
+            btcOut = []
+            for out in outbound:
+                if out.coins[0].asset.get_chain() == "BTC":
+                    btcOut.append(out)
+            thorchain.handle_gas(bnbOut)  # subtract gas from pool(s)
+            thorchain.handle_gas(btcOut)  # subtract gas from pool(s)
 
             # generated a snapshop picture of thorchain and bnb
             snap = Breakpoint(thorchain, bnb).snapshot(i, len(outbound))
