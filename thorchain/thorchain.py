@@ -1166,7 +1166,12 @@ class EventGasPool(Jsonable):
 
     @classmethod
     def from_dict(cls, value):
-        return cls(value["asset"], value["asset_amt"], value["rune_amt"], value["transaction_count"])
+        return cls(
+            value["asset"],
+            value["asset_amt"],
+            value["rune_amt"],
+            value["transaction_count"],
+        )
 
 
 class GasEvent(Jsonable):
