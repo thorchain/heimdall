@@ -159,7 +159,6 @@ class ThorchainState:
             return
 
         gas_pools = []
-        has_btc = False
 
         for asset, gas in gas_coins.items():
             pool = self.get_pool(gas.asset)
@@ -181,28 +180,10 @@ class ThorchainState:
             gas_pool = EventGasPool(asset, gas.amount, rune_amt)
             gas_pools.append(gas_pool)
             self.set_pool(pool)
-            if asset.is_btc():
-                has_btc = True
 
-        # generate event GAS
-        if has_btc:
-            btc_pool = None
-            for gas_pool in gas_pools:
-                if gas_pool.asset.is_btc():
-                    btc_pool = gas_pool
-                    continue
-                gas_event = GasEvent([gas_pool])
-                event = Event("gas", Transaction.empty_txn(), None, gas_event)
-                self.events.append(event)
-
-            # BTC pool last
-            gas_event = GasEvent([btc_pool])
-            event = Event("gas", Transaction.empty_txn(), None, gas_event)
-            self.events.append(event)
-        else:
-            gas_event = GasEvent(gas_pools)
-            event = Event("gas", Transaction.empty_txn(), None, gas_event)
-            self.events.append(event)
+        gas_event = GasEvent(gas_pools)
+        event = Event("gas", Transaction.empty_txn(), None, gas_event)
+        self.events.append(event)
 
     def handle_fee(self, txns):
         """
