@@ -66,6 +66,12 @@ class MockBitcoin:
         """
         return self.call("getblockcount")
 
+    def get_block_hash(self, block_height):
+        """
+        Get the block hash for a height
+        """
+        return self.call("getblockhash", int(block_height))
+
     def wait_for_blocks(self, count):
         """
         Wait for the given number of blocks
@@ -76,6 +82,12 @@ class MockBitcoin:
             block = self.get_block_height()
             if block - start_block >= count:
                 return
+
+    def invalidate_block(self, block_hash):
+        """
+        Invalidate a block
+        """
+        self.call("invalidateblock", block_hash)
 
     def get_balance(self, address):
         """

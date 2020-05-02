@@ -39,7 +39,7 @@ health:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py
 
 bitcoin-reorg:
-	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/bitcoin_reorg.py
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/bitcoin_reorg.py --fast-fail=True
 
 shell:
 	@docker run ${DOCKER_OPTS} -it ${IMAGE_NAME} sh
