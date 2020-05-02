@@ -219,24 +219,6 @@ class Smoker:
         if txn.chain == Bitcoin.chain:
             return self.bitcoin.transfer(txn)
 
-    def wait_for_blocks_chain(self, txns):
-        count_bnb = len([tx for tx in txns if tx.chain == Binance.chain])
-        if count_bnb > 0:
-            self.mock_binance.wait_for_blocks(count_bnb)
-        count_btc = len([tx for tx in txns if tx.chain == Bitcoin.chain])
-        if count_btc > 0:
-            self.mock_bitcoin.wait_for_blocks(count_btc)
-
-    @retry(stop=stop_after_attempt(60), wait=wait_fixed(1), reraise=True)
-    def wait_count_events(self, outbounds):
-        events = self.thorchain_client.get_events()
-        sim_events = self.thorchain.get_events()
-        if len(events) != len(sim_events):
-            raise Exception(
-                f"Events wait count mismatch: "
-                f"Thorchain {len(events)} != {len(sim_events)} Simulator"
-            )
-
     def run(self):
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
