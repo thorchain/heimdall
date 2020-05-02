@@ -614,7 +614,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "gas")
         self.assertEqual(event.in_tx.to_json(), Transaction.empty_txn().to_json())
         self.assertEqual(event.out_txs, None)
-        self.assertEqual(event.event.pools, [EventGasPool("BNB.BNB", 75000, 25012506)])
+        self.assertEqual(event.event.pools, [EventGasPool("BNB.BNB", 75000, 25000000)])
 
     def test_stake(self):
         thorchain = ThorchainState()
