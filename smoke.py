@@ -310,7 +310,7 @@ class Smoker:
 
                 if evt_list == sim_evt_list and count_outbounds <= 0 and processed_transaction:
                     break
-                if len(events) == len(sim_events) and evt_list != sim_evt_list:
+                if len(evt_list) == len(sim_evt_list) and evt_list != sim_evt_list:
                     logging.error(f"mismatch events: Real {evt_list[-1]} vs {sim_evt_list[1]} Sim")
                     break
 
@@ -320,11 +320,11 @@ class Smoker:
             if self.no_verify:
                 continue
 
+            self.check_events()
             self.check_pools()
             self.check_binance()
             self.check_bitcoin()
             self.check_vaults()
-            self.check_events()
             self.run_health()
 
 
