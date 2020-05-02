@@ -248,13 +248,13 @@ class BitcoinReorg:
             if i == 7:
                 current_height = self.mock_bitcoin.get_block_height()
                 block_hash = self.mock_bitcoin.get_block_hash(current_height)
-                logging.info(f"Block hash re-org will be triggered on: {current_height} -> {block_hash}")
+                logging.info(f"Block to invalidated {current_height} {block_hash}")
 
-            # now we processed some btc txs and we invalidate an older block
+            # now we processed some btc txs and we invalidate an older block
             # to make those txs not valid anymore and test thornode reaction
-            if i == 12 :
+            if i == 12:
                 self.mock_bitcoin.invalidate_block(block_hash)
-                logging.info("Bitcoin reorg triggered")
+                logging.info("Reorg triggered")
 
             self.broadcast_chain(txn)
             self.broadcast_simulator(txn)
