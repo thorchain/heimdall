@@ -3,7 +3,7 @@ import unittest
 from chains.account import Account
 from chains.binance import Binance
 
-from common import Transaction, Coin
+from utils.common import Transaction, Coin
 
 
 class TestAccount(unittest.TestCase):

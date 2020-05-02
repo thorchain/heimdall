@@ -1,4 +1,5 @@
 IMAGE_NAME = registry.gitlab.com/thorchain/heimdall
+DOCKER_OPTS = --network=host --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app
 
 clean:
 	rm *.pyc
@@ -13,30 +14,33 @@ format:
 	@docker run --rm -v ${PWD}:/app cytopia/black /app
 
 test:
-	@docker run --rm -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python -m unittest tests/test_*
+	@docker run ${DOCKER_OPTS} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} python -m unittest tests/test_*
 
 test-coverage:
-	@docker run --rm -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} coverage run -m unittest tests/test_*
+	@docker run ${DOCKER_OPTS} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} coverage run -m unittest tests/test_*
 
 test-coverage-report:
-	@docker run --rm -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} coverage report -m
+	@docker run ${DOCKER_OPTS} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} coverage report -m
 
 test-watch:
 	@PYTHONPATH=${PWD} ptw tests/test_*
 
 benchmark-stake:
-	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python benchmark.py --binance="http://host.docker.internal:26660" --thorchain="http://host.docker.internal:1317" --tx-type=stake --num=${NUM}
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/benchmark.py --tx-type=stake --num=${NUM}
 
 benchmark-swap:
-	@docker run ${DOCKER_OPTS} --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python benchmark.py --binance="http://host.docker.internal:26660" --thorchain="http://host.docker.internal:1317" --tx-type=swap --num=${NUM}
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/benchmark.py --tx-type=swap --num=${NUM}
 
 smoke:
-	@docker run --network=host --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python smoke.py --fast-fail=True
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True
 
 health:
-	@docker run --network=host --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app ${IMAGE_NAME} python health.py
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py
+
+bitcoin-reorg:
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/bitcoin_reorg.py
 
 shell:
-	@docker run --network=host --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app -it ${IMAGE_NAME} sh
+	@docker run ${DOCKER_OPTS} -it ${IMAGE_NAME} sh
 
 .PHONY: build lint format test test-watch health smoke shell

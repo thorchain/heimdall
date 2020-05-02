@@ -7,7 +7,7 @@ from bitcoin.rpc import Proxy
 from bitcoin.wallet import CBitcoinSecret, P2WPKHBitcoinAddress
 from bitcoin.core import Hash160
 from bitcoin.core.script import CScript, OP_0
-from common import Coin
+from utils.common import Coin
 from decimal import Decimal, getcontext
 from chains.aliases import aliases_btc, get_aliases, get_alias_address
 from chains.account import Account

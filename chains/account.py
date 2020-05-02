@@ -1,5 +1,5 @@
 import logging
-from common import Asset
+from utils.common import Asset
 
 
 class Account:

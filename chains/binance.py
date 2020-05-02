@@ -2,8 +2,8 @@ import time
 import base64
 import hashlib
 
-from common import Coin, HttpClient
-from segwit_addr import address_from_public_key
+from utils.common import Coin, HttpClient
+from utils.segwit_addr import address_from_public_key
 from chains.aliases import aliases_bnb, get_aliases, get_alias_address
 from chains.account import Account
 
