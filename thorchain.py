@@ -65,9 +65,8 @@ class ThorchainClient(HttpClient):
             if len(new_events) < 100:
                 break
             else:
-                evtID = int(new_events[-1]['id']) + 1
+                evtID = int(new_events[-1]["id"]) + 1
         return events
-
 
 
 class ThorchainState:
@@ -285,9 +284,7 @@ class ThorchainState:
         emission_curve = 6
         blocks_per_year = 6311390
         block_rewards = int(
-            round(
-                float(self.reserve) / emission_curve / blocks_per_year
-            )
+            round(float(self.reserve) / emission_curve / blocks_per_year)
         )
 
         # total income made on the network
@@ -1108,7 +1105,8 @@ class RewardEvent(Jsonable):
     @classmethod
     def from_dict(cls, value):
         return cls(
-            value["bond_reward"], [Coin.from_dict(c) for c in value["pool_rewards"] or []]
+            value["bond_reward"],
+            [Coin.from_dict(c) for c in value["pool_rewards"] or []],
         )
 
 

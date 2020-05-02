@@ -231,19 +231,29 @@ class Smoker:
             if txn.memo == "SEED":
                 continue
 
-            processed_transaction = False # used to track if we have already processed this txn
-            count_outbounds = 0 # keep track of how many outbound txs we created this inbound txn
+            processed_transaction = (
+                False  # used to track if we have already processed this txn
+            )
+            count_outbounds = (
+                0  # keep track of how many outbound txs we created this inbound txn
+            )
 
-            for x in range(0,60): # 60 attempts
+            for x in range(0, 60):  # 60 attempts
                 events = self.thorchain_client.get_events()
                 events = [Event.from_dict(evt) for evt in events]
-                evt_list = [evt.type for evt in events] # convert evts to array of strings
+                evt_list = [
+                    evt.type for evt in events
+                ]  # convert evts to array of strings
 
                 sim_events = self.thorchain.get_events()
-                sim_evt_list = [evt.type for evt in sim_events] # convert evts to array of strings
+                sim_evt_list = [
+                    evt.type for evt in sim_events
+                ]  # convert evts to array of strings
 
-                if len(events) > len(sim_events): # we have more real events than sim, fill in the gaps
-                    for evt in events[len(sim_events):]:
+                if len(events) > len(
+                    sim_events
+                ):  # we have more real events than sim, fill in the gaps
+                    for evt in events[len(sim_events) :]:
                         if evt.type == "gas":
                             todo = []
                             # with the given gas pool event data, figure out
@@ -252,20 +262,31 @@ class Smoker:
                             for pool in evt.event.pools:
                                 for out in outbounds:
                                     # a gas pool matches a txn if their from the same blockchain
-                                    if pool.asset.get_chain() == out.coins[0].asset.get_chain():
+                                    if (
+                                        pool.asset.get_chain()
+                                        == out.coins[0].asset.get_chain()
+                                    ):
                                         todo.append(out)
                             self.thorchain.handle_gas(todo)
-                            count_outbounds -= len(todo) # countdown til we've seen all expected gas evts
+                            count_outbounds -= len(
+                                todo
+                            )  # countdown til we've seen all expected gas evts
 
                         elif evt.type == "rewards":
                             self.thorchain.handle_rewards()
 
                         else:
                             # sent a transaction to our simulated thorchain
-                            outbounds = self.thorchain.handle(txn)  # process transaction in thorchain
+                            outbounds = self.thorchain.handle(
+                                txn
+                            )  # process transaction in thorchain
                             outbounds = self.thorchain.handle_fee(outbounds)
-                            processed_transaction = True # we have now processed this inbound txn
-                            count_outbounds = len(outbounds) # expecting to see this many outbound txs
+                            processed_transaction = (
+                                True  # we have now processed this inbound txn
+                            )
+                            count_outbounds = len(
+                                outbounds
+                            )  # expecting to see this many outbound txs
 
                             # replicate order of outbounds broadcast from thorchain
                             self.thorchain.order_outbound_txns(outbounds)
@@ -276,7 +297,11 @@ class Smoker:
                     continue
 
                 # happy path exit
-                if evt_list == sim_evt_list and count_outbounds <= 0 and processed_transaction:
+                if (
+                    evt_list == sim_evt_list
+                    and count_outbounds <= 0
+                    and processed_transaction
+                ):
                     break
                 # unhappy path exit. We got the events in a different order
                 if len(evt_list) == len(sim_evt_list) and evt_list != sim_evt_list:
