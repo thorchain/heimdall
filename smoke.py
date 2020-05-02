@@ -1,7 +1,7 @@
 import argparse
+import time
 import logging
 import os
-import time
 import sys
 import json
 
@@ -228,16 +228,24 @@ class Smoker:
             self.mock_bitcoin.wait_for_blocks(count_btc)
 
     @retry(stop=stop_after_attempt(60), wait=wait_fixed(1), reraise=True)
-    def wait_count_events(self):
+    def wait_count_events(self, outbounds):
         events = self.thorchain_client.get_events()
         sim_events = self.thorchain.get_events()
+        print("======================")
+        if len(events) > len(sim_events):
+            for evt in events[len(sim_events):]:
+                print("EVT:", evt['type'])
+                if evt['type'] == "gas":
+                    print("ADD GAS EVENT")
+                    self.thorchain.handle_gas(outbounds)
+                elif evt['type'] == "rewards":
+                    print("ADD REWARDS EVENT")
+                    self.thorchain.handle_rewards()
+
         if len(events) != len(sim_events):
-            print("----------")
-            for evt in events:
-                print(evt['type'])
-            print("=======")
-            for evt in sim_events:
-                print(evt.type)
+            print(f"{len(events)} | {len(sim_events)}")
+            for i, evt in enumerate(events):
+                print(evt['type'] + " | " + sim_events[i].type)
             raise Exception(
                 f"Events wait count mismatch: "
                 f"Thorchain {len(events)} != {len(sim_events)} Simulator"
@@ -254,30 +262,59 @@ class Smoker:
 
             if txn.memo == "SEED":
                 continue
+            
+            events = self.thorchain_client.get_events()
+            self.thorchain_client.wait_for_blocks(1)
 
-            outbounds = self.thorchain.handle(txn)  # process transaction in thorchain
-            outbounds = self.thorchain.handle_fee(outbounds)
+            processed_transaction = False
+            outbounds = []
+            count_outbounds = 0
 
-            # replicate order of outbounds broadcast from thorchain
-            self.thorchain.order_outbound_txns(outbounds)
+            while True:
+                events = self.thorchain_client.get_events()
+                events = [Event.from_dict(evt) for evt in events]
+                evt_list = [evt.type for evt in events]
+                sim_events = self.thorchain.get_events()
+                sim_evt_list = [evt.type for evt in sim_events]
+                # print(f"======== {len(events)} / {len(sim_events)} ======== ({count_outbounds} | {processed_transaction})")
+                if len(events) > len(sim_events):
+                    for evt in events[len(sim_events):]:
+                        # print("EVT:", evt.type)
+                        if evt.type == "gas":
+                            for pool in evt.event.pools:
+                                todo = []
+                                for out in outbounds:
+                                    if pool.asset.get_chain() == out.coins[0].asset.get_chain():
+                                        todo.append(out)
+                                self.thorchain.handle_gas(todo)
+                                count_outbounds -= len(todo)
+                        elif evt.type == "rewards":
+                            self.thorchain.handle_rewards()
+                        else:
+                            # if not processed_transaction and count_outbounds <= 0:
+                            outbounds = self.thorchain.handle(txn)  # process transaction in thorchain
+                            outbounds = self.thorchain.handle_fee(outbounds)
+                            processed_transaction = True
+                            count_outbounds = len(outbounds)
 
-            for outbound in outbounds:
-                # update simulator state with outbound txs
-                self.broadcast_simulator(outbound)
+                            # replicate order of outbounds broadcast from thorchain
+                            self.thorchain.order_outbound_txns(outbounds)
 
-            if len(outbounds) > 0:
-                # looks like we have at least one outbound tx, give it a block
-                self.thorchain.handle_rewards()
+                            for outbound in outbounds:
+                                # update simulator state with outbound txs
+                                self.broadcast_simulator(outbound)
 
-            self.thorchain.handle_gas(outbounds)
+                            if txn.memo == "RESERVE": # avoiding race condition, additional wait
+                                pass # self.thorchain_client.wait_for_blocks(2)
+                    continue
 
-            # wait for blocks to be processed on real chains
-            self.wait_for_blocks_chain(outbounds)
-            wait_blocks = 2
-            self.thorchain_client.wait_for_blocks(wait_blocks)
-            for x in range(0, wait_blocks):
-                self.thorchain.handle_rewards()
-            self.wait_count_events()
+                if evt_list == sim_evt_list and count_outbounds <= 0 and processed_transaction:
+                    break
+                if len(events) == len(sim_events) and evt_list != sim_evt_list:
+                    logging.error(f"mismatch events: Real {evt_list[-1]} vs {sim_evt_list[1]} Sim")
+                    break
+
+                time.sleep(1)
 
             # check if we are verifying the results
             if self.no_verify:
