@@ -539,6 +539,7 @@ class ThorchainState:
         # generate event for STAKE transaction
         stake_event = StakeEvent(pool.asset, stake_units)
         event = Event("stake", txn, [Transaction.empty_txn()], stake_event)
+        print("Add stake event")
         self.events.append(event)
 
         return []
@@ -802,6 +803,7 @@ class ThorchainState:
             pool.asset, target_trade, trade_slip, liquidity_fee, liquidity_fee_in_rune
         )
         event = Event("swap", in_txn, out_txns, swap_event)
+        print("Add swap event")
         self.events.append(event)
 
         return out_txns

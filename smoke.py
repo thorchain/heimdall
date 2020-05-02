@@ -190,6 +190,7 @@ class Smoker:
 
         # check events
         for event, sim_event in zip(events, sim_events):
+            print(f"Event {event.type} | {sim_event.type} Sim")
             if sim_event != event:
                 logging.error(
                     f"Event Thorchain {event} \n   !="
@@ -219,11 +220,28 @@ class Smoker:
         if txn.chain == Bitcoin.chain:
             return self.bitcoin.transfer(txn)
 
+    def verify(self):
+        # check if we are verifying the results
+        if self.no_verify:
+            return
+
+        self.check_events()
+        self.check_pools()
+        self.check_binance()
+        self.check_bitcoin()
+        self.check_vaults()
+        self.run_health()
+
     def run(self):
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
 
             logging.info(f"{i:2} {txn}")
+
+            events = self.thorchain_client.get_events()
+            last_event_id = 0
+            if len(events) > 0:
+                last_event_id = int(events[-1]['id'])
 
             self.broadcast_chain(txn)
             self.broadcast_simulator(txn)
@@ -231,13 +249,10 @@ class Smoker:
             if txn.memo == "SEED":
                 continue
 
-            processed_transaction = (
-                False  # used to track if we have already processed this txn
-            )
+            time.sleep(5) # let thorchain get new event
+
             outbounds = []
-            count_outbounds = (
-                0  # keep track of how many outbound txs we created this inbound txn
-            )
+            stored_outbounds = []
 
             for x in range(0, 60):  # 60 attempts
                 events = self.thorchain_client.get_events()
@@ -262,35 +277,31 @@ class Smoker:
                             # another later on
                             for pool in evt.event.pools:
                                 count = 0
-                                for out in outbounds:
+                                for i, out in enumerate(stored_outbounds):
                                     # a gas pool matches a txn if their from
                                     # the same blockchain
                                     p_chain = pool.asset.get_chain()
                                     c_chain = out.coins[0].asset.get_chain()
                                     if p_chain == c_chain:
                                         todo.append(out)
+                                        stored_outbounds.pop(i) # used, remove it
                                         count += 1
                                         if count >= pool.count:
+                                            print("Pool Count:", pool.count, count)
                                             break
                             self.thorchain.handle_gas(todo)
-                            # countdown til we've seen all expected gas evts
-                            count_outbounds -= len(todo)
 
                         elif evt.type == "rewards":
                             self.thorchain.handle_rewards()
 
                         else:
                             # sent a transaction to our simulated thorchain
+                            print("TXN:", txn)
                             outbounds = self.thorchain.handle(
                                 txn
                             )  # process transaction in thorchain
                             outbounds = self.thorchain.handle_fee(outbounds)
-                            processed_transaction = (
-                                True  # we have now processed this inbound txn
-                            )
-                            count_outbounds = len(
-                                outbounds
-                            )  # expecting to see this many outbound txs
+                            stored_outbounds += outbounds
 
                             # replicate order of outbounds broadcast from thorchain
                             self.thorchain.order_outbound_txns(outbounds)
@@ -298,31 +309,21 @@ class Smoker:
                             for outbound in outbounds:
                                 # update simulator state with outbound txs
                                 self.broadcast_simulator(outbound)
+
                     continue
 
                 # happy path exit
-                if (
-                    evt_list == sim_evt_list
-                    and count_outbounds <= 0
-                    and processed_transaction
-                ):
+                if evt_list == sim_evt_list and len(events) > 0 and last_event_id < int(events[-1].id):
+                    print("verifty 1")
+                    self.verify()
                     break
                 # unhappy path exit. We got the events in a different order
                 if len(evt_list) == len(sim_evt_list) and evt_list != sim_evt_list:
+                    print("verify2 2")
+                    self.verify()
                     break
 
                 time.sleep(1)
-
-            # check if we are verifying the results
-            if self.no_verify:
-                continue
-
-            self.check_events()
-            self.check_pools()
-            self.check_binance()
-            self.check_bitcoin()
-            self.check_vaults()
-            self.run_health()
 
 
 if __name__ == "__main__":
