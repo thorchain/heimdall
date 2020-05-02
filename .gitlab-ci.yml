@@ -27,6 +27,8 @@ unit_tests:
 integration:
   image: docker/compose:alpine-1.25.4
   stage: integration
+  tags: 
+    - thorchain
   services:
     - docker:dind
   variables:
