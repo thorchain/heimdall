@@ -81,7 +81,6 @@ class ThorchainState:
         self.pools = []
         self.events = []
         self.reserve = 0
-        self.reserve_contribs = 0
         self.liquidity = {}
         self.total_bonded = 0
         self.bond_reward = 0
@@ -281,22 +280,18 @@ class ThorchainState:
         if self.reserve == 0:
             return
 
-        surplus_reserve = 0
-        if self.reserve > self.reserve_contribs:
-            pass # surplus_reserve += self.reserve - self.reserve_contribs
-
         # calculate the block rewards based on the reserve, emission curve, and
         # blocks in a year
         emission_curve = 6
         blocks_per_year = 6311390
         block_rewards = int(
             round(
-                float(self.reserve - surplus_reserve) / emission_curve / blocks_per_year
+                float(self.reserve) / emission_curve / blocks_per_year
             )
         )
 
         # total income made on the network
-        system_income = surplus_reserve + block_rewards + self._total_liquidity()
+        system_income = block_rewards + self._total_liquidity()
 
         # get the total staked
         # TODO: skip non-enabled pools
@@ -440,7 +435,6 @@ class ThorchainState:
         for coin in txn.coins:
             if coin.is_rune():
                 self.reserve += coin.amount
-                self.reserve_contribs += coin.amount
                 amount += coin.amount
 
         # generate event for RESERVE transaction

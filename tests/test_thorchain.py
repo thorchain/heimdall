@@ -1077,7 +1077,6 @@ class TestThorchainState(unittest.TestCase):
         thorchain.pools.append(Pool("BNB.BNB", 94382620747, 301902605))
         thorchain.pools.append(Pool("BNB.LOKI", 50000000000, 100))
         thorchain.reserve = 40001517380253
-        thorchain.reserve_contribs = 40001517380253
 
         # test minus rune from pools and add to bond rewards (too much rewards to pools)
         thorchain.liquidity["BNB.BNB"] = 105668
