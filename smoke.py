@@ -234,6 +234,7 @@ class Smoker:
             processed_transaction = (
                 False  # used to track if we have already processed this txn
             )
+            outbounds = []
             count_outbounds = (
                 0  # keep track of how many outbound txs we created this inbound txn
             )
@@ -261,11 +262,11 @@ class Smoker:
                             # another later on
                             for pool in evt.event.pools:
                                 for out in outbounds:
-                                    # a gas pool matches a txn if their from the same blockchain
-                                    if (
-                                        pool.asset.get_chain()
-                                        == out.coins[0].asset.get_chain()
-                                    ):
+                                    # a gas pool matches a txn if their from
+                                    # the same blockchain
+                                    p_chain = pool.asset.get_chain()
+                                    c_chain = out.coins[0].asset.get_chain()
+                                    if p_chain == c_chain:
                                         todo.append(out)
                             self.thorchain.handle_gas(todo)
                             count_outbounds -= len(
