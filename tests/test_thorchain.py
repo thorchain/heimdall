@@ -1,6 +1,6 @@
 import unittest
 
-from thorchain import (
+from thorchain.thorchain import (
     ThorchainState,
     Pool,
     Event,
@@ -10,7 +10,7 @@ from thorchain import (
 )
 from chains.binance import Binance
 
-from common import Transaction, Coin
+from utils.common import Transaction, Coin
 
 
 class TestThorchainState(unittest.TestCase):

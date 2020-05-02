@@ -7,10 +7,10 @@ from deepdiff import DeepDiff
 
 from chains.binance import Binance
 from chains.bitcoin import Bitcoin
-from thorchain import ThorchainState, Event
-from breakpoint import Breakpoint
+from thorchain.thorchain import ThorchainState, Event
+from utils.breakpoint import Breakpoint
 
-from common import Transaction
+from utils.common import Transaction
 
 # Init logging
 logging.basicConfig(

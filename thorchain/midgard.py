@@ -1,4 +1,4 @@
-from common import HttpClient
+from utils.common import HttpClient
 
 
 class MidgardClient(HttpClient):
