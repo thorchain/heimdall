@@ -181,6 +181,11 @@ class ThorchainState:
             gas_pools.append(gas_pool)
             self.set_pool(pool)
 
+        # ensure btc is last
+        if not gas_pools[-1].asset.is_btc():
+            p = gas_pools.pop()
+            gas_pools.insert(0, p)
+
         gas_event = GasEvent(gas_pools)
         event = Event("gas", Transaction.empty_txn(), None, gas_event)
         self.events.append(event)
