@@ -396,6 +396,7 @@
             "pools": [
                 {
                     "asset": "BTC.BTC",
+                    "transaction_count": 1,
                     "asset_amt": 149013,
                     "rune_amt": 49800457
                 }
@@ -513,6 +514,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 12417081
                 }
@@ -647,6 +649,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 12423271
                 }
@@ -675,6 +678,7 @@
             "pools": [
                 {
                     "asset": "BTC.BTC",
+                    "transaction_count": 1,
                     "asset_amt": 150312,
                     "rune_amt": 49778005
                 }
@@ -881,6 +885,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 2,
                     "asset_amt": 75000,
                     "rune_amt": 24759412
                 }
@@ -1017,6 +1022,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 2,
                     "asset_amt": 75000,
                     "rune_amt": 24684697
                 }
@@ -1126,6 +1132,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 12305010
                 }
@@ -1262,6 +1269,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 2,
                     "asset_amt": 75000,
                     "rune_amt": 24523189
                 }
@@ -1398,6 +1406,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 2,
                     "asset_amt": 75000,
                     "rune_amt": 24448597
                 }
@@ -1768,6 +1777,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 11745822
                 }
@@ -1877,6 +1887,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 11748743
                 }
@@ -1986,6 +1997,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 11726819
                 }
@@ -2103,6 +2115,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 11704909
                 }
@@ -2220,6 +2233,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 11707802
                 }
@@ -2329,6 +2343,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 11710709
                 }
@@ -2446,6 +2461,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 14039562
                 }
@@ -2563,6 +2579,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 13078738
                 }
@@ -2672,6 +2689,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 13082167
                 }
@@ -2789,6 +2807,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 15549328
                 }
@@ -2898,6 +2917,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 15525228
                 }
@@ -3015,6 +3035,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 15529660
                 }
@@ -3132,6 +3153,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 15534093
                 }
@@ -3299,6 +3321,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 16832139
                 }
@@ -3466,6 +3489,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 16189223
                 }
@@ -3600,6 +3624,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 2,
                     "asset_amt": 75000,
                     "rune_amt": 32306885
                 }
@@ -3753,6 +3778,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 2,
                     "asset_amt": 75000,
                     "rune_amt": 32333063
                 }
@@ -3887,6 +3913,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 2,
                     "asset_amt": 75000,
                     "rune_amt": 32226403
                 }
@@ -4044,6 +4071,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 1,
                     "asset_amt": 37500,
                     "rune_amt": 16134626
                 }
@@ -4072,6 +4100,7 @@
             "pools": [
                 {
                     "asset": "BTC.BTC",
+                    "transaction_count": 1,
                     "asset_amt": 150648,
                     "rune_amt": 0
                 }
@@ -4206,6 +4235,7 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
+                    "transaction_count": 2,
                     "asset_amt": 75000,
                     "rune_amt": 0
                 }

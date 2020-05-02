@@ -147,13 +147,16 @@ class ThorchainState:
 
         """
         gas_coins = {}
+        gas_coin_count = {}
 
         for txn in txns:
             if txn.gas:
                 for gas in txn.gas:
                     if gas.asset not in gas_coins:
                         gas_coins[gas.asset] = Coin(gas.asset)
+                        gas_coin_count[gas.asset] = 1
                     gas_coins[gas.asset].amount += gas.amount
+                    gas_coin_count[gas.asset] += 1
 
         if not len(gas_coins.items()):
             return
@@ -177,14 +180,16 @@ class ThorchainState:
                 pool.sub(0, gas.amount)  # subtract gas from pool
 
             # update gas event
-            gas_pool = EventGasPool(asset, gas.amount, rune_amt)
+            gas_pool = EventGasPool(asset, gas.amount, rune_amt, gas_coin_count[asset])
             gas_pools.append(gas_pool)
             self.set_pool(pool)
 
         # ensure btc is last
-        if not gas_pools[-1].asset.is_btc():
-            p = gas_pools.pop()
-            gas_pools.insert(0, p)
+        for i, pool in enumerate(gas_pools):
+            if pool.asset.is_btc():
+                p = gas_pools.pop(i)
+                gas_pools.append(p)
+                break
 
         gas_event = GasEvent(gas_pools)
         event = Event("gas", Transaction.empty_txn(), None, gas_event)
@@ -1135,12 +1140,13 @@ class EventGasPool(Jsonable):
     GasPool in Gas Event
     """
 
-    def __init__(self, asset, asset_amt, rune_amt):
+    def __init__(self, asset, asset_amt, rune_amt, count=1):
         self.asset = asset
         if isinstance(asset, str):
             self.asset = Asset(asset)
         self.asset_amt = int(asset_amt)
         self.rune_amt = int(rune_amt)
+        self.count = count
 
     def __eq__(self, other):
         return (
@@ -1160,7 +1166,7 @@ class EventGasPool(Jsonable):
 
     @classmethod
     def from_dict(cls, value):
-        return cls(value["asset"], value["asset_amt"], value["rune_amt"])
+        return cls(value["asset"], value["asset_amt"], value["rune_amt"], value["transaction_count"])
 
 
 class GasEvent(Jsonable):

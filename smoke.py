@@ -261,6 +261,7 @@ class Smoker:
                             # which outbound txns are for this gas pool, vs
                             # another later on
                             for pool in evt.event.pools:
+                                count = 0
                                 for out in outbounds:
                                     # a gas pool matches a txn if their from
                                     # the same blockchain
@@ -268,10 +269,12 @@ class Smoker:
                                     c_chain = out.coins[0].asset.get_chain()
                                     if p_chain == c_chain:
                                         todo.append(out)
+                                        count += 1
+                                        if count >= pool.count:
+                                            break
                             self.thorchain.handle_gas(todo)
-                            count_outbounds -= len(
-                                todo
-                            )  # countdown til we've seen all expected gas evts
+                            # countdown til we've seen all expected gas evts
+                            count_outbounds -= len(todo)
 
                         elif evt.type == "rewards":
                             self.thorchain.handle_rewards()
