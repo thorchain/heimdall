@@ -7,13 +7,13 @@ import json
 
 from tenacity import retry, stop_after_attempt, wait_fixed
 
-from segwit_addr import decode_address
+from utils.segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
 from chains.bitcoin import Bitcoin, MockBitcoin
 from chains.ethereum import Ethereum, MockEthereum
-from thorchain import ThorchainState, ThorchainClient, Event
-from health import Health
-from common import Transaction, Coin, Asset
+from thorchain.thorchain import ThorchainState, ThorchainClient, Event
+from scripts.health import Health
+from utils.common import Transaction, Coin, Asset
 from chains.aliases import aliases_bnb, get_alias
 
 # Init logging

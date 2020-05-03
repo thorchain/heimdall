@@ -6,8 +6,8 @@ import sys
 from tqdm import tqdm
 
 from chains.binance import MockBinance
-from thorchain import ThorchainState, ThorchainClient
-from common import Transaction, Coin
+from thorchain.thorchain import ThorchainState, ThorchainClient
+from utils.common import Transaction, Coin
 from chains.aliases import get_alias
 
 # Init logging

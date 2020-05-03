@@ -4,10 +4,10 @@ import os
 import logging
 
 from chains.binance import MockBinance, Account
-from thorchain import ThorchainClient
-from midgard import MidgardClient
-from common import Coin
-from segwit_addr import decode_address
+from thorchain.thorchain import ThorchainClient
+from thorchain.midgard import MidgardClient
+from utils.common import Coin
+from utils.segwit_addr import decode_address
 
 # Init logging
 logging.basicConfig(

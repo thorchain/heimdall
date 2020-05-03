@@ -2,7 +2,7 @@ import unittest
 import json
 
 from copy import deepcopy
-from common import Asset, Transaction, Coin, get_share
+from utils.common import Asset, Transaction, Coin, get_share
 from chains.binance import Binance
 
 
