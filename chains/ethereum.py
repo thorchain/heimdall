@@ -13,7 +13,7 @@ class MockEthereum:
     """
     An client implementation for a localnet/rinkebye/ropston Ethereum server
     """
-    default_gas = 21000
+    default_gas = 25000
     passphrase = 'the-passphrase'
 
     private_keys = [
@@ -24,10 +24,13 @@ class MockEthereum:
         "9294f4d108465fd293f7fe299e6923ef71a77f2cb1eb6d4394839c64ec25d5c0",
     ]
 
-    def __init__(self, base_url):
+    def __init__(self, base_url, doimport):
         self.web3 = Web3(HTTPProvider(base_url))
-        for key in self.private_keys:
-            self.web3.geth.personal.import_raw_key(key, self.passphrase)
+        if doimport:
+            for key in self.private_keys:
+                print(key)
+                self.web3.geth.personal.import_raw_key(key, self.passphrase)
+                print(self.web3.geth.personal.list_accounts())
         self.accounts = self.web3.eth.accounts
 
     @classmethod
@@ -39,8 +42,8 @@ class MockEthereum:
         :param string pubkey: public key
         :returns: string 0x encoded address
         """
-        enc = bytearray.fromhex(pubkey)
-        eth_pubkey = KeyAPI.PublicKey(enc)
+        eth_pubkey = KeyAPI.PublicKey.from_compressed_bytes(pubkey)
+        print('key '+eth_pubkey.to_address())
         return eth_pubkey.to_address()
 
     def set_vault_address(self, addr):
@@ -53,7 +56,7 @@ class MockEthereum:
         """
         Get the current block height of Ethereum localnet
         """
-        block = self.web3.eth.getBlock(self.web3.eth.defaultBlock)
+        block = self.web3.eth.getBlock('latest')
         return block['number']
 
     def wait_for_blocks(self, count):
@@ -71,7 +74,7 @@ class MockEthereum:
         """
         Get ETH balance for an address
         """
-        return int(self.web3.eth.getBalance(address, 'latest') * Coin.ONE)
+        return int(self.web3.eth.getBalance(Web3.toChecksumAddress(address), 'latest') * Coin.ONE)
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
     def wait_for_node(self):
@@ -81,7 +84,7 @@ class MockEthereum:
         It can take a while depending on the machine specs so we retry.
         """
         current_height = self.get_block_height()
-        if current_height < 20:
+        if current_height < 1:
             logging.warning(
                 f"Ethereum localnet starting, waiting"
             )
@@ -112,20 +115,21 @@ class MockEthereum:
             txn.memo = txn.memo.replace(alias, addr)
 
         amount = int(txn.coins[0].amount / Coin.ONE)
-
         # create and send transaction
-        nonce = self.web3.eth.getTransactionCount(txn.from_address)
+        nonce = self.web3.eth.getTransactionCount(Web3.toChecksumAddress(txn.from_address))
         tx = {
             "nonce": nonce,
-            "from": txn.from_address,
-            "to": txn.to_address,
+            "from": Web3.toChecksumAddress(txn.from_address),
+            "to": Web3.toChecksumAddress(txn.to_address),
             "value": amount,
-            "data": txn.memo.encode().hex(),
+            "data": '0x'+txn.memo.encode().hex(),
             "gas": self.default_gas,
             "gasPrice": 1,
         }
-
+        cur = self.get_block_height()
         self.web3.geth.personal.send_transaction(tx, self.passphrase)
+        while cur == self.get_block_height():
+            time.sleep(1.0)
 
 
 class Ethereum:

@@ -20,7 +20,7 @@ aliases_eth = {
     "MASTER": "0x3fd2d4ce97b082d4bce3f9fee2a3d60668d2f473",
     "CONTRIB": "0x970e8128ab834e8eac17ab8e3812f010678cf791",
     "USER-1": "0xf6da288748ec4c77642f6c5543717539b3ae001b",
-    "STAKER-1": "0xfabb9cc6ec839b1214bb11c53377a56a6ed81762 ",
+    "STAKER-1": "0xfabb9cc6ec839b1214bb11c53377a56a6ed81762",
     "STAKER-2": "0x1f30a82340f08177aba70e6f48054917c74d7d38",
     "VAULT": "",
 }

@@ -108,6 +108,19 @@
     {
         "chain": "ETH",
         "from_address": "MASTER",
+        "to_address": "USER-1",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "ETH.ETH",
+                "amount": 200000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "ETH",
+        "from_address": "MASTER",
         "to_address": "STAKER-1",
         "memo": "SEED",
         "coins": [
@@ -169,19 +182,6 @@
         "coins": [
             {
                 "asset": "BTC.BTC",
-                "amount": 150000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "ETH",
-        "from_address": "STAKER-1",
-        "to_address": "VAULT",
-        "memo": "STAKE:ETH.ETH:STAKER-1",
-        "coins": [
-            {
-                "asset": "ETH.ETH",
                 "amount": 150000000
             }
         ],
@@ -644,6 +644,49 @@
             {
                 "asset": "BNB.RUNE-A1F",
                 "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:BNB.BNB",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 150000000
+            },
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:ETH.ETH:STAKER-1",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "ETH",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:ETH.ETH:STAKER-1",
+        "coins": [
+            {
+                "asset": "ETH.ETH",
+                "amount": 150000000
             }
         ],
         "gas": null

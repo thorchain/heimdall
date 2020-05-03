@@ -10,7 +10,7 @@ from tenacity import retry, stop_after_attempt, wait_fixed
 from segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
 from chains.bitcoin import Bitcoin, MockBitcoin
-from chains.ethereum_address import Ethereum, MockEthereum
+from chains.ethereum import Ethereum, MockEthereum
 from thorchain import ThorchainState, ThorchainClient, Event
 from health import Health
 from common import Transaction, Coin, Asset
@@ -37,7 +37,7 @@ def main():
     )
     parser.add_argument(
         "--ethereum",
-        default="http://thorchain:password@localhost:8545",
+        default="http://localhost:8545",
         help="Localnet ethereum server",
     )
     parser.add_argument(
@@ -120,10 +120,7 @@ class Smoker:
         bitcoin_address = MockBitcoin.get_address_from_pubkey(raw_pubkey)
         self.mock_bitcoin.set_vault_address(bitcoin_address)
 
-        self.mock_ethereum = MockEthereum(eth)
-        # extract pubkey from bech32 encoded pubkey
-        # removing first 5 bytes used by amino encoding
-        raw_pubkey = decode_address(vault_pubkey)[5:]
+        self.mock_ethereum = MockEthereum(eth, True)
         ethereum_address = MockEthereum.get_address_from_pubkey(raw_pubkey)
         self.mock_ethereum.set_vault_address(ethereum_address)
 
