@@ -3725,5 +3725,88 @@
         ],
         "block_height": null,
         "category": null
+    },
+    {
+        "type": "stake",
+        "attributes": [
+            {
+                "pool": "BNB.BNB"
+            },
+            {
+                "stake_units": "25075000000"
+            },
+            {
+                "rune_address": "STAKER-1"
+            },
+            {
+                "rune_amount": "50000000000"
+            },
+            {
+                "asset_amount": "150000000"
+            },
+            {
+                "BNB_txid": "TODO"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "105628337"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "105628334"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "stake",
+        "attributes": [
+            {
+                "pool": "ETH.ETH"
+            },
+            {
+                "stake_units": "14401862242"
+            },
+            {
+                "rune_address": "STAKER-1"
+            },
+            {
+                "rune_amount": "50000000000"
+            },
+            {
+                "asset_amount": "150000000"
+            },
+            {
+                "ETH_txid": "TODO"
+            },
+            {
+                "BNB_txid": "TODO"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "105628331"
+            }
+        ],
+        "block_height": null,
+        "category": null
     }
 ]
