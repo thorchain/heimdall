@@ -228,14 +228,12 @@ class Smoker:
         processed_transaction = False
         outbounds = []
         # keep track of how many outbound txs we created this inbound txn
-        count_outbounds = 0 
+        count_outbounds = 0
 
         for x in range(0, 60):  # 60 attempts
             events = self.thorchain_client.get_events()
             events = [Event.from_dict(evt) for evt in events]
-            evt_list = [
-                evt.type for evt in events
-            ]  # convert evts to array of strings
+            evt_list = [evt.type for evt in events]  # convert evts to array of strings
 
             sim_events = self.thorchain.get_events()
             sim_evt_list = [
