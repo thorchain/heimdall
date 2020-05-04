@@ -57,8 +57,16 @@ class ThorchainClient(HttpClient):
     def get_pools(self):
         return self.fetch("/thorchain/pools")
 
-    def get_events(self, id=1):
-        return self.fetch(f"/thorchain/events/{id}")
+    def get_events(self, evtID=1):
+        events = []
+        while True:
+            new_events = self.fetch(f"/thorchain/events/{evtID}")
+            events += new_events
+            if len(new_events) < 100:
+                break
+            else:
+                evtID = int(new_events[-1]["id"]) + 1
+        return events
 
 
 class ThorchainState:
@@ -139,19 +147,21 @@ class ThorchainState:
 
         """
         gas_coins = {}
+        gas_coin_count = {}
 
         for txn in txns:
             if txn.gas:
                 for gas in txn.gas:
                     if gas.asset not in gas_coins:
                         gas_coins[gas.asset] = Coin(gas.asset)
+                        gas_coin_count[gas.asset] = 1
                     gas_coins[gas.asset].amount += gas.amount
+                    gas_coin_count[gas.asset] += 1
 
         if not len(gas_coins.items()):
             return
 
         gas_pools = []
-        has_btc = False
 
         for asset, gas in gas_coins.items():
             pool = self.get_pool(gas.asset)
@@ -162,40 +172,28 @@ class ThorchainState:
                 pool.asset_balance = 0
                 rune_amt = 0
             else:
-                pool.sub(0, gas.amount)  # subtract gas from pool
-
                 # figure out how much rune is an equal amount to gas.amount
                 rune_amt = pool.get_asset_in_rune(gas.amount)
                 self.reserve -= rune_amt  # take rune from the reserve
-                # add the rune amount to gas reimburse
+
                 pool.add(rune_amt, 0)  # replenish gas costs with rune
+                pool.sub(0, gas.amount)  # subtract gas from pool
 
             # update gas event
-            gas_pool = EventGasPool(asset, gas.amount, rune_amt)
+            gas_pool = EventGasPool(asset, gas.amount, rune_amt, gas_coin_count[asset])
             gas_pools.append(gas_pool)
             self.set_pool(pool)
-            if asset.is_btc():
-                has_btc = True
 
-        # generate event GAS
-        if has_btc:
-            btc_pool = None
-            for gas_pool in gas_pools:
-                if gas_pool.asset.is_btc():
-                    btc_pool = gas_pool
-                    continue
-                gas_event = GasEvent([gas_pool])
-                event = Event("gas", Transaction.empty_txn(), None, gas_event)
-                self.events.append(event)
+        # ensure btc is last
+        for i, pool in enumerate(gas_pools):
+            if pool.asset.is_btc():
+                p = gas_pools.pop(i)
+                gas_pools.append(p)
+                break
 
-            # BTC pool last
-            gas_event = GasEvent([btc_pool])
-            event = Event("gas", Transaction.empty_txn(), None, gas_event)
-            self.events.append(event)
-        else:
-            gas_event = GasEvent(gas_pools)
-            event = Event("gas", Transaction.empty_txn(), None, gas_event)
-            self.events.append(event)
+        gas_event = GasEvent(gas_pools)
+        event = Event("gas", Transaction.empty_txn(), None, gas_event)
+        self.events.append(event)
 
     def handle_fee(self, txns):
         """
@@ -270,9 +268,6 @@ class ThorchainState:
         Calculate block rewards
         """
         if self.reserve == 0:
-            return
-
-        if self._total_liquidity() == 0:
             return
 
         # calculate the block rewards based on the reserve, emission curve, and
@@ -1002,7 +997,7 @@ Event {self.event}
         )
 
         if "out_txs" in value and value["out_txs"]:
-            event.out_txs = [Transaction.from_dict(t) for t in value["out_txs"]]
+            event.out_txs = [Transaction.from_dict(t) for t in value["out_txs"] or []]
 
         if "event" in value and value["event"]:
             if value["type"] == "refund":
@@ -1101,7 +1096,8 @@ class RewardEvent(Jsonable):
     @classmethod
     def from_dict(cls, value):
         return cls(
-            value["bond_reward"], [Coin.from_dict(c) for c in value["pool_rewards"]]
+            value["bond_reward"],
+            [Coin.from_dict(c) for c in value["pool_rewards"] or []],
         )
 
 
@@ -1144,10 +1140,13 @@ class EventGasPool(Jsonable):
     GasPool in Gas Event
     """
 
-    def __init__(self, asset, asset_amt, rune_amt):
+    def __init__(self, asset, asset_amt, rune_amt, count=1):
         self.asset = asset
+        if isinstance(asset, str):
+            self.asset = Asset(asset)
         self.asset_amt = int(asset_amt)
         self.rune_amt = int(rune_amt)
+        self.count = count
 
     def __eq__(self, other):
         return (
@@ -1167,7 +1166,12 @@ class EventGasPool(Jsonable):
 
     @classmethod
     def from_dict(cls, value):
-        return cls(value["asset"], value["asset_amt"], value["rune_amt"])
+        return cls(
+            value["asset"],
+            value["asset_amt"],
+            value["rune_amt"],
+            value["transaction_count"],
+        )
 
 
 class GasEvent(Jsonable):
