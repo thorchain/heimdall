@@ -303,8 +303,9 @@ class Smoker:
             time.sleep(1)
 
         if count_outbounds != 0:
-            self.error(f"failed to send out all expected outbound transactions ({count_outbounds})")
-
+            self.error(
+                f"failed to send out all expected outbound transactions ({count_outbounds})"
+            )
 
     def run(self):
         for i, txn in enumerate(self.txns):
