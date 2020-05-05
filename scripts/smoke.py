@@ -26,9 +26,7 @@ logging.basicConfig(
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--binance",
-        default="http://localhost:26660",
-        help="Mock binance server",
+        "--binance", default="http://localhost:26660", help="Mock binance server",
     )
     parser.add_argument(
         "--bitcoin",
@@ -36,9 +34,7 @@ def main():
         help="Regtest bitcoin server",
     )
     parser.add_argument(
-        "--ethereum",
-        default="http://localhost:8545",
-        help="Localnet ethereum server",
+        "--ethereum", default="http://localhost:8545", help="Localnet ethereum server",
     )
     parser.add_argument(
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
