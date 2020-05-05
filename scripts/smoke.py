@@ -302,6 +302,11 @@ class Smoker:
 
             time.sleep(1)
 
+        if count_outbounds != 0:
+            self.error(
+                f"failed to send out all outbound transactions ({count_outbounds})"
+            )
+
     def run(self):
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
