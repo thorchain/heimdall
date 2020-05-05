@@ -302,7 +302,7 @@ class Smoker:
 
             time.sleep(1)
 
-        if count_outbounds > 0:
+        if count_outbounds != 0:
             self.error(f"failed to send out all expected outbound transactions ({count_outbounds})")
 
 
