@@ -304,7 +304,7 @@ class Smoker:
 
         if count_outbounds != 0:
             self.error(
-                f"failed to send out all expected outbound transactions ({count_outbounds})"
+                f"failed to send out all outbound transactions ({count_outbounds})"
             )
 
     def run(self):
