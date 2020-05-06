@@ -98,8 +98,13 @@ class TestSmoke(unittest.TestCase):
             for out in outbound:
                 if out.coins[0].asset.get_chain() == "BTC":
                     btcOut.append(out)
+            ethOut = []
+            for out in outbound:
+                if out.coins[0].asset.get_chain() == "ETH":
+                    ethOut.append(out)
             thorchain.handle_gas(bnbOut)  # subtract gas from pool(s)
             thorchain.handle_gas(btcOut)  # subtract gas from pool(s)
+            thorchain.handle_gas(ethOut)  # subtract gas from pool(s)
 
             # generated a snapshop picture of thorchain and bnb
             snap = Breakpoint(thorchain, bnb).snapshot(i, len(outbound))

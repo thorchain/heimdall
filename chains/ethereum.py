@@ -28,7 +28,6 @@ class MockEthereum:
 
     def __init__(self, base_url, doimport):
         self.web3 = Web3(HTTPProvider(base_url))
-        logging.info(f"LOOOL")
         if doimport:
             for key in self.private_keys:
                 self.web3.geth.personal.import_raw_key(key, self.passphrase)
@@ -44,8 +43,6 @@ class MockEthereum:
         :returns: string 0x encoded address
         """
         eth_pubkey = KeyAPI.PublicKey.from_compressed_bytes(pubkey)
-
-        logging.info(f"KEY")
         return eth_pubkey.to_address()
 
     def set_vault_address(self, addr):
