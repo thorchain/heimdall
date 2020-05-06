@@ -303,6 +303,11 @@ class BitcoinReorg:
 
             time.sleep(1)
 
+        if count_outbounds != 0:
+            self.error(
+                f"failed to send out all outbound transactions ({count_outbounds})"
+            )
+
     def run(self):
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
@@ -310,7 +315,7 @@ class BitcoinReorg:
             logging.info(f"{i:2} {txn}")
 
             # get block hash from bitcoin we are going to invalidate later
-            if i == 7:
+            if i == 10:
                 current_height = self.mock_bitcoin.get_block_height()
                 block_hash = self.mock_bitcoin.get_block_hash(current_height)
                 logging.info(f"Block to invalidated {current_height} {block_hash}")
