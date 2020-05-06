@@ -259,7 +259,7 @@ class Smoker:
                                 if p_chain == c_chain:
                                     todo.append(out)
                                     count += 1
-                                    if count >= pool.count:
+                                    if count >= pool.transaction_count:
                                         break
                         self.thorchain.handle_gas(todo)
                         # countdown til we've seen all expected gas evts
