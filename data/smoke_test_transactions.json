@@ -285,7 +285,7 @@
         "chain": "BNB",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:RUNE-A1F",
+        "memo": "STAKE:BNB.RUNE-A1F",
         "coins": [
             {
                 "asset": "BNB.BNB",

@@ -1140,13 +1140,13 @@ class EventGasPool(Jsonable):
     GasPool in Gas Event
     """
 
-    def __init__(self, asset, asset_amt, rune_amt, count=1):
+    def __init__(self, asset, asset_amt, rune_amt, transaction_count=0):
         self.asset = asset
         if isinstance(asset, str):
             self.asset = Asset(asset)
         self.asset_amt = int(asset_amt)
         self.rune_amt = int(rune_amt)
-        self.count = count
+        self.transaction_count = transaction_count
 
     def __eq__(self, other):
         return (
@@ -1158,7 +1158,8 @@ class EventGasPool(Jsonable):
     def __str__(self):
         return (
             f"GasPool {self.asset} | "
-            f"Asset {self.asset_amt:0,.0f} | Rune {self.rune_amt:0,.0f}"
+            f"Asset {self.asset_amt:0,.0f} | Rune {self.rune_amt:0,.0f} | "
+            f"Transaction Count {self.transaction_count}"
         )
 
     def __repr__(self):
