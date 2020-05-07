@@ -1158,6 +1158,9 @@ class EventGasPool(Jsonable):
     def __repr__(self):
         return str(self)
 
+    def __lt__(self, other):
+        return self.asset_amt < other.asset_amt and self.rune_amt < other.rune_amt
+
     @classmethod
     def from_dict(cls, value):
         return cls(
