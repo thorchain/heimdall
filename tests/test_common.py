@@ -2,7 +2,7 @@ import unittest
 import json
 
 from copy import deepcopy
-from utils.common import Asset, Transaction, Coin, get_share, get_rune_asset
+from utils.common import Asset, Transaction, Coin, get_share, get_rune_asset, DEFAULT_RUNE_ASSET
 from chains.binance import Binance
 
 RUNE=get_rune_asset()
@@ -364,10 +364,11 @@ class TestTransaction(unittest.TestCase):
             "thorpub1addwnpepqv7kdf473gc4jyls7hlx4rg"
             "t2lqxm9qkfh5m3ua7wnzzzfhlpz49u4slu4g"
         )
-        self.assertEqual(
-            txn.custom_hash(pubkey),
-            "2CA3A2B2A758ABD7F464C51071C0E0DAC39D7583F418D98FF9D30894CDB7FF49",
-        )
+        if DEFAULT_RUNE_ASSET == RUNE:
+            self.assertEqual(
+                txn.custom_hash(pubkey),
+                "2CA3A2B2A758ABD7F464C51071C0E0DAC39D7583F418D98FF9D30894CDB7FF49",
+            )
 
     def test_to_json(self):
         txn = Transaction(
