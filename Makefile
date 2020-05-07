@@ -35,7 +35,7 @@ benchmark-swap:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/benchmark.py --tx-type=swap --num=${NUM}
 
 smoke:
-	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True
+	@docker run ${DOCKER_OPTS} -e RUNE=${RUNE} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True
 
 kube-smoke:
 	@kubectl replace --force -f kube/job.yml
