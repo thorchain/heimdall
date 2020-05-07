@@ -82,7 +82,7 @@ class Benchie:
                 get_alias("BNB", "MASTER"),
                 get_alias("BNB", "STAKER-1"),
                 [
-                    Coin("BNB", self.num * 100 * Coin.ONE),
+                    Coin("BNB.BNB", self.num * 100 * Coin.ONE),
                     Coin(RUNE, self.num * 100 * Coin.ONE),
                 ],
             )
@@ -95,7 +95,7 @@ class Benchie:
                 get_alias("BNB", "MASTER"),
                 get_alias("BNB", "USER-1"),
                 [
-                    Coin("BNB", self.num * 100 * Coin.ONE),
+                    Coin("BNB.BNB", self.num * 100 * Coin.ONE),
                     Coin(RUNE, self.num * 100 * Coin.ONE),
                 ],
             )
@@ -109,7 +109,7 @@ class Benchie:
                     get_alias("BNB", "STAKER-1"),
                     get_alias("BNB", "VAULT"),
                     [
-                        Coin("BNB", self.num * 100 * Coin.ONE),
+                        Coin("BNB.BNB", self.num * 100 * Coin.ONE),
                         Coin(RUNE, self.num * 100 * Coin.ONE),
                     ],
                     memo="STAKE:BNB.BNB",
@@ -126,7 +126,7 @@ class Benchie:
             if self.tx_type == "stake":
                 coins = [
                     Coin(RUNE, 10 * Coin.ONE),
-                    Coin("BNB", 10 * Coin.ONE),
+                    Coin("BNB.BNB", 10 * Coin.ONE),
                 ]
             elif self.tx_type == "swap":
                 coins = [

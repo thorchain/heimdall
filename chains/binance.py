@@ -125,8 +125,8 @@ class Binance:
         With given coin set, calculates the gas owed
         """
         if not isinstance(coins, list) or len(coins) == 1:
-            return Coin("BNB", 37500)
-        return Coin("BNB", 30000 * len(coins))
+            return Coin("BNB.BNB", 37500)
+        return Coin("BNB.BNB", 30000 * len(coins))
 
     def get_account(self, addr):
         """

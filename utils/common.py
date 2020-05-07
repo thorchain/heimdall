@@ -85,7 +85,7 @@ class Jsonable:
 class Asset(str, Jsonable):
     def __new__(cls, value, *args, **kwargs):
         if len(value.split(".")) < 2:
-            value = f"BNB.{value}"  # default to binance chain
+            value = f"THOR.{value}"  # default to binance chain
         return super().__new__(cls, value)
 
     def is_bnb(self):

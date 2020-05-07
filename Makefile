@@ -14,7 +14,7 @@ format:
 	@docker run --rm -v ${PWD}:/app cytopia/black /app
 
 test:
-	@docker run ${DOCKER_OPTS} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} python -m unittest tests/test_*
+	@docker run ${DOCKER_OPTS} -e RUNE=${RUNE} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} python -m unittest tests/test_*
 
 test-coverage:
 	@docker run ${DOCKER_OPTS} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} coverage run -m unittest tests/test_*

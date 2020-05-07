@@ -12,7 +12,7 @@ class TestAsset(unittest.TestCase):
         asset = Asset("BNB.BNB")
         self.assertEqual(asset, "BNB.BNB")
         asset = Asset("BNB")
-        self.assertEqual(asset, "BNB.BNB")
+        self.assertEqual(asset, "THOR.BNB")
         asset = Asset(RUNE)
         self.assertEqual(asset, RUNE)
         asset = Asset(RUNE)
@@ -39,9 +39,9 @@ class TestAsset(unittest.TestCase):
         asset = Asset("BNB.BNB")
         self.assertEqual(asset.get_chain(), "BNB")
         asset = Asset(RUNE)
-        self.assertEqual(asset.get_chain(), "BNB")
+        self.assertEqual(asset.get_chain(), RUNE.split('.')[0])
         asset = Asset("LOK-3C0")
-        self.assertEqual(asset.get_chain(), "BNB")
+        self.assertEqual(asset.get_chain(), "THOR")
 
     def test_is_rune(self):
         asset = Asset("BNB.BNB")
@@ -56,10 +56,10 @@ class TestAsset(unittest.TestCase):
     def test_to_json(self):
         asset = Asset("BNB.BNB")
         self.assertEqual(asset.to_json(), json.dumps("BNB.BNB"))
-        asset = Asset("LOK-3C0")
+        asset = Asset("BNB.LOK-3C0")
         self.assertEqual(asset.to_json(), json.dumps("BNB.LOK-3C0"))
-        asset = Asset("RUNE")
-        self.assertEqual(asset.to_json(), json.dumps("BNB.RUNE"))
+        asset = Asset(RUNE)
+        self.assertEqual(asset.to_json(), json.dumps(RUNE))
 
 
 class TestCoin(unittest.TestCase):
@@ -67,7 +67,7 @@ class TestCoin(unittest.TestCase):
         coin = Coin("BNB.BNB", 100)
         self.assertEqual(coin.asset, "BNB.BNB")
         self.assertEqual(coin.amount, 100)
-        coin = Coin("BNB")
+        coin = Coin("BNB.BNB")
         self.assertEqual(coin.asset, "BNB.BNB")
         self.assertEqual(coin.amount, 0)
         coin = Coin(RUNE, 1000000)
@@ -82,17 +82,17 @@ class TestCoin(unittest.TestCase):
     def test_is_zero(self):
         coin = Coin("BNB.BNB", 100)
         self.assertEqual(coin.is_zero(), False)
-        coin = Coin("BNB")
+        coin = Coin("BNB.BNB")
         self.assertEqual(coin.is_zero(), True)
         coin = Coin(RUNE, 0)
         self.assertEqual(coin.is_zero(), True)
 
     def test_eq(self):
         coin1 = Coin("BNB.BNB", 100)
-        coin2 = Coin("BNB")
+        coin2 = Coin("BNB.BNB")
         self.assertNotEqual(coin1, coin2)
         coin1 = Coin("BNB.BNB", 100)
-        coin2 = Coin("BNB", 100)
+        coin2 = Coin("BNB.BNB", 100)
         self.assertEqual(coin1, coin2)
         coin1 = Coin("BNB.LOK-3C0", 100)
         coin2 = Coin(RUNE, 100)
@@ -114,8 +114,8 @@ class TestCoin(unittest.TestCase):
         list2 = [Coin("RUNE", 10), Coin("RUNE", 100)]
         self.assertNotEqual(list1, list2)
         # list not sorted are NOT equal
-        list1 = [Coin("RUNE", 100), Coin("BNB", 200)]
-        list2 = [Coin("BNB", 200), Coin("RUNE", 100)]
+        list1 = [Coin("RUNE", 100), Coin("BNB.BNB", 200)]
+        list2 = [Coin("BNB.BNB", 200), Coin("RUNE", 100)]
         self.assertNotEqual(list1, list2)
         self.assertEqual(sorted(list1), sorted(list2))
         # check sets
@@ -145,25 +145,25 @@ class TestCoin(unittest.TestCase):
     def test_str(self):
         coin = Coin("BNB.BNB")
         self.assertEqual(str(coin), "0_BNB.BNB")
-        coin = Coin("RUNE", 1000000)
-        self.assertEqual(str(coin), "1,000,000_BNB.RUNE")
-        coin = Coin("LOK-3C0", 1000000)
+        coin = Coin(RUNE, 1000000)
+        self.assertEqual(str(coin), "1,000,000_" + RUNE)
+        coin = Coin("BNB.LOK-3C0", 1000000)
         self.assertEqual(str(coin), "1,000,000_BNB.LOK-3C0")
 
     def test_repr(self):
         coin = Coin("BNB.BNB")
         self.assertEqual(repr(coin), "<Coin 0_BNB.BNB>")
-        coin = Coin("RUNE", 1000000)
-        self.assertEqual(repr(coin), "<Coin 1,000,000_BNB.RUNE>")
-        coin = Coin("LOK-3C0", 1000000)
+        coin = Coin(RUNE, 1000000)
+        self.assertEqual(repr(coin), f"<Coin 1,000,000_{RUNE}>")
+        coin = Coin("BNB.LOK-3C0", 1000000)
         self.assertEqual(repr(coin), "<Coin 1,000,000_BNB.LOK-3C0>")
 
     def test_to_json(self):
         coin = Coin("BNB.BNB")
         self.assertEqual(coin.to_json(), '{"asset": "BNB.BNB", "amount": 0}')
-        coin = Coin("RUNE", 1000000)
-        self.assertEqual(coin.to_json(), '{"asset": "BNB.RUNE", "amount": 1000000}')
-        coin = Coin("LOK-3C0", 1000000)
+        coin = Coin(RUNE, 1000000)
+        self.assertEqual(coin.to_json(), '{"asset": "'+RUNE+'", "amount": 1000000}')
+        coin = Coin("BNB.LOK-3C0", 1000000)
         self.assertEqual(coin.to_json(), '{"asset": "BNB.LOK-3C0", "amount": 1000000}')
 
     def test_from_dict(self):
@@ -175,11 +175,11 @@ class TestCoin(unittest.TestCase):
         self.assertEqual(coin.asset, "BNB.BNB")
         self.assertEqual(coin.amount, 1000)
         value = {
-            "asset": "RUNE",
+            "asset": RUNE,
             "amount": "1000",
         }
         coin = Coin.from_dict(value)
-        self.assertEqual(coin.asset, "BNB.RUNE")
+        self.assertEqual(coin.asset, RUNE)
         self.assertEqual(coin.amount, 1000)
 
 
@@ -192,7 +192,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(txn.coins[0].asset, "BNB.BNB")
         self.assertEqual(txn.coins[0].amount, 100)
         self.assertEqual(txn.memo, "MEMO")
-        txn.coins = [Coin("BNB", 1000000000), Coin(RUNE, 1000000000)]
+        txn.coins = [Coin("BNB.BNB", 1000000000), Coin(RUNE, 1000000000)]
         self.assertEqual(txn.coins[0].asset, "BNB.BNB")
         self.assertEqual(txn.coins[0].amount, 1000000000)
         self.assertEqual(txn.coins[1].asset, RUNE)
@@ -201,7 +201,7 @@ class TestTransaction(unittest.TestCase):
     def test_str(self):
         txn = Transaction(Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "MEMO",)
         self.assertEqual(str(txn), "Tx     USER ==> VAULT    | MEMO | 100_BNB.BNB")
-        txn.coins = [Coin("BNB", 1000000000), Coin(RUNE, 1000000000)]
+        txn.coins = [Coin("BNB.BNB", 1000000000), Coin(RUNE, 1000000000)]
         self.assertEqual(
             str(txn),
             "Tx     USER ==> VAULT    | MEMO | 1,000,000,000_BNB.BNB"
@@ -211,7 +211,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(
             str(txn), "Tx     USER ==> VAULT    | MEMO | No Coins",
         )
-        txn.gas = [Coin("BNB", 37500)]
+        txn.gas = [Coin("BNB.BNB", 37500)]
         self.assertEqual(
             str(txn), "Tx     USER ==> VAULT    | MEMO | No Coins | Gas 37,500_BNB.BNB",
         )
@@ -221,7 +221,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(
             repr(txn), "<Tx     USER ==> VAULT    | MEMO | [<Coin 100_BNB.BNB>]>"
         )
-        txn.coins = [Coin("BNB", 1000000000), Coin(RUNE, 1000000000)]
+        txn.coins = [Coin("BNB.BNB", 1000000000), Coin(RUNE, 1000000000)]
         self.assertEqual(
             repr(txn),
             "<Tx     USER ==> VAULT    | MEMO | [<Coin 1,000,000,000_BNB.BNB>,"
@@ -231,7 +231,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(
             repr(txn), "<Tx     USER ==> VAULT    | MEMO | No Coins>",
         )
-        txn.gas = [Coin("BNB", 37500)]
+        txn.gas = [Coin("BNB.BNB", 37500)]
         self.assertEqual(
             repr(txn),
             "<Tx     USER ==> VAULT    | MEMO | No Coins |"
@@ -277,17 +277,17 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(tx1, tx2)
         tx2.memo = "STAKE:BNB"
         self.assertEqual(tx1, tx2)
-        tx2.coins = [Coin("BNB", 100)]
+        tx2.coins = [Coin("BNB.BNB", 100)]
         self.assertEqual(tx1, tx2)
-        tx2.coins = [Coin("BNB", 100), Coin("RUNE", 100)]
+        tx2.coins = [Coin("BNB.BNB", 100), Coin("RUNE", 100)]
         self.assertNotEqual(tx1, tx2)
         # different list of coins not equal
         tx1.coins = [Coin("RUNE", 200), Coin("RUNE", 100)]
-        tx2.coins = [Coin("BNB", 100), Coin("RUNE", 200)]
+        tx2.coins = [Coin("BNB.BNB", 100), Coin("RUNE", 200)]
         self.assertNotEqual(tx1, tx2)
         # coins different order tx are still equal
-        tx1.coins = [Coin("RUNE", 200), Coin("BNB", 100)]
-        tx2.coins = [Coin("BNB", 100), Coin("RUNE", 200)]
+        tx1.coins = [Coin("RUNE", 200), Coin("BNB.BNB", 100)]
+        tx2.coins = [Coin("BNB.BNB", 100), Coin("RUNE", 200)]
         self.assertEqual(tx1, tx2)
         # we ignore from / to address for equality
         tx1.to_address = "VAULT1"
@@ -310,9 +310,9 @@ class TestTransaction(unittest.TestCase):
         # check list of 1 coin
         # descending order in list1
         tx1.coins = [Coin("RUNE", 200)]
-        tx2.coins = [Coin("BNB", 100)]
+        tx2.coins = [Coin("BNB.BNB", 100)]
         # ascrending order in list2
-        tx3.coins = [Coin("BNB", 100)]
+        tx3.coins = [Coin("BNB.BNB", 100)]
         tx4.coins = [Coin("RUNE", 200)]
         self.assertNotEqual(list1, list2)
         self.assertEqual(sorted(list1), list2)
@@ -320,11 +320,11 @@ class TestTransaction(unittest.TestCase):
 
         # check list of > 1 coin
         # descending order in list1
-        tx1.coins = [Coin("RUNE", 200), Coin("BNB", 300)]
-        tx2.coins = [Coin("BNB", 100), Coin("LOK-3C0", 500)]
+        tx1.coins = [Coin("RUNE", 200), Coin("BNB.BNB", 300)]
+        tx2.coins = [Coin("BNB.BNB", 100), Coin("LOK-3C0", 500)]
         # ascrending order in list2
-        tx3.coins = [Coin("BNB", 100), Coin("LOK-3C0", 500)]
-        tx4.coins = [Coin("RUNE", 200), Coin("BNB", 300)]
+        tx3.coins = [Coin("BNB.BNB", 100), Coin("LOK-3C0", 500)]
+        tx4.coins = [Coin("RUNE", 200), Coin("BNB.BNB", 300)]
         self.assertNotEqual(list1, list2)
         self.assertEqual(sorted(list1), list2)
         self.assertEqual(sorted(list1), sorted(list2))
@@ -379,7 +379,7 @@ class TestTransaction(unittest.TestCase):
             '"to_address": "VAULT", "memo": "STAKE:BNB", "coins": '
             '[{"asset": "BNB.BNB", "amount": 100}], "gas": null}',
         )
-        txn.coins = [Coin("BNB", 1000000000), Coin(RUNE, 1000000000)]
+        txn.coins = [Coin("BNB.BNB", 1000000000), Coin(RUNE, 1000000000)]
         self.assertEqual(
             txn.to_json(),
             '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
@@ -393,7 +393,7 @@ class TestTransaction(unittest.TestCase):
             '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
             '"to_address": "VAULT", "memo": "STAKE:BNB", "coins": null, "gas": null}',
         )
-        txn.gas = [Coin("BNB", 37500)]
+        txn.gas = [Coin("BNB.BNB", 37500)]
         self.assertEqual(
             txn.to_json(),
             '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
@@ -408,7 +408,7 @@ class TestTransaction(unittest.TestCase):
             "to_address": "VAULT",
             "coins": [
                 {"asset": "BNB.BNB", "amount": 1000},
-                {"asset": "RUNE", "amount": "1000"},
+                {"asset": RUNE, "amount": "1000"},
             ],
             "memo": "STAKE:BNB.BNB",
         }
@@ -419,7 +419,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(txn.memo, "STAKE:BNB.BNB")
         self.assertEqual(txn.coins[0].asset, "BNB.BNB")
         self.assertEqual(txn.coins[0].amount, 1000)
-        self.assertEqual(txn.coins[1].asset, "BNB.RUNE")
+        self.assertEqual(txn.coins[1].asset, RUNE)
         self.assertEqual(txn.coins[1].amount, 1000)
         self.assertEqual(txn.gas, None)
         value["coins"] = None
