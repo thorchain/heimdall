@@ -1,5 +1,6 @@
 IMAGE_NAME = registry.gitlab.com/thorchain/heimdall
 DOCKER_OPTS = --network=host --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app
+RUNE?=BNB.RUNE-A1F
 
 clean:
 	rm *.pyc
