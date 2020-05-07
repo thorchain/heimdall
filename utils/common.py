@@ -8,8 +8,10 @@ from decimal import Decimal, getcontext
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
+DEFAULT_RUNE_ASSET="BNB.RUNE-A1F"
+
 def get_rune_asset():
-    return os.environ.get("RUNE", "BNB.RUNE-A1F")
+    return os.environ.get("RUNE", DEFAULT_RUNE_ASSET)
 
 def requests_retry_session(
     retries=6, backoff_factor=1, status_forcelist=(500, 502, 504), session=None,
