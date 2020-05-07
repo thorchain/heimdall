@@ -16,7 +16,8 @@ from chains.aliases import get_alias, get_alias_address, get_aliases
 from chains.bitcoin import Bitcoin
 from chains.binance import Binance
 
-RUNE=get_rune_asset()
+RUNE = get_rune_asset()
+
 
 class ThorchainClient(HttpClient):
     """

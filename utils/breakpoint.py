@@ -1,7 +1,7 @@
-
 from utils.common import get_rune_asset
 
-RUNE=get_rune_asset()
+RUNE = get_rune_asset()
+
 
 class Breakpoint:
     """

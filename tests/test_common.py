@@ -2,10 +2,18 @@ import unittest
 import json
 
 from copy import deepcopy
-from utils.common import Asset, Transaction, Coin, get_share, get_rune_asset, DEFAULT_RUNE_ASSET
+from utils.common import (
+    Asset,
+    Transaction,
+    Coin,
+    get_share,
+    get_rune_asset,
+    DEFAULT_RUNE_ASSET,
+)
 from chains.binance import Binance
 
-RUNE=get_rune_asset()
+RUNE = get_rune_asset()
+
 
 class TestAsset(unittest.TestCase):
     def test_constructor(self):
@@ -31,7 +39,7 @@ class TestAsset(unittest.TestCase):
         asset = Asset("BNB.BNB")
         self.assertEqual(asset.get_symbol(), "BNB")
         asset = Asset(RUNE)
-        self.assertEqual(asset.get_symbol(), RUNE.split('.')[-1])
+        self.assertEqual(asset.get_symbol(), RUNE.split(".")[-1])
         asset = Asset("LOK-3C0")
         self.assertEqual(asset.get_symbol(), "LOK-3C0")
 
@@ -39,7 +47,7 @@ class TestAsset(unittest.TestCase):
         asset = Asset("BNB.BNB")
         self.assertEqual(asset.get_chain(), "BNB")
         asset = Asset(RUNE)
-        self.assertEqual(asset.get_chain(), RUNE.split('.')[0])
+        self.assertEqual(asset.get_chain(), RUNE.split(".")[0])
         asset = Asset("LOK-3C0")
         self.assertEqual(asset.get_chain(), "THOR")
 
@@ -162,7 +170,7 @@ class TestCoin(unittest.TestCase):
         coin = Coin("BNB.BNB")
         self.assertEqual(coin.to_json(), '{"asset": "BNB.BNB", "amount": 0}')
         coin = Coin(RUNE, 1000000)
-        self.assertEqual(coin.to_json(), '{"asset": "'+RUNE+'", "amount": 1000000}')
+        self.assertEqual(coin.to_json(), '{"asset": "' + RUNE + '", "amount": 1000000}')
         coin = Coin("BNB.LOK-3C0", 1000000)
         self.assertEqual(coin.to_json(), '{"asset": "BNB.LOK-3C0", "amount": 1000000}')
 

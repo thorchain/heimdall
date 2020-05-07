@@ -15,7 +15,8 @@ logging.basicConfig(
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
-RUNE=get_rune_asset()
+RUNE = get_rune_asset()
+
 
 def main():
     parser = argparse.ArgumentParser()

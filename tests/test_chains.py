@@ -5,7 +5,8 @@ from chains.binance import Binance
 
 from utils.common import Transaction, Coin, get_rune_asset
 
-RUNE=get_rune_asset()
+RUNE = get_rune_asset()
+
 
 class TestAccount(unittest.TestCase):
     def test_addsub(self):
@@ -28,7 +29,8 @@ class TestBinance(unittest.TestCase):
             bnb._calculate_gas([Coin("BNB.BNB", 5757575)]), Coin("BNB.BNB", 37500),
         )
         self.assertEqual(
-            bnb._calculate_gas([Coin("BNB.BNB", 0), Coin("RUNE", 0)]), Coin("BNB.BNB", 60000)
+            bnb._calculate_gas([Coin("BNB.BNB", 0), Coin("RUNE", 0)]),
+            Coin("BNB.BNB", 60000),
         )
 
     def test_transfer(self):

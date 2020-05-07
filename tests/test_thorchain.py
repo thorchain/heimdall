@@ -13,7 +13,8 @@ from chains.binance import Binance
 
 from utils.common import Transaction, Coin, get_rune_asset
 
-RUNE=get_rune_asset()
+RUNE = get_rune_asset()
+
 
 class TestThorchainState(unittest.TestCase):
     def test_swap(self):
@@ -526,11 +527,7 @@ class TestThorchainState(unittest.TestCase):
     def test_reserve(self):
         thorchain = ThorchainState()
         txn = Transaction(
-            Binance.chain,
-            "STAKER-1",
-            "VAULT",
-            [Coin(RUNE, 50000000000)],
-            "RESERVE",
+            Binance.chain, "STAKER-1", "VAULT", [Coin(RUNE, 50000000000)], "RESERVE",
         )
 
         outbound = thorchain.handle(txn)
@@ -861,11 +858,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.total_units, 25075000000)
 
         txn = Transaction(
-            Binance.chain,
-            "STAKER-1",
-            "VAULT",
-            [Coin(RUNE, 1)],
-            "WITHDRAW:BNB.BNB:100",
+            Binance.chain, "STAKER-1", "VAULT", [Coin(RUNE, 1)], "WITHDRAW:BNB.BNB:100",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
@@ -951,11 +944,7 @@ class TestThorchainState(unittest.TestCase):
 
         # check successful withdraw everything
         txn = Transaction(
-            Binance.chain,
-            "STAKER-1",
-            "VAULT",
-            [Coin(RUNE, 1)],
-            "WITHDRAW:BNB.BNB",
+            Binance.chain, "STAKER-1", "VAULT", [Coin(RUNE, 1)], "WITHDRAW:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
@@ -999,11 +988,7 @@ class TestThorchainState(unittest.TestCase):
 
         # check withdraw staker has 0 units
         txn = Transaction(
-            Binance.chain,
-            "STAKER-1",
-            "VAULT",
-            [Coin(RUNE, 1)],
-            "WITHDRAW:BNB.BNB",
+            Binance.chain, "STAKER-1", "VAULT", [Coin(RUNE, 1)], "WITHDRAW:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
@@ -1124,11 +1109,7 @@ class TestThorchainState(unittest.TestCase):
 
         # unstake
         txn = Transaction(
-            Binance.chain,
-            "STAKER-1",
-            "VAULT",
-            [Coin(RUNE, 1)],
-            "WITHDRAW:BNB.BNB:100",
+            Binance.chain, "STAKER-1", "VAULT", [Coin(RUNE, 1)], "WITHDRAW:BNB.BNB:100",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
@@ -1262,7 +1243,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
             event.to_json(),
             '{"id": 1, "type": "refund", "in_tx": {"id": "TODO", "chain": "BNB", '
             '"from_address": "STAKER-1", "to_address": "VAULT", '
-            '"memo": "ADD:'+RUNE+'", "coins": [{"asset": "'+RUNE+'", '
+            '"memo": "ADD:' + RUNE + '", "coins": [{"asset": "' + RUNE + '", '
             '"amount": 50000000000}], "gas": null}, "out_txs": null, '
             '"fee": {"coins": null, "pool_deduct": 0}, "event": {"code": 105, '
             '"reason": "memo can\'t be empty"}, "status": "Success"}',

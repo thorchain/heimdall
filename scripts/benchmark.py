@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from chains.binance import MockBinance
 from thorchain.thorchain import ThorchainState, ThorchainClient
-from utils.common import Transaction, Coin, get_rune_aset
+from utils.common import Transaction, Coin, get_rune_asset
 from chains.aliases import get_alias
 
 # Init logging
@@ -16,7 +16,8 @@ logging.basicConfig(
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
-RUNE=get_rune_asset()
+RUNE = get_rune_asset()
+
 
 def main():
     parser = argparse.ArgumentParser()
