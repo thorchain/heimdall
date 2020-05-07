@@ -260,7 +260,7 @@ class BitcoinReorg:
                                 if p_chain == c_chain:
                                     todo.append(out)
                                     count += 1
-                                    if count >= pool.count:
+                                    if count >= pool.transaction_count:
                                         break
                         self.thorchain.handle_gas(todo)
                         # countdown til we've seen all expected gas evts
@@ -312,8 +312,6 @@ class BitcoinReorg:
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
 
-            logging.info(f"{i:2} {txn}")
-
             # get block hash from bitcoin we are going to invalidate later
             if i == 10:
                 current_height = self.mock_bitcoin.get_block_height()
@@ -325,6 +323,8 @@ class BitcoinReorg:
             if i == 12:
                 self.mock_bitcoin.invalidate_block(block_hash)
                 logging.info("Reorg triggered")
+
+            logging.info(f"{i:2} {txn}")
 
             self.broadcast_chain(txn)
             self.broadcast_simulator(txn)
