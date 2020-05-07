@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from chains.binance import MockBinance
 from thorchain.thorchain import ThorchainState, ThorchainClient
-from utils.common import Transaction, Coin
+from utils.common import Transaction, Coin, get_rune_aset
 from chains.aliases import get_alias
 
 # Init logging
@@ -16,6 +16,7 @@ logging.basicConfig(
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
+RUNE=get_rune_asset()
 
 def main():
     parser = argparse.ArgumentParser()
@@ -82,7 +83,7 @@ class Benchie:
                 get_alias("BNB", "STAKER-1"),
                 [
                     Coin("BNB", self.num * 100 * Coin.ONE),
-                    Coin("RUNE-A1F", self.num * 100 * Coin.ONE),
+                    Coin(RUNE, self.num * 100 * Coin.ONE),
                 ],
             )
         )
@@ -95,7 +96,7 @@ class Benchie:
                 get_alias("BNB", "USER-1"),
                 [
                     Coin("BNB", self.num * 100 * Coin.ONE),
-                    Coin("RUNE-A1F", self.num * 100 * Coin.ONE),
+                    Coin(RUNE, self.num * 100 * Coin.ONE),
                 ],
             )
         )
@@ -109,7 +110,7 @@ class Benchie:
                     get_alias("BNB", "VAULT"),
                     [
                         Coin("BNB", self.num * 100 * Coin.ONE),
-                        Coin("RUNE-A1F", self.num * 100 * Coin.ONE),
+                        Coin(RUNE, self.num * 100 * Coin.ONE),
                     ],
                     memo="STAKE:BNB.BNB",
                 )
@@ -124,12 +125,12 @@ class Benchie:
         for x in range(0, self.num):
             if self.tx_type == "stake":
                 coins = [
-                    Coin("RUNE-A1F", 10 * Coin.ONE),
+                    Coin(RUNE, 10 * Coin.ONE),
                     Coin("BNB", 10 * Coin.ONE),
                 ]
             elif self.tx_type == "swap":
                 coins = [
-                    Coin("RUNE-A1F", 10 * Coin.ONE),
+                    Coin(RUNE, 10 * Coin.ONE),
                 ]
             txns.append(
                 Transaction(

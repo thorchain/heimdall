@@ -11,8 +11,9 @@ from thorchain.thorchain import (
 )
 from chains.binance import Binance
 
-from utils.common import Transaction, Coin
+from utils.common import Transaction, Coin, get_rune_asset
 
+RUNE=get_rune_asset()
 
 class TestThorchainState(unittest.TestCase):
     def test_swap(self):
@@ -22,7 +23,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 1000000000)],
+            [Coin(RUNE, 1000000000)],
             "SWAP:BNB.BNB",
         )
 
@@ -41,7 +42,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.event.code, 105)
-        self.assertEqual(event.fee.coins, [Coin("RUNE-A1F", 100000000)])
+        self.assertEqual(event.fee.coins, [Coin(RUNE, 100000000)])
         self.assertEqual(event.fee.pool_deduct, 0)
         self.assertEqual(event.event.reason, "refund reason message: pool is zero")
 
@@ -72,7 +73,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.fee.pool_deduct, 100000000)
 
         # swap with two coins on the inbound tx
-        txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)]
+        txn.coins = [Coin("BNB", 1000000000), Coin(RUNE, 1000000000)]
         outbound = thorchain.handle(txn)
         outbound = thorchain.handle_fee(outbound)
         self.assertEqual(len(outbound), 2)
@@ -94,12 +95,12 @@ class TestThorchainState(unittest.TestCase):
             "invalid swap memo:not expecting multiple coins in a swap",
         )
         self.assertEqual(
-            event.fee.coins, [Coin("BNB", 74191777), Coin("RUNE-A1F", 100000000)]
+            event.fee.coins, [Coin("BNB", 74191777), Coin(RUNE, 100000000)]
         )
         self.assertEqual(event.fee.pool_deduct, 100000000)
 
         # swap with zero return, refunds and doesn't change pools
-        txn.coins = [Coin("RUNE-A1F", 1)]
+        txn.coins = [Coin(RUNE, 1)]
         outbound = thorchain.handle(txn)
         # outbound = thorchain.handle_fee(outbound)
         self.assertEqual(len(outbound), 1)
@@ -121,7 +122,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.fee.pool_deduct, 0)
 
         # swap with zero return, not enough coin to pay fee so no refund
-        txn.coins = [Coin("RUNE-A1F", 1)]
+        txn.coins = [Coin(RUNE, 1)]
         outbound = thorchain.handle(txn)
         outbound = thorchain.handle_fee(outbound)
         self.assertEqual(len(outbound), 0)
@@ -137,17 +138,17 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.event.code, 109)
         self.assertEqual(event.event.reason, "emit asset 0 less than price limit 0")
-        self.assertEqual(event.fee.coins, [Coin("RUNE-A1F", 100000000)])
+        self.assertEqual(event.fee.coins, [Coin(RUNE, 100000000)])
         self.assertEqual(event.fee.pool_deduct, 0)
 
         # swap with limit
-        txn.coins = [Coin("RUNE-A1F", 500000000)]
+        txn.coins = [Coin(RUNE, 500000000)]
         txn.memo = "SWAP:BNB.BNB::999999999999999999999"
         outbound = thorchain.handle(txn)
         outbound = thorchain.handle_fee(outbound)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
-        self.assertEqual(outbound[0].coins, [Coin("RUNE-A1F", 400000000)])
+        self.assertEqual(outbound[0].coins, [Coin(RUNE, 400000000)])
         self.assertEqual(thorchain.pools[0].rune_balance, 58 * 100000000)
 
         # check refund event generated for swap with limit
@@ -164,11 +165,11 @@ class TestThorchainState(unittest.TestCase):
             event.event.reason,
             "emit asset 325254953 less than price limit 999999999999999999999",
         )
-        self.assertEqual(event.fee.coins, [Coin("RUNE-A1F", 100000000)])
+        self.assertEqual(event.fee.coins, [Coin(RUNE, 100000000)])
         self.assertEqual(event.fee.pool_deduct, 0)
 
         # swap with custom address
-        txn.coins = [Coin("RUNE-A1F", 500000000)]
+        txn.coins = [Coin(RUNE, 500000000)]
         txn.memo = "SWAP:BNB.BNB:NOMNOM:"
         outbound = thorchain.handle(txn)
         outbound = thorchain.handle_fee(outbound)
@@ -194,7 +195,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.fee.pool_deduct, 100000000)
 
         # refund swap when address is a different network
-        txn.coins = [Coin("RUNE-A1F", 500000000)]
+        txn.coins = [Coin(RUNE, 500000000)]
         txn.memo = "SWAP:BNB.BNB:BNBNOMNOM"
         outbound = thorchain.handle(txn)
         outbound = thorchain.handle_fee(outbound)
@@ -212,7 +213,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "address format not supported: BNBNOMNOM")
-        self.assertEqual(event.fee.coins, [Coin("RUNE-A1F", 100000000)])
+        self.assertEqual(event.fee.coins, [Coin(RUNE, 100000000)])
         self.assertEqual(event.fee.pool_deduct, 0)
 
         # do a double swap
@@ -237,7 +238,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].memo, "SWAP:BNB.LOK-3C0")
-        self.assertEqual(event.out_txs[0].coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(event.out_txs[0].coins[0].asset, RUNE)
         self.assertEqual(event.out_txs[0].coins[0].amount, 964183435)
         self.assertEqual(event.out_txs[0].from_address, txn.from_address)
         self.assertEqual(event.out_txs[0].to_address, txn.to_address)
@@ -253,7 +254,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "swap")
         self.assertEqual(event.in_tx.memo, "SWAP:BNB.LOK-3C0")
-        self.assertEqual(event.in_tx.coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(event.in_tx.coins[0].asset, RUNE)
         self.assertEqual(event.in_tx.coins[0].amount, 964183435)
         self.assertEqual(event.in_tx.from_address, txn.from_address)
         self.assertEqual(event.in_tx.to_address, txn.to_address)
@@ -279,7 +280,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 1000000000), Coin("RUNE-A1F", 1000000000)],
+            [Coin("BNB", 1000000000), Coin(RUNE, 1000000000)],
             "SWAP:BNB.BNB",
         )
 
@@ -288,7 +289,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
         self.assertEqual(outbound[0].coins[0], Coin("BNB", 1000000000))
         self.assertEqual(outbound[1].memo, "REFUND:TODO")
-        self.assertEqual(outbound[1].coins[0], Coin("RUNE-A1F", 1000000000))
+        self.assertEqual(outbound[1].coins[0], Coin(RUNE, 1000000000))
 
         # check refund event generated for swap with two coins
         events = thorchain.get_events()
@@ -311,7 +312,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
         self.assertEqual(outbound[0].coins[0], Coin("BNB", 900000000))
         self.assertEqual(outbound[1].memo, "REFUND:TODO")
-        self.assertEqual(outbound[1].coins[0], Coin("RUNE-A1F", 900000000))
+        self.assertEqual(outbound[1].coins[0], Coin(RUNE, 900000000))
 
         # check refund event generated for swap with two coins
         events = thorchain.get_events()
@@ -331,14 +332,14 @@ class TestThorchainState(unittest.TestCase):
 
         # make RUNE coin same amount as fee, we should
         # then only get 1 txn outbound after fee
-        txn.coins = [Coin("BNB", 1000000000), Coin("RUNE-A1F", 100000000)]
+        txn.coins = [Coin("BNB", 1000000000), Coin(RUNE, 100000000)]
 
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
         self.assertEqual(outbound[0].coins[0], Coin("BNB", 1000000000))
         self.assertEqual(outbound[1].memo, "REFUND:TODO")
-        self.assertEqual(outbound[1].coins[0], Coin("RUNE-A1F", 100000000))
+        self.assertEqual(outbound[1].coins[0], Coin(RUNE, 100000000))
 
         # check refund event generated for swap with two coins
         events = thorchain.get_events()
@@ -382,7 +383,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "ADD:BNB.BNB",
         )
 
@@ -404,8 +405,8 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 50000000000)],
-            "ADD:RUNE-A1F",
+            [Coin(RUNE, 50000000000)],
+            "ADD:" + RUNE,
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 0)
@@ -419,14 +420,14 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(event.out_txs, None)
         # FIXME? do we have RUNE pool
-        self.assertEqual(event.event.pool, "BNB.RUNE-A1F")
+        self.assertEqual(event.event.pool, RUNE)
 
         # bad add memo should refund
         txn = Transaction(
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "ADD:",
         )
         outbound = thorchain.handle(txn)
@@ -450,7 +451,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "ADD:BNB.TCAN-014",
         )
         outbound = thorchain.handle(txn)
@@ -474,8 +475,8 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
-            "ADD:RUNE-A1F",
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
+            "ADD:" + RUNE,
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
@@ -500,7 +501,7 @@ class TestThorchainState(unittest.TestCase):
             "VAULT",
             [
                 Coin("BNB", 150000000),
-                Coin("RUNE-A1F", 50000000000),
+                Coin(RUNE, 50000000000),
                 Coin("BNB-LOK-3C0", 30000000000),
             ],
             "ADD:BNB.BNB",
@@ -528,7 +529,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 50000000000)],
+            [Coin(RUNE, 50000000000)],
             "RESERVE",
         )
 
@@ -554,7 +555,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "STAKE:BNB.BNB",
         )
 
@@ -583,7 +584,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "",
         )
         outbound = thorchain.handle(txn)
@@ -623,7 +624,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "STAKE:BNB.BNB",
         )
 
@@ -652,7 +653,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "",
         )
         outbound = thorchain.handle(txn)
@@ -676,7 +677,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "STAKE:",
         )
         outbound = thorchain.handle(txn)
@@ -700,7 +701,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "STAKE:BNB.TCAN-014",
         )
         outbound = thorchain.handle(txn)
@@ -726,8 +727,8 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
-            "STAKE:RUNE-A1F",
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
+            "STAKE:" + RUNE,
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
@@ -752,7 +753,7 @@ class TestThorchainState(unittest.TestCase):
             "VAULT",
             [
                 Coin("BNB", 150000000),
-                Coin("RUNE-A1F", 50000000000),
+                Coin(RUNE, 50000000000),
                 Coin("BNB-LOK-3C0", 30000000000),
             ],
             "STAKE:BNB.BNB",
@@ -802,7 +803,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 10000000000)],
+            [Coin(RUNE, 10000000000)],
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
@@ -823,7 +824,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 30000000000), Coin("BNB", 90000000)],
+            [Coin(RUNE, 30000000000), Coin("BNB", 90000000)],
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
@@ -847,7 +848,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
@@ -863,12 +864,12 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 1)],
+            [Coin(RUNE, 1)],
             "WITHDRAW:BNB.BNB:100",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
-        self.assertEqual(outbound[0].coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(outbound[0].coins[0].asset, RUNE)
         self.assertEqual(outbound[0].coins[0].amount, 500000000)
         self.assertEqual(outbound[1].coins[0].asset, "BNB.BNB")
         self.assertEqual(outbound[1].coins[0].amount, 1500000)
@@ -953,12 +954,12 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 1)],
+            [Coin(RUNE, 1)],
             "WITHDRAW:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 2)
-        self.assertEqual(outbound[0].coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(outbound[0].coins[0].asset, RUNE)
         self.assertEqual(outbound[0].coins[0].amount, 49500000000)
         self.assertEqual(outbound[1].coins[0].asset, "BNB.BNB")
         self.assertEqual(outbound[1].coins[0].amount, 148425000)
@@ -1001,12 +1002,12 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 1)],
+            [Coin(RUNE, 1)],
             "WITHDRAW:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(outbound[0].coins[0].asset, RUNE)
         self.assertEqual(outbound[0].coins[0].amount, 1)
 
         pool = thorchain.get_pool("BNB.BNB")
@@ -1104,7 +1105,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB", 150000000), Coin(RUNE, 50000000000)],
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
@@ -1115,7 +1116,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("BNB.LOK-3C0", 150000000), Coin("RUNE-A1F", 50000000000)],
+            [Coin("BNB.LOK-3C0", 150000000), Coin(RUNE, 50000000000)],
             "STAKE:BNB.LOK-3C0",
         )
         outbound = thorchain.handle(txn)
@@ -1126,7 +1127,7 @@ class TestThorchainState(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 1)],
+            [Coin(RUNE, 1)],
             "WITHDRAW:BNB.BNB:100",
         )
         outbound = thorchain.handle(txn)
@@ -1169,16 +1170,16 @@ class TestEvent(unittest.TestCase):
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 50000000000)],
-            "ADD:RUNE-A1F",
+            [Coin(RUNE, 50000000000)],
+            "ADD:" + RUNE,
         )
         event = Event("refund", txn, None, refund_event)
         event.id = 1
         self.assertEqual(
             str(event),
-            """
+            f"""
 Event #1 | Type REFUND | Status Success |
-InTx  Tx STAKER-1 ==> VAULT    | ADD:RUNE-A1F | 50,000,000,000_BNB.RUNE-A1F
+InTx  Tx STAKER-1 ==> VAULT    | ADD:{RUNE} | 50,000,000,000_{RUNE}
 OutTx None
 Fee   Coins None | Pool deduct 0
 Event RefundEvent Code 105 | Reason "memo can't be empty"
@@ -1191,16 +1192,16 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 50000000000)],
-            "ADD:RUNE-A1F",
+            [Coin(RUNE, 50000000000)],
+            "ADD:" + RUNE,
         )
         event = Event("refund", txn, None, refund_event, status="Refund")
         event.id = 1
         self.assertEqual(
             repr(event),
-            """
+            f"""
 Event #1 | Type REFUND | Status Refund |
-InTx  Tx STAKER-1 ==> VAULT    | ADD:RUNE-A1F | 50,000,000,000_BNB.RUNE-A1F
+InTx  Tx STAKER-1 ==> VAULT    | ADD:{RUNE} | 50,000,000,000_{RUNE}
 OutTx None
 Fee   Coins None | Pool deduct 0
 Event RefundEvent Code 105 | Reason "memo can't be empty"
@@ -1213,8 +1214,8 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 50000000000)],
-            "ADD:RUNE-A1F",
+            [Coin(RUNE, 50000000000)],
+            "ADD:" + RUNE,
         )
         event1 = Event("refund", txn, None, refund_event, status="Refund")
         event2 = Event("refund", txn, None, refund_event, status="Refund")
@@ -1252,8 +1253,8 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
             Binance.chain,
             "STAKER-1",
             "VAULT",
-            [Coin("RUNE-A1F", 50000000000)],
-            "ADD:RUNE-A1F",
+            [Coin(RUNE, 50000000000)],
+            "ADD:" + RUNE,
         )
         event = Event("refund", txn, None, refund_event)
         event.id = 1
@@ -1261,7 +1262,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
             event.to_json(),
             '{"id": 1, "type": "refund", "in_tx": {"id": "TODO", "chain": "BNB", '
             '"from_address": "STAKER-1", "to_address": "VAULT", '
-            '"memo": "ADD:RUNE-A1F", "coins": [{"asset": "BNB.RUNE-A1F", '
+            '"memo": "ADD:'+RUNE+'", "coins": [{"asset": "'+RUNE+'", '
             '"amount": 50000000000}], "gas": null}, "out_txs": null, '
             '"fee": {"coins": null, "pool_deduct": 0}, "event": {"code": 105, '
             '"reason": "memo can\'t be empty"}, "status": "Success"}',
@@ -1275,8 +1276,8 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
                 "chain": "BNB",
                 "from_address": "STAKER-1",
                 "to_address": "VAULT",
-                "memo": "ADD:RUNE-A1F",
-                "coins": [{"asset": "BNB.RUNE-A1F", "amount": 50000000000}],
+                "memo": "ADD:" + RUNE,
+                "coins": [{"asset": RUNE, "amount": 50000000000}],
                 "gas": None,
             },
             "out_txs": None,
@@ -1290,8 +1291,8 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         self.assertEqual(event.in_tx.chain, "BNB")
         self.assertEqual(event.in_tx.from_address, "STAKER-1")
         self.assertEqual(event.in_tx.to_address, "VAULT")
-        self.assertEqual(event.in_tx.memo, "ADD:RUNE-A1F")
-        self.assertEqual(event.in_tx.coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(event.in_tx.memo, "ADD:" + RUNE)
+        self.assertEqual(event.in_tx.coins[0].asset, RUNE)
         self.assertEqual(event.in_tx.coins[0].amount, 50000000000)
         self.assertEqual(event.out_txs, None)
         self.assertEqual(event.fee.coins, None)
@@ -1347,7 +1348,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
                 "to_address": "VAULT",
                 "memo": "",
                 "coins": [
-                    {"asset": "BNB.RUNE-A1F", "amount": 50000000000},
+                    {"asset": RUNE, "amount": 50000000000},
                     {"asset": "BNB.BNB", "amount": 30000000000},
                 ],
                 "gas": [{"asset": "BNB.BNB", "amount": 60000}],
@@ -1358,7 +1359,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
                     "from_address": "VAULT",
                     "to_address": "STAKER-1",
                     "memo": "REFUND:TODO",
-                    "coins": [{"asset": "BNB.RUNE-A1F", "amount": 50000000000}],
+                    "coins": [{"asset": RUNE, "amount": 50000000000}],
                     "gas": [{"asset": "BNB.BNB", "amount": 35000}],
                 },
                 {
@@ -1387,7 +1388,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         self.assertEqual(event.in_tx.from_address, "STAKER-1")
         self.assertEqual(event.in_tx.to_address, "VAULT")
         self.assertEqual(event.in_tx.memo, "")
-        self.assertEqual(event.in_tx.coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(event.in_tx.coins[0].asset, RUNE)
         self.assertEqual(event.in_tx.coins[0].amount, 50000000000)
         self.assertEqual(event.in_tx.coins[1].asset, "BNB.BNB")
         self.assertEqual(event.in_tx.coins[1].amount, 30000000000)
@@ -1398,7 +1399,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         self.assertEqual(event.out_txs[0].from_address, "VAULT")
         self.assertEqual(event.out_txs[0].to_address, "STAKER-1")
         self.assertEqual(event.out_txs[0].memo, "REFUND:TODO")
-        self.assertEqual(event.out_txs[0].coins[0].asset, "BNB.RUNE-A1F")
+        self.assertEqual(event.out_txs[0].coins[0].asset, RUNE)
         self.assertEqual(event.out_txs[0].coins[0].amount, 50000000000)
         self.assertEqual(event.out_txs[0].gas[0].asset, "BNB.BNB")
         self.assertEqual(event.out_txs[0].gas[0].amount, 35000)

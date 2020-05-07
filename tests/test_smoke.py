@@ -10,7 +10,9 @@ from chains.bitcoin import Bitcoin
 from thorchain.thorchain import ThorchainState, Event
 from utils.breakpoint import Breakpoint
 
-from utils.common import Transaction
+from utils.common import Transaction, get_rune_asset
+
+RUNE=get_rune_asset()
 
 # Init logging
 logging.basicConfig(
