@@ -243,7 +243,7 @@ class Transaction(Jsonable):
 
     def get_asset_from_memo(self):
         parts = self.memo.split(":")
-        if len(parts) >= 2:
+        if len(parts) >= 2 and parts[1] != "":
             return Asset(parts[1])
         return None
 

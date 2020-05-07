@@ -28,7 +28,7 @@ def get_alias_address(chain, alias):
         return aliases_bnb[alias]
     if chain == "BTC":
         return aliases_btc[alias]
-    raise Exception("Address for alias not found, chain not supported")
+    raise Exception(f"Address for alias not found, chain not supported ({chain})")
 
 
 def get_bnb_address(chain, addr):
