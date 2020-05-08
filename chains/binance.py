@@ -1,18 +1,32 @@
 import time
 import base64
 import hashlib
+import bech32
 
-from utils.common import Coin, HttpClient
+from utils.segwit_addr import decode_address
+from utils.common import Coin, HttpClient, get_rune_asset
 from utils.segwit_addr import address_from_public_key
 from chains.aliases import aliases_bnb, get_aliases, get_alias_address
 from chains.account import Account
 
+RUNE = get_rune_asset()
 
 class MockBinance(HttpClient):
     """
     An client implementation for a mock binance server
     https://gitlab.com/thorchain/bepswap/mock-binance
     """
+
+    def set_vault_address_by_pubkey(self, pubkey):
+        """
+        Set vault adddress by pubkey
+        """
+        pubkey_bytes = decode_address(pubkey)[5:]
+        s = hashlib.new("sha256", pubkey_bytes).digest()
+        r = hashlib.new("ripemd160", s).digest()
+        five_bit_r = bech32.convertbits(r, 8, 5)
+        assert five_bit_r is not None, "Unsuccessful bech32.convertbits call"
+        self.set_vault_address(bech32.bech32_encode("tbnb", five_bit_r))
 
     def set_vault_address(self, addr):
         """
@@ -95,6 +109,9 @@ class MockBinance(HttpClient):
                 asset = txn.get_asset_from_memo()
                 if asset:
                     chain = asset.get_chain()
+                # we use RUNE BNB address to identify a cross chain stake
+                if txn.memo.startswith("STAKE"):
+                    chain = RUNE.split('.')[0]
                 addr = get_alias_address(chain, alias)
                 txn.memo = txn.memo.replace(alias, addr)
 

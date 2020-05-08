@@ -6,7 +6,7 @@ from bitcoin import SelectParams
 from bitcoin.wallet import CBitcoinSecret, P2WPKHBitcoinAddress
 from bitcoin.core import Hash160
 from bitcoin.core.script import CScript, OP_0
-from utils.common import Coin, HttpClient
+from utils.common import Coin, HttpClient, get_rune_asset
 from decimal import Decimal, getcontext
 from chains.aliases import aliases_btc, get_aliases, get_alias_address
 from chains.account import Account
@@ -14,6 +14,7 @@ from tenacity import retry, stop_after_delay, wait_fixed
 
 getcontext().prec = 15
 
+RUNE = get_rune_asset()
 
 class MockBitcoin(HttpClient):
     """
@@ -140,7 +141,7 @@ class MockBitcoin(HttpClient):
                 chain = asset.get_chain()
             # we use RUNE BNB address to identify a cross chain stake
             if txn.memo.startswith("STAKE"):
-                chain = "BNB"
+                chain = RUNE.split('.')[0]
             addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
 

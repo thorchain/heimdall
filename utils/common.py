@@ -153,6 +153,16 @@ class Coin(Jsonable):
         """
         return self.amount == 0
 
+    def to_thorchain_fmt(self):
+        """
+        Convert the class to an dictionary, specifically in a format for
+        thorchain
+        """
+        return {
+            "asset": self.asset,
+            "amount": str(self.amount),
+        }
+
     def to_binance_fmt(self):
         """
         Convert the class to an dictionary, specifically in a format for
@@ -223,7 +233,7 @@ class Transaction(Jsonable):
         gas = " | Gas " + ", ".join([str(g) for g in self.gas]) if self.gas else ""
         id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
         return (
-            f"Tx {self.from_address:>8} ==> {self.to_address:8} | "
+            f"Tx {self.chain} {self.from_address:>8} ==> {self.to_address:8} | "
             f"{self.memo} | {coins}{gas}{id}"
         )
 

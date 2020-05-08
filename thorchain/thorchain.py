@@ -111,9 +111,12 @@ class ThorchainClient(HttpClient):
         data = self.fetch("/thorchain/lastblock")
         return int(data["thorchain"])
 
-    def get_vault_address(self):
+    def get_vault_address(self, chain):
         data = self.fetch("/thorchain/pool_addresses")
-        return data["current"][0]["address"]
+        for d in data["current"]:
+            if chain == d["chain"]:
+                return d["address"]
+        return "address not found"
 
     def get_vault_pubkey(self):
         data = self.fetch("/thorchain/pool_addresses")
@@ -528,6 +531,9 @@ class ThorchainState:
 
         """
         tx = deepcopy(txn)  # copy of transaction
+
+        if tx.chain == "THOR":
+            self.reserve += 100000000
         if tx.memo.startswith("STAKE:"):
             return self.handle_stake(tx)
         elif tx.memo.startswith("ADD:"):
@@ -673,7 +679,7 @@ class ThorchainState:
 
         # check address to stake to from memo
         address = txn.from_address
-        if txn.chain != Binance.chain and len(parts) > 2:
+        if txn.chain != RUNE.split('.')[0] and len(parts) > 2:
             address = parts[2]
 
         stake_units = pool.stake(address, rune_amt, asset_amt, asset)
@@ -885,7 +891,7 @@ class ThorchainState:
             # generate event for SWAP transaction
             out_txns = [
                 Transaction(
-                    txn.chain,
+                    emit.asset.get_chain(),
                     txn.from_address,
                     txn.to_address,
                     [emit],
@@ -1665,8 +1671,9 @@ class Pool(Jsonable):
         """
         staker = self.get_staker(address)
 
+
         # handle cross chain stake
-        if not asset.is_bnb():
+        if not asset.get_chain() == RUNE.split(".")[0]:
             if asset_amt == 0:
                 staker.pending_rune += rune_amt
                 self.set_staker(staker)

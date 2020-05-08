@@ -11,6 +11,7 @@ from utils.segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
 from chains.bitcoin import Bitcoin, MockBitcoin
 from chains.ethereum import Ethereum, MockEthereum
+from chains.thorchain import ThorchainSigner
 from thorchain.thorchain import ThorchainState, ThorchainClient, Event
 from scripts.health import Health
 from utils.common import Transaction, Coin, Asset
@@ -129,15 +130,21 @@ class Smoker:
         vault_address = self.thorchain_client.get_vault_address()
         vault_pubkey = self.thorchain_client.get_vault_pubkey()
 
-        self.thorchain.set_vault_pubkey(vault_pubkey)
+        pubkey = self.thorchain_client.get_vault_pubkey()
+
+        self.thorchain.set_vault_pubkey(pubkey)
+        if RUNE.split('.')[0] == "THOR":
+            self.thorchain.reserve = 40000000000000
+
+        self.thorchain_signer = ThorchainSigner(thor)
 
         self.mock_binance = MockBinance(bnb)
-        self.mock_binance.set_vault_address(vault_address)
+        self.mock_binance.set_vault_address_by_pubkey(pubkey)
 
         self.mock_bitcoin = MockBitcoin(btc)
         # extract pubkey from bech32 encoded pubkey
         # removing first 5 bytes used by amino encoding
-        raw_pubkey = decode_address(vault_pubkey)[5:]
+        raw_pubkey = decode_address(pubkey)[5:]
         bitcoin_address = MockBitcoin.get_address_from_pubkey(raw_pubkey)
         self.mock_bitcoin.set_vault_address(bitcoin_address)
 
@@ -285,6 +292,8 @@ class Smoker:
             return self.mock_bitcoin.transfer(txn)
         if txn.chain == Ethereum.chain:
             return self.mock_ethereum.transfer(txn)
+        if txn.chain == ThorchainSigner.chain:
+            return self.thorchain_signer.transfer(txn)
 
     def broadcast_simulator(self, txn):
         """
@@ -308,7 +317,7 @@ class Smoker:
         # keep track of how many outbound txs we created this inbound txn
         count_outbounds = 0
 
-        for x in range(0, 60):  # 60 attempts
+        for x in range(0, 30):  # 60 attempts
             events = self.thorchain_client.get_events()
             events = [Event.from_dict(evt) for evt in events]
             evt_list = [evt.type for evt in events]  # convert evts to array of strings
@@ -434,7 +443,7 @@ class Smoker:
             self.check_bitcoin()
             self.check_ethereum()
             self.check_vaults()
-            self.run_health()
+            # self.run_health()
 
 
 if __name__ == "__main__":
