@@ -173,6 +173,10 @@ class Smoker:
                 continue  # don't care to compare MASTER account
             mock_coin = Coin("BTC.BTC", self.mock_bitcoin.get_balance(addr))
             sim_coin = Coin("BTC.BTC", sim_acct.get("BTC.BTC"))
+            # dont raise error on reorg balance being invalidated
+            # sim is not smart enough to subtract funds on reorg
+            if mock_coin.amount == 0 and self.bitcoin_reorg:
+                return
             if sim_coin != mock_coin:
                 self.error(f"Bad bitcoin balance: {name} {mock_coin} != {sim_coin}")
 
@@ -206,7 +210,7 @@ class Smoker:
                 )
                 self.error("Events mismatch")
 
-    @retry(stop=stop_after_attempt(30), wait=wait_fixed(1), reraise=True)
+    @retry(stop=stop_after_attempt(60), wait=wait_fixed(1), reraise=True)
     def run_health(self):
         self.health.run()
 
@@ -322,14 +326,14 @@ class Smoker:
 
             if self.bitcoin_reorg:
                 # get block hash from bitcoin we are going to invalidate later
-                if i == 35:
+                if i == 14 or i == 24:
                     current_height = self.mock_bitcoin.get_block_height()
                     block_hash = self.mock_bitcoin.get_block_hash(current_height)
                     logging.info(f"Block to invalidate {current_height} {block_hash}")
 
                 # now we processed some btc txs and we invalidate an older block
                 # to make those txs not valid anymore and test thornode reaction
-                if i == 38:
+                if i == 18 or i == 28:
                     self.mock_bitcoin.invalidate_block(block_hash)
                     logging.info("Reorg triggered")
 
