@@ -30,7 +30,7 @@ aliases_thor = {
     "USER-1": "thor1j08ys4ct2hzzc2hcz6h2hgrvlmsjynaw02vym4",
     "STAKER-1": "thor1zupk5lmc84r2dh738a9g3zscavannjy3h4s0hw",
     "STAKER-2": "thor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkdftjnal",
-    "VAULT": "thor1rm9guke9xxuts3t725juunpv9yrudhn42kj7p8",
+    "VAULT": "thor1g98cy3n9mmjrpn0sxmn63lztelera37n8n67c0",
 }
 
 

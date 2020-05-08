@@ -2,7 +2,7 @@ include Makefile.cicd
 IMAGE_NAME = registry.gitlab.com/thorchain/heimdall
 LOGLEVEL?=INFO
 DOCKER_OPTS = --network=host --rm -e LOGLEVEL=${LOGLEVEL} -e PYTHONPATH=/app -v ${PWD}:/app -w /app
-RUNE?=BNB.RUNE-A1F
+RUNE?=THOR.RUNE
 
 clean:
 	rm *.pyc
