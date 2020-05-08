@@ -157,7 +157,7 @@
         "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB",
+        "memo": "STAKE:BNB.BNB:STAKER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -170,7 +170,7 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB",
+        "memo": "STAKE:BNB.BNB:STAKER-1",
         "coins": [
             {
                 "asset": "BNB.BNB",
