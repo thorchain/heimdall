@@ -14,7 +14,7 @@ from chains.ethereum import Ethereum, MockEthereum
 from chains.thorchain import ThorchainSigner
 from thorchain.thorchain import ThorchainState, ThorchainClient, Event
 from scripts.health import Health
-from utils.common import Transaction, Coin, Asset
+from utils.common import Transaction, Coin, Asset, get_rune_asset
 from chains.aliases import aliases_bnb, get_alias
 
 # Init logging
@@ -23,6 +23,7 @@ logging.basicConfig(
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
+RUNE = get_rune_asset()
 
 def main():
     parser = argparse.ArgumentParser()
