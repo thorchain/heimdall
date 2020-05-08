@@ -7,6 +7,7 @@ from thorchain.thorchain import (
     RefundEvent,
     RewardEvent,
     EventGasPool,
+    GasEvent,
 )
 from chains.binance import Binance
 
@@ -1237,6 +1238,13 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
             "rewards", Transaction.empty_txn(), None, reward_event2, status="Success"
         )
         self.assertEqual(event1, event2)
+
+    def test_gas_pool_event_sort(self):
+        gas_pool_btc = EventGasPool("BTC.BTC", 100, 200)
+        gas_pool_bnb = EventGasPool("BNB.BNB", 300, 400)
+        gas_event1 = GasEvent([gas_pool_btc, gas_pool_bnb])
+        gas_event2 = GasEvent([gas_pool_bnb, gas_pool_btc])
+        self.assertEqual(gas_event1, gas_event2)
 
     def test_to_json(self):
         refund_event = RefundEvent(105, "memo can't be empty")

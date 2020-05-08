@@ -185,13 +185,6 @@ class ThorchainState:
             gas_pools.append(gas_pool)
             self.set_pool(pool)
 
-        # ensure btc is last
-        for i, pool in enumerate(gas_pools):
-            if pool.asset.is_btc():
-                p = gas_pools.pop(i)
-                gas_pools.append(p)
-                break
-
         gas_event = GasEvent(gas_pools)
         event = Event("gas", Transaction.empty_txn(), None, gas_event)
         self.events.append(event)
@@ -1170,6 +1163,9 @@ class EventGasPool(Jsonable):
     def __repr__(self):
         return str(self)
 
+    def __lt__(self, other):
+        return self.asset_amt < other.asset_amt and self.rune_amt < other.rune_amt
+
     @classmethod
     def from_dict(cls, value):
         return cls(
@@ -1189,7 +1185,7 @@ class GasEvent(Jsonable):
         self.pools = pools
 
     def __eq__(self, other):
-        return self.pools == other.pools
+        return sorted(self.pools) == sorted(other.pools)
 
     def __str__(self):
         pools = ", ".join([str(p) for p in self.pools]) if self.pools else "No Pools"
