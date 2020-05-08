@@ -9,12 +9,17 @@ from chains.account import Account
 from tenacity import retry, stop_after_delay, wait_fixed
 
 
+def calculate_gas(msg):
+    return MockEthereum.default_gas+MockEthereum.gas_per_byte*len(msg)
+
+
 class MockEthereum:
     """
     An client implementation for a localnet/rinkebye/ropston Ethereum server
     """
 
-    default_gas = 25000
+    default_gas = 21000
+    gas_per_byte = 68
     gwei = 1000000000
     passphrase = "the-passphrase"
 
@@ -28,10 +33,14 @@ class MockEthereum:
 
     def __init__(self, base_url, doimport):
         self.web3 = Web3(HTTPProvider(base_url))
-        if doimport:
-            for key in self.private_keys:
-                self.web3.geth.personal.import_raw_key(key, self.passphrase)
-        self.accounts = self.web3.eth.accounts
+        start = len(self.web3.eth.accounts)
+        logging.info(f"start {start}")
+        logging.info(f"accs {self.web3.eth.accounts}")
+        for i in range(start, len(self.private_keys)):
+            key = self.private_keys[i]
+            logging.info(f"key {key}")
+            pubkey = self.web3.geth.personal.import_raw_key(key, self.passphrase)
+            logging.info(f"pub {pubkey}")
 
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
@@ -87,9 +96,8 @@ class MockEthereum:
         It can take a while depending on the machine specs so we retry.
         """
         current_height = self.get_block_height()
-        if current_height < 1:
-            logging.warning(f"Ethereum localnet starting, waiting")
-            raise Exception
+        while current_height < 3:
+            current_height = self.get_block_height()
 
     def transfer(self, txn):
         """
@@ -113,37 +121,33 @@ class MockEthereum:
             else:
                 addr = get_alias_address(txn.chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
-
+        logging.info(f"memo {txn.memo} len {len(txn.memo)}")
         amount = int(txn.coins[0].amount / Coin.ONE * self.gwei)
 
         logging.info(f"WOOOL")
         # create and send transaction
-        nonce = self.web3.eth.getTransactionCount(
-            Web3.toChecksumAddress(txn.from_address)
-        )
+        gasPrice = self.web3.eth.gasPrice
+        logging.info(f"gasPrice {gasPrice}")
         tx = {
-            "nonce": nonce,
             "from": Web3.toChecksumAddress(txn.from_address),
             "to": Web3.toChecksumAddress(txn.to_address),
             "value": amount,
             "data": "0x" + txn.memo.encode().hex(),
-            "gas": self.default_gas,
+            "gas": calculate_gas(txn.memo),
         }
         from_bal = int(self.get_balance(Web3.toChecksumAddress(txn.from_address)))
-        logging.info(f"bal {from_bal}")
+        logging.info(f"bal {from_bal*10}")
         logging.info(f"amountt {amount}")
-        cur = self.get_block_height()
         self.web3.geth.personal.send_transaction(tx, self.passphrase)
+        cur = self.get_block_height()
         while cur == self.get_block_height():
             time.sleep(1.0)
-
 
 class Ethereum:
     """
     A local simple implementation of Ethereum chain
     """
 
-    gweiPerGas = 20
     chain = "ETH"
 
     def __init__(self):
@@ -184,7 +188,7 @@ class Ethereum:
         to_acct = self.get_account(txn.to_address)
 
         if not txn.gas:
-            txn.gas = [Coin("ETH.ETH", self.gweiPerGas * MockEthereum.default_gas)]
+            txn.gas = [Coin("ETH.ETH", calculate_gas(txn.memo) * Coin.ONE)]
 
         from_acct.sub(txn.gas[0])
         from_acct.sub(txn.coins)

@@ -296,6 +296,45 @@
     },
     {
         "chain": "BNB",
+        "from_address": "USER-1",
+        "to_address": "VAULT",
+        "memo": "SWAP:ETH.ETH:USER-1",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 500000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "ETH",
+        "from_address": "USER-1",
+        "to_address": "VAULT",
+        "memo": "SWAP:BNB.RUNE-A1F:USER-1",
+        "coins": [
+            {
+                "asset": "ETH.ETH",
+                "amount": 500000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:ETH.ETH:1000",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.LOK-3C0",
@@ -379,7 +418,7 @@
         "chain": "BNB",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:RUNE-A1F",
+        "memo": "STAKE:BNB.RUNE-A1F",
         "coins": [
             {
                 "asset": "BNB.BNB",
