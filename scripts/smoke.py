@@ -48,6 +48,10 @@ def main():
         "--no-verify", default=False, type=bool, help="Skip verifying results"
     )
 
+    parser.add_argument(
+        "--bitcoin-reorg", default=False, type=bool, help="Trigger a Bitcoin chain reorg"
+    )
+
     args = parser.parse_args()
 
     with open("data/smoke_test_transactions.json", "r") as f:
@@ -64,6 +68,7 @@ def main():
         args.generate_balances,
         args.fast_fail,
         args.no_verify,
+        args.bitcoin_reorg,
     )
     try:
         smoker.run()
@@ -84,6 +89,7 @@ class Smoker:
         gen_balances=False,
         fast_fail=False,
         no_verify=False,
+        bitcoin_reorg=False,
     ):
         self.binance = Binance()
         self.bitcoin = Bitcoin()
@@ -112,6 +118,7 @@ class Smoker:
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
         self.no_verify = no_verify
+        self.bitcoin_reorg = bitcoin_reorg
         self.exit = 0
 
         time.sleep(5)  # give thorchain extra time to start the blockchain
@@ -199,7 +206,7 @@ class Smoker:
                 )
                 self.error("Events mismatch")
 
-    @retry(stop=stop_after_attempt(10), wait=wait_fixed(1), reraise=True)
+    @retry(stop=stop_after_attempt(30), wait=wait_fixed(1), reraise=True)
     def run_health(self):
         self.health.run()
 
@@ -312,6 +319,19 @@ class Smoker:
     def run(self):
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
+
+            if self.bitcoin_reorg:
+                # get block hash from bitcoin we are going to invalidate later
+                if i == 35:
+                    current_height = self.mock_bitcoin.get_block_height()
+                    block_hash = self.mock_bitcoin.get_block_hash(current_height)
+                    logging.info(f"Block to invalidate {current_height} {block_hash}")
+
+                # now we processed some btc txs and we invalidate an older block
+                # to make those txs not valid anymore and test thornode reaction
+                if i == 38:
+                    self.mock_bitcoin.invalidate_block(block_hash)
+                    logging.info("Reorg triggered")
 
             logging.info(f"{i:2} {txn}")
 
