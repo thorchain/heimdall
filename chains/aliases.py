@@ -37,6 +37,14 @@ aliases_thor = {
 def get_aliases():
     return aliases_btc.keys()
 
+def get_address_prefix(chain):
+    if chain == "BNB":
+        return "tbnb"
+    if chain == "BTC":
+        return "bc"
+    if chain == "THOR":
+        return "thor"
+    raise Exception(f"Address prefix not found, chain not supported ({chain})")
 
 def get_alias_address(chain, alias):
     if not alias:

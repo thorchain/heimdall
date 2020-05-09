@@ -248,7 +248,7 @@
         "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.LOK-3C0",
+        "memo": "STAKE:BNB.LOK-3C0:STAKER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -261,7 +261,7 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.LOK-3C0",
+        "memo": "STAKE:BNB.LOK-3C0:STAKER-1",
         "coins": [
             {
                 "asset": "BNB.LOK-3C0",
@@ -310,18 +310,18 @@
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.TCAN-014",
+        "memo": "STAKE:THOR.CAT",
         "coins": [
             {
-                "asset": "BNB.BNB",
+                "asset": "THOR.FUNNY",
                 "amount": 150000000
             },
             {
                 "asset": "THOR.RUNE",
-                "amount": 50000000000
+                "amount": 50000000
             }
         ],
         "gas": null
@@ -335,19 +335,6 @@
             {
                 "asset": "THOR.RUNE",
                 "amount": 50000000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "BNB",
-        "from_address": "STAKER-2",
-        "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB",
-        "coins": [
-            {
-                "asset": "BNB.BNB",
-                "amount": 30000000
             }
         ],
         "gas": null
@@ -369,7 +356,20 @@
         "chain": "BNB",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB",
+        "memo": "STAKE:BNB.BNB:STAKER-2",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 30000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-2",
+        "to_address": "VAULT",
+        "memo": "STAKE:BNB.BNB:STAKER-2",
         "coins": [
             {
                 "asset": "BNB.BNB",
