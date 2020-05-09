@@ -129,7 +129,7 @@ class ThorchainSigner(HttpClient):
                     }
                 ],
             },
-            "mode": "block",
+            "mode": "sync",
         }
         return json.dumps(pushable_tx, separators=(",", ":"))
 
