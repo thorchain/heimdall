@@ -47,10 +47,13 @@ def main():
     parser.add_argument(
         "--no-verify", default=False, type=bool, help="Skip verifying results"
     )
+    parser.add_argument(
+        "--transactions", default="data/smoke_test_transactions.json", help="transactions json file"
+    )
 
     args = parser.parse_args()
 
-    with open("data/smoke_test_transactions.json", "r") as f:
+    with open(args.transactions, "r") as f:
         txns = json.load(f)
 
     health = Health(args.thorchain, args.midgard, args.binance, args.fast_fail)
