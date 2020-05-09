@@ -15,7 +15,8 @@ from utils.common import (
     Jsonable,
     get_rune_asset,
 )
-from chains.aliases import get_alias, get_alias_address, get_aliases
+
+from chains.aliases import get_alias, get_alias_address, get_aliases, get_address_prefix
 from chains.bitcoin import Bitcoin
 from chains.ethereum import Ethereum
 from chains.binance import Binance
@@ -479,6 +480,9 @@ class ThorchainState:
         """
         txns = []
         for coin in txn.coins:
+            pool = self.get_pool(coin.asset)
+            if pool.rune_balance == 0:
+                continue # no pool exists, skip it
             txns.append(
                 Transaction(
                     txn.chain,
@@ -782,7 +786,7 @@ class ThorchainState:
 
         out_txns = [
             Transaction(
-                Binance.chain,
+                RUNE.split('.')[0],
                 txn.to_address,
                 txn.from_address,
                 [Coin(RUNE, rune_amt)],

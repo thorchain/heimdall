@@ -135,7 +135,7 @@ class Smoker:
 
         self.thorchain.set_vault_pubkey(pubkey)
         if RUNE.split('.')[0] == "THOR":
-            self.thorchain.reserve = 40000000000000
+            self.thorchain.reserve = 22000000000000000
 
         self.thorchain_signer = ThorchainSigner(thor)
 
@@ -367,6 +367,16 @@ class Smoker:
 
                         # replicate order of outbounds broadcast from thorchain
                         self.thorchain.order_outbound_txns(outbounds)
+
+                        # expecting to see this many outbound txs
+                        count_outbounds = 0
+                        for o in outbounds:
+                            if o.chain == "THOR":
+                                continue # thorchain transactions are on chain
+                            pool = self.thorchain.get_pool(o.coins[0].asset)
+                            if pool.rune_balance == 0:
+                                continue # no pool exists, skip it
+                            count_outbounds += 1
 
                         for outbound in outbounds:
                             # update simulator state with outbound txs
