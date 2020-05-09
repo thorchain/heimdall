@@ -59,6 +59,9 @@ def main():
     parser.add_argument(
         "--no-verify", default=False, type=bool, help="Skip verifying results"
     )
+    parser.add_argument(
+        "--transactions", default="data/smoke_test_transactions.json", help="transactions json file"
+    )
 
     parser.add_argument(
         "--bitcoin-reorg",
@@ -76,10 +79,7 @@ def main():
 
     args = parser.parse_args()
 
-    txn_list = "data/smoke_test_native_transactions.json"
-    if RUNE.get_chain() == "BNB":
-        txn_list = "data/smoke_test_transactions.json"
-    with open(txn_list, "r") as f:
+    with open(args.transactions, "r") as f:
         txns = json.load(f)
 
     health = Health(args.thorchain, args.midgard, args.binance, args.fast_fail)
