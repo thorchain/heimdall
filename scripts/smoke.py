@@ -49,7 +49,10 @@ def main():
     )
 
     parser.add_argument(
-        "--bitcoin-reorg", default=False, type=bool, help="Trigger a Bitcoin chain reorg"
+        "--bitcoin-reorg",
+        default=False,
+        type=bool,
+        help="Trigger a Bitcoin chain reorg",
     )
 
     args = parser.parse_args()
