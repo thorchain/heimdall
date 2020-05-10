@@ -1,11 +1,18 @@
 import requests
 import json
+import os
 import hashlib
 
 from decimal import Decimal, getcontext
 
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+
+DEFAULT_RUNE_ASSET = "BNB.RUNE-A1F"
+
+
+def get_rune_asset():
+    return os.environ.get("RUNE", DEFAULT_RUNE_ASSET)
 
 
 def requests_retry_session(
@@ -80,7 +87,7 @@ class Jsonable:
 class Asset(str, Jsonable):
     def __new__(cls, value, *args, **kwargs):
         if len(value.split(".")) < 2:
-            value = f"BNB.{value}"  # default to binance chain
+            value = f"THOR.{value}"  # default to thorchain
         return super().__new__(cls, value)
 
     def is_bnb(self):
@@ -238,7 +245,7 @@ class Transaction(Jsonable):
 
     def get_asset_from_memo(self):
         parts = self.memo.split(":")
-        if len(parts) >= 2:
+        if len(parts) >= 2 and parts[1] != "":
             return Asset(parts[1])
         return None
 
