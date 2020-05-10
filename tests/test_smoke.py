@@ -10,7 +10,9 @@ from chains.bitcoin import Bitcoin
 from chains.ethereum import Ethereum
 from thorchain.thorchain import ThorchainState, Event
 from utils.breakpoint import Breakpoint
-from utils.common import Transaction
+from utils.common import Transaction, get_rune_asset, DEFAULT_RUNE_ASSET
+
+RUNE = get_rune_asset()
 
 # Init logging
 logging.basicConfig(
@@ -24,7 +26,9 @@ def get_balance(idx):
     Retrieve expected balance with given id
     """
     with open("data/smoke_test_balances.json") as f:
-        balances = json.load(f)
+        contents = f.read()
+        contents = contents.replace(DEFAULT_RUNE_ASSET, RUNE)
+        balances = json.loads(contents)
         for bal in balances:
             if idx == bal["TX"]:
                 return bal
@@ -35,7 +39,9 @@ def get_events():
     Retrieve expected events
     """
     with open("data/smoke_test_events.json") as f:
-        events = json.load(f)
+        contents = f.read()
+        contents = contents.replace(DEFAULT_RUNE_ASSET, RUNE)
+        events = json.loads(contents)
         return [Event.from_dict(evt) for evt in events]
     raise Exception("could not load events")
 
@@ -60,7 +66,9 @@ class TestSmoke(unittest.TestCase):
         thorchain = ThorchainState()  # init local thorchain
 
         with open("data/smoke_test_transactions.json", "r") as f:
-            loaded = json.load(f)
+            contents = f.read()
+            contents = contents.replace(DEFAULT_RUNE_ASSET, RUNE)
+            loaded = json.loads(contents)
 
         for i, txn in enumerate(loaded):
             txn = Transaction.from_dict(txn)

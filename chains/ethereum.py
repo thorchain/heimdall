@@ -1,5 +1,7 @@
 import time
 import logging
+import json
+import requests
 
 from web3 import Web3, HTTPProvider
 from eth_keys import KeyAPI
@@ -33,14 +35,16 @@ class MockEthereum:
 
     def __init__(self, base_url, doimport):
         self.web3 = Web3(HTTPProvider(base_url))
-        start = len(self.web3.eth.accounts)
-        logging.info(f"start {start}")
-        logging.info(f"accs {self.web3.eth.accounts}")
-        for i in range(start, len(self.private_keys)):
-            key = self.private_keys[i]
-            logging.info(f"key {key}")
-            pubkey = self.web3.geth.personal.import_raw_key(key, self.passphrase)
-            logging.info(f"pub {pubkey}")
+        for key in self.private_keys:
+            payload = json.dumps({"method": "personal_importRawKey", "params": [key, self.passphrase]})
+            headers = {'content-type': "application/json", 'cache-control': "no-cache"}
+            try:
+                response = requests.request("POST", base_url, data=payload, headers=headers)
+            except requests.exceptions.RequestException as e:
+                logging.error(f"{e}")
+            except:
+                logging.info(f"Imported {key}")
+            logging.info(f"accs {self.web3.eth.accounts}")
 
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
@@ -115,12 +119,16 @@ class MockEthereum:
 
         # update memo with actual address (over alias name)
         for alias in get_aliases():
+            chain = txn.chain
+            asset = txn.get_asset_from_memo()
+            if asset:
+                chain = asset.get_chain()
             # we use RUNE BNB address to identify a cross chain stake
             if txn.memo.startswith("STAKE"):
-                addr = get_alias_address("ETH", alias)
-            else:
-                addr = get_alias_address(txn.chain, alias)
+                chain = "BNB"
+            addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
+
         logging.info(f"memo {txn.memo} len {len(txn.memo)}")
         amount = int(txn.coins[0].amount / Coin.ONE * self.gwei)
 

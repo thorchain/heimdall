@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 from chains.binance import MockBinance
 from thorchain.thorchain import ThorchainState, ThorchainClient
-from utils.common import Transaction, Coin
+from utils.common import Transaction, Coin, get_rune_asset
 from chains.aliases import get_alias
 
 # Init logging
@@ -15,6 +15,8 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname).4s | %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
+
+RUNE = get_rune_asset()
 
 
 def main():
@@ -81,8 +83,8 @@ class Benchie:
                 get_alias("BNB", "MASTER"),
                 get_alias("BNB", "STAKER-1"),
                 [
-                    Coin("BNB", self.num * 100 * Coin.ONE),
-                    Coin("RUNE-A1F", self.num * 100 * Coin.ONE),
+                    Coin("BNB.BNB", self.num * 100 * Coin.ONE),
+                    Coin(RUNE, self.num * 100 * Coin.ONE),
                 ],
             )
         )
@@ -94,8 +96,8 @@ class Benchie:
                 get_alias("BNB", "MASTER"),
                 get_alias("BNB", "USER-1"),
                 [
-                    Coin("BNB", self.num * 100 * Coin.ONE),
-                    Coin("RUNE-A1F", self.num * 100 * Coin.ONE),
+                    Coin("BNB.BNB", self.num * 100 * Coin.ONE),
+                    Coin(RUNE, self.num * 100 * Coin.ONE),
                 ],
             )
         )
@@ -108,8 +110,8 @@ class Benchie:
                     get_alias("BNB", "STAKER-1"),
                     get_alias("BNB", "VAULT"),
                     [
-                        Coin("BNB", self.num * 100 * Coin.ONE),
-                        Coin("RUNE-A1F", self.num * 100 * Coin.ONE),
+                        Coin("BNB.BNB", self.num * 100 * Coin.ONE),
+                        Coin(RUNE, self.num * 100 * Coin.ONE),
                     ],
                     memo="STAKE:BNB.BNB",
                 )
@@ -124,12 +126,12 @@ class Benchie:
         for x in range(0, self.num):
             if self.tx_type == "stake":
                 coins = [
-                    Coin("RUNE-A1F", 10 * Coin.ONE),
-                    Coin("BNB", 10 * Coin.ONE),
+                    Coin(RUNE, 10 * Coin.ONE),
+                    Coin("BNB.BNB", 10 * Coin.ONE),
                 ]
             elif self.tx_type == "swap":
                 coins = [
-                    Coin("RUNE-A1F", 10 * Coin.ONE),
+                    Coin(RUNE, 10 * Coin.ONE),
                 ]
             txns.append(
                 Transaction(

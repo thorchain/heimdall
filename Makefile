@@ -1,5 +1,6 @@
 IMAGE_NAME = registry.gitlab.com/thorchain/heimdall
 DOCKER_OPTS = --network=host --rm -e PYTHONPATH=/app -v ${PWD}:/app -w /app
+RUNE?=BNB.RUNE-A1F
 
 clean:
 	rm *.pyc
@@ -14,7 +15,7 @@ format:
 	@docker run --rm -v ${PWD}:/app cytopia/black /app
 
 test:
-	@docker run ${DOCKER_OPTS} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} python -m unittest tests/test_*
+	@docker run ${DOCKER_OPTS} -e RUNE=${RUNE} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} python -m unittest tests/test_*
 
 test-coverage:
 	@docker run ${DOCKER_OPTS} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} coverage run -m unittest tests/test_*
@@ -38,7 +39,7 @@ health:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py
 
 bitcoin-reorg:
-	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/bitcoin_reorg.py
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True --bitcoin-reorg=True
 
 shell:
 	@docker run ${DOCKER_OPTS} -it ${IMAGE_NAME} sh

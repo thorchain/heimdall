@@ -6,7 +6,7 @@ import logging
 from chains.binance import MockBinance, Account
 from thorchain.thorchain import ThorchainClient
 from thorchain.midgard import MidgardClient
-from utils.common import Coin
+from utils.common import Coin, get_rune_asset
 from utils.segwit_addr import decode_address
 
 # Init logging
@@ -14,6 +14,8 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname).4s | %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
+
+RUNE = get_rune_asset()
 
 
 def main():
@@ -33,6 +35,7 @@ def main():
     health = Health(args.thorchain, args.midgard, args.binance)
     try:
         health.run()
+        sys.exit(health.exit)
     except Exception as e:
         logging.error(e)
         sys.exit(1)
@@ -114,11 +117,11 @@ class Health:
             mpool = self.get_midgard_pool(asset)
 
             # Thorchain Coins
-            trune_coin = Coin("RUNE-A1F", tpool["balance_rune"])
+            trune_coin = Coin(RUNE, tpool["balance_rune"])
             tasset_coin = Coin(asset, tpool["balance_asset"])
 
             # Midgard Coins
-            mrune_coin = Coin("RUNE-A1F", mpool["runeDepth"])
+            mrune_coin = Coin(RUNE, mpool["runeDepth"])
             masset_coin = Coin(asset, mpool["assetDepth"])
 
             # Check balances
