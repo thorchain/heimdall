@@ -29,6 +29,7 @@ class ThorchainClient(HttpClient):
     """
     A client implementation to thorchain API
     """
+
     ws = None
     events = []
 
@@ -67,7 +68,7 @@ class ThorchainClient(HttpClient):
             if "Tx" in event_category:
                 events = msg["result"]["data"]["value"]["TxResult"]["result"]["events"]
             self.process_events(events)
-        except:
+        except Exception:
             pass
 
     def process_events(self, events):
@@ -79,8 +80,8 @@ class ThorchainClient(HttpClient):
 
     def decode_event(self, event):
         for attr in event["attributes"]:
-            attr["key"] = base64.b64decode(attr["key"]).decode('utf-8')
-            attr["value"] = base64.b64decode(attr["value"]).decode('utf-8')
+            attr["key"] = base64.b64decode(attr["key"]).decode("utf-8")
+            attr["value"] = base64.b64decode(attr["value"]).decode("utf-8")
 
     def ws_error(self, error):
         """
