@@ -1,6 +1,10 @@
 import time
+import base64
 import logging
 import itertools
+import threading
+import websocket
+import json
 from copy import deepcopy
 
 from utils.common import (
@@ -17,12 +21,72 @@ from chains.bitcoin import Bitcoin
 from chains.binance import Binance
 
 RUNE = get_rune_asset()
+SUBSCRIBE_BLOCK = {"method": "subscribe", "params": {"query": "tm.event='NewBlock'"}}
+SUBSCRIBE_TX = {"method": "subscribe", "params": {"query": "tm.event='Tx'"}}
 
 
 class ThorchainClient(HttpClient):
     """
     A client implementation to thorchain API
     """
+    ws = None
+    events = []
+
+    def __init__(self, base_url):
+        super().__init__(base_url)
+        if not ThorchainClient.ws:
+            ThorchainClient.ws = websocket.WebSocketApp(
+                self.get_websocket_uri(),
+                on_open=self.ws_open,
+                on_error=self.ws_error,
+                on_message=self.ws_message,
+            )
+            threading.Thread(target=ThorchainClient.ws.run_forever, daemon=True).start()
+
+    def get_websocket_uri(self):
+        uri = self.base_url.replace("http", "ws")
+        uri = uri.replace("1317", "26657")
+        return f"{uri}/websocket"
+
+    def ws_open(self):
+        """
+        Websocket connection open, subscribe to events
+        """
+        ThorchainClient.ws.send(json.dumps(SUBSCRIBE_BLOCK))
+        ThorchainClient.ws.send(json.dumps(SUBSCRIBE_TX))
+
+    def ws_message(self, msg):
+        """
+        Websocket message handler
+        """
+        try:
+            msg = json.loads(msg)
+            event_category = msg["result"]["data"]["type"]
+            if "NewBlock" in event_category:
+                events = msg["result"]["data"]["value"]["result_end_block"]["events"]
+            if "Tx" in event_category:
+                events = msg["result"]["data"]["value"]["TxResult"]["result"]["events"]
+            self.process_events(events)
+        except:
+            pass
+
+    def process_events(self, events):
+        for evt in events:
+            if evt["type"] == "message":
+                continue
+            self.decode_event(evt)
+            logging.info(evt)
+
+    def decode_event(self, event):
+        for attr in event["attributes"]:
+            attr["key"] = base64.b64decode(attr["key"]).decode('utf-8')
+            attr["value"] = base64.b64decode(attr["value"]).decode('utf-8')
+
+    def ws_error(self, error):
+        """
+        Websocket error handler
+        """
+        logging.error(error)
 
     def get_block_height(self):
         """
