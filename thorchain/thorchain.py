@@ -10,10 +10,13 @@ from utils.common import (
     get_share,
     HttpClient,
     Jsonable,
+    get_rune_asset,
 )
 from chains.aliases import get_alias, get_alias_address, get_aliases
 from chains.bitcoin import Bitcoin
 from chains.binance import Binance
+
+RUNE = get_rune_asset()
 
 
 class ThorchainClient(HttpClient):
@@ -615,7 +618,7 @@ class ThorchainState:
                 Binance.chain,
                 txn.to_address,
                 txn.from_address,
-                [Coin("RUNE-A1F", rune_amt)],
+                [Coin(RUNE, rune_amt)],
                 f"OUTBOUND:{txn.id.upper()}",
             ),
             Transaction(
@@ -700,7 +703,7 @@ class ThorchainState:
                 return self.refund(txn, refund_event)
 
             emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
-                txn.coins[0], "RUNE-A1F"
+                txn.coins[0], RUNE
             )
             if str(pool.asset) not in self.liquidity:
                 self.liquidity[str(pool.asset)] = 0
@@ -733,7 +736,7 @@ class ThorchainState:
 
             pools.append(pool)
             in_txn.coins[0] = emit
-            source = Asset("RUNE-A1F")
+            source = Asset(RUNE)
             target = asset
 
         # set asset to non-rune asset
@@ -848,7 +851,7 @@ class ThorchainState:
         else:
             newPool.add(0, x)
             newPool.sub(emit, 0)
-            emit = Coin("RUNE-A1F", emit)
+            emit = Coin(RUNE, emit)
 
         return emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, newPool
 

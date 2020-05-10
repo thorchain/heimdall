@@ -53,7 +53,7 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 150000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -84,11 +84,11 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 150000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 0,
-            "RUNE-A1F": 0
+            "BNB.RUNE-A1F": 0
         }
     },
     {
@@ -119,11 +119,11 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 150000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 150000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -154,11 +154,11 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 150500000,
-            "RUNE-A1F": 49833887044
+            "BNB.RUNE-A1F": 49833887044
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 149655603,
-            "RUNE-A1F": 50114817210
+            "BNB.RUNE-A1F": 50114817210
         }
     },
     {
@@ -189,11 +189,11 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 150462500,
-            "RUNE-A1F": 49846304125
+            "BNB.RUNE-A1F": 49846304125
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 150155603,
-            "RUNE-A1F": 49947940930
+            "BNB.RUNE-A1F": 49947940930
         }
     },
     {
@@ -224,11 +224,11 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 150425000,
-            "RUNE-A1F": 49858727396
+            "BNB.RUNE-A1F": 49858727396
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         }
     },
     {
@@ -260,15 +260,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 150425000,
-            "RUNE-A1F": 49858727396
+            "BNB.RUNE-A1F": 49858727396
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -300,15 +300,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 150651702,
-            "RUNE-A1F": 49783486808
+            "BNB.RUNE-A1F": 49783486808
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -340,15 +340,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 150879316,
-            "RUNE-A1F": 49708171505
+            "BNB.RUNE-A1F": 49708171505
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -380,15 +380,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 151145346,
-            "RUNE-A1F": 49620476515
+            "BNB.RUNE-A1F": 49620476515
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -420,15 +420,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 151374949,
-            "RUNE-A1F": 49544999704
+            "BNB.RUNE-A1F": 49544999704
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -460,15 +460,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 151605479,
-            "RUNE-A1F": 49469448301
+            "BNB.RUNE-A1F": 49469448301
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -500,15 +500,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 181605479,
-            "RUNE-A1F": 49469448301
+            "BNB.RUNE-A1F": 49469448301
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -540,15 +540,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 181605479,
-            "RUNE-A1F": 59469448301
+            "BNB.RUNE-A1F": 59469448301
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -580,15 +580,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 271605479,
-            "RUNE-A1F": 89469448301
+            "BNB.RUNE-A1F": 89469448301
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -620,15 +620,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 301605479,
-            "RUNE-A1F": 94469448301
+            "BNB.RUNE-A1F": 94469448301
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -660,15 +660,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 301567979,
-            "RUNE-A1F": 94481194123
+            "BNB.RUNE-A1F": 94481194123
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -700,15 +700,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 301530479,
-            "RUNE-A1F": 94492942866
+            "BNB.RUNE-A1F": 94492942866
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -740,15 +740,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 301812083,
-            "RUNE-A1F": 94404669685
+            "BNB.RUNE-A1F": 94404669685
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -780,15 +780,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 302094283,
-            "RUNE-A1F": 94316374594
+            "BNB.RUNE-A1F": 94316374594
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -820,15 +820,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 302056781,
-            "RUNE-A1F": 94327977870
+            "BNB.RUNE-A1F": 94327977870
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -860,15 +860,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 302019281,
-            "RUNE-A1F": 94339688579
+            "BNB.RUNE-A1F": 94339688579
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -900,15 +900,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 276074571,
-            "RUNE-A1F": 103387174713
+            "BNB.RUNE-A1F": 103387174713
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -940,15 +940,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 286037071,
-            "RUNE-A1F": 99786259577
+            "BNB.RUNE-A1F": 99786259577
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -980,15 +980,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 285999571,
-            "RUNE-A1F": 99799341744
+            "BNB.RUNE-A1F": 99799341744
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -1020,15 +1020,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 262525788,
-            "RUNE-A1F": 108887086045
+            "BNB.RUNE-A1F": 108887086045
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -1060,15 +1060,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 262729387,
-            "RUNE-A1F": 108802611273
+            "BNB.RUNE-A1F": 108802611273
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
-            "RUNE-A1F": 50000000000
+            "BNB.RUNE-A1F": 50000000000
         }
     },
     {
@@ -1100,15 +1100,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 262691887,
-            "RUNE-A1F": 108818140933
+            "BNB.RUNE-A1F": 108818140933
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 45000000000,
-            "RUNE-A1F": 44444444446
+            "BNB.RUNE-A1F": 44444444446
         }
     },
     {
@@ -1140,15 +1140,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 262654387,
-            "RUNE-A1F": 108833675026
+            "BNB.RUNE-A1F": 108833675026
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40992345905,
-            "RUNE-A1F": 48889956377
+            "BNB.RUNE-A1F": 48889956377
         }
     },
     {
@@ -1180,15 +1180,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 252340217,
-            "RUNE-A1F": 113298350094
+            "BNB.RUNE-A1F": 113298350094
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 45992345905,
-            "RUNE-A1F": 43574946302
+            "BNB.RUNE-A1F": 43574946302
         }
     },
     {
@@ -1220,15 +1220,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 257302717,
-            "RUNE-A1F": 111113205391
+            "BNB.RUNE-A1F": 111113205391
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 44020067553,
-            "RUNE-A1F": 45536436603
+            "BNB.RUNE-A1F": 45536436603
         }
     },
     {
@@ -1260,15 +1260,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 185112931,
-            "RUNE-A1F": 79803575207
+            "BNB.RUNE-A1F": 79803575207
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 44020067553,
-            "RUNE-A1F": 45536436603
+            "BNB.RUNE-A1F": 45536436603
         }
     },
     {
@@ -1300,15 +1300,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 185037931,
-            "RUNE-A1F": 79835908270
+            "BNB.RUNE-A1F": 79835908270
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 0,
-            "RUNE-A1F": 0
+            "BNB.RUNE-A1F": 0
         }
     },
     {
@@ -1340,15 +1340,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 112816444,
-            "RUNE-A1F": 48540028817
+            "BNB.RUNE-A1F": 48540028817
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 135290355,
-            "RUNE-A1F": 44902924842
+            "BNB.RUNE-A1F": 44902924842
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 0,
-            "RUNE-A1F": 0
+            "BNB.RUNE-A1F": 0
         }
     },
     {
@@ -1380,15 +1380,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 112778944,
-            "RUNE-A1F": 48556163443
+            "BNB.RUNE-A1F": 48556163443
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 0,
-            "RUNE-A1F": 0
+            "BNB.RUNE-A1F": 0
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 0,
-            "RUNE-A1F": 0
+            "BNB.RUNE-A1F": 0
         }
     },
     {
@@ -1420,15 +1420,15 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 0,
-            "RUNE-A1F": 0
+            "BNB.RUNE-A1F": 0
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 0,
-            "RUNE-A1F": 0
+            "BNB.RUNE-A1F": 0
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 0,
-            "RUNE-A1F": 0
+            "BNB.RUNE-A1F": 0
         }
     }
 ]

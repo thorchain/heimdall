@@ -1,3 +1,8 @@
+from utils.common import get_rune_asset
+
+RUNE = get_rune_asset()
+
+
 class Breakpoint:
     """
     This takes a snapshot picture of the chain(s) and generates json
@@ -33,7 +38,7 @@ class Breakpoint:
         for pool in self.thorchain.pools:
             snap["POOL." + str(pool.asset)] = {
                 str(pool.asset): int(pool.asset_balance),
-                "RUNE-A1F": int(pool.rune_balance),
+                RUNE: int(pool.rune_balance),
             }
 
         return snap

@@ -149,8 +149,10 @@ class Smoker:
                 if address == macct["address"]:
                     sacct = self.binance.get_account(address)
                     for bal in macct["balances"]:
-                        sim_coin = Coin(bal["denom"], sacct.get(bal["denom"]))
-                        bnb_coin = Coin(bal["denom"], bal["amount"])
+                        sim_coin = Coin(
+                            f"BNB.{bal['denom']}", sacct.get(f"BNB.{bal['denom']}")
+                        )
+                        bnb_coin = Coin(f"BNB.{bal['denom']}", bal["amount"])
                         if sim_coin != bnb_coin:
                             self.error(
                                 f"Bad binance balance: {name} {bnb_coin} != {sim_coin}"
