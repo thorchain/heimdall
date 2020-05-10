@@ -35,6 +35,7 @@ def main():
     health = Health(args.thorchain, args.midgard, args.binance)
     try:
         health.run()
+        sys.exit(health.exit)
     except Exception as e:
         logging.error(e)
         sys.exit(1)

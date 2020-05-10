@@ -238,17 +238,17 @@
     },
     {
         "id": 8,
-        "type": "swap",
+        "type": "stake",
         "in_tx": {
             "id": "TODO",
             "chain": "BNB",
-            "from_address": "USER-1",
+            "from_address": "STAKER-2",
             "to_address": "VAULT",
-            "memo": "SWAP:BTC.BTC:USER-1",
+            "memo": "STAKE:BTC.BTC:STAKER-2",
             "coins": [
                 {
-                    "asset": "BNB.BNB",
-                    "amount": 500000
+                    "asset": "BNB.RUNE-A1F",
+                    "amount": 200000000
                 }
             ],
             "gas": [
@@ -261,16 +261,11 @@
         "out_txs": [
             {
                 "id": "0000000000000000000000000000000000000000000000000000000000000000",
-                "chain": "BNB",
-                "from_address": "USER-1",
-                "to_address": "VAULT",
-                "memo": "SWAP:BTC.BTC:USER-1",
-                "coins": [
-                    {
-                        "asset": "BNB.RUNE-A1F",
-                        "amount": 165561086
-                    }
-                ],
+                "chain": "",
+                "from_address": "",
+                "to_address": "",
+                "memo": "",
+                "coins": null,
                 "gas": null
             }
         ],
@@ -279,72 +274,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "pool": "BNB.BNB",
-            "price_target": 0,
-            "trade_slip": 67,
-            "liquidity_fee": 551870,
-            "liquidity_fee_in_rune": 551870
+            "pool": "BTC.BTC",
+            "stake_units": 0
         },
         "status": "Success"
     },
     {
         "id": 9,
-        "type": "swap",
-        "in_tx": {
-            "id": "TODO",
-            "chain": "BNB",
-            "from_address": "USER-1",
-            "to_address": "VAULT",
-            "memo": "SWAP:BTC.BTC:USER-1",
-            "coins": [
-                {
-                    "asset": "BNB.RUNE-A1F",
-                    "amount": 165561086
-                }
-            ],
-            "gas": null
-        },
-        "out_txs": [
-            {
-                "id": "TODO",
-                "chain": "BTC",
-                "from_address": "VAULT",
-                "to_address": "USER-1",
-                "memo": "OUTBOUND:TODO",
-                "coins": [
-                    {
-                        "asset": "BTC.BTC",
-                        "amount": 195384
-                    }
-                ],
-                "gas": [
-                    {
-                        "asset": "BTC.BTC",
-                        "amount": 149013
-                    }
-                ]
-            }
-        ],
-        "fee": {
-            "coins": [
-                {
-                    "asset": "BTC.BTC",
-                    "amount": 298026
-                }
-            ],
-            "pool_deduct": 100000000
-        },
-        "event": {
-            "pool": "BTC.BTC",
-            "price_target": 0,
-            "trade_slip": 66,
-            "liquidity_fee": 1633,
-            "liquidity_fee_in_rune": 544333
-        },
-        "status": "Success"
-    },
-    {
-        "id": 10,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -361,62 +297,24 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 2152497,
-            "pool_rewards": [
-                {
-                    "asset": "BNB.BNB",
-                    "amount": -551870
-                },
-                {
-                    "asset": "BTC.BTC",
-                    "amount": -544333
-                }
-            ]
+            "bond_reward": 1056291,
+            "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 11,
-        "type": "gas",
-        "in_tx": {
-            "id": "0000000000000000000000000000000000000000000000000000000000000000",
-            "chain": "",
-            "from_address": "",
-            "to_address": "",
-            "memo": "",
-            "coins": null,
-            "gas": null
-        },
-        "out_txs": null,
-        "fee": {
-            "coins": null,
-            "pool_deduct": 0
-        },
-        "event": {
-            "pools": [
-                {
-                    "asset": "BTC.BTC",
-                    "asset_amt": 149013,
-                    "rune_amt": 49800457,
-                    "transaction_count": 2
-                }
-            ]
-        },
-        "status": "Success"
-    },
-    {
-        "id": 12,
-        "type": "swap",
+        "id": 10,
+        "type": "stake",
         "in_tx": {
             "id": "TODO",
             "chain": "BTC",
-            "from_address": "USER-1",
+            "from_address": "STAKER-2",
             "to_address": "VAULT",
-            "memo": "SWAP:BNB.RUNE-A1F:USER-1",
+            "memo": "STAKE:BTC.BTC:STAKER-2",
             "coins": [
                 {
                     "asset": "BTC.BTC",
-                    "amount": 500000
+                    "amount": 150000000
                 }
             ],
             "gas": [
@@ -428,45 +326,27 @@
         },
         "out_txs": [
             {
-                "id": "TODO",
-                "chain": "BNB",
-                "from_address": "VAULT",
-                "to_address": "USER-1",
-                "memo": "OUTBOUND:TODO",
-                "coins": [
-                    {
-                        "asset": "BNB.RUNE-A1F",
-                        "amount": 66320603
-                    }
-                ],
-                "gas": [
-                    {
-                        "asset": "BNB.BNB",
-                        "amount": 37500
-                    }
-                ]
+                "id": "0000000000000000000000000000000000000000000000000000000000000000",
+                "chain": "",
+                "from_address": "",
+                "to_address": "",
+                "memo": "",
+                "coins": null,
+                "gas": null
             }
         ],
         "fee": {
-            "coins": [
-                {
-                    "asset": "BNB.RUNE-A1F",
-                    "amount": 100000000
-                }
-            ],
+            "coins": null,
             "pool_deduct": 0
         },
         "event": {
             "pool": "BTC.BTC",
-            "price_target": 0,
-            "trade_slip": 67,
-            "liquidity_fee": 555677,
-            "liquidity_fee_in_rune": 555677
+            "stake_units": 6362798804
         },
         "status": "Success"
     },
     {
-        "id": 13,
+        "id": 11,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -483,211 +363,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1611972,
-            "pool_rewards": [
-                {
-                    "asset": "BTC.BTC",
-                    "amount": -555677
-                }
-            ]
-        },
-        "status": "Success"
-    },
-    {
-        "id": 14,
-        "type": "gas",
-        "in_tx": {
-            "id": "0000000000000000000000000000000000000000000000000000000000000000",
-            "chain": "",
-            "from_address": "",
-            "to_address": "",
-            "memo": "",
-            "coins": null,
-            "gas": null
-        },
-        "out_txs": null,
-        "fee": {
-            "coins": null,
-            "pool_deduct": 0
-        },
-        "event": {
-            "pools": [
-                {
-                    "asset": "BNB.BNB",
-                    "asset_amt": 37500,
-                    "rune_amt": 12417081,
-                    "transaction_count": 2
-                }
-            ]
-        },
-        "status": "Success"
-    },
-    {
-        "id": 15,
-        "type": "unstake",
-        "in_tx": {
-            "id": "TODO",
-            "chain": "BNB",
-            "from_address": "STAKER-1",
-            "to_address": "VAULT",
-            "memo": "WITHDRAW:BTC.BTC:1000",
-            "coins": [
-                {
-                    "asset": "BNB.RUNE-A1F",
-                    "amount": 1
-                }
-            ],
-            "gas": [
-                {
-                    "asset": "BNB.BNB",
-                    "amount": 37500
-                }
-            ]
-        },
-        "out_txs": [
-            {
-                "id": "TODO",
-                "chain": "BNB",
-                "from_address": "VAULT",
-                "to_address": "STAKER-1",
-                "memo": "OUTBOUND:TODO",
-                "coins": [
-                    {
-                        "asset": "BNB.RUNE-A1F",
-                        "amount": 4894794093
-                    }
-                ],
-                "gas": [
-                    {
-                        "asset": "BNB.BNB",
-                        "amount": 37500
-                    }
-                ]
-            },
-            {
-                "id": "TODO",
-                "chain": "BTC",
-                "from_address": "VAULT",
-                "to_address": "STAKER-1",
-                "memo": "OUTBOUND:TODO",
-                "coins": [
-                    {
-                        "asset": "BTC.BTC",
-                        "amount": 14714936
-                    }
-                ],
-                "gas": [
-                    {
-                        "asset": "BTC.BTC",
-                        "amount": 150312
-                    }
-                ]
-            }
-        ],
-        "fee": {
-            "coins": [
-                {
-                    "asset": "BNB.RUNE-A1F",
-                    "amount": 100000000
-                },
-                {
-                    "asset": "BTC.BTC",
-                    "amount": 300624
-                }
-            ],
-            "pool_deduct": 100000000
-        },
-        "event": {
-            "pool": "BTC.BTC",
-            "stake_units": 2507500000,
-            "basis_points": 1000,
-            "asymmetry": 0
-        },
-        "status": "Success"
-    },
-    {
-        "id": 16,
-        "type": "rewards",
-        "in_tx": {
-            "id": "0000000000000000000000000000000000000000000000000000000000000000",
-            "chain": "",
-            "from_address": "",
-            "to_address": "",
-            "memo": "",
-            "coins": null,
-            "gas": null
-        },
-        "out_txs": null,
-        "fee": {
-            "coins": null,
-            "pool_deduct": 0
-        },
-        "event": {
-            "bond_reward": 1056300,
+            "bond_reward": 1056291,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 17,
-        "type": "gas",
-        "in_tx": {
-            "id": "0000000000000000000000000000000000000000000000000000000000000000",
-            "chain": "",
-            "from_address": "",
-            "to_address": "",
-            "memo": "",
-            "coins": null,
-            "gas": null
-        },
-        "out_txs": null,
-        "fee": {
-            "coins": null,
-            "pool_deduct": 0
-        },
-        "event": {
-            "pools": [
-                {
-                    "asset": "BNB.BNB",
-                    "asset_amt": 37500,
-                    "rune_amt": 12423271,
-                    "transaction_count": 2
-                }
-            ]
-        },
-        "status": "Success"
-    },
-    {
-        "id": 18,
-        "type": "gas",
-        "in_tx": {
-            "id": "0000000000000000000000000000000000000000000000000000000000000000",
-            "chain": "",
-            "from_address": "",
-            "to_address": "",
-            "memo": "",
-            "coins": null,
-            "gas": null
-        },
-        "out_txs": null,
-        "fee": {
-            "coins": null,
-            "pool_deduct": 0
-        },
-        "event": {
-            "pools": [
-                {
-                    "asset": "BTC.BTC",
-                    "asset_amt": 150312,
-                    "rune_amt": 49778005,
-                    "transaction_count": 2
-                }
-            ]
-        },
-        "status": "Success"
-    },
-    {
-        "id": 19,
+        "id": 12,
         "type": "stake",
         "in_tx": {
             "id": "TODO",
@@ -734,7 +416,7 @@
         "status": "Success"
     },
     {
-        "id": 20,
+        "id": 13,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -751,13 +433,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056298,
+            "bond_reward": 1056291,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 21,
+        "id": 14,
         "type": "refund",
         "in_tx": {
             "id": "TODO",
@@ -811,7 +493,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 149698298
+                        "amount": 149700000
                     }
                 ],
                 "gas": [
@@ -826,7 +508,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 301702
+                    "amount": 300000
                 },
                 {
                     "asset": "BNB.RUNE-A1F",
@@ -842,7 +524,7 @@
         "status": "Refund"
     },
     {
-        "id": 22,
+        "id": 15,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -859,13 +541,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056304,
+            "bond_reward": 1056296,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 23,
+        "id": 16,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -886,7 +568,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 75000,
-                    "rune_amt": 24759412,
+                    "rune_amt": 24900200,
                     "transaction_count": 3
                 }
             ]
@@ -894,7 +576,7 @@
         "status": "Success"
     },
     {
-        "id": 24,
+        "id": 17,
         "type": "refund",
         "in_tx": {
             "id": "TODO",
@@ -948,7 +630,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 149697386
+                        "amount": 149699098
                     }
                 ],
                 "gas": [
@@ -963,7 +645,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 302614
+                    "amount": 300902
                 },
                 {
                     "asset": "BNB.RUNE-A1F",
@@ -979,7 +661,7 @@
         "status": "Refund"
     },
     {
-        "id": 25,
+        "id": 18,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -996,13 +678,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056308,
+            "bond_reward": 1056301,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 26,
+        "id": 19,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1023,7 +705,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 75000,
-                    "rune_amt": 24684697,
+                    "rune_amt": 24825412,
                     "transaction_count": 3
                 }
             ]
@@ -1031,7 +713,7 @@
         "status": "Success"
     },
     {
-        "id": 27,
+        "id": 20,
         "type": "refund",
         "in_tx": {
             "id": "TODO",
@@ -1062,7 +744,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 9696470
+                        "amount": 9698191
                     }
                 ],
                 "gas": [
@@ -1077,7 +759,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 303530
+                    "amount": 301809
                 }
             ],
             "pool_deduct": 100000000
@@ -1089,7 +771,7 @@
         "status": "Refund"
     },
     {
-        "id": 28,
+        "id": 21,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1106,13 +788,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056310,
+            "bond_reward": 1056303,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 29,
+        "id": 22,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1133,7 +815,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 12305010,
+                    "rune_amt": 12375331,
                     "transaction_count": 2
                 }
             ]
@@ -1141,7 +823,7 @@
         "status": "Success"
     },
     {
-        "id": 30,
+        "id": 23,
         "type": "refund",
         "in_tx": {
             "id": "TODO",
@@ -1195,7 +877,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 149695397
+                        "amount": 149697129
                     }
                 ],
                 "gas": [
@@ -1210,7 +892,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 304603
+                    "amount": 302871
                 },
                 {
                     "asset": "BNB.RUNE-A1F",
@@ -1226,7 +908,7 @@
         "status": "Refund"
     },
     {
-        "id": 31,
+        "id": 24,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1243,13 +925,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056315,
+            "bond_reward": 1056308,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 32,
+        "id": 25,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1270,7 +952,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 75000,
-                    "rune_amt": 24523189,
+                    "rune_amt": 24663653,
                     "transaction_count": 3
                 }
             ]
@@ -1278,7 +960,7 @@
         "status": "Success"
     },
     {
-        "id": 33,
+        "id": 26,
         "type": "refund",
         "in_tx": {
             "id": "TODO",
@@ -1312,8 +994,8 @@
                 "memo": "REFUND:TODO",
                 "coins": [
                     {
-                        "asset": "BNB.BNB",
-                        "amount": 149694470
+                        "asset": "BNB.RUNE-A1F",
+                        "amount": 49900000000
                     }
                 ],
                 "gas": [
@@ -1331,8 +1013,8 @@
                 "memo": "REFUND:TODO",
                 "coins": [
                     {
-                        "asset": "BNB.RUNE-A1F",
-                        "amount": 49900000000
+                        "asset": "BNB.BNB",
+                        "amount": 149696211
                     }
                 ],
                 "gas": [
@@ -1347,7 +1029,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 305530
+                    "amount": 303789
                 },
                 {
                     "asset": "BNB.RUNE-A1F",
@@ -1363,7 +1045,7 @@
         "status": "Refund"
     },
     {
-        "id": 34,
+        "id": 27,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1380,13 +1062,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056320,
+            "bond_reward": 1056313,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 35,
+        "id": 28,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1407,7 +1089,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 75000,
-                    "rune_amt": 24448597,
+                    "rune_amt": 24588987,
                     "transaction_count": 3
                 }
             ]
@@ -1415,7 +1097,7 @@
         "status": "Success"
     },
     {
-        "id": 36,
+        "id": 29,
         "type": "stake",
         "in_tx": {
             "id": "TODO",
@@ -1453,12 +1135,12 @@
         },
         "event": {
             "pool": "BNB.BNB",
-            "stake_units": 2050504783
+            "stake_units": 2061268887
         },
         "status": "Success"
     },
     {
-        "id": 37,
+        "id": 30,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1475,13 +1157,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056319,
+            "bond_reward": 1056312,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 38,
+        "id": 31,
         "type": "stake",
         "in_tx": {
             "id": "TODO",
@@ -1519,12 +1201,12 @@
         },
         "event": {
             "pool": "BNB.BNB",
-            "stake_units": 2507634402
+            "stake_units": 2507598043
         },
         "status": "Success"
     },
     {
-        "id": 39,
+        "id": 32,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1541,13 +1223,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056319,
+            "bond_reward": 1056312,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 40,
+        "id": 33,
         "type": "stake",
         "in_tx": {
             "id": "TODO",
@@ -1589,12 +1271,12 @@
         },
         "event": {
             "pool": "BNB.BNB",
-            "stake_units": 14956983685
+            "stake_units": 14980537123
         },
         "status": "Success"
     },
     {
-        "id": 41,
+        "id": 34,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1611,13 +1293,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056319,
+            "bond_reward": 1056312,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 42,
+        "id": 35,
         "type": "add",
         "in_tx": {
             "id": "TODO",
@@ -1653,7 +1335,7 @@
         "status": "Success"
     },
     {
-        "id": 43,
+        "id": 36,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1670,13 +1352,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056319,
+            "bond_reward": 1056312,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 44,
+        "id": 37,
         "type": "refund",
         "in_tx": {
             "id": "TODO",
@@ -1734,7 +1416,7 @@
         "status": "Refund"
     },
     {
-        "id": 45,
+        "id": 38,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1751,13 +1433,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056322,
+            "bond_reward": 1056314,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 46,
+        "id": 39,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1778,7 +1460,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 11745822,
+                    "rune_amt": 11780402,
                     "transaction_count": 2
                 }
             ]
@@ -1786,7 +1468,7 @@
         "status": "Success"
     },
     {
-        "id": 47,
+        "id": 40,
         "type": "refund",
         "in_tx": {
             "id": "TODO",
@@ -1844,7 +1526,7 @@
         "status": "Refund"
     },
     {
-        "id": 48,
+        "id": 41,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1861,13 +1543,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056324,
+            "bond_reward": 1056317,
             "pool_rewards": []
         },
         "status": "Success"
     },
     {
-        "id": 49,
+        "id": 42,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -1888,7 +1570,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 11748743,
+                    "rune_amt": 11783336,
                     "transaction_count": 2
                 }
             ]
@@ -1896,7 +1578,7 @@
         "status": "Success"
     },
     {
-        "id": 50,
+        "id": 43,
         "type": "refund",
         "in_tx": {
             "id": "TODO",
@@ -1927,7 +1609,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 29680896
+                        "amount": 29681833
                     }
                 ],
                 "gas": [
@@ -1942,7 +1624,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 319104
+                    "amount": 318167
                 }
             ],
             "pool_deduct": 100000000
@@ -1952,6 +1634,287 @@
             "reason": "invalid swap memo:swap from BNB.BNB to BNB.BNB is noop, refund"
         },
         "status": "Refund"
+    },
+    {
+        "id": 44,
+        "type": "rewards",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "bond_reward": 1056319,
+            "pool_rewards": []
+        },
+        "status": "Success"
+    },
+    {
+        "id": 45,
+        "type": "gas",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "pools": [
+                {
+                    "asset": "BNB.BNB",
+                    "asset_amt": 37500,
+                    "rune_amt": 11761389,
+                    "transaction_count": 2
+                }
+            ]
+        },
+        "status": "Success"
+    },
+    {
+        "id": 46,
+        "type": "swap",
+        "in_tx": {
+            "id": "TODO",
+            "chain": "BNB",
+            "from_address": "USER-1",
+            "to_address": "VAULT",
+            "memo": "SWAP:BTC.BTC:USER-1",
+            "coins": [
+                {
+                    "asset": "BNB.BNB",
+                    "amount": 500000
+                }
+            ],
+            "gas": [
+                {
+                    "asset": "BNB.BNB",
+                    "amount": 37500
+                }
+            ]
+        },
+        "out_txs": [
+            {
+                "id": "0000000000000000000000000000000000000000000000000000000000000000",
+                "chain": "BNB",
+                "from_address": "USER-1",
+                "to_address": "VAULT",
+                "memo": "SWAP:BTC.BTC:USER-1",
+                "coins": [
+                    {
+                        "asset": "BNB.RUNE-A1F",
+                        "amount": 156338364
+                    }
+                ],
+                "gas": null
+            }
+        ],
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "pool": "BNB.BNB",
+            "price_target": 0,
+            "trade_slip": 33,
+            "liquidity_fee": 259372,
+            "liquidity_fee_in_rune": 259372
+        },
+        "status": "Success"
+    },
+    {
+        "id": 47,
+        "type": "swap",
+        "in_tx": {
+            "id": "TODO",
+            "chain": "BNB",
+            "from_address": "USER-1",
+            "to_address": "VAULT",
+            "memo": "SWAP:BTC.BTC:USER-1",
+            "coins": [
+                {
+                    "asset": "BNB.RUNE-A1F",
+                    "amount": 156338364
+                }
+            ],
+            "gas": null
+        },
+        "out_txs": [
+            {
+                "id": "TODO",
+                "chain": "BTC",
+                "from_address": "VAULT",
+                "to_address": "USER-1",
+                "memo": "OUTBOUND:TODO",
+                "coins": [
+                    {
+                        "asset": "BTC.BTC",
+                        "amount": 334590
+                    }
+                ],
+                "gas": [
+                    {
+                        "asset": "BTC.BTC",
+                        "amount": 296955
+                    }
+                ]
+            }
+        ],
+        "fee": {
+            "coins": [
+                {
+                    "asset": "BTC.BTC",
+                    "amount": 593910
+                }
+            ],
+            "pool_deduct": 100000000
+        },
+        "event": {
+            "pool": "BTC.BTC",
+            "price_target": 0,
+            "trade_slip": 62,
+            "liquidity_fee": 2891,
+            "liquidity_fee_in_rune": 483761
+        },
+        "status": "Success"
+    },
+    {
+        "id": 48,
+        "type": "rewards",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "bond_reward": 1799454,
+            "pool_rewards": [
+                {
+                    "asset": "BNB.BNB",
+                    "amount": -259372
+                },
+                {
+                    "asset": "BTC.BTC",
+                    "amount": -483761
+                }
+            ]
+        },
+        "status": "Success"
+    },
+    {
+        "id": 49,
+        "type": "gas",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "pools": [
+                {
+                    "asset": "BTC.BTC",
+                    "asset_amt": 296955,
+                    "rune_amt": 49801301,
+                    "transaction_count": 2
+                }
+            ]
+        },
+        "status": "Success"
+    },
+    {
+        "id": 50,
+        "type": "swap",
+        "in_tx": {
+            "id": "TODO",
+            "chain": "BTC",
+            "from_address": "USER-1",
+            "to_address": "VAULT",
+            "memo": "SWAP:BNB.RUNE-A1F:USER-1",
+            "coins": [
+                {
+                    "asset": "BTC.BTC",
+                    "amount": 1500000
+                }
+            ],
+            "gas": [
+                {
+                    "asset": "BTC.BTC",
+                    "amount": 1000000
+                }
+            ]
+        },
+        "out_txs": [
+            {
+                "id": "TODO",
+                "chain": "BNB",
+                "from_address": "VAULT",
+                "to_address": "USER-1",
+                "memo": "OUTBOUND:TODO",
+                "coins": [
+                    {
+                        "asset": "BNB.RUNE-A1F",
+                        "amount": 149551853
+                    }
+                ],
+                "gas": [
+                    {
+                        "asset": "BNB.BNB",
+                        "amount": 37500
+                    }
+                ]
+            }
+        ],
+        "fee": {
+            "coins": [
+                {
+                    "asset": "BNB.RUNE-A1F",
+                    "amount": 100000000
+                }
+            ],
+            "pool_deduct": 0
+        },
+        "event": {
+            "pool": "BTC.BTC",
+            "price_target": 0,
+            "trade_slip": 100,
+            "liquidity_fee": 1250391,
+            "liquidity_fee_in_rune": 1250391
+        },
+        "status": "Success"
     },
     {
         "id": 51,
@@ -1971,8 +1934,13 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056326,
-            "pool_rewards": []
+            "bond_reward": 2306714,
+            "pool_rewards": [
+                {
+                    "asset": "BTC.BTC",
+                    "amount": -1250391
+                }
+            ]
         },
         "status": "Success"
     },
@@ -1998,7 +1966,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 11726819,
+                    "rune_amt": 11725377,
                     "transaction_count": 2
                 }
             ]
@@ -2041,7 +2009,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 29680300
+                        "amount": 29680260
                     }
                 ],
                 "gas": [
@@ -2056,7 +2024,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 319700
+                    "amount": 319740
                 },
                 {
                     "asset": "BNB.RUNE-A1F",
@@ -2089,7 +2057,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056331,
+            "bond_reward": 1056327,
             "pool_rewards": []
         },
         "status": "Success"
@@ -2116,7 +2084,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 11704909,
+                    "rune_amt": 11703469,
                     "transaction_count": 2
                 }
             ]
@@ -2155,7 +2123,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 2
+                        "amount": 3
                     }
                 ],
                 "gas": [
@@ -2170,7 +2138,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 319621
+                    "amount": 319660
                 }
             ],
             "pool_deduct": 100000000
@@ -2180,7 +2148,7 @@
             "price_target": 0,
             "trade_slip": 21,
             "liquidity_fee": 338,
-            "liquidity_fee_in_rune": 105526
+            "liquidity_fee_in_rune": 105513
         },
         "status": "Success"
     },
@@ -2202,11 +2170,11 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1161859,
+            "bond_reward": 1161843,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": -105526
+                    "amount": -105513
                 }
             ]
         },
@@ -2234,7 +2202,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 11707802,
+                    "rune_amt": 11706362,
                     "transaction_count": 2
                 }
             ]
@@ -2295,7 +2263,7 @@
         },
         "event": {
             "code": 109,
-            "reason": "emit asset 26177461 less than price limit 26572599"
+            "reason": "emit asset 26180530 less than price limit 26572599"
         },
         "status": "Refund"
     },
@@ -2317,7 +2285,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056336,
+            "bond_reward": 1056332,
             "pool_rewards": []
         },
         "status": "Success"
@@ -2344,7 +2312,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 11710709,
+                    "rune_amt": 11709268,
                     "transaction_count": 2
                 }
             ]
@@ -2383,7 +2351,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 25907210
+                        "amount": 25910248
                     }
                 ],
                 "gas": [
@@ -2398,7 +2366,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 264375
+                    "amount": 264406
                 }
             ],
             "pool_deduct": 100000000
@@ -2407,8 +2375,8 @@
             "pool": "BNB.BNB",
             "price_target": 0,
             "trade_slip": 2232,
-            "liquidity_fee": 2774186,
-            "liquidity_fee_in_rune": 866553428
+            "liquidity_fee": 2774595,
+            "liquidity_fee_in_rune": 866574518
         },
         "status": "Success"
     },
@@ -2430,11 +2398,11 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 867609766,
+            "bond_reward": 867630852,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": -866553428
+                    "amount": -866574518
                 }
             ]
         },
@@ -2462,7 +2430,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 14039562,
+                    "rune_amt": 14037901,
                     "transaction_count": 2
                 }
             ]
@@ -2471,6 +2439,170 @@
     },
     {
         "id": 65,
+        "type": "unstake",
+        "in_tx": {
+            "id": "TODO",
+            "chain": "BNB",
+            "from_address": "STAKER-1",
+            "to_address": "VAULT",
+            "memo": "WITHDRAW:BTC.BTC:1000",
+            "coins": [
+                {
+                    "asset": "BNB.RUNE-A1F",
+                    "amount": 1
+                }
+            ],
+            "gas": [
+                {
+                    "asset": "BNB.BNB",
+                    "amount": 37500
+                }
+            ]
+        },
+        "out_txs": [
+            {
+                "id": "TODO",
+                "chain": "BNB",
+                "from_address": "VAULT",
+                "to_address": "STAKER-1",
+                "memo": "OUTBOUND:TODO",
+                "coins": [
+                    {
+                        "asset": "BNB.RUNE-A1F",
+                        "amount": 3892408830
+                    }
+                ],
+                "gas": [
+                    {
+                        "asset": "BNB.BNB",
+                        "amount": 37500
+                    }
+                ]
+            },
+            {
+                "id": "TODO",
+                "chain": "BTC",
+                "from_address": "VAULT",
+                "to_address": "STAKER-1",
+                "memo": "OUTBOUND:TODO",
+                "coins": [
+                    {
+                        "asset": "BTC.BTC",
+                        "amount": 23396394
+                    }
+                ],
+                "gas": [
+                    {
+                        "asset": "BTC.BTC",
+                        "amount": 300539
+                    }
+                ]
+            }
+        ],
+        "fee": {
+            "coins": [
+                {
+                    "asset": "BNB.RUNE-A1F",
+                    "amount": 100000000
+                },
+                {
+                    "asset": "BTC.BTC",
+                    "amount": 601077
+                }
+            ],
+            "pool_deduct": 100000000
+        },
+        "event": {
+            "pool": "BTC.BTC",
+            "stake_units": 2507500000,
+            "basis_points": 1000,
+            "asymmetry": 0
+        },
+        "status": "Success"
+    },
+    {
+        "id": 66,
+        "type": "rewards",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "bond_reward": 1056316,
+            "pool_rewards": []
+        },
+        "status": "Success"
+    },
+    {
+        "id": 67,
+        "type": "gas",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "pools": [
+                {
+                    "asset": "BNB.BNB",
+                    "asset_amt": 37500,
+                    "rune_amt": 14041714,
+                    "transaction_count": 2
+                }
+            ]
+        },
+        "status": "Success"
+    },
+    {
+        "id": 68,
+        "type": "gas",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "pools": [
+                {
+                    "asset": "BTC.BTC",
+                    "asset_amt": 300539,
+                    "rune_amt": 49783417,
+                    "transaction_count": 2
+                }
+            ]
+        },
+        "status": "Success"
+    },
+    {
+        "id": 69,
         "type": "swap",
         "in_tx": {
             "id": "TODO",
@@ -2501,7 +2633,7 @@
                 "coins": [
                     {
                         "asset": "BNB.RUNE-A1F",
-                        "amount": 3387663391
+                        "amount": 3388186981
                     }
                 ],
                 "gas": [
@@ -2525,13 +2657,13 @@
             "pool": "BNB.BNB",
             "price_target": 0,
             "trade_slip": 738,
-            "liquidity_fee": 126330483,
-            "liquidity_fee_in_rune": 126330483
+            "liquidity_fee": 126355189,
+            "liquidity_fee_in_rune": 126355189
         },
         "status": "Success"
     },
     {
-        "id": 66,
+        "id": 70,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -2548,18 +2680,18 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 127386800,
+            "bond_reward": 127411506,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": -126330483
+                    "amount": -126355189
                 }
             ]
         },
         "status": "Success"
     },
     {
-        "id": 67,
+        "id": 71,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -2580,7 +2712,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 13078738,
+                    "rune_amt": 13080701,
                     "transaction_count": 2
                 }
             ]
@@ -2588,7 +2720,7 @@
         "status": "Success"
     },
     {
-        "id": 68,
+        "id": 72,
         "type": "refund",
         "in_tx": {
             "id": "TODO",
@@ -2641,12 +2773,12 @@
         },
         "event": {
             "code": 109,
-            "reason": "emit asset 23680839 less than price limit 23853375"
+            "reason": "emit asset 23677742 less than price limit 23853375"
         },
         "status": "Refund"
     },
     {
-        "id": 69,
+        "id": 73,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -2669,7 +2801,7 @@
         "status": "Success"
     },
     {
-        "id": 70,
+        "id": 74,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -2690,7 +2822,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 13082167,
+                    "rune_amt": 13084131,
                     "transaction_count": 2
                 }
             ]
@@ -2698,7 +2830,7 @@
         "status": "Success"
     },
     {
-        "id": 71,
+        "id": 75,
         "type": "swap",
         "in_tx": {
             "id": "TODO",
@@ -2729,7 +2861,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 23436283
+                        "amount": 23433219
                     }
                 ],
                 "gas": [
@@ -2744,7 +2876,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 238913
+                    "amount": 238881
                 }
             ],
             "pool_deduct": 100000000
@@ -2753,13 +2885,13 @@
             "pool": "BNB.BNB",
             "price_target": 22460886,
             "trade_slip": 2104,
-            "liquidity_fee": 2372279,
-            "liquidity_fee_in_rune": 827805027
+            "liquidity_fee": 2371717,
+            "liquidity_fee_in_rune": 827733183
         },
         "status": "Success"
     },
     {
-        "id": 72,
+        "id": 76,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -2776,18 +2908,18 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 828861346,
+            "bond_reward": 828789502,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": -827805027
+                    "amount": -827733183
                 }
             ]
         },
         "status": "Success"
     },
     {
-        "id": 73,
+        "id": 77,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -2808,7 +2940,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 15549328,
+                    "rune_amt": 15551414,
                     "transaction_count": 2
                 }
             ]
@@ -2816,7 +2948,7 @@
         "status": "Success"
     },
     {
-        "id": 74,
+        "id": 78,
         "type": "refund",
         "in_tx": {
             "id": "TODO",
@@ -2847,7 +2979,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 9758901
+                        "amount": 9758933
                     }
                 ],
                 "gas": [
@@ -2862,7 +2994,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 241099
+                    "amount": 241067
                 }
             ],
             "pool_deduct": 100000000
@@ -2874,7 +3006,7 @@
         "status": "Refund"
     },
     {
-        "id": 75,
+        "id": 79,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -2897,7 +3029,7 @@
         "status": "Success"
     },
     {
-        "id": 76,
+        "id": 80,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -2918,7 +3050,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 15525228,
+                    "rune_amt": 15527314,
                     "transaction_count": 2
                 }
             ]
@@ -2926,7 +3058,7 @@
         "status": "Success"
     },
     {
-        "id": 77,
+        "id": 81,
         "type": "swap",
         "in_tx": {
             "id": "TODO",
@@ -2987,7 +3119,7 @@
         "status": "Success"
     },
     {
-        "id": 78,
+        "id": 82,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3015,7 +3147,7 @@
         "status": "Success"
     },
     {
-        "id": 79,
+        "id": 83,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3036,7 +3168,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 15529660,
+                    "rune_amt": 15531747,
                     "transaction_count": 2
                 }
             ]
@@ -3044,7 +3176,7 @@
         "status": "Success"
     },
     {
-        "id": 80,
+        "id": 84,
         "type": "swap",
         "in_tx": {
             "id": "TODO",
@@ -3105,7 +3237,7 @@
         "status": "Success"
     },
     {
-        "id": 81,
+        "id": 85,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3133,7 +3265,7 @@
         "status": "Success"
     },
     {
-        "id": 82,
+        "id": 86,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3154,7 +3286,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 15534093,
+                    "rune_amt": 15536181,
                     "transaction_count": 2
                 }
             ]
@@ -3162,7 +3294,7 @@
         "status": "Success"
     },
     {
-        "id": 83,
+        "id": 87,
         "type": "swap",
         "in_tx": {
             "id": "TODO",
@@ -3213,7 +3345,7 @@
         "status": "Success"
     },
     {
-        "id": 84,
+        "id": 88,
         "type": "swap",
         "in_tx": {
             "id": "TODO",
@@ -3239,7 +3371,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 10276670
+                        "amount": 10275373
                     }
                 ],
                 "gas": [
@@ -3254,7 +3386,7 @@
             "coins": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": 222025
+                    "amount": 221997
                 }
             ],
             "pool_deduct": 100000000
@@ -3263,13 +3395,13 @@
             "pool": "BNB.BNB",
             "price_target": 0,
             "trade_slip": 889,
-            "liquidity_fee": 456975,
-            "liquidity_fee_in_rune": 189352515
+            "liquidity_fee": 456873,
+            "liquidity_fee_in_rune": 189335696
         },
         "status": "Success"
     },
     {
-        "id": 85,
+        "id": 89,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3286,7 +3418,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 768223423,
+            "bond_reward": 768206604,
             "pool_rewards": [
                 {
                     "asset": "BNB.LOK-3C0",
@@ -3294,14 +3426,14 @@
                 },
                 {
                     "asset": "BNB.BNB",
-                    "amount": -189352515
+                    "amount": -189335696
                 }
             ]
         },
         "status": "Success"
     },
     {
-        "id": 86,
+        "id": 90,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3322,7 +3454,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 16832139,
+                    "rune_amt": 16834278,
                     "transaction_count": 2
                 }
             ]
@@ -3330,7 +3462,7 @@
         "status": "Success"
     },
     {
-        "id": 87,
+        "id": 91,
         "type": "swap",
         "in_tx": {
             "id": "TODO",
@@ -3361,7 +3493,7 @@
                 "coins": [
                     {
                         "asset": "BNB.RUNE-A1F",
-                        "amount": 2158563038
+                        "amount": 2158834562
                     }
                 ],
                 "gas": null
@@ -3375,13 +3507,13 @@
             "pool": "BNB.BNB",
             "price_target": 0,
             "trade_slip": 400,
-            "liquidity_fee": 42770888,
-            "liquidity_fee_in_rune": 42770888
+            "liquidity_fee": 42777660,
+            "liquidity_fee_in_rune": 42777660
         },
         "status": "Success"
     },
     {
-        "id": 88,
+        "id": 92,
         "type": "swap",
         "in_tx": {
             "id": "TODO",
@@ -3392,7 +3524,7 @@
             "coins": [
                 {
                     "asset": "BNB.RUNE-A1F",
-                    "amount": 2158563038
+                    "amount": 2158834562
                 }
             ],
             "gas": null
@@ -3407,7 +3539,7 @@
                 "coins": [
                     {
                         "asset": "BNB.LOK-3C0",
-                        "amount": 1972278352
+                        "amount": 1972515047
                     }
                 ],
                 "gas": [
@@ -3422,7 +3554,7 @@
             "coins": [
                 {
                     "asset": "BNB.LOK-3C0",
-                    "amount": 96043415
+                    "amount": 96042330
                 }
             ],
             "pool_deduct": 100000000
@@ -3431,13 +3563,13 @@
             "pool": "BNB.LOK-3C0",
             "price_target": 0,
             "trade_slip": 1015,
-            "liquidity_fee": 102458024,
-            "liquidity_fee_in_rune": 97072737
+            "liquidity_fee": 102482585,
+            "liquidity_fee_in_rune": 97096007
         },
         "status": "Success"
     },
     {
-        "id": 89,
+        "id": 93,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3454,22 +3586,22 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 140899884,
+            "bond_reward": 140929926,
             "pool_rewards": [
                 {
                     "asset": "BNB.BNB",
-                    "amount": -42770888
+                    "amount": -42777660
                 },
                 {
                     "asset": "BNB.LOK-3C0",
-                    "amount": -97072737
+                    "amount": -97096007
                 }
             ]
         },
         "status": "Success"
     },
     {
-        "id": 90,
+        "id": 94,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3490,7 +3622,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 37500,
-                    "rune_amt": 16189223,
+                    "rune_amt": 16191259,
                     "transaction_count": 2
                 }
             ]
@@ -3498,7 +3630,7 @@
         "status": "Success"
     },
     {
-        "id": 91,
+        "id": 95,
         "type": "unstake",
         "in_tx": {
             "id": "TODO",
@@ -3529,7 +3661,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 72114786
+                        "amount": 72056929
                     }
                 ],
                 "gas": [
@@ -3548,7 +3680,7 @@
                 "coins": [
                     {
                         "asset": "BNB.RUNE-A1F",
-                        "amount": 31141937069
+                        "amount": 31120866839
                     }
                 ],
                 "gas": [
@@ -3567,7 +3699,7 @@
                 },
                 {
                     "asset": "BNB.BNB",
-                    "amount": 231568
+                    "amount": 231539
                 }
             ],
             "pool_deduct": 100000000
@@ -3581,7 +3713,7 @@
         "status": "Success"
     },
     {
-        "id": 92,
+        "id": 96,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3604,7 +3736,7 @@
         "status": "Success"
     },
     {
-        "id": 93,
+        "id": 97,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3625,7 +3757,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 75000,
-                    "rune_amt": 32306885,
+                    "rune_amt": 32310981,
                     "transaction_count": 3
                 }
             ]
@@ -3633,7 +3765,7 @@
         "status": "Success"
     },
     {
-        "id": 94,
+        "id": 98,
         "type": "pool",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3656,7 +3788,7 @@
         "status": "Success"
     },
     {
-        "id": 95,
+        "id": 99,
         "type": "unstake",
         "in_tx": {
             "id": "TODO",
@@ -3686,8 +3818,8 @@
                 "memo": "OUTBOUND:TODO",
                 "coins": [
                     {
-                        "asset": "BNB.RUNE-A1F",
-                        "amount": 45436436603
+                        "asset": "BNB.LOK-3C0",
+                        "amount": 44019830858
                     }
                 ],
                 "gas": [
@@ -3705,8 +3837,8 @@
                 "memo": "OUTBOUND:TODO",
                 "coins": [
                     {
-                        "asset": "BNB.LOK-3C0",
-                        "amount": 44020067553
+                        "asset": "BNB.RUNE-A1F",
+                        "amount": 45436684857
                     }
                 ],
                 "gas": [
@@ -3735,7 +3867,7 @@
         "status": "Success"
     },
     {
-        "id": 96,
+        "id": 100,
         "type": "rewards",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3758,7 +3890,7 @@
         "status": "Success"
     },
     {
-        "id": 97,
+        "id": 101,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -3779,7 +3911,7 @@
                 {
                     "asset": "BNB.BNB",
                     "asset_amt": 75000,
-                    "rune_amt": 32333063,
+                    "rune_amt": 32337156,
                     "transaction_count": 3
                 }
             ]
@@ -3787,7 +3919,7 @@
         "status": "Success"
     },
     {
-        "id": 98,
+        "id": 102,
         "type": "unstake",
         "in_tx": {
             "id": "TODO",
@@ -3818,7 +3950,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 72146487
+                        "amount": 72088585
                     }
                 ],
                 "gas": [
@@ -3837,7 +3969,7 @@
                 "coins": [
                     {
                         "asset": "BNB.RUNE-A1F",
-                        "amount": 31128105856
+                        "amount": 31107053603
                     }
                 ],
                 "gas": [
@@ -3856,7 +3988,7 @@
                 },
                 {
                     "asset": "BNB.BNB",
-                    "amount": 231773
+                    "amount": 231744
                 }
             ],
             "pool_deduct": 100000000
@@ -3864,164 +3996,6 @@
         "event": {
             "pool": "BNB.BNB",
             "stake_units": 12537500000,
-            "basis_points": 10000,
-            "asymmetry": 0
-        },
-        "status": "Success"
-    },
-    {
-        "id": 99,
-        "type": "rewards",
-        "in_tx": {
-            "id": "0000000000000000000000000000000000000000000000000000000000000000",
-            "chain": "",
-            "from_address": "",
-            "to_address": "",
-            "memo": "",
-            "coins": null,
-            "gas": null
-        },
-        "out_txs": null,
-        "fee": {
-            "coins": null,
-            "pool_deduct": 0
-        },
-        "event": {
-            "bond_reward": 1056269,
-            "pool_rewards": []
-        },
-        "status": "Success"
-    },
-    {
-        "id": 100,
-        "type": "gas",
-        "in_tx": {
-            "id": "0000000000000000000000000000000000000000000000000000000000000000",
-            "chain": "",
-            "from_address": "",
-            "to_address": "",
-            "memo": "",
-            "coins": null,
-            "gas": null
-        },
-        "out_txs": null,
-        "fee": {
-            "coins": null,
-            "pool_deduct": 0
-        },
-        "event": {
-            "pools": [
-                {
-                    "asset": "BNB.BNB",
-                    "asset_amt": 75000,
-                    "rune_amt": 32226403,
-                    "transaction_count": 3
-                }
-            ]
-        },
-        "status": "Success"
-    },
-    {
-        "id": 101,
-        "type": "pool",
-        "in_tx": {
-            "id": "0000000000000000000000000000000000000000000000000000000000000000",
-            "chain": "",
-            "from_address": "",
-            "to_address": "",
-            "memo": "",
-            "coins": null,
-            "gas": null
-        },
-        "out_txs": null,
-        "fee": {
-            "coins": null,
-            "pool_deduct": 0
-        },
-        "event": {
-            "pool": "BTC.BTC",
-            "status": "Bootstrap"
-        },
-        "status": "Success"
-    },
-    {
-        "id": 102,
-        "type": "unstake",
-        "in_tx": {
-            "id": "TODO",
-            "chain": "BNB",
-            "from_address": "STAKER-1",
-            "to_address": "VAULT",
-            "memo": "WITHDRAW:BTC.BTC",
-            "coins": [
-                {
-                    "asset": "BNB.RUNE-A1F",
-                    "amount": 1
-                }
-            ],
-            "gas": [
-                {
-                    "asset": "BNB.BNB",
-                    "amount": 37500
-                }
-            ]
-        },
-        "out_txs": [
-            {
-                "id": "TODO",
-                "chain": "BTC",
-                "from_address": "VAULT",
-                "to_address": "STAKER-1",
-                "memo": "OUTBOUND:TODO",
-                "coins": [
-                    {
-                        "asset": "BTC.BTC",
-                        "amount": 135139707
-                    }
-                ],
-                "gas": [
-                    {
-                        "asset": "BTC.BTC",
-                        "amount": 150648
-                    }
-                ]
-            },
-            {
-                "id": "TODO",
-                "chain": "BNB",
-                "from_address": "VAULT",
-                "to_address": "STAKER-1",
-                "memo": "OUTBOUND:TODO",
-                "coins": [
-                    {
-                        "asset": "BNB.RUNE-A1F",
-                        "amount": 44802924842
-                    }
-                ],
-                "gas": [
-                    {
-                        "asset": "BNB.BNB",
-                        "amount": 37500
-                    }
-                ]
-            }
-        ],
-        "fee": {
-            "coins": [
-                {
-                    "asset": "BNB.RUNE-A1F",
-                    "amount": 100000000
-                },
-                {
-                    "asset": "BTC.BTC",
-                    "amount": 0
-                }
-            ],
-            "pool_deduct": 100000000
-        },
-        "event": {
-            "pool": "BTC.BTC",
-            "stake_units": 22567500000,
             "basis_points": 10000,
             "asymmetry": 0
         },
@@ -4045,7 +4019,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "bond_reward": 1056274,
+            "bond_reward": 1056269,
             "pool_rewards": []
         },
         "status": "Success"
@@ -4071,9 +4045,9 @@
             "pools": [
                 {
                     "asset": "BNB.BNB",
-                    "asset_amt": 37500,
-                    "rune_amt": 16134626,
-                    "transaction_count": 2
+                    "asset_amt": 75000,
+                    "rune_amt": 32230618,
+                    "transaction_count": 3
                 }
             ]
         },
@@ -4081,6 +4055,141 @@
     },
     {
         "id": 105,
+        "type": "unstake",
+        "in_tx": {
+            "id": "TODO",
+            "chain": "BNB",
+            "from_address": "STAKER-2",
+            "to_address": "VAULT",
+            "memo": "WITHDRAW:BTC.BTC",
+            "coins": [
+                {
+                    "asset": "BNB.RUNE-A1F",
+                    "amount": 1
+                }
+            ],
+            "gas": [
+                {
+                    "asset": "BNB.BNB",
+                    "amount": 37500
+                }
+            ]
+        },
+        "out_txs": [
+            {
+                "id": "TODO",
+                "chain": "BTC",
+                "from_address": "VAULT",
+                "to_address": "STAKER-2",
+                "memo": "OUTBOUND:TODO",
+                "coins": [
+                    {
+                        "asset": "BTC.BTC",
+                        "amount": 60357461
+                    }
+                ],
+                "gas": [
+                    {
+                        "asset": "BTC.BTC",
+                        "amount": 301193
+                    }
+                ]
+            },
+            {
+                "id": "TODO",
+                "chain": "BNB",
+                "from_address": "VAULT",
+                "to_address": "STAKER-2",
+                "memo": "OUTBOUND:TODO",
+                "coins": [
+                    {
+                        "asset": "BNB.RUNE-A1F",
+                        "amount": 10019720949
+                    }
+                ],
+                "gas": [
+                    {
+                        "asset": "BNB.BNB",
+                        "amount": 37500
+                    }
+                ]
+            }
+        ],
+        "fee": {
+            "coins": [
+                {
+                    "asset": "BNB.RUNE-A1F",
+                    "amount": 100000000
+                },
+                {
+                    "asset": "BTC.BTC",
+                    "amount": 602387
+                }
+            ],
+            "pool_deduct": 100000000
+        },
+        "event": {
+            "pool": "BTC.BTC",
+            "stake_units": 6362798804,
+            "basis_points": 10000,
+            "asymmetry": 0
+        },
+        "status": "Success"
+    },
+    {
+        "id": 106,
+        "type": "rewards",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "bond_reward": 1056273,
+            "pool_rewards": []
+        },
+        "status": "Success"
+    },
+    {
+        "id": 107,
+        "type": "gas",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "pools": [
+                {
+                    "asset": "BNB.BNB",
+                    "asset_amt": 37500,
+                    "rune_amt": 16136715,
+                    "transaction_count": 2
+                }
+            ]
+        },
+        "status": "Success"
+    },
+    {
+        "id": 108,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -4100,8 +4209,8 @@
             "pools": [
                 {
                     "asset": "BTC.BTC",
-                    "asset_amt": 150648,
-                    "rune_amt": 0,
+                    "asset_amt": 301193,
+                    "rune_amt": 49722110,
                     "transaction_count": 2
                 }
             ]
@@ -4109,7 +4218,7 @@
         "status": "Success"
     },
     {
-        "id": 106,
+        "id": 109,
         "type": "pool",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
@@ -4132,7 +4241,7 @@
         "status": "Success"
     },
     {
-        "id": 107,
+        "id": 110,
         "type": "unstake",
         "in_tx": {
             "id": "TODO",
@@ -4163,7 +4272,7 @@
                 "coins": [
                     {
                         "asset": "BNB.RUNE-A1F",
-                        "amount": 48456163443
+                        "amount": 48508730260
                     }
                 ],
                 "gas": [
@@ -4182,7 +4291,7 @@
                 "coins": [
                     {
                         "asset": "BNB.BNB",
-                        "amount": 112703944
+                        "amount": 112811488
                     }
                 ],
                 "gas": [
@@ -4208,14 +4317,37 @@
         },
         "event": {
             "pool": "BNB.BNB",
-            "stake_units": 19515122870,
+            "stake_units": 19549404053,
             "basis_points": 10000,
             "asymmetry": 0
         },
         "status": "Success"
     },
     {
-        "id": 108,
+        "id": 111,
+        "type": "rewards",
+        "in_tx": {
+            "id": "0000000000000000000000000000000000000000000000000000000000000000",
+            "chain": "",
+            "from_address": "",
+            "to_address": "",
+            "memo": "",
+            "coins": null,
+            "gas": null
+        },
+        "out_txs": null,
+        "fee": {
+            "coins": null,
+            "pool_deduct": 0
+        },
+        "event": {
+            "bond_reward": 1056277,
+            "pool_rewards": []
+        },
+        "status": "Success"
+    },
+    {
+        "id": 112,
         "type": "gas",
         "in_tx": {
             "id": "0000000000000000000000000000000000000000000000000000000000000000",
