@@ -502,6 +502,16 @@ class ThorchainState:
         self.sdk_events.append(event)
         return txns
 
+    def generate_outbound_events(self, in_tx, txns):
+        """
+        Generate outbound events for txns
+        """
+        for txn in txns:
+            event = EventSDK(
+                "outbound", [{"in_tx_id": in_tx.id}, *txn.get_attributes()]
+            )
+            self.sdk_events.append(event)
+
     def order_outbound_txns(self, txns):
         """
         Sort txns by tx custom hash function to replicate real thorchain order
@@ -1136,16 +1146,20 @@ class EventSDK(Jsonable):
         attrs = " ".join(map(str, self.attributes))
         return f"Event {self.type} | {attrs}"
 
+    def __hash__(self):
+        attrs = sorted(self.attributes, key=lambda x: sorted(x.items()))
+        if self.type == "outbound":
+            attrs = [a for a in attrs if list(a.keys())[0] != "id"]
+        return hash(str(attrs))
+
     def __repr__(self):
         return str(self)
 
     def __eq__(self, other):
-        attrs = sorted(self.attributes, key=lambda x: sorted(x.items()))
-        other_attrs = sorted(other.attributes, key=lambda x: sorted(x.items()))
-        return self.type == other.type and attrs == other_attrs
+        return (self.type, hash(self)) == (other.type, hash(other))
 
     def __lt__(self, other):
-        return self.type < other.type
+        return (self.type, hash(self)) < (other.type, hash(other))
 
 
 class Event(Jsonable):
