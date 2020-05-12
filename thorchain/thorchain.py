@@ -1,6 +1,10 @@
 import time
+import base64
 import logging
 import itertools
+import threading
+import websocket
+import json
 from copy import deepcopy
 
 from utils.common import (
@@ -17,12 +21,76 @@ from chains.bitcoin import Bitcoin
 from chains.binance import Binance
 
 RUNE = get_rune_asset()
+SUBSCRIBE_BLOCK = {"method": "subscribe", "params": {"query": "tm.event='NewBlock'"}}
+SUBSCRIBE_TX = {"method": "subscribe", "params": {"query": "tm.event='Tx'"}}
 
 
 class ThorchainClient(HttpClient):
     """
     A client implementation to thorchain API
     """
+
+    def __init__(self, api_url, websocket_url=None):
+        super().__init__(api_url)
+        if websocket_url:
+            self.ws = websocket.WebSocketApp(
+                websocket_url,
+                on_open=self.ws_open,
+                on_error=self.ws_error,
+                on_message=self.ws_message,
+            )
+            self.events = []
+            threading.Thread(target=self.ws.run_forever, daemon=True).start()
+
+    def ws_open(self):
+        """
+        Websocket connection open, subscribe to events
+        """
+        logging.debug("websocket opened")
+        self.ws.send(json.dumps(SUBSCRIBE_BLOCK))
+        self.ws.send(json.dumps(SUBSCRIBE_TX))
+
+    def ws_message(self, msg):
+        """
+        Websocket message handler
+        """
+        try:
+            msg = json.loads(msg)
+            if "data" not in msg["result"]:
+                return
+            event_category = msg["result"]["data"]["type"]
+            value = msg["result"]["data"]["value"]
+            if "NewBlock" in event_category:
+                if "events" not in value["result_end_block"]:
+                    return
+                events = value["result_end_block"]["events"]
+            if "Tx" in event_category:
+                events = value["TxResult"]["result"]["events"]
+            self.process_events(events)
+        except Exception as e:
+            logging.error(f"Message: {msg} Exception: {e}")
+
+    def process_events(self, events):
+        for event in events:
+            if event["type"] == "message":
+                continue
+            self.decode_event(event)
+            logging.debug(f"websocket event: {event}")
+            self.events.append(EventSDK(event["type"], event["attributes"]))
+
+    def decode_event(self, event):
+        attributes = []
+        for attr in event["attributes"]:
+            key = base64.b64decode(attr["key"]).decode("utf-8")
+            value = base64.b64decode(attr["value"]).decode("utf-8")
+            attributes.append({key: value})
+        event["attributes"] = attributes
+
+    def ws_error(self, error):
+        """
+        Websocket error handler
+        """
+        logging.error(error)
 
     def get_block_height(self):
         """
@@ -71,6 +139,9 @@ class ThorchainClient(HttpClient):
                 evtID = int(new_events[-1]["id"]) + 1
         return events
 
+    def get_sdk_events(self):
+        return self.events
+
 
 class ThorchainState:
     """
@@ -82,6 +153,7 @@ class ThorchainState:
     def __init__(self):
         self.pools = []
         self.events = []
+        self.sdk_events = []
         self.reserve = 0
         self.liquidity = {}
         self.total_bonded = 0
@@ -123,6 +195,11 @@ class ThorchainState:
                     event = Event("pool", Transaction.empty_txn(), None, pool_event)
                     self.events.append(event)
 
+                    event = EventSDK(
+                        "pool", [{"pool": pool.asset}, {"pool_status": pool.status}]
+                    )
+                    self.sdk_events.append(event)
+
                 self.pools[i] = pool
                 return
 
@@ -157,7 +234,7 @@ class ThorchainState:
                 for gas in txn.gas:
                     if gas.asset not in gas_coins:
                         gas_coins[gas.asset] = Coin(gas.asset)
-                        gas_coin_count[gas.asset] = 1
+                        gas_coin_count[gas.asset] = 0
                     gas_coins[gas.asset].amount += gas.amount
                     gas_coin_count[gas.asset] += 1
 
@@ -187,11 +264,22 @@ class ThorchainState:
             gas_pools.append(gas_pool)
             self.set_pool(pool)
 
+            event = EventSDK(
+                "gas",
+                [
+                    {"asset": asset},
+                    {"asset_amt": gas.amount},
+                    {"rune_amt": rune_amt},
+                    {"transaction_count": gas_coin_count[asset]},
+                ],
+            )
+            self.sdk_events.append(event)
+
         gas_event = GasEvent(gas_pools)
         event = Event("gas", Transaction.empty_txn(), None, gas_event)
         self.events.append(event)
 
-    def handle_fee(self, txns):
+    def handle_fee(self, in_tx, txns):
         """
         Subtract transaction fee from given transactions
         """
@@ -200,6 +288,7 @@ class ThorchainState:
             txns = [txns]
 
         event_fee = EventFee()
+
         for txn in txns:
             for coin in txn.coins:
                 if coin.is_rune():
@@ -215,6 +304,17 @@ class ThorchainState:
                     self.reserve += self.rune_fee  # add to the reserve
                     if coin.amount > 0:
                         outbound.append(txn)
+
+                    # add sdk fee event
+                    event = EventSDK(
+                        "fee",
+                        [
+                            {"tx_id": in_tx.id},
+                            {"coins": f"{coin_fee.amount} {coin_fee.asset}"},
+                            {"pool_deduct": 0},
+                        ],
+                    )
+                    self.sdk_events.append(event)
 
                 else:
                     pool = self.get_pool(coin.asset)
@@ -236,6 +336,17 @@ class ThorchainState:
                         else:
                             event_fee.coins = [coin_fee]
                         event_fee.pool_deduct += self.rune_fee
+
+                        # add sdk fee event
+                        event = EventSDK(
+                            "fee",
+                            [
+                                {"tx_id": in_tx.id},
+                                {"coins": f"{coin_fee.amount} {coin_fee.asset}"},
+                                {"pool_deduct": self.rune_fee},
+                            ],
+                        )
+                        self.sdk_events.append(event)
 
                     self.reserve += self.rune_fee  # add to the reserve
                     if coin.amount > 0:
@@ -321,6 +432,7 @@ class ThorchainState:
         # Generate rewards event
         reward_event = RewardEvent(0, [])
         reward_event.bond_reward = bond_reward
+        reward_sdk_event = EventSDK("rewards", [{"bond_reward": bond_reward}])
 
         if pool_reward > 0:
             # TODO: subtract any remaining gas, from the pool rewards
@@ -333,6 +445,7 @@ class ThorchainState:
 
                     # Append pool reward to event
                     reward_event.pool_rewards.append(Coin(pool.asset, share))
+                    reward_sdk_event.attributes.append({pool.asset: str(share)})
             else:
                 pass  # TODO: Pool Rewards are based on Depth Share
         else:
@@ -345,12 +458,14 @@ class ThorchainState:
 
                 # Append pool reward to event
                 reward_event.pool_rewards.append(Coin(pool.asset, -share))
+                reward_sdk_event.attributes.append({pool.asset: str(-share)})
 
         # generate event REWARDS
         event = Event(
             "rewards", Transaction.empty_txn(), None, reward_event, status="Success"
         )
         self.events.append(event)
+        self.sdk_events.append(reward_sdk_event)
 
         # clear summed liquidity fees
         self.liquidity = {}
@@ -374,6 +489,16 @@ class ThorchainState:
         # generate event REFUND for the transaction
         event = Event("refund", txn, txns, refund_event, status="Refund")
         self.events.append(event)
+
+        event = EventSDK(
+            "refund",
+            [
+                {"code": refund_event.code},
+                {"reason": refund_event.reason},
+                *txn.get_attributes(),
+            ],
+        )
+        self.sdk_events.append(event)
         return txns
 
     def order_outbound_txns(self, txns):
@@ -426,6 +551,16 @@ class ThorchainState:
         event = Event("reserve", txn, None, reserve_event)
         self.events.append(event)
 
+        event = EventSDK(
+            "reserve",
+            [
+                {"contributor_address": txn.from_address},
+                {"amount": amount},
+                *txn.get_attributes(),
+            ],
+        )
+        self.sdk_events.append(event)
+
         return []
 
     def handle_add(self, txn):
@@ -470,6 +605,9 @@ class ThorchainState:
         add_event = AddEvent(pool.asset)
         event = Event("add", txn, None, add_event)
         self.events.append(event)
+
+        event = EventSDK("add", [{"pool": pool.asset}, *txn.get_attributes()])
+        self.sdk_events.append(event)
 
         return []
 
@@ -536,6 +674,16 @@ class ThorchainState:
         stake_event = StakeEvent(pool.asset, stake_units)
         event = Event("stake", txn, [Transaction.empty_txn()], stake_event)
         self.events.append(event)
+
+        event = EventSDK(
+            "stake",
+            [
+                {"pool": pool.asset},
+                {"stake_units": stake_units},
+                *txn.get_attributes(),
+            ],
+        )
+        self.sdk_events.append(event)
 
         return []
 
@@ -638,6 +786,18 @@ class ThorchainState:
         event = Event("unstake", txn, out_txns, unstake_event)
         self.events.append(event)
 
+        event = EventSDK(
+            "unstake",
+            [
+                {"pool": pool.asset},
+                {"stake_units": unstake_units},
+                {"basis_points": withdraw_basis_points},
+                {"asymmetry": "0.000000000000000000"},
+                *txn.get_attributes(),
+            ],
+        )
+        self.sdk_events.append(event)
+
         return out_txns
 
     def handle_swap(self, txn):
@@ -730,6 +890,19 @@ class ThorchainState:
             event = Event("swap", in_txn, out_txns, swap_event)
             self.events.append(event)
 
+            event = EventSDK(
+                "swap",
+                [
+                    {"pool": pool.asset},
+                    {"price_target": 0},
+                    {"trade_slip": trade_slip},
+                    {"liquidity_fee": liquidity_fee},
+                    {"liquidity_fee_in_rune": liquidity_fee_in_rune},
+                    *in_txn.get_attributes(),
+                ],
+            )
+            self.sdk_events.append(event)
+
             # and we remove the gas on in_txn for the next event so we don't
             # have it twice
             in_txn.gas = None
@@ -799,6 +972,19 @@ class ThorchainState:
         )
         event = Event("swap", in_txn, out_txns, swap_event)
         self.events.append(event)
+
+        event = EventSDK(
+            "swap",
+            [
+                {"pool": pool.asset},
+                {"price_target": target_trade},
+                {"trade_slip": trade_slip},
+                {"liquidity_fee": liquidity_fee},
+                {"liquidity_fee_in_rune": liquidity_fee_in_rune},
+                *in_txn.get_attributes(),
+            ],
+        )
+        self.sdk_events.append(event)
 
         return out_txns
 
@@ -921,6 +1107,37 @@ class EventFee(Jsonable):
             coins = [Coin.from_dict(c) for c in value["coins"]]
         pool_deduct = value["pool_deduct"] if value else 0
         return cls(coins=coins, pool_deduct=pool_deduct)
+
+
+class EventSDK(Jsonable):
+    """
+    Event class representing events generated by thorchain
+    using tendermint sdk events
+    """
+
+    def __init__(
+        self, event_type, attributes,
+    ):
+        self.type = event_type
+        for attr in attributes:
+            for key, value in attr.items():
+                attr[key] = str(value)
+        self.attributes = attributes
+
+    def __str__(self):
+        attrs = " ".join(map(str, self.attributes))
+        return f"Event {self.type} | {attrs}"
+
+    def __repr__(self):
+        return str(self)
+
+    def __eq__(self, other):
+        attrs = sorted(self.attributes, key=lambda x: sorted(x.items()))
+        other_attrs = sorted(other.attributes, key=lambda x: sorted(x.items()))
+        return self.type == other.type and attrs == other_attrs
+
+    def __lt__(self, other):
+        return self.type < other.type
 
 
 class Event(Jsonable):
