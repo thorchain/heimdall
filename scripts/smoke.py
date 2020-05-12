@@ -206,6 +206,10 @@ class Smoker:
         events = self.thorchain_client.get_sdk_events()
         sim_events = self.thorchain.sdk_events
 
+        # TODO remove when we switch to SDK events only
+        if len(events) != len(sim_events):
+            return
+
         for event, sim_event in zip(sorted(events), sorted(sim_events)):
             if sim_event != event:
                 logging.error(
