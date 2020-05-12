@@ -4,6 +4,8 @@ import json
 import requests
 
 from web3 import Web3, HTTPProvider
+from web3.auto.gethdev import w3
+from web3.middleware import geth_poa_middleware
 from eth_keys import KeyAPI
 from utils.common import Coin
 from chains.aliases import aliases_eth, get_aliases, get_alias_address
@@ -12,7 +14,9 @@ from tenacity import retry, stop_after_delay, wait_fixed
 
 
 def calculate_gas(msg):
-    return MockEthereum.default_gas+MockEthereum.gas_per_byte*len(msg)
+    if msg == "SEED":
+        return MockEthereum.seed_gas
+    return MockEthereum.default_gas + MockEthereum.gas_per_byte * len(msg)
 
 
 class MockEthereum:
@@ -22,7 +26,8 @@ class MockEthereum:
 
     default_gas = 21000
     gas_per_byte = 68
-    gwei = 1000000000
+    gas_price = 1
+    seed_gas = 30000
     passphrase = "the-passphrase"
 
     private_keys = [
@@ -33,18 +38,23 @@ class MockEthereum:
         "9294f4d108465fd293f7fe299e6923ef71a77f2cb1eb6d4394839c64ec25d5c0",
     ]
 
-    def __init__(self, base_url, doimport):
-        self.web3 = Web3(HTTPProvider(base_url))
+    def __init__(self, base_url):
         for key in self.private_keys:
-            payload = json.dumps({"method": "personal_importRawKey", "params": [key, self.passphrase]})
-            headers = {'content-type': "application/json", 'cache-control': "no-cache"}
+            time.sleep(1.0)
+            payload = json.dumps(
+                {"method": "personal_importRawKey", "params": [key, self.passphrase]}
+            )
+            headers = {"content-type": "application/json", "cache-control": "no-cache"}
             try:
-                response = requests.request("POST", base_url, data=payload, headers=headers)
+                response = requests.request(
+                    "POST", base_url, data=payload, headers=headers
+                )
             except requests.exceptions.RequestException as e:
                 logging.error(f"{e}")
             except:
                 logging.info(f"Imported {key}")
-            logging.info(f"accs {self.web3.eth.accounts}")
+        self.web3 = Web3(HTTPProvider(base_url))
+        self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
@@ -63,6 +73,7 @@ class MockEthereum:
         Set the vault eth address
         """
         aliases_eth["VAULT"] = addr
+        logging.info(f"vault addr {addr}")
 
     def get_block_height(self):
         """
@@ -86,13 +97,8 @@ class MockEthereum:
         """
         Get ETH balance for an address
         """
-        return int(
-            self.web3.eth.getBalance(Web3.toChecksumAddress(address), "latest")
-            / self.gwei
-            * Coin.ONE
-        )
+        return self.web3.eth.getBalance(Web3.toChecksumAddress(address), "latest")
 
-    @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
     def wait_for_node(self):
         """
         Ethereum localnet node is started with directly mining 100 blocks
@@ -100,7 +106,7 @@ class MockEthereum:
         It can take a while depending on the machine specs so we retry.
         """
         current_height = self.get_block_height()
-        while current_height < 3:
+        while current_height < 4:
             current_height = self.get_block_height()
 
     def transfer(self, txn):
@@ -130,26 +136,25 @@ class MockEthereum:
             txn.memo = txn.memo.replace(alias, addr)
 
         logging.info(f"memo {txn.memo} len {len(txn.memo)}")
-        amount = int(txn.coins[0].amount / Coin.ONE * self.gwei)
 
-        logging.info(f"WOOOL")
         # create and send transaction
-        gasPrice = self.web3.eth.gasPrice
-        logging.info(f"gasPrice {gasPrice}")
         tx = {
             "from": Web3.toChecksumAddress(txn.from_address),
             "to": Web3.toChecksumAddress(txn.to_address),
-            "value": amount,
+            "value": txn.coins[0].amount,
             "data": "0x" + txn.memo.encode().hex(),
             "gas": calculate_gas(txn.memo),
         }
-        from_bal = int(self.get_balance(Web3.toChecksumAddress(txn.from_address)))
-        logging.info(f"bal {from_bal*10}")
-        logging.info(f"amountt {amount}")
-        self.web3.geth.personal.send_transaction(tx, self.passphrase)
-        cur = self.get_block_height()
-        while cur == self.get_block_height():
-            time.sleep(1.0)
+
+        tx_hash = self.web3.geth.personal.send_transaction(tx, self.passphrase)
+        receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
+        txlol = self.web3.eth.getTransaction(receipt['transactionHash'])
+        logging.info(f"balance from {self.get_balance(Web3.toChecksumAddress(txn.from_address))}")
+        logging.info(f"balance to {self.get_balance(Web3.toChecksumAddress(txn.to_address))}")
+        logging.info(f"hash {tx_hash}")
+        logging.info(f"tx {txlol}")
+        logging.info(f"receipt {receipt}")
+
 
 class Ethereum:
     """
@@ -167,8 +172,7 @@ class Ethereum:
         Calculate gas according to RUNE thorchain fee
         1 RUNE / 2 in ETH value
         """
-        eth_amount = pool.get_rune_in_asset(int(rune_fee / 2))
-        return Coin("ETH.ETH", eth_amount)
+        return Coin("ETH.ETH", calculate_gas("") * MockEthereum.gas_price)
 
     def get_account(self, addr):
         """
@@ -196,7 +200,9 @@ class Ethereum:
         to_acct = self.get_account(txn.to_address)
 
         if not txn.gas:
-            txn.gas = [Coin("ETH.ETH", calculate_gas(txn.memo) * Coin.ONE)]
+            txn.gas = [
+                Coin("ETH.ETH", calculate_gas(txn.memo) * MockEthereum.gas_price)
+            ]
 
         from_acct.sub(txn.gas[0])
         from_acct.sub(txn.coins)

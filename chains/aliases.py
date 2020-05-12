@@ -50,7 +50,9 @@ def get_bnb_address(chain, addr):
             if addr == btc_addr:
                 return aliases_bnb[alias]
     if chain == "ETH":
-        return addr
+        for alias, eth_addr in aliases_eth.items():
+            if addr == eth_addr:
+                return aliases_bnb[alias]
     return addr
 
 

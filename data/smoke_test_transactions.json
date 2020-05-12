@@ -7,11 +7,11 @@
         "coins": [
             {
                 "asset": "BNB.BNB",
-                "amount": 100000000
+                "amount": 1000000000
             },
             {
                 "asset": "BNB.RUNE-A1F",
-                "amount": 200000000000000
+                "amount": 2000000000000000000
             }
         ],
         "gas": null
@@ -24,36 +24,15 @@
         "coins": [
             {
                 "asset": "BNB.BNB",
-                "amount": 100000000
+                "amount": 300000000
             },
             {
                 "asset": "BNB.RUNE-A1F",
-                "amount": 50000000000
+                "amount": 150000000000
             },
             {
                 "asset": "BNB.LOK-3C0",
-                "amount": 50000000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "BNB",
-        "from_address": "MASTER",
-        "to_address": "USER-1",
-        "memo": "SEED",
-        "coins": [
-            {
-                "asset": "BNB.BNB",
-                "amount": 100000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 50000000000
-            },
-            {
-                "asset": "BNB.LOK-3C0",
-                "amount": 50000000000
+                "amount": 150000000000
             }
         ],
         "gas": null
@@ -87,11 +66,11 @@
         "coins": [
             {
                 "asset": "BNB.BNB",
-                "amount": 200000000
+                "amount": 300000000
             },
             {
                 "asset": "BNB.RUNE-A1F",
-                "amount": 150000000001
+                "amount": 200000000001
             },
             {
                 "asset": "BNB.LOK-3C0",
@@ -168,7 +147,7 @@
         "coins": [
             {
                 "asset": "ETH.ETH",
-                "amount": 400000000000000000
+                "amount": 4000000000000
             }
         ],
         "gas": null
@@ -181,7 +160,7 @@
         "coins": [
             {
                 "asset": "ETH.ETH",
-                "amount": 400000000000000000
+                "amount": 40000000000000
             }
         ],
         "gas": null
@@ -194,7 +173,7 @@
         "coins": [
             {
                 "asset": "BNB.RUNE-A1F",
-                "amount": 200000000000000
+                "amount": 4000000000000000
             }
         ],
         "gas": null
@@ -263,7 +242,7 @@
         "coins": [
             {
                 "asset": "ETH.ETH",
-                "amount": 150000000
+                "amount": 4000000000
             }
         ],
         "gas": null
@@ -290,45 +269,6 @@
             {
                 "asset": "BTC.BTC",
                 "amount": 150000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "BNB",
-        "from_address": "USER-1",
-        "to_address": "VAULT",
-        "memo": "SWAP:ETH.ETH:USER-1",
-        "coins": [
-            {
-                "asset": "BNB.BNB",
-                "amount": 500000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "ETH",
-        "from_address": "USER-1",
-        "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F:USER-1",
-        "coins": [
-            {
-                "asset": "ETH.ETH",
-                "amount": 500000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "BNB",
-        "from_address": "STAKER-1",
-        "to_address": "VAULT",
-        "memo": "WITHDRAW:ETH.ETH:10",
-        "coins": [
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 1
             }
         ],
         "gas": null
@@ -544,6 +484,19 @@
         "gas": null
     },
     {
+        "chain": "BNB",
+        "from_address": "USER-1",
+        "to_address": "VAULT",
+        "memo": "SWAP:ETH.ETH:USER-1",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 500000
+            }
+        ],
+        "gas": null
+    },
+    {
         "chain": "BTC",
         "from_address": "USER-1",
         "to_address": "VAULT",
@@ -552,6 +505,32 @@
             {
                 "asset": "BTC.BTC",
                 "amount": 1500000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "ETH",
+        "from_address": "USER-1",
+        "to_address": "VAULT",
+        "memo": "SWAP:BNB.RUNE-A1F:USER-1",
+        "coins": [
+            {
+                "asset": "ETH.ETH",
+                "amount": 15000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:ETH.ETH:10",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 1
             }
         ],
         "gas": null
