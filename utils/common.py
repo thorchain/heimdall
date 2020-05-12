@@ -1,5 +1,6 @@
 import requests
 import json
+import logging
 import os
 import hashlib
 
@@ -101,6 +102,12 @@ class Asset(str, Jsonable):
         Is this asset btc?
         """
         return self.get_symbol().startswith("BTC")
+
+    def is_eth(self):
+        """
+        Is this asset eth?
+        """
+        return self.get_symbol().startswith("ETH")
 
     def is_rune(self):
         """
