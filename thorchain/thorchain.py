@@ -506,10 +506,9 @@ class ThorchainState:
         Generate outbound events for txns
         """
         for txn in txns:
-            event = EventSDK("outbound", [
-                {"in_tx_id": in_tx.id},
-                *txn.get_attributes(),
-            ])
+            event = EventSDK(
+                "outbound", [{"in_tx_id": in_tx.id}, *txn.get_attributes()]
+            )
             self.sdk_events.append(event)
 
     def order_outbound_txns(self, txns):
@@ -1142,9 +1141,7 @@ class EventSDK(Jsonable):
     def __hash__(self):
         attrs = sorted(self.attributes, key=lambda x: sorted(x.items()))
         if self.type == "outbound":
-            attrs = [
-                a for a in attrs if list(a.keys())[0] != "id"
-            ]
+            attrs = [a for a in attrs if list(a.keys())[0] != "id"]
         return hash(str(attrs))
 
     def __repr__(self):

@@ -1147,83 +1147,107 @@ class TestThorchainState(unittest.TestCase):
 
 class TestSDKEvent(unittest.TestCase):
     def test_eq(self):
-        outbound_sim = EventSDK("outbound", [
-            {'in_tx_id': 'FAAFF'},
-            {'id': 'TODO'},
-            {'chain': 'BNB'},
-            {'from': 'tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj'},
-            {'to': 'tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx'},
-            {'coin': '149700000 BNB.BNB'},
-            {'memo': 'REFUND:FAAFF'},
-        ])
-        outbound = EventSDK("outbound", [
-            {'in_tx_id': 'FAAFF'},
-            {'id': '67672'},
-            {'chain': 'BNB'},
-            {'from': 'tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj'},
-            {'to': 'tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx'},
-            {'coin': '149700000 BNB.BNB'},
-            {'memo': 'REFUND:FAAFF'},
-        ])
+        outbound_sim = EventSDK(
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "TODO"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
+        outbound = EventSDK(
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "67672"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         self.assertEqual(outbound_sim, outbound)
-        swap_sim = EventSDK("swap", [
-            {'in_tx_id': 'FAAFF'},
-            {'id': 'TODO'},
-            {'chain': 'BNB'},
-            {'from': 'tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj'},
-            {'to': 'tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx'},
-            {'coin': '149700000 BNB.BNB'},
-            {'memo': 'REFUND:FAAFF'},
-        ])
-        swap = EventSDK("swap", [
-            {'in_tx_id': 'FAAFF'},
-            {'id': '67672'},
-            {'chain': 'BNB'},
-            {'from': 'tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj'},
-            {'to': 'tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx'},
-            {'coin': '149700000 BNB.BNB'},
-            {'memo': 'REFUND:FAAFF'},
-        ])
+        swap_sim = EventSDK(
+            "swap",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "TODO"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
+        swap = EventSDK(
+            "swap",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "67672"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         self.assertNotEqual(swap_sim, swap)
 
     def test_sorted(self):
-        outbound_sim_1 = EventSDK("outbound", [
-            {'in_tx_id': 'FAAFF'},
-            {'id': 'TODO'},
-            {'chain': 'BNB'},
-            {'from': 'tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj'},
-            {'to': 'tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx'},
-            {'coin': '149700000 BNB.BNB'},
-            {'memo': 'REFUND:FAAFF'},
-        ])
-        outbound_sim_2 = EventSDK("outbound", [
-            {'in_tx_id': 'FAAFF'},
-            {'id': 'TODO'},
-            {'chain': 'BNB'},
-            {'from': 'tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj'},
-            {'to': 'tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx'},
-            {'coin': '500000000 BNB.RUNE-A1F'},
-            {'memo': 'REFUND:FAAFF'},
-        ])
+        outbound_sim_1 = EventSDK(
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "TODO"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
+        outbound_sim_2 = EventSDK(
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "TODO"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "500000000 BNB.RUNE-A1F"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         sim_events = [outbound_sim_1, outbound_sim_2]
-        outbound_1 = EventSDK("outbound", [
-            {'in_tx_id': 'FAAFF'},
-            {'id': '47AC6'},
-            {'chain': 'BNB'},
-            {'from': 'tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj'},
-            {'to': 'tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx'},
-            {'coin': '149700000 BNB.BNB'},
-            {'memo': 'REFUND:FAAFF'},
-        ])
-        outbound_2 = EventSDK("outbound", [
-            {'in_tx_id': 'FAAFF'},
-            {'id': 'E415A'},
-            {'chain': 'BNB'},
-            {'from': 'tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj'},
-            {'to': 'tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx'},
-            {'coin': '500000000 BNB.RUNE-A1F'},
-            {'memo': 'REFUND:FAAFF'},
-        ])
+        outbound_1 = EventSDK(
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "47AC6"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
+        outbound_2 = EventSDK(
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "E415A"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "500000000 BNB.RUNE-A1F"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         sim_events = [outbound_sim_1, outbound_sim_2]
         events = [outbound_1, outbound_2]
         self.assertEqual(sim_events, events)
