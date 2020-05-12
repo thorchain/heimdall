@@ -40,6 +40,11 @@ def main():
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
     )
     parser.add_argument(
+        "--thorchain-websocket",
+        default="ws://localhost:26657/websocket",
+        help="Thorchain Websocket url",
+    )
+    parser.add_argument(
         "--midgard", default="http://localhost:8080", help="Midgard API url"
     )
     parser.add_argument(
@@ -77,6 +82,7 @@ def main():
         args.fast_fail,
         args.no_verify,
         args.bitcoin_reorg,
+        args.thorchain_websocket,
     )
     try:
         smoker.run()
@@ -99,6 +105,7 @@ class Smoker:
         fast_fail=False,
         no_verify=False,
         bitcoin_reorg=False,
+        thor_websocket=None,
     ):
         self.binance = Binance()
         self.bitcoin = Bitcoin()
@@ -109,7 +116,7 @@ class Smoker:
 
         self.txns = txns
 
-        self.thorchain_client = ThorchainClient(thor)
+        self.thorchain_client = ThorchainClient(thor, thor_websocket)
         vault_address = self.thorchain_client.get_vault_address()
         vault_pubkey = self.thorchain_client.get_vault_pubkey()
 
@@ -217,6 +224,22 @@ class Smoker:
             real = vdata["bond_reward_rune"]
             self.error(f"Mismatching bond reward: {sim} != {real}")
 
+    def check_sdk_events(self):
+        events = self.thorchain_client.get_sdk_events()
+        sim_events = self.thorchain.sdk_events
+
+        # TODO remove when we switch to SDK events only
+        if len(events) != len(sim_events):
+            return
+
+        for event, sim_event in zip(sorted(events), sorted(sim_events)):
+            if sim_event != event:
+                logging.error(
+                    f"Event Thorchain \n{event} \n   !="
+                    f"  \nEvent Simulator \n{sim_event}"
+                )
+                self.error("Events SDK mismatch")
+
     def check_events(self):
         # compare simulation events with real events
         raw_events = self.thorchain_client.get_events()
@@ -282,9 +305,8 @@ class Smoker:
                 evt.type for evt in sim_events
             ]  # convert evts to array of strings
 
-            if len(events) > len(
-                sim_events
-            ):  # we have more real events than sim, fill in the gaps
+            # we have more real events than sim, fill in the gaps
+            if len(events) > len(sim_events):
                 for evt in events[len(sim_events) :]:
                     if evt.type == "gas":
                         todo = []
@@ -315,7 +337,7 @@ class Smoker:
                         outbounds = self.thorchain.handle(
                             txn
                         )  # process transaction in thorchain
-                        outbounds = self.thorchain.handle_fee(outbounds)
+                        outbounds = self.thorchain.handle_fee(txn, outbounds)
                         processed_transaction = (
                             True  # we have now processed this inbound txn
                         )
@@ -350,6 +372,9 @@ class Smoker:
             )
 
     def run(self):
+        # reset sdk events
+        self.thorchain_client.events = []
+
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
 
@@ -380,6 +405,7 @@ class Smoker:
             if self.no_verify:
                 continue
 
+            self.check_sdk_events()
             self.check_events()
             self.check_pools()
             self.check_binance()

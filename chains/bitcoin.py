@@ -164,7 +164,7 @@ class MockBitcoin:
 
         tx = self.call("createrawtransaction", tx_in, tx_out)
         tx = self.call("signrawtransactionwithwallet", tx)
-        txn.id = self.call("sendrawtransaction", tx["hex"])
+        txn.id = self.call("sendrawtransaction", tx["hex"]).upper()
         txn.gas = [Coin("BTC.BTC", self.default_gas)]
 
 

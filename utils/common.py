@@ -191,7 +191,7 @@ class Transaction(Jsonable):
     def __init__(
         self, chain, from_address, to_address, coins, memo="", gas=None, id="TODO"
     ):
-        self.id = id
+        self.id = id.upper()
         self.chain = chain
         self.from_address = from_address
         self.to_address = to_address
@@ -266,6 +266,17 @@ class Transaction(Jsonable):
         tmp = f"{self.chain}|{self.to_address}|{pubkey}|{coins}|{self.memo}|{in_hash}"
         return hashlib.new("sha256", tmp.encode()).digest().hex().upper()
 
+    def get_attributes(self):
+        coin = ", ".join([f"{c.amount} {c.asset}" for c in self.coins])
+        return [
+            {"id": self.id},
+            {"chain": self.chain},
+            {"from": self.from_address},
+            {"to": self.to_address},
+            {"coin": coin},
+            {"memo": self.memo},
+        ]
+
     @classmethod
     def from_dict(cls, value):
         txn = cls(
@@ -276,7 +287,7 @@ class Transaction(Jsonable):
             memo=value["memo"],
         )
         if "id" in value and value["id"]:
-            txn.id = value["id"]
+            txn.id = value["id"].upper()
         if "coins" in value and value["coins"]:
             txn.coins = [Coin.from_dict(c) for c in value["coins"]]
         if "gas" in value and value["gas"]:
