@@ -84,9 +84,6 @@ class ThorchainClient(HttpClient):
             key = base64.b64decode(attr["key"]).decode("utf-8")
             value = base64.b64decode(attr["value"]).decode("utf-8")
             attributes.append({key: value})
-
-        # TODO remove when fee is its own event
-        attributes[:] = [a for a in attributes if list(a.keys())[0] != "fee"]
         event["attributes"] = attributes
 
     def ws_error(self, error):
@@ -198,10 +195,9 @@ class ThorchainState:
                     event = Event("pool", Transaction.empty_txn(), None, pool_event)
                     self.events.append(event)
 
-                    event = EventSDK("pool", [
-                        {"pool": pool.asset},
-                        {"pool_status": pool.status},
-                    ])
+                    event = EventSDK(
+                        "pool", [{"pool": pool.asset}, {"pool_status": pool.status}]
+                    )
                     self.sdk_events.append(event)
 
                 self.pools[i] = pool
@@ -283,7 +279,7 @@ class ThorchainState:
         event = Event("gas", Transaction.empty_txn(), None, gas_event)
         self.events.append(event)
 
-    def handle_fee(self, txns):
+    def handle_fee(self, in_tx, txns):
         """
         Subtract transaction fee from given transactions
         """
@@ -292,6 +288,7 @@ class ThorchainState:
             txns = [txns]
 
         event_fee = EventFee()
+
         for txn in txns:
             for coin in txn.coins:
                 if coin.is_rune():
@@ -307,6 +304,17 @@ class ThorchainState:
                     self.reserve += self.rune_fee  # add to the reserve
                     if coin.amount > 0:
                         outbound.append(txn)
+
+                    # add sdk fee event
+                    event = EventSDK(
+                        "fee",
+                        [
+                            {"tx_id": in_tx.id},
+                            {"coins": f"{coin_fee.amount} {coin_fee.asset}"},
+                            {"pool_deduct": 0},
+                        ],
+                    )
+                    self.sdk_events.append(event)
 
                 else:
                     pool = self.get_pool(coin.asset)
@@ -328,6 +336,17 @@ class ThorchainState:
                         else:
                             event_fee.coins = [coin_fee]
                         event_fee.pool_deduct += self.rune_fee
+
+                        # add sdk fee event
+                        event = EventSDK(
+                            "fee",
+                            [
+                                {"tx_id": in_tx.id},
+                                {"coins": f"{coin_fee.amount} {coin_fee.asset}"},
+                                {"pool_deduct": self.rune_fee},
+                            ],
+                        )
+                        self.sdk_events.append(event)
 
                     self.reserve += self.rune_fee  # add to the reserve
                     if coin.amount > 0:
@@ -471,11 +490,14 @@ class ThorchainState:
         event = Event("refund", txn, txns, refund_event, status="Refund")
         self.events.append(event)
 
-        event = EventSDK("refund", [
-            {"code": refund_event.code},
-            {"reason": refund_event.reason},
-            *txn.get_attributes(),
-        ])
+        event = EventSDK(
+            "refund",
+            [
+                {"code": refund_event.code},
+                {"reason": refund_event.reason},
+                *txn.get_attributes(),
+            ],
+        )
         self.sdk_events.append(event)
         return txns
 

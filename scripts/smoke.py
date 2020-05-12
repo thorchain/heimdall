@@ -212,7 +212,7 @@ class Smoker:
                     f"Event Thorchain \n{event} \n   !="
                     f"  \nEvent Simulator \n{sim_event}"
                 )
-                self.error("Events mismatch")
+                self.error("Events SDK mismatch")
 
     def check_events(self):
         # compare simulation events with real events
@@ -307,7 +307,7 @@ class Smoker:
                         outbounds = self.thorchain.handle(
                             txn
                         )  # process transaction in thorchain
-                        outbounds = self.thorchain.handle_fee(outbounds)
+                        outbounds = self.thorchain.handle_fee(txn, outbounds)
                         processed_transaction = (
                             True  # we have now processed this inbound txn
                         )
