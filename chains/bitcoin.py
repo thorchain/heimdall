@@ -105,7 +105,7 @@ class MockBitcoin:
         """
         current_height = self.get_block_height()
         if current_height < 100:
-            logging.warning(f"Bitcoin regtest starting, waiting")
+            logging.warning("Bitcoin regtest starting, waiting")
             raise Exception
 
     def transfer(self, txn):

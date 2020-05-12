@@ -338,16 +338,13 @@ class Smoker:
 
                     else:
                         # sent a transaction to our simulated thorchain
-                        outbounds = self.thorchain.handle(
-                            txn
-                        )  # process transaction in thorchain
+                        outbounds = self.thorchain.handle(txn)
+                        # process transaction in thorchain
                         outbounds = self.thorchain.handle_fee(txn, outbounds)
-                        processed_transaction = (
-                            True  # we have now processed this inbound txn
-                        )
-                        count_outbounds = len(
-                            outbounds
-                        )  # expecting to see this many outbound txs
+                        # we have now processed this inbound txn
+                        processed_transaction = True
+                        # expecting to see this many outbound txs
+                        count_outbounds = len(outbounds)
 
                         # replicate order of outbounds broadcast from thorchain
                         self.thorchain.order_outbound_txns(outbounds)
@@ -355,6 +352,8 @@ class Smoker:
                         for outbound in outbounds:
                             # update simulator state with outbound txs
                             self.broadcast_simulator(outbound)
+
+                        self.thorchain.generate_outbound_events(txn, outbounds)
                 continue
 
             # happy path exit
