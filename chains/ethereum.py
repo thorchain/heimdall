@@ -4,13 +4,11 @@ import json
 import requests
 
 from web3 import Web3, HTTPProvider
-from web3.auto.gethdev import w3
 from web3.middleware import geth_poa_middleware
 from eth_keys import KeyAPI
 from utils.common import Coin
 from chains.aliases import aliases_eth, get_aliases, get_alias_address
 from chains.account import Account
-from tenacity import retry, stop_after_delay, wait_fixed
 
 
 def calculate_gas(msg):
@@ -46,13 +44,9 @@ class MockEthereum:
             )
             headers = {"content-type": "application/json", "cache-control": "no-cache"}
             try:
-                response = requests.request(
-                    "POST", base_url, data=payload, headers=headers
-                )
+                requests.request("POST", base_url, data=payload, headers=headers)
             except requests.exceptions.RequestException as e:
                 logging.error(f"{e}")
-            except:
-                logging.info(f"Imported {key}")
         self.web3 = Web3(HTTPProvider(base_url))
         self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
