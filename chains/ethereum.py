@@ -148,9 +148,13 @@ class MockEthereum:
 
         tx_hash = self.web3.geth.personal.send_transaction(tx, self.passphrase)
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
-        txlol = self.web3.eth.getTransaction(receipt['transactionHash'])
-        logging.info(f"balance from {self.get_balance(Web3.toChecksumAddress(txn.from_address))}")
-        logging.info(f"balance to {self.get_balance(Web3.toChecksumAddress(txn.to_address))}")
+        txlol = self.web3.eth.getTransaction(receipt["transactionHash"])
+        logging.info(
+            f"balance from {self.get_balance(Web3.toChecksumAddress(txn.from_address))}"
+        )
+        logging.info(
+            f"balance to {self.get_balance(Web3.toChecksumAddress(txn.to_address))}"
+        )
         logging.info(f"hash {tx_hash}")
         logging.info(f"tx {txlol}")
         logging.info(f"receipt {receipt}")
