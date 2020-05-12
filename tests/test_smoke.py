@@ -85,7 +85,7 @@ class TestSmoke(unittest.TestCase):
                 continue
 
             outbound = thorchain.handle(txn)  # process transaction in thorchain
-            outbound = thorchain.handle_fee(outbound)
+            outbound = thorchain.handle_fee(txn, outbound)
             thorchain.order_outbound_txns(outbound)
 
             for txn in outbound:
