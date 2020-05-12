@@ -1206,25 +1206,6 @@ Event {self.event}
     def __eq__(self, other):
         out_txs = self.out_txs or []
         other_out_txs = other.out_txs or []
-        if not (
-            self.type == other.type
-            and self.status == other.status
-            and self.in_tx == other.in_tx
-            and sorted(out_txs) == sorted(other_out_txs)
-            and self.event == other.event
-        ):
-            if not (self.type == other.type):
-                logging.info(f"types {self.type} {other.type}")
-            if not (self.status == other.status):
-                logging.info(f"status {self.status} {other.status}")
-            if not (self.in_tx == other.in_tx):
-                logging.info(f"in tx {self.in_tx} {other.in_tx}")
-            if not (sorted(out_txs) == sorted(other_out_txs)):
-                logging.info(f"out tx {sorted(out_txs)} {sorted(other_out_txs)}")
-            if not (self.event == other.event):
-                logging.info(f"event {self.event} {other.event}")
-
-
         return (
             self.type == other.type
             and self.status == other.status
