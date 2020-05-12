@@ -233,7 +233,6 @@ class Smoker:
             return
 
         for event, sim_event in zip(sorted(events), sorted(sim_events)):
-            logging.info(f"Thorchain \n{event}" f"  \nSimulator \n{sim_event}")
             if sim_event != event:
                 logging.error(
                     f"Event Thorchain \n{event} \n   !="
