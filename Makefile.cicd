@@ -9,5 +9,5 @@ docker-gitlab-push:
 	docker push ${IMAGE_NAME}:latest
 
 docker-gitlab-build:
-	docker build -t ${IMAGE_NAME}
+	docker build -t ${IMAGE_NAME} .
 # ------------------------------------------------------------------ #
