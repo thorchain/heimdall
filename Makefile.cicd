@@ -1,0 +1,13 @@
+IMAGE_NAME = registry.gitlab.com/thorchain/heimdall
+
+# ------------------------------- GitLab ------------------------------- #
+
+docker-gitlab-login:
+	docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+
+docker-gitlab-push:
+	docker push ${IMAGE_NAME}:latest
+
+docker-gitlab-build:
+	docker build -t ${IMAGE_NAME}
+# ------------------------------------------------------------------ #
