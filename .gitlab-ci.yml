@@ -65,6 +65,8 @@ build-thornode:
   image: docker:stable
   tags:
     - thorchain
+  only:
+    - master
   services:
     - docker:19-dind
   before_script:
