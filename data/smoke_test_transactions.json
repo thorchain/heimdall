@@ -526,7 +526,7 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "WITHDRAW:ETH.ETH:10",
+        "memo": "WITHDRAW:ETH.ETH:1000",
         "coins": [
             {
                 "asset": "BNB.RUNE-A1F",

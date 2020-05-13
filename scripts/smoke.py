@@ -404,7 +404,7 @@ class Smoker:
             if self.no_verify:
                 continue
 
-            self.check_sdk_events()
+            # self.check_sdk_events()
             self.check_events()
             self.check_pools()
             self.check_binance()

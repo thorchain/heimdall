@@ -12,8 +12,6 @@ from chains.account import Account
 
 
 def calculate_gas(msg):
-    if msg == "SEED":
-        return MockEthereum.seed_gas
     return MockEthereum.default_gas + MockEthereum.gas_per_byte * len(msg)
 
 
@@ -25,7 +23,6 @@ class MockEthereum:
     default_gas = 21000
     gas_per_byte = 68
     gas_price = 1
-    seed_gas = 30000
     passphrase = "the-passphrase"
 
     private_keys = [
@@ -129,8 +126,6 @@ class MockEthereum:
             addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
 
-        logging.info(f"memo {txn.memo} len {len(txn.memo)}")
-
         # create and send transaction
         tx = {
             "from": Web3.toChecksumAddress(txn.from_address),
@@ -142,16 +137,8 @@ class MockEthereum:
 
         tx_hash = self.web3.geth.personal.send_transaction(tx, self.passphrase)
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
-        txlol = self.web3.eth.getTransaction(receipt["transactionHash"])
-        logging.info(
-            f"balance from {self.get_balance(Web3.toChecksumAddress(txn.from_address))}"
-        )
-        logging.info(
-            f"balance to {self.get_balance(Web3.toChecksumAddress(txn.to_address))}"
-        )
-        logging.info(f"hash {tx_hash}")
-        logging.info(f"tx {txlol}")
-        logging.info(f"receipt {receipt}")
+        txn.id = receipt["transactionHash"].hex()[2:]
+        txn.gasUsed = [Coin("ETH.ETH", receipt["cumulativeGasUsed"] * self.gas_price)]
 
 
 class Ethereum:
