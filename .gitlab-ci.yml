@@ -57,3 +57,19 @@ integration:
     - make smoke
   after_script:
     - ./thornode/scripts/docker_logs.sh
+
+# Build docker image
+build-thornode:
+  stage: build
+  image: docker:stable
+  tags:
+    - thorchain
+  services:
+    - docker:19-dind
+  before_script:
+    - apk update
+    - apk add python py-pip make git jq curl
+    - make docker-gitlab-login
+  script:
+    - make docker-gitlab-build
+    - make docker-gitlab-push
