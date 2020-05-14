@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: smoke-tests
+spec:
+  template:
+    spec:
+      containers:
+      - name: heimdall
+        image: registry.gitlab.com/thorchain/heimdall
+        imagePullPolicy: Always
+        command:
+          - python
+          - scripts/smoke.py
+          - --fast-fail=True
+          - --thorchain=http://thor-api
+          - --binance=http://binance-daemon:26660
+          - --bitcoin=http://thorchain:password@bitcoin-daemon:18443
+          - --thorchain-websocket=ws://thor-daemon:26657/websocket
+          - --midgard=http://midgard
+      restartPolicy: Never

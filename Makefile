@@ -37,6 +37,9 @@ benchmark-swap:
 smoke:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True
 
+kube-smoke:
+	@kubectl apply -f kube/job.yml
+
 health:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py
 
