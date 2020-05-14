@@ -34,7 +34,7 @@ unit_tests:
 integration:
   image: docker/compose:alpine-1.25.4
   stage: integration
-  tags: 
+  tags:
     - thorchain
   services:
     - docker:19-dind
@@ -47,7 +47,7 @@ integration:
   before_script:
     - apk update
     - apk add git make
-    - (git clone --single-branch -b $CI_COMMIT_BRANCH https://gitlab.com/thorchain/midgard.git && cd midgard && make docker-gitlab-build && cd ..) || true
+    - (git clone --single-branch -b $CI_COMMIT_BRANCH https://gitlab.com/thorchain/midgard.git && cd midgard && make docker-gitlab-build && docker tag registry.gitlab.com/thorchain/midgard:latest registry.gitlab.com/thorchain/midgard:mocknet && cd ..) || true
     - git clone --single-branch -b $CI_COMMIT_BRANCH https://gitlab.com/thorchain/thornode.git || git clone --single-branch -b master https://gitlab.com/thorchain/thornode.git
     - cd thornode
     - test master = $(git rev-parse --abbrev-ref HEAD) && docker pull registry.gitlab.com/thorchain/thornode:mocknet
