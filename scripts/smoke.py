@@ -5,7 +5,7 @@ import os
 import sys
 import json
 
-from tenacity import retry, stop_after_attempt, wait_fixed
+from tenacity import retry, stop_after_delay, wait_fixed
 
 from utils.segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
@@ -236,7 +236,7 @@ class Smoker:
                 )
                 self.error("Events mismatch")
 
-    @retry(stop=stop_after_attempt(60), wait=wait_fixed(1), reraise=True)
+    @retry(stop=stop_after_delay(60), wait=wait_fixed(1), reraise=True)
     def run_health(self):
         self.health.run()
 
