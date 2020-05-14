@@ -6,10 +6,11 @@ import requests
 from web3 import Web3, HTTPProvider
 from web3.middleware import geth_poa_middleware
 from eth_keys import KeyAPI
-from utils.common import Coin
+from utils.common import Coin, get_rune_asset
 from chains.aliases import aliases_eth, get_aliases, get_alias_address
 from chains.account import Account
 
+RUNE = get_rune_asset()
 
 def calculate_gas(msg):
     return MockEthereum.default_gas + MockEthereum.gas_per_byte * len(msg)
@@ -138,7 +139,7 @@ class MockEthereum:
                 chain = asset.get_chain()
             # we use RUNE BNB address to identify a cross chain stake
             if txn.memo.startswith("STAKE"):
-                chain = "BNB"
+                chain = RUNE.split('.')[0]
             addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
 
