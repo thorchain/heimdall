@@ -18,6 +18,7 @@ from utils.common import (
 )
 from chains.aliases import get_alias, get_alias_address, get_aliases
 from chains.bitcoin import Bitcoin
+from chains.ethereum import Ethereum
 from chains.binance import Binance
 
 RUNE = get_rune_asset()
@@ -740,9 +741,12 @@ class ThorchainState:
 
         # calculate gas prior to update pool in case we empty the pool
         # and need to subtract
-        btc_gas = None
+        gas = None
         if asset.get_chain() == "BTC":
-            btc_gas = [Bitcoin.calculate_gas(pool, self.rune_fee)]
+            gas = [Bitcoin.calculate_gas(pool, self.rune_fee)]
+
+        if asset.get_chain() == "ETH":
+            gas = [Ethereum.calculate_gas(pool, self.rune_fee)]
 
         unstake_units, rune_amt, asset_amt = pool.unstake(
             txn.from_address, withdraw_basis_points
@@ -753,9 +757,9 @@ class ThorchainState:
             if pool.asset.is_bnb():
                 asset_amt -= 75000
                 pool.asset_balance += 75000
-            elif pool.asset.is_btc():
-                asset_amt -= btc_gas[0].amount
-                pool.asset_balance += btc_gas[0].amount
+            elif pool.asset.is_btc() or pool.asset.is_eth():
+                asset_amt -= gas[0].amount
+                pool.asset_balance += gas[0].amount
 
         self.set_pool(pool)
 
@@ -785,7 +789,7 @@ class ThorchainState:
                 to_address,
                 [Coin(asset, asset_amt)],
                 f"OUTBOUND:{txn.id.upper()}",
-                gas=btc_gas,
+                gas=gas,
             ),
         ]
 
@@ -964,6 +968,10 @@ class ThorchainState:
         # calculate gas if BTC
         if target.get_chain() == "BTC":
             gas = [Bitcoin.calculate_gas(pool, self.rune_fee)]
+
+        # calculate gas if ETH
+        if target.get_chain() == "ETH":
+            gas = [Ethereum.calculate_gas(pool, self.rune_fee)]
 
         out_txns = [
             Transaction(
