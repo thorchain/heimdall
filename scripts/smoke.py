@@ -98,7 +98,7 @@ def main():
         smoker.run()
         sys.exit(smoker.exit)
     except Exception as e:
-        logging.fatal(e)
+        logging.exception('Smoke tests failed')
         sys.exit(1)
 
 
