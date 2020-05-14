@@ -1335,10 +1335,14 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
 
     def test_gas_pool_event_sort(self):
         gas_pool_btc = EventGasPool("BTC.BTC", 100, 200)
+        gas_pool_eth = EventGasPool("ETH.ETH", 100, 200)
         gas_pool_bnb = EventGasPool("BNB.BNB", 300, 400)
         gas_event1 = GasEvent([gas_pool_btc, gas_pool_bnb])
         gas_event2 = GasEvent([gas_pool_bnb, gas_pool_btc])
+        gas_event3 = GasEvent([gas_pool_bnb, gas_pool_eth])
+        gas_event4 = GasEvent([gas_pool_eth, gas_pool_bnb])
         self.assertEqual(gas_event1, gas_event2)
+        self.assertEqual(gas_event3, gas_event4)
 
     def test_to_json(self):
         refund_event = RefundEvent(105, "memo can't be empty")

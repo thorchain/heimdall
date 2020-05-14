@@ -7,9 +7,9 @@ from deepdiff import DeepDiff
 
 from chains.binance import Binance
 from chains.bitcoin import Bitcoin
+from chains.ethereum import Ethereum
 from thorchain.thorchain import ThorchainState, Event
 from utils.breakpoint import Breakpoint
-
 from utils.common import Transaction, get_rune_asset, DEFAULT_RUNE_ASSET
 
 RUNE = get_rune_asset()
@@ -62,6 +62,7 @@ class TestSmoke(unittest.TestCase):
         snaps = []
         bnb = Binance()  # init local binance chain
         btc = Bitcoin()  # init local bitcoin chain
+        eth = Ethereum()  # init local ethereum chain
         thorchain = ThorchainState()  # init local thorchain
 
         with open("data/smoke_test_transactions.json", "r") as f:
@@ -77,6 +78,8 @@ class TestSmoke(unittest.TestCase):
                 bnb.transfer(txn)  # send transfer on binance chain
             if txn.chain == Bitcoin.chain:
                 btc.transfer(txn)  # send transfer on bitcoin chain
+            if txn.chain == Ethereum.chain:
+                eth.transfer(txn)  # send transfer on ethereum chain
 
             if txn.memo == "SEED":
                 continue
@@ -90,6 +93,8 @@ class TestSmoke(unittest.TestCase):
                     bnb.transfer(txn)  # send outbound txns back to Binance
                 if txn.chain == Bitcoin.chain:
                     btc.transfer(txn)  # send outbound txns back to Bitcoin
+                if txn.chain == Ethereum.chain:
+                    eth.transfer(txn)  # send outbound txns back to Ethereum
 
             thorchain.handle_rewards()
 
@@ -101,8 +106,13 @@ class TestSmoke(unittest.TestCase):
             for out in outbound:
                 if out.coins[0].asset.get_chain() == "BTC":
                     btcOut.append(out)
+            ethOut = []
+            for out in outbound:
+                if out.coins[0].asset.get_chain() == "ETH":
+                    ethOut.append(out)
             thorchain.handle_gas(bnbOut)  # subtract gas from pool(s)
             thorchain.handle_gas(btcOut)  # subtract gas from pool(s)
+            thorchain.handle_gas(ethOut)  # subtract gas from pool(s)
 
             # generated a snapshop picture of thorchain and bnb
             snap = Breakpoint(thorchain, bnb).snapshot(i, len(outbound))
