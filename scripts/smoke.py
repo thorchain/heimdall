@@ -128,9 +128,6 @@ class Smoker:
         self.txns = txns
 
         self.thorchain_client = ThorchainClient(thor, thor_websocket)
-        vault_address = self.thorchain_client.get_vault_address()
-        vault_pubkey = self.thorchain_client.get_vault_pubkey()
-
         pubkey = self.thorchain_client.get_vault_pubkey()
 
         self.thorchain.set_vault_pubkey(pubkey)
