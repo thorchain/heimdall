@@ -3,7 +3,6 @@ import codecs
 import logging
 
 from bitcoin import SelectParams
-from bitcoin.rpc import Proxy
 from bitcoin.wallet import CBitcoinSecret, P2WPKHBitcoinAddress
 from bitcoin.core import Hash160
 from bitcoin.core.script import CScript, OP_0
