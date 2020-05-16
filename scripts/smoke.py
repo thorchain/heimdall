@@ -14,7 +14,7 @@ from chains.ethereum import Ethereum, MockEthereum
 from thorchain.thorchain import ThorchainState, ThorchainClient, Event
 from scripts.health import Health
 from utils.common import Transaction, Coin, Asset
-from chains.aliases import aliases_bnb, aliases_btc, aliases_eth, get_alias
+from chains.aliases import aliases_bnb, get_alias
 
 # Init logging
 logging.basicConfig(
