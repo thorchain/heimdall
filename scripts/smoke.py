@@ -14,7 +14,7 @@ from chains.ethereum import Ethereum, MockEthereum
 from thorchain.thorchain import ThorchainState, ThorchainClient, Event
 from scripts.health import Health
 from utils.common import Transaction, Coin, Asset
-from chains.aliases import aliases_bnb, get_alias
+from chains.aliases import aliases_bnb, aliases_btc, aliases_eth, get_alias
 
 # Init logging
 logging.basicConfig(
@@ -140,9 +140,8 @@ class Smoker:
         self.fast_fail = fast_fail
         self.no_verify = no_verify
         self.bitcoin_reorg = bitcoin_reorg
+        self.thorchain_client.events = []
         self.exit = 0
-
-        time.sleep(5)  # give thorchain extra time to start the blockchain
 
     def error(self, err):
         self.exit = 1
@@ -371,9 +370,6 @@ class Smoker:
             )
 
     def run(self):
-        # reset sdk events
-        self.thorchain_client.events = []
-
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
 
