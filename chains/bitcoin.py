@@ -7,7 +7,7 @@ from bitcoin.rpc import Proxy
 from bitcoin.wallet import CBitcoinSecret, P2WPKHBitcoinAddress
 from bitcoin.core import Hash160
 from bitcoin.core.script import CScript, OP_0
-from utils.common import Coin
+from utils.common import Coin, HttpClient
 from decimal import Decimal, getcontext
 from chains.aliases import aliases_btc, get_aliases, get_alias_address
 from chains.account import Account
@@ -16,7 +16,7 @@ from tenacity import retry, stop_after_delay, wait_fixed
 getcontext().prec = 15
 
 
-class MockBitcoin:
+class MockBitcoin(HttpClient):
     """
     An client implementation for a regtest bitcoin server
     """
@@ -31,8 +31,10 @@ class MockBitcoin:
     default_gas = 1000000
 
     def __init__(self, base_url):
+        super().__init__(base_url)
+
         SelectParams("regtest")
-        self.connection = Proxy(service_url=base_url)
+
         for key in self.private_keys:
             seckey = CBitcoinSecret.from_secret_bytes(codecs.decode(key, "hex_codec"))
             self.call("importprivkey", str(seckey))
@@ -49,9 +51,17 @@ class MockBitcoin:
         script_pubkey = CScript([OP_0, Hash160(pubkey)])
         return str(P2WPKHBitcoinAddress.from_scriptPubKey(script_pubkey))
 
-    @retry(stop=stop_after_delay(3), wait=wait_fixed(0.5))
-    def call(self, *args):
-        return self.connection._call(*args)
+    def call(self, service, *args):
+        payload = {
+            "version": "1.1",
+            "method": service,
+            "params": args,
+        }
+        result = self.post("/", payload)
+        if result.get("error"):
+            logging.error(result["error"])
+            raise (result["error"])
+        return result["result"]
 
     def set_vault_address(self, addr):
         """
@@ -93,7 +103,7 @@ class MockBitcoin:
         """
         Get BTC balance for an address
         """
-        unspents = self.call("listunspent", 1, 9999, [str(address)])
+        unspents = self.call("listunspent", 1, 9999999, [address])
         return int(sum(Decimal(u["amount"]) for u in unspents) * Coin.ONE)
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1))

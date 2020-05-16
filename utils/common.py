@@ -1,4 +1,5 @@
 import requests
+import logging
 import json
 import os
 import hashlib
@@ -75,8 +76,10 @@ class HttpClient:
         """
         url = self.get_url(path)
         resp = requests_retry_session().post(url, json=payload)
+        if resp.status_code != 200:
+            logging.error(resp.text)
         resp.raise_for_status()
-        return resp.json()
+        return json.loads(resp.text, parse_float=Decimal)
 
 
 class Jsonable:
