@@ -22,7 +22,7 @@ spec:
           - --fast-fail=True
           - --thorchain=http://thor-api
           - --binance=http://binance-daemon-rpc:27147
-          - --ethereum=http://ethereum-daemon:8545
+          - --ethereum=http://ethereum-daemon-rpc:8545
           - --bitcoin=http://thorchain:password@bitcoin-daemon-rpc:18443
           - --thorchain-websocket=ws://thor-daemon-rpc:26657/websocket
           - --midgard=http://midgard
