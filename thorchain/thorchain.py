@@ -478,6 +478,7 @@ class ThorchainState:
         """
         Returns a list of refund transactions based on given txn
         """
+        logging.info("REFUNDING", str(txn))
         txns = []
         for coin in txn.coins:
             pool = self.get_pool(coin.asset)
