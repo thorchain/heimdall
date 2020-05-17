@@ -35,7 +35,6 @@ class MockEthereum:
 
     def __init__(self, base_url):
         for key in self.private_keys:
-            time.sleep(1.0)
             payload = json.dumps(
                 {"method": "personal_importRawKey", "params": [key, self.passphrase]}
             )
@@ -64,7 +63,7 @@ class MockEthereum:
         Set the vault eth address
         """
         aliases_eth["VAULT"] = addr
-        logging.info(f"vault addr {addr}")
+        logging.debug(f"ethereum vault addr {addr}")
 
     def get_block_height(self):
         """

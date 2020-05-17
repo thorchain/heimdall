@@ -1,4 +1,3 @@
-import time
 import base64
 import logging
 import itertools
@@ -20,6 +19,7 @@ from chains.aliases import get_alias, get_alias_address, get_aliases
 from chains.bitcoin import Bitcoin
 from chains.ethereum import Ethereum
 from chains.binance import Binance
+from tenacity import retry, stop_after_delay, wait_fixed
 
 RUNE = get_rune_asset()
 SUBSCRIBE_BLOCK = {"method": "subscribe", "params": {"query": "tm.event='NewBlock'"}}
@@ -33,6 +33,9 @@ class ThorchainClient(HttpClient):
 
     def __init__(self, api_url, websocket_url=None):
         super().__init__(api_url)
+
+        self.wait_for_node()
+
         if websocket_url:
             self.ws = websocket.WebSocketApp(
                 websocket_url,
@@ -42,6 +45,13 @@ class ThorchainClient(HttpClient):
             )
             self.events = []
             threading.Thread(target=self.ws.run_forever, daemon=True).start()
+
+    @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
+    def wait_for_node(self):
+        current_height = self.get_block_height()
+        if current_height < 1:
+            logging.warning("Thorchain starting, waiting")
+            raise Exception
 
     def ws_open(self):
         """
@@ -92,25 +102,14 @@ class ThorchainClient(HttpClient):
         Websocket error handler
         """
         logging.error(error)
+        raise Exception("thorchain websocket error")
 
     def get_block_height(self):
         """
         Get the current block height of mock binance
         """
         data = self.fetch("/thorchain/lastblock")
-        return int(data["statechain"])
-
-    def wait_for_blocks(self, count):
-        """
-        Wait for the given number of blocks
-        """
-        start_block = self.get_block_height()
-        for x in range(0, 100):
-            time.sleep(1)
-            block = self.get_block_height()
-            if block - start_block >= count:
-                return
-        raise Exception(f"failed waiting for thorchain blocks ({count})")
+        return int(data["thorchain"])
 
     def get_vault_address(self):
         data = self.fetch("/thorchain/pool_addresses")
