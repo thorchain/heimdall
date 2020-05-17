@@ -508,7 +508,7 @@
         "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.BNB",
+        "memo": "SWAP:BNB.BNB:USER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -521,7 +521,7 @@
         "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.BNB::26572599",
+        "memo": "SWAP:BNB.BNB:USER-1:26572599",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -534,7 +534,7 @@
         "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.BNB",
+        "memo": "SWAP:BNB.BNB:USER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -560,7 +560,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:THOR.RUNE",
+        "memo": "SWAP:THOR.RUNE:USER-1",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -612,7 +612,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:THOR.RUNE",
+        "memo": "SWAP:THOR.RUNE:USER-1",
         "coins": [
             {
                 "asset": "BNB.LOK-3C0",
@@ -625,7 +625,7 @@
         "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.LOK-3C0",
+        "memo": "SWAP:BNB.LOK-3C0:USER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",

@@ -201,7 +201,7 @@ class Transaction(Jsonable):
     empty_id = "0000000000000000000000000000000000000000000000000000000000000000"
 
     def __init__(
-        self, chain, from_address, to_address, coins, memo="", gas=None, id="TODO"
+        self, chain, from_address, to_address, coins, memo="", gas=None, id=empty_id
     ):
         self.id = id.upper()
         self.chain = chain
@@ -231,7 +231,7 @@ class Transaction(Jsonable):
     def __str__(self):
         coins = ", ".join([str(c) for c in self.coins]) if self.coins else "No Coins"
         gas = " | Gas " + ", ".join([str(g) for g in self.gas]) if self.gas else ""
-        id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
+        id = f" | ID {self.id.upper()}" if self.id != "TODO" and self.id != empty_id else ""
         return (
             f"Tx {self.from_address:>8} ==> {self.to_address:8} | "
             f"{self.memo} | {coins}{gas}{id}"
