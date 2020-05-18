@@ -63,7 +63,6 @@ class MockEthereum:
         Set the vault eth address
         """
         aliases_eth["VAULT"] = addr
-        logging.debug(f"ethereum vault addr {addr}")
 
     def get_block_height(self):
         """
@@ -103,7 +102,6 @@ class MockEthereum:
         """
         Make a transaction/transfer on localnet Ethereum
         """
-        self.wait_for_node()
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
