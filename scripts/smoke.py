@@ -449,7 +449,7 @@ class Smoker:
             self.check_bitcoin()
             self.check_ethereum()
             self.check_vaults()
-            # self.run_health()
+            self.run_health()
 
 
 if __name__ == "__main__":

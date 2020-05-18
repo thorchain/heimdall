@@ -8,10 +8,6 @@
             {
                 "asset": "BNB.BNB",
                 "amount": 1000000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 2000000000000000000
             }
         ],
         "gas": null
@@ -25,10 +21,6 @@
             {
                 "asset": "BNB.BNB",
                 "amount": 300000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 150000000000
             },
             {
                 "asset": "BNB.LOK-3C0",
@@ -48,10 +40,6 @@
                 "amount": 200000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 150000000001
-            },
-            {
                 "asset": "BNB.LOK-3C0",
                 "amount": 40000000000
             }
@@ -67,10 +55,6 @@
             {
                 "asset": "BNB.BNB",
                 "amount": 300000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 200000000001
             },
             {
                 "asset": "BNB.LOK-3C0",
@@ -88,10 +72,6 @@
             {
                 "asset": "BNB.BNB",
                 "amount": 200000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 51000000000
             },
             {
                 "asset": "BNB.LOK-3C0",
@@ -166,30 +146,13 @@
         "gas": null
     },
     {
-        "chain": "BNB",
-        "from_address": "CONTRIB",
-        "to_address": "VAULT",
-        "memo": "RESERVE",
-        "coins": [
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 4000000000000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB",
+        "memo": "STAKE:BNB.BNB:STAKER-1",
         "coins": [
             {
-                "asset": "BNB.BNB",
-                "amount": 150000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 50000000000
             }
         ],
@@ -199,10 +162,23 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
+        "memo": "STAKE:BNB.BNB:STAKER-1",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 150000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "THOR",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
         "memo": "STAKE:BTC.BTC:STAKER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 50000000000
             }
         ],
@@ -222,13 +198,13 @@
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "STAKE:ETH.ETH:STAKER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 50000000000
             }
         ],
@@ -248,27 +224,14 @@
         "gas": null
     },
     {
-        "chain": "BNB",
-        "from_address": "STAKER-2",
+        "chain": "THOR",
+        "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BTC.BTC:STAKER-2",
+        "memo": "STAKE:BNB.LOK-3C0:STAKER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 200000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "BTC",
-        "from_address": "STAKER-2",
-        "to_address": "VAULT",
-        "memo": "STAKE:BTC.BTC:STAKER-2",
-        "coins": [
-            {
-                "asset": "BTC.BTC",
-                "amount": 150000000
+                "asset": "THOR.RUNE",
+                "amount": 50000000000
             }
         ],
         "gas": null
@@ -277,15 +240,11 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.LOK-3C0",
+        "memo": "STAKE:BNB.LOK-3C0:STAKER-1",
         "coins": [
             {
                 "asset": "BNB.LOK-3C0",
                 "amount": 40000000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 50000000000
             }
         ],
         "gas": null
@@ -299,10 +258,6 @@
             {
                 "asset": "BNB.BNB",
                 "amount": 150000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 50000000000
             }
         ],
         "gas": null
@@ -316,10 +271,6 @@
             {
                 "asset": "BNB.BNB",
                 "amount": 150000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 50000000000
             }
         ],
         "gas": null
@@ -338,44 +289,53 @@
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.TCAN-014",
+        "memo": "STAKE:THOR.CAT",
         "coins": [
             {
-                "asset": "BNB.BNB",
+                "asset": "THOR.FUNNY",
                 "amount": 150000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
+                "amount": 50000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "THOR",
+        "from_address": "STAKER-2",
+        "to_address": "VAULT",
+        "memo": "STAKE:THOR.RUNE",
+        "coins": [
+            {
+                "asset": "THOR.RUNE",
                 "amount": 50000000000
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
-        "from_address": "STAKER-2",
-        "to_address": "VAULT",
-        "memo": "STAKE:BNB.RUNE-A1F",
-        "coins": [
-            {
-                "asset": "BNB.BNB",
-                "amount": 150000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 50000000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.BNB",
+        "coins": [
+            {
+                "asset": "THOR.RUNE",
+                "amount": 30000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-2",
+        "to_address": "VAULT",
+        "memo": "STAKE:BNB.BNB:STAKER-2",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -388,28 +348,24 @@
         "chain": "BNB",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB",
+        "memo": "STAKE:BNB.BNB:STAKER-2",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 10000000000
+                "asset": "BNB.BNB",
+                "amount": 90000000
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB",
+        "memo": "ADD:BNB.BNB",
         "coins": [
             {
-                "asset": "BNB.BNB",
-                "amount": 90000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 30000000000
+                "asset": "THOR.RUNE",
+                "amount": 5000000000
             }
         ],
         "gas": null
@@ -423,35 +379,31 @@
             {
                 "asset": "BNB.BNB",
                 "amount": 30000000
-            },
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 5000000000
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
         "memo": " ",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 200000000
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
         "memo": "ABDG?",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 200000000
             }
         ],
@@ -471,14 +423,14 @@
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
         "memo": "SWAP:BTC.BTC:USER-1",
         "coins": [
             {
-                "asset": "BNB.BNB",
-                "amount": 500000
+                "asset": "THOR.RUNE",
+                "amount": 500000000
             }
         ],
         "gas": null
@@ -491,7 +443,7 @@
         "coins": [
             {
                 "asset": "BNB.BNB",
-                "amount": 500000
+                "amount": 5000000
             }
         ],
         "gas": null
@@ -500,7 +452,7 @@
         "chain": "BTC",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F:USER-1",
+        "memo": "SWAP:THOR.RUNE:USER-1",
         "coins": [
             {
                 "asset": "BTC.BTC",
@@ -513,7 +465,7 @@
         "chain": "ETH",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F:USER-1",
+        "memo": "SWAP:THOR.RUNE:USER-1",
         "coins": [
             {
                 "asset": "ETH.ETH",
@@ -523,13 +475,13 @@
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:ETH.ETH:1000",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 1
             }
         ],
@@ -546,59 +498,59 @@
                 "amount": 30000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 100000000
+                "asset": "BNB.TCAN-014",
+                "amount": 1000000
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.BNB",
+        "memo": "SWAP:BNB.BNB:USER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 100001000
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.BNB::26572599",
+        "memo": "SWAP:BNB.BNB:USER-1:26572599",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 10000000000
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.BNB",
+        "memo": "SWAP:BNB.BNB:USER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 10000000000
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BTC.BTC:1000",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 1
             }
         ],
@@ -608,7 +560,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F",
+        "memo": "SWAP:THOR.RUNE:USER-1",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -618,26 +570,26 @@
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
         "memo": "SWAP:BNB.BNB:STAKER-1:23853375",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 10000000000
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
         "memo": "SWAP:BNB.BNB:STAKER-1:22460886",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 10000000000
             }
         ],
@@ -647,7 +599,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F:bnbSTAKER-1",
+        "memo": "SWAP:THOR.RUNE:bnbSTAKER-1",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -660,7 +612,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F",
+        "memo": "SWAP:THOR.RUNE:USER-1",
         "coins": [
             {
                 "asset": "BNB.LOK-3C0",
@@ -670,13 +622,13 @@
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.LOK-3C0",
+        "memo": "SWAP:BNB.LOK-3C0:USER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 5000000000
             }
         ],
@@ -709,65 +661,65 @@
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB:5000",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 1
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.LOK-3C0",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 1
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB:10000",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 1
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
-        "from_address": "STAKER-2",
+        "chain": "THOR",
+        "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BTC.BTC",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 1
             }
         ],
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "THOR.RUNE",
                 "amount": 1
             }
         ],
