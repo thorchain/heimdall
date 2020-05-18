@@ -64,6 +64,13 @@ def main():
         help="Trigger a Bitcoin chain reorg",
     )
 
+    parser.add_argument(
+        "--ethereum-reorg",
+        default=False,
+        type=bool,
+        help="Trigger an Ethereum chain reorg",
+    )
+
     args = parser.parse_args()
 
     with open("data/smoke_test_transactions.json", "r") as f:
@@ -82,6 +89,7 @@ def main():
         args.fast_fail,
         args.no_verify,
         args.bitcoin_reorg,
+        args.ethereum_reorg,
         args.thorchain_websocket,
     )
     try:
@@ -105,6 +113,7 @@ class Smoker:
         fast_fail=False,
         no_verify=False,
         bitcoin_reorg=False,
+        ethereum_reorg=False,
         thor_websocket=None,
     ):
         self.binance = Binance()
@@ -140,6 +149,7 @@ class Smoker:
         self.fast_fail = fast_fail
         self.no_verify = no_verify
         self.bitcoin_reorg = bitcoin_reorg
+        self.ethereum_reorg = ethereum_reorg
         self.thorchain_client.events = []
         self.exit = 0
 
@@ -208,6 +218,10 @@ class Smoker:
                 continue  # don't care to compare MASTER account
             mock_coin = Coin("ETH.ETH", self.mock_ethereum.get_balance(addr))
             sim_coin = Coin("ETH.ETH", sim_acct.get("ETH.ETH"))
+            # dont raise error on reorg balance being invalidated
+            # sim is not smart enough to subtract funds on reorg
+            if mock_coin.amount == 0 and self.ethereum_reorg:
+                return
             if sim_coin != mock_coin:
                 self.error(f"Bad ethereum balance: {name} {mock_coin} != {sim_coin}")
 
@@ -384,6 +398,19 @@ class Smoker:
                 # to make those txs not valid anymore and test thornode reaction
                 if i == 18 or i == 28:
                     self.mock_bitcoin.invalidate_block(block_hash)
+                    logging.info("Reorg triggered")
+
+            if self.ethereum_reorg:
+                # get block hash from ethereum we are going to invalidate later
+                if i == 14 or i == 24:
+                    current_height = self.mock_ethereum.get_block_height()
+                    block_hash = self.mock_ethereum.get_block_hash(current_height)
+                    logging.info(f"Block to invalidate {current_height} {block_hash}")
+
+                # now we processed some eth txs and we invalidate an older block
+                # to make those txs not valid anymore and test thornode reaction
+                if i == 18 or i == 28:
+                    self.mock_ethereum.set_block(current_height)
                     logging.info("Reorg triggered")
 
             logging.info(f"{i:2} {txn}")
