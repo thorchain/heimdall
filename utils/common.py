@@ -231,7 +231,11 @@ class Transaction(Jsonable):
     def __str__(self):
         coins = ", ".join([str(c) for c in self.coins]) if self.coins else "No Coins"
         gas = " | Gas " + ", ".join([str(g) for g in self.gas]) if self.gas else ""
-        id = f" | ID {self.id.upper()}" if self.id != "TODO" and self.id != self.empty_id else ""
+        id = (
+            f" | ID {self.id.upper()}"
+            if self.id != "TODO" and self.id != self.empty_id
+            else ""
+        )
         return (
             f"Tx {self.from_address:>8} ==> {self.to_address:8} | "
             f"{self.memo} | {coins}{gas}{id}"
@@ -248,7 +252,11 @@ class Transaction(Jsonable):
         gas = self.gas or []
         other_gas = other.gas or []
         return (
-            (self.id == "TODO" or self.id == self.empty_id or self.id.upper() == other.id.upper())
+            (
+                self.id == "TODO"
+                or self.id == self.empty_id
+                or self.id.upper() == other.id.upper()
+            )
             and self.chain == other.chain
             and self.memo == other.memo
             and self.from_address == other.from_address

@@ -11,6 +11,7 @@ from chains.account import Account
 
 RUNE = get_rune_asset()
 
+
 class MockBinance(HttpClient):
     """
     An client implementation for a mock binance server
@@ -111,7 +112,7 @@ class MockBinance(HttpClient):
                     chain = asset.get_chain()
                 if txn.memo.startswith("STAKE"):
                     if asset and txn.chain == asset.get_chain():
-                        chain = RUNE.split('.')[0]
+                        chain = RUNE.split(".")[0]
                 addr = get_alias_address(chain, alias)
                 txn.memo = txn.memo.replace(alias, addr)
 
