@@ -25,6 +25,7 @@ logging.basicConfig(
 
 RUNE = get_rune_asset()
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -97,8 +98,8 @@ def main():
     try:
         smoker.run()
         sys.exit(smoker.exit)
-    except Exception as e:
-        logging.exception('Smoke tests failed')
+    except Exception:
+        logging.exception("Smoke tests failed")
         sys.exit(1)
 
 
@@ -131,7 +132,7 @@ class Smoker:
         pubkey = self.thorchain_client.get_vault_pubkey()
 
         self.thorchain.set_vault_pubkey(pubkey)
-        if RUNE.split('.')[0] == "THOR":
+        if RUNE.split(".")[0] == "THOR":
             self.thorchain.reserve = 22000000000000000
 
         self.thorchain_signer = ThorchainSigner(thor)
@@ -367,10 +368,10 @@ class Smoker:
                         count_outbounds = 0
                         for o in outbounds:
                             if o.chain == "THOR":
-                                continue # thorchain transactions are on chain
+                                continue  # thorchain transactions are on chain
                             pool = self.thorchain.get_pool(o.coins[0].asset)
                             if pool.rune_balance == 0:
-                                continue # no pool exists, skip it
+                                continue  # no pool exists, skip it
                             count_outbounds += 1
 
                         for outbound in outbounds:

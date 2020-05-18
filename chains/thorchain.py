@@ -9,13 +9,14 @@ import bech32
 import ecdsa
 
 from utils.common import HttpClient, Coin
-from chains.aliases import get_alias, get_alias_address, get_aliases
+from chains.aliases import get_alias_address, get_aliases
 
 # Init logging
 logging.basicConfig(
     format="%(asctime)s | %(levelname).4s | %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
+
 
 # wallet helper functions
 # Thanks to https://github.com/hukkinj1/cosmospy
@@ -89,7 +90,7 @@ class ThorchainSigner(HttpClient):
             payload = {
                 "coins": [coin.to_thorchain_fmt() for coin in txn.coins],
                 "memo": txn.memo,
-                "base_req": {"chain_id": "thorchain", "from": txn.from_address,},
+                "base_req": {"chain_id": "thorchain", "from": txn.from_address},
             }
 
             payload = self.post("/thorchain/native/tx", payload)
@@ -102,7 +103,7 @@ class ThorchainSigner(HttpClient):
             )
             pushable = self.get_pushable(name, msgs, sig, fee, acct_num, seq)
             result = self.send(pushable)
-            txn.id = result['txhash']
+            txn.id = result["txhash"]
 
     def send(self, payload):
         resp = requests.post(self.get_url("/txs"), data=payload)

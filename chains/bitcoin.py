@@ -16,6 +16,7 @@ getcontext().prec = 15
 
 RUNE = get_rune_asset()
 
+
 class MockBitcoin(HttpClient):
     """
     An client implementation for a regtest bitcoin server
@@ -141,7 +142,7 @@ class MockBitcoin(HttpClient):
                 chain = asset.get_chain()
             # we use RUNE BNB address to identify a cross chain stake
             if txn.memo.startswith("STAKE"):
-                chain = RUNE.split('.')[0]
+                chain = RUNE.split(".")[0]
             addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
 

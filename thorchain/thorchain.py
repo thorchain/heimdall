@@ -16,10 +16,9 @@ from utils.common import (
     get_rune_asset,
 )
 
-from chains.aliases import get_alias, get_alias_address, get_aliases, get_address_prefix
+from chains.aliases import get_alias, get_alias_address, get_aliases
 from chains.bitcoin import Bitcoin
 from chains.ethereum import Ethereum
-from chains.binance import Binance
 from tenacity import retry, stop_after_delay, wait_fixed
 
 RUNE = get_rune_asset()
@@ -483,7 +482,7 @@ class ThorchainState:
             if not coin.is_rune():
                 pool = self.get_pool(coin.asset)
                 if pool.rune_balance == 0:
-                    continue # no pool exists, skip it
+                    continue  # no pool exists, skip it
             txns.append(
                 Transaction(
                     txn.chain,
@@ -684,7 +683,7 @@ class ThorchainState:
 
         # check address to stake to from memo
         address = txn.from_address
-        if txn.chain != RUNE.split('.')[0] and len(parts) > 2:
+        if txn.chain != RUNE.split(".")[0] and len(parts) > 2:
             address = parts[2]
 
         stake_units = pool.stake(address, rune_amt, asset_amt, asset)
@@ -766,7 +765,7 @@ class ThorchainState:
         if pool.total_units == 0:
             if pool.asset.is_bnb():
                 fee_amt = 37500
-                if RUNE.split('.')[0] == "BNB":
+                if RUNE.split(".")[0] == "BNB":
                     fee_amt *= 2
                 asset_amt -= fee_amt
                 pool.asset_balance += fee_amt
@@ -790,7 +789,7 @@ class ThorchainState:
 
         out_txns = [
             Transaction(
-                RUNE.split('.')[0],
+                RUNE.split(".")[0],
                 txn.to_address,
                 txn.from_address,
                 [Coin(RUNE, rune_amt)],
@@ -1678,7 +1677,6 @@ class Pool(Jsonable):
         Stake rune/asset for an address
         """
         staker = self.get_staker(address)
-
 
         # handle cross chain stake
         if not asset.get_chain() == RUNE.split(".")[0]:

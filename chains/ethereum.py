@@ -12,6 +12,7 @@ from chains.account import Account
 
 RUNE = get_rune_asset()
 
+
 def calculate_gas(msg):
     return MockEthereum.default_gas + MockEthereum.gas_per_byte * len(msg)
 
@@ -139,7 +140,7 @@ class MockEthereum:
                 chain = asset.get_chain()
             # we use RUNE BNB address to identify a cross chain stake
             if txn.memo.startswith("STAKE"):
-                chain = RUNE.split('.')[0]
+                chain = RUNE.split(".")[0]
             addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
 
