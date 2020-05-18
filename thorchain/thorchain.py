@@ -363,6 +363,16 @@ class ThorchainState:
             self.events[-1].out_txs = outbound
             self.events[-1].fee = event_fee
 
+        if in_tx.chain == "THOR" and len(txns) == 0:
+            # thor chain does NOT have any outbound transactions (it all
+            # happens internally). Therefore we have to calculate the fees
+            # differently than other chains
+            pass
+            # event_fee = EventFee()
+            # event_fee.coins = [Coin(RUNE, self.rune_fee * len(in_tx.coins))]
+            # self.events[-1].fee = event_fee
+            # self.reserve += self.rune_fee * len(in_tx.coins)
+
         return outbound
 
     def _total_liquidity(self):
@@ -478,12 +488,12 @@ class ThorchainState:
         """
         Returns a list of refund transactions based on given txn
         """
-        logging.info("REFUNDING", str(txn))
         txns = []
         for coin in txn.coins:
-            pool = self.get_pool(coin.asset)
-            if pool.rune_balance == 0:
-                continue # no pool exists, skip it
+            if not coin.is_rune():
+                pool = self.get_pool(coin.asset)
+                if pool.rune_balance == 0:
+                    continue # no pool exists, skip it
             txns.append(
                 Transaction(
                     txn.chain,
@@ -765,8 +775,11 @@ class ThorchainState:
         # if this is our last staker of bnb, subtract a little BNB for gas.
         if pool.total_units == 0:
             if pool.asset.is_bnb():
-                asset_amt -= 75000
-                pool.asset_balance += 75000
+                fee_amt = 37500
+                if RUNE.split('.')[0] == "BNB":
+                    fee_amt *= 2
+                asset_amt -= fee_amt
+                pool.asset_balance += fee_amt
             elif pool.asset.is_btc() or pool.asset.is_eth():
                 asset_amt -= gas[0].amount
                 pool.asset_balance += gas[0].amount
@@ -1193,7 +1206,7 @@ class Event(Jsonable):
         self.id = int(id) if id is not None else next(Event.id_iter)
         self.type = event_type
         self.in_tx = deepcopy(txn)
-        self.out_txs = txns_out
+        self.out_txs = txns_out or []
         self.fee = fee
         self.event = deepcopy(event)
         self.status = status
