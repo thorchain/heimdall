@@ -359,8 +359,6 @@ class Smoker:
                         outbounds = self.thorchain.handle_fee(txn, outbounds)
                         # we have now processed this inbound txn
                         processed_transaction = True
-                        # expecting to see this many outbound txs
-                        count_outbounds = len(outbounds)
 
                         # replicate order of outbounds broadcast from thorchain
                         self.thorchain.order_outbound_txns(outbounds)
@@ -395,7 +393,7 @@ class Smoker:
 
             time.sleep(1)
 
-        if count_outbounds != 0:
+        if count_outbounds > 0:
             self.error(
                 f"failed to send out all outbound transactions ({count_outbounds})"
             )
