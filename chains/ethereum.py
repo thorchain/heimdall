@@ -34,6 +34,7 @@ class MockEthereum:
     ]
 
     def __init__(self, base_url):
+        self.url = base_url
         for key in self.private_keys:
             payload = json.dumps(
                 {"method": "personal_importRawKey", "params": [key, self.passphrase]}
@@ -70,6 +71,24 @@ class MockEthereum:
         """
         block = self.web3.eth.getBlock("latest")
         return block["number"]
+
+    def get_block_hash(self, block_height):
+        """
+        Get the block hash for a height
+        """
+        block = self.web3.eth.getBlock(block_height)
+        return block["hash"].hex()
+
+    def set_block(self, block_height):
+        """
+        Set head for reorg
+        """
+        payload = json.dumps({"method": "debug_setHead", "params": [block_height]})
+        headers = {"content-type": "application/json", "cache-control": "no-cache"}
+        try:
+            requests.request("POST", self.url, data=payload, headers=headers)
+        except requests.exceptions.RequestException as e:
+            logging.error(f"{e}")
 
     def wait_for_blocks(self, count):
         """
