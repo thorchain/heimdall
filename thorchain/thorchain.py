@@ -363,16 +363,6 @@ class ThorchainState:
             self.events[-1].out_txs = outbound
             self.events[-1].fee = event_fee
 
-        if in_tx.chain == "THOR" and len(txns) == 0:
-            # thor chain does NOT have any outbound transactions (it all
-            # happens internally). Therefore we have to calculate the fees
-            # differently than other chains
-            pass
-            # event_fee = EventFee()
-            # event_fee.coins = [Coin(RUNE, self.rune_fee * len(in_tx.coins))]
-            # self.events[-1].fee = event_fee
-            # self.reserve += self.rune_fee * len(in_tx.coins)
-
         return outbound
 
     def _total_liquidity(self):
