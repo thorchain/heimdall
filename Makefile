@@ -46,6 +46,9 @@ health:
 bitcoin-reorg:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True --bitcoin-reorg=True
 
+ethereum-reorg:
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True --ethereum-reorg=True
+
 shell:
 	@docker run ${DOCKER_OPTS} -it ${IMAGE_NAME} sh
 
