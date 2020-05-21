@@ -448,7 +448,7 @@ class Smoker:
             self.check_chain(self.thorchain, self.mock_thorchain, None)
 
             self.check_vaults()
-            # self.run_health()
+            self.run_health()
 
 
 if __name__ == "__main__":
