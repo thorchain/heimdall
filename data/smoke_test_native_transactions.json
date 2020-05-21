@@ -292,23 +292,6 @@
         "chain": "THOR",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:THOR.CAT",
-        "coins": [
-            {
-                "asset": "THOR.FUNNY",
-                "amount": 150000000
-            },
-            {
-                "asset": "THOR.RUNE",
-                "amount": 50000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "THOR",
-        "from_address": "STAKER-2",
-        "to_address": "VAULT",
         "memo": "STAKE:THOR.RUNE",
         "coins": [
             {

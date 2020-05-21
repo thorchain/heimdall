@@ -645,13 +645,13 @@ class ThorchainState:
                 refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
             return self.refund(txn, refund_event)
 
-        # empty asset
+                # empty asset
         if parts[1] == "":
             refund_event = RefundEvent(105, "Invalid symbol")
             return self.refund(txn, refund_event)
 
         asset = Asset(parts[1])
-
+       
         # cant have rune memo
         if asset.is_rune():
             refund_event = RefundEvent(105, "invalid stake memo:invalid pool asset")
@@ -670,7 +670,14 @@ class ThorchainState:
                     refund_event = RefundEvent(
                         105, f"invalid stake memo:did not find {asset} "
                     )
+                    print("invalid statke memo")
                     return self.refund(txn, refund_event)
+
+        if len(parts) < 3 and asset.get_chain != RUNE.get_chain():
+            refund_event = RefundEvent(
+                105, f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based pool without providing an associated address"
+            )
+            return self.refund(txn, refund_event)
 
         pool = self.get_pool(asset)
         rune_amt = 0
@@ -683,7 +690,7 @@ class ThorchainState:
 
         # check address to stake to from memo
         address = txn.from_address
-        if txn.chain != RUNE.split(".")[0] and len(parts) > 2:
+        if txn.chain != RUNE.get_chain() and len(parts) > 2:
             address = parts[2]
 
         stake_units = pool.stake(address, rune_amt, asset_amt, asset)
@@ -752,10 +759,10 @@ class ThorchainState:
         # and need to subtract
         gas = None
         if asset.get_chain() == "BTC":
-            gas = [Bitcoin.calculate_gas(pool, self.rune_fee)]
+            gas = [Bitcoin._calculate_gas(pool, txn)]
 
         if asset.get_chain() == "ETH":
-            gas = [Ethereum.calculate_gas(pool, self.rune_fee)]
+            gas = [Ethereum._calculate_gas(pool, txn)]
 
         unstake_units, rune_amt, asset_amt = pool.unstake(
             txn.from_address, withdraw_basis_points
@@ -765,7 +772,7 @@ class ThorchainState:
         if pool.total_units == 0:
             if pool.asset.is_bnb():
                 fee_amt = 37500
-                if RUNE.split(".")[0] == "BNB":
+                if RUNE.get_chain() == "BNB":
                     fee_amt *= 2
                 asset_amt -= fee_amt
                 pool.asset_balance += fee_amt
@@ -789,7 +796,7 @@ class ThorchainState:
 
         out_txns = [
             Transaction(
-                RUNE.split(".")[0],
+                RUNE.get_chain(),
                 txn.to_address,
                 txn.from_address,
                 [Coin(RUNE, rune_amt)],
@@ -935,7 +942,7 @@ class ThorchainState:
 
             pools.append(pool)
             in_txn.coins[0] = emit
-            source = Asset(RUNE)
+            source = RUNE
             target = asset
 
         # set asset to non-rune asset
@@ -979,11 +986,11 @@ class ThorchainState:
 
         # calculate gas if BTC
         if target.get_chain() == "BTC":
-            gas = [Bitcoin.calculate_gas(pool, self.rune_fee)]
+            gas = [Bitcoin._calculate_gas(pool, txn)]
 
         # calculate gas if ETH
         if target.get_chain() == "ETH":
-            gas = [Ethereum.calculate_gas(pool, self.rune_fee)]
+            gas = [Ethereum._calculate_gas(pool, txn)]
 
         out_txns = [
             Transaction(
@@ -1679,7 +1686,7 @@ class Pool(Jsonable):
         staker = self.get_staker(address)
 
         # handle cross chain stake
-        if not asset.get_chain() == RUNE.split(".")[0]:
+        if not asset.get_chain() == RUNE.get_chain():
             if asset_amt == 0:
                 staker.pending_rune += rune_amt
                 self.set_staker(staker)
