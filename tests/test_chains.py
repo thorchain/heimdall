@@ -25,12 +25,13 @@ class TestAccount(unittest.TestCase):
 class TestBinance(unittest.TestCase):
     def test_gas(self):
         bnb = Binance()
+        txn = Transaction(Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 5757575), "MEMO",)
         self.assertEqual(
-            bnb._calculate_gas([Coin("BNB.BNB", 5757575)]), Coin("BNB.BNB", 37500),
+            bnb._calculate_gas(None, txn), Coin("BNB.BNB", 37500),
         )
+        txn = Transaction(Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 0), Coin("RUNE", 0)], "MEMO",)
         self.assertEqual(
-            bnb._calculate_gas([Coin("BNB.BNB", 0), Coin("RUNE", 0)]),
-            Coin("BNB.BNB", 60000),
+            bnb._calculate_gas(None, txn), Coin("BNB.BNB", 60000),
         )
 
     def test_transfer(self):
