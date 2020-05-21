@@ -8,7 +8,6 @@ from web3.middleware import geth_poa_middleware
 from eth_keys import KeyAPI
 from utils.common import Coin, get_rune_asset, Asset
 from chains.aliases import aliases_eth, get_aliases, get_alias_address
-from chains.account import Account
 from chains.chain import GenericChain
 
 RUNE = get_rune_asset()

@@ -645,13 +645,13 @@ class ThorchainState:
                 refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
             return self.refund(txn, refund_event)
 
-                # empty asset
+            # empty asset
         if parts[1] == "":
             refund_event = RefundEvent(105, "Invalid symbol")
             return self.refund(txn, refund_event)
 
         asset = Asset(parts[1])
-       
+
         # cant have rune memo
         if asset.is_rune():
             refund_event = RefundEvent(105, "invalid stake memo:invalid pool asset")
@@ -675,7 +675,9 @@ class ThorchainState:
 
         if len(parts) < 3 and asset.get_chain != RUNE.get_chain():
             refund_event = RefundEvent(
-                105, f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based pool without providing an associated address"
+                105,
+                f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based"
+                + " pool without providing an associated address",
             )
             return self.refund(txn, refund_event)
 

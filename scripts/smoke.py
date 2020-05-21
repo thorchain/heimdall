@@ -212,7 +212,7 @@ class Smoker:
             if name == "MASTER":
                 continue  # don't care to compare MASTER account
             if name == "VAULT" and chain.chain == "THOR":
-                continue # don't care about vault for thorchain
+                continue  # don't care about vault for thorchain
             mock_coin = Coin(chain.coin, mock.get_balance(addr))
             sim_coin = Coin(chain.coin, sim_acct.get(chain.coin))
             # dont raise error on reorg balance being invalidated
@@ -220,7 +220,9 @@ class Smoker:
             if mock_coin.amount == 0 and reorg:
                 return
             if sim_coin != mock_coin:
-                self.error(f"Bad {chain.name} balance: {name} {mock_coin} != {sim_coin}")
+                self.error(
+                    f"Bad {chain.name} balance: {name} {mock_coin} != {sim_coin}"
+                )
 
     def check_vaults(self):
         # check vault data
