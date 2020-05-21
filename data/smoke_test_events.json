@@ -320,7 +320,7 @@
             "gas": [
                 {
                     "asset": "ETH.ETH",
-                    "amount": 22496
+                    "amount": 21000
                 }
             ]
         },
@@ -2291,7 +2291,7 @@
             "gas": [
                 {
                     "asset": "ETH.ETH",
-                    "amount": 22632
+                    "amount": 21000
                 }
             ]
         },

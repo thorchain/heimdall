@@ -3,7 +3,8 @@ import sys
 import os
 import logging
 
-from chains.binance import MockBinance, Account
+from chains.binance import MockBinance
+from chains.account import Account
 from thorchain.thorchain import ThorchainClient
 from thorchain.midgard import MidgardClient
 from utils.common import Coin, get_rune_asset

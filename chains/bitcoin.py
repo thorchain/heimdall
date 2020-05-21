@@ -6,10 +6,10 @@ from bitcoin import SelectParams
 from bitcoin.wallet import CBitcoinSecret, P2WPKHBitcoinAddress
 from bitcoin.core import Hash160
 from bitcoin.core.script import CScript, OP_0
-from utils.common import Coin, HttpClient, get_rune_asset
+from utils.common import Coin, HttpClient, get_rune_asset, Asset
 from decimal import Decimal, getcontext
 from chains.aliases import aliases_btc, get_aliases, get_alias_address
-from chains.account import Account
+from chains.chain import GenericChain
 from tenacity import retry, stop_after_delay, wait_fixed
 
 getcontext().prec = 15
@@ -142,7 +142,7 @@ class MockBitcoin(HttpClient):
                 chain = asset.get_chain()
             # we use RUNE BNB address to identify a cross chain stake
             if txn.memo.startswith("STAKE"):
-                chain = RUNE.split(".")[0]
+                chain = RUNE.get_chain()
             addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
 
@@ -179,57 +179,24 @@ class MockBitcoin(HttpClient):
         txn.gas = [Coin("BTC.BTC", self.default_gas)]
 
 
-class Bitcoin:
+class Bitcoin(GenericChain):
     """
     A local simple implementation of bitcoin chain
     """
 
+    name = "Bitcoin"
     chain = "BTC"
-
-    def __init__(self):
-        self.accounts = {}
+    coin = Asset("BTC.BTC")
+    rune_fee = 100000000
 
     @classmethod
-    def calculate_gas(cls, pool, rune_fee):
+    def _calculate_gas(cls, pool, txn):
         """
         Calculate gas according to RUNE thorchain fee
         1 RUNE / 2 in BTC value
         """
-        btc_amount = pool.get_rune_in_asset(int(rune_fee / 2))
-        return Coin("BTC.BTC", btc_amount)
+        if pool is None:
+            return Coin(cls.coin, MockBitcoin.default_gas)
 
-    def get_account(self, addr):
-        """
-        Retrieve an accout by address
-        """
-        if addr in self.accounts:
-            return self.accounts[addr]
-        return Account(addr)
-
-    def set_account(self, acct):
-        """
-        Update a given account
-        """
-        self.accounts[acct.address] = acct
-
-    def transfer(self, txn):
-        """
-        Makes a transfer on the bitcoin chain. Returns gas used
-        """
-
-        if txn.chain != Bitcoin.chain:
-            raise Exception(f"Cannot transfer. {Bitcoin.chain} is not {txn.chain}")
-
-        from_acct = self.get_account(txn.from_address)
-        to_acct = self.get_account(txn.to_address)
-
-        if not txn.gas:
-            txn.gas = [Coin("BTC.BTC", MockBitcoin.default_gas)]
-
-        from_acct.sub(txn.gas[0])
-
-        from_acct.sub(txn.coins)
-        to_acct.add(txn.coins)
-
-        self.set_account(from_acct)
-        self.set_account(to_acct)
+        btc_amount = pool.get_rune_in_asset(int(cls.rune_fee / 2))
+        return Coin(cls.coin, btc_amount)

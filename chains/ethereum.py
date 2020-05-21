@@ -6,9 +6,9 @@ import requests
 from web3 import Web3, HTTPProvider
 from web3.middleware import geth_poa_middleware
 from eth_keys import KeyAPI
-from utils.common import Coin, get_rune_asset
+from utils.common import Coin, get_rune_asset, Asset
 from chains.aliases import aliases_eth, get_aliases, get_alias_address
-from chains.account import Account
+from chains.chain import GenericChain
 
 RUNE = get_rune_asset()
 
@@ -140,7 +140,7 @@ class MockEthereum:
                 chain = asset.get_chain()
             # we use RUNE BNB address to identify a cross chain stake
             if txn.memo.startswith("STAKE"):
-                chain = RUNE.split(".")[0]
+                chain = RUNE.get_chain()
             addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
 
@@ -159,59 +159,19 @@ class MockEthereum:
         txn.gas = [Coin("ETH.ETH", receipt["cumulativeGasUsed"] * self.gas_price)]
 
 
-class Ethereum:
+class Ethereum(GenericChain):
     """
     A local simple implementation of Ethereum chain
     """
 
+    name = "Ethereum"
     chain = "ETH"
-
-    def __init__(self):
-        self.accounts = {}
+    coin = Asset("ETH.ETH")
 
     @classmethod
-    def calculate_gas(cls, pool, rune_fee):
+    def _calculate_gas(cls, pool, txn):
         """
         Calculate gas according to RUNE thorchain fee
         1 RUNE / 2 in ETH value
         """
-        return Coin("ETH.ETH", calculate_gas("") * MockEthereum.gas_price)
-
-    def get_account(self, addr):
-        """
-        Retrieve an accout by address
-        """
-        if addr in self.accounts:
-            return self.accounts[addr]
-        return Account(addr)
-
-    def set_account(self, acct):
-        """
-        Update a given account
-        """
-        self.accounts[acct.address] = acct
-
-    def transfer(self, txn):
-        """
-        Makes a transfer on the Ethereum chain. Returns gas used
-        """
-
-        if txn.chain != Ethereum.chain:
-            raise Exception(f"Cannot transfer. {Ethereum.chain} is not {txn.chain}")
-
-        from_acct = self.get_account(txn.from_address)
-        to_acct = self.get_account(txn.to_address)
-
-        if not txn.gas:
-            txn.gas = [
-                Coin("ETH.ETH", calculate_gas(txn.memo) * MockEthereum.gas_price)
-            ]
-
-        from_acct.sub(txn.gas[0])
-        from_acct.sub(txn.coins)
-        to_acct.add(txn.coins)
-
-        self.set_account(from_acct)
-        self.set_account(to_acct)
-
-        return txn.gas[0]
+        return Coin(cls.coin, calculate_gas("") * MockEthereum.gas_price)
