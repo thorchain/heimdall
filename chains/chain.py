@@ -18,7 +18,7 @@ class GenericChain:
         """
         With given coin set, calculates the gas owed
         """
-        raise Exception(f"_calculate_gas is not yet implemented")
+        raise Exception("_calculate_gas is not yet implemented")
 
     def get_account(self, addr):
         """
