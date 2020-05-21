@@ -166,6 +166,19 @@
         "gas": null
     },
     {
+        "chain": "ETH",
+        "from_address": "MASTER",
+        "to_address": "VAULT",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "ETH.ETH",
+                "amount": 40000000000000
+            }
+        ],
+        "gas": null
+    },
+    {
         "chain": "BNB",
         "from_address": "CONTRIB",
         "to_address": "VAULT",
