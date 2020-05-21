@@ -1,9 +1,7 @@
 import time
 import base64
 import hashlib
-import bech32
 
-from utils.segwit_addr import decode_address
 from utils.common import Coin, HttpClient, get_rune_asset
 from utils.segwit_addr import address_from_public_key
 from chains.aliases import aliases_bnb, get_aliases, get_alias_address
