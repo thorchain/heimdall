@@ -670,10 +670,9 @@ class ThorchainState:
                     refund_event = RefundEvent(
                         105, f"invalid stake memo:did not find {asset} "
                     )
-                    print("invalid statke memo")
                     return self.refund(txn, refund_event)
 
-        if len(parts) < 3 and asset.get_chain != RUNE.get_chain():
+        if len(parts) < 3 and asset.get_chain() != RUNE.get_chain():
             refund_event = RefundEvent(
                 105,
                 f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based"

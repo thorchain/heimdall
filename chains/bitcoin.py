@@ -196,7 +196,7 @@ class Bitcoin(GenericChain):
         1 RUNE / 2 in BTC value
         """
         if pool is None:
-            return [Coin(cls.coin, MockBitcoin.default_gas)]
+            return Coin(cls.coin, MockBitcoin.default_gas)
 
         btc_amount = pool.get_rune_in_asset(int(cls.rune_fee / 2))
         return Coin(cls.coin, btc_amount)
