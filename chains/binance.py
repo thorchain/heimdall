@@ -22,12 +22,7 @@ class MockBinance(HttpClient):
         """
         Set vault adddress by pubkey
         """
-        pubkey_bytes = decode_address(pubkey)[5:]
-        s = hashlib.new("sha256", pubkey_bytes).digest()
-        r = hashlib.new("ripemd160", s).digest()
-        five_bit_r = bech32.convertbits(r, 8, 5)
-        assert five_bit_r is not None, "Unsuccessful bech32.convertbits call"
-        self.set_vault_address(bech32.bech32_encode("tbnb", five_bit_r))
+        self.set_vault_address(self.get_address_from_pubkey(pubkey))
 
     def set_vault_address(self, addr):
         """

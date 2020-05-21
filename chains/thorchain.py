@@ -8,6 +8,7 @@ import requests
 import bech32
 import ecdsa
 
+from utils.segwit_addr import address_from_public_key
 from utils.common import HttpClient, Coin
 from chains.aliases import get_alias_address, get_aliases
 
@@ -23,7 +24,7 @@ logging.basicConfig(
 def generate_wallet():
     privkey = ecdsa.SigningKey.generate(curve=ecdsa.SECP256k1).to_string().hex()
     pubkey = privkey_to_pubkey(privkey)
-    address = pubkey_to_address(pubkey)
+    address = address_from_public_key(pubkey)
     return {"private_key": privkey, "public_key": pubkey, "address": address}
 
 
@@ -35,18 +36,9 @@ def privkey_to_pubkey(privkey):
     return pubkey_obj.to_string("compressed").hex()
 
 
-def pubkey_to_address(pubkey):
-    pubkey_bytes = bytes.fromhex(pubkey)
-    s = hashlib.new("sha256", pubkey_bytes).digest()
-    r = hashlib.new("ripemd160", s).digest()
-    five_bit_r = bech32.convertbits(r, 8, 5)
-    assert five_bit_r is not None, "Unsuccessful bech32.convertbits call"
-    return bech32.bech32_encode("thor", five_bit_r)
-
-
 def privkey_to_address(privkey):
     pubkey = privkey_to_pubkey(privkey)
-    return pubkey_to_address(pubkey)
+    return address_from_public_key(pubkey)
 
 
 class ThorchainSigner(HttpClient):
