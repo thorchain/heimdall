@@ -2,10 +2,11 @@ import time
 import base64
 import hashlib
 
-from utils.common import Coin, HttpClient, get_rune_asset
+from utils.common import Coin, HttpClient, get_rune_asset, Asset
 from utils.segwit_addr import address_from_public_key
 from chains.aliases import aliases_bnb, get_aliases, get_alias_address
 from chains.account import Account
+from chains.chain import GenericChain
 
 RUNE = get_rune_asset()
 
@@ -105,7 +106,7 @@ class MockBinance(HttpClient):
                     chain = asset.get_chain()
                 if txn.memo.startswith("STAKE"):
                     if asset and txn.chain == asset.get_chain():
-                        chain = RUNE.split(".")[0]
+                        chain = RUNE.get_chain()
                 addr = get_alias_address(chain, alias)
                 txn.memo = txn.memo.replace(alias, addr)
 
@@ -121,56 +122,20 @@ class MockBinance(HttpClient):
         txn.id = self.get_tx_id_from_block(result["height"])
 
 
-class Binance:
+class Binance(GenericChain):
     """
     A local simple implementation of binance chain
     """
 
+    name = "Binance"
     chain = "BNB"
+    coin = Asset("BNB.BNB")
 
-    def __init__(self):
-        self.accounts = {}
-
-    def _calculate_gas(self, coins):
+    @classmethod
+    def _calculate_gas(cls, pool, txn):
         """
         With given coin set, calculates the gas owed
         """
-        if not isinstance(coins, list) or len(coins) == 1:
-            return Coin("BNB.BNB", 37500)
-        return Coin("BNB.BNB", 30000 * len(coins))
-
-    def get_account(self, addr):
-        """
-        Retrieve an accout by address
-        """
-        if addr in self.accounts:
-            return self.accounts[addr]
-        return Account(addr)
-
-    def set_account(self, acct):
-        """
-        Update a given account
-        """
-        self.accounts[acct.address] = acct
-
-    def transfer(self, txn):
-        """
-        Makes a transfer on the binance chain. Returns gas used
-        """
-
-        if txn.chain != Binance.chain:
-            raise Exception(f"Cannot transfer. {Binance.chain} is not {txn.chain}")
-
-        from_acct = self.get_account(txn.from_address)
-        to_acct = self.get_account(txn.to_address)
-
-        gas = self._calculate_gas(txn.coins)
-        from_acct.sub(gas)
-
-        from_acct.sub(txn.coins)
-        to_acct.add(txn.coins)
-
-        self.set_account(from_acct)
-        self.set_account(to_acct)
-
-        txn.gas = [gas]
+        if not isinstance(txn.coins, list) or len(txn.coins) == 1:
+            return Coin(cls.coin, 37500)
+        return Coin(cls.coin, 30000 * len(txn.coins))

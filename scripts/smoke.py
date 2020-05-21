@@ -11,7 +11,7 @@ from utils.segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
 from chains.bitcoin import Bitcoin, MockBitcoin
 from chains.ethereum import Ethereum, MockEthereum
-from chains.thorchain import ThorchainSigner
+from chains.thorchain import Thorchain, MockThorchain
 from thorchain.thorchain import ThorchainState, ThorchainClient, Event
 from scripts.health import Health
 from utils.common import Transaction, Coin, Asset, get_rune_asset
@@ -76,7 +76,10 @@ def main():
 
     args = parser.parse_args()
 
-    with open("data/smoke_test_transactions.json", "r") as f:
+    txn_list = "data/smoke_test_native_transactions.json"
+    if RUNE.get_chain() == "BNB":
+        txn_list = "data/smoke_test_transactions.json"
+    with open(txn_list, "r") as f:
         txns = json.load(f)
 
     health = Health(args.thorchain, args.midgard, args.binance, args.fast_fail)
@@ -122,7 +125,8 @@ class Smoker:
         self.binance = Binance()
         self.bitcoin = Bitcoin()
         self.ethereum = Ethereum()
-        self.thorchain = ThorchainState()
+        self.thorchain = Thorchain()
+        self.thorchain_state = ThorchainState()
 
         self.health = health
 
@@ -131,11 +135,11 @@ class Smoker:
         self.thorchain_client = ThorchainClient(thor, thor_websocket)
         pubkey = self.thorchain_client.get_vault_pubkey()
 
-        self.thorchain.set_vault_pubkey(pubkey)
-        if RUNE.split(".")[0] == "THOR":
-            self.thorchain.reserve = 22000000000000000
+        self.thorchain_state.set_vault_pubkey(pubkey)
+        if RUNE.get_chain() == "THOR":
+            self.thorchain_state.reserve = 22000000000000000
 
-        self.thorchain_signer = ThorchainSigner(thor)
+        self.mock_thorchain = MockThorchain(thor)
 
         self.mock_bitcoin = MockBitcoin(btc)
         # extract pubkey from bech32 encoded pubkey
@@ -170,7 +174,7 @@ class Smoker:
         # compare simulation pools vs real pools
         real_pools = self.thorchain_client.get_pools()
         for rpool in real_pools:
-            spool = self.thorchain.get_pool(Asset(rpool["asset"]))
+            spool = self.thorchain_state.get_pool(Asset(rpool["asset"]))
             if int(spool.rune_balance) != int(rpool["balance_rune"]):
                 self.error(
                     f"Bad Pool-{rpool['asset']} balance: RUNE "
@@ -201,51 +205,38 @@ class Smoker:
                                 f"Bad binance balance: {name} {bnb_coin} != {sim_coin}"
                             )
 
-    def check_bitcoin(self):
+    def check_chain(self, chain, mock, reorg):
         # compare simulation bitcoin vs mock bitcoin
-        for addr, sim_acct in self.bitcoin.accounts.items():
-            name = get_alias(Bitcoin.chain, addr)
+        for addr, sim_acct in chain.accounts.items():
+            name = get_alias(chain.chain, addr)
             if name == "MASTER":
                 continue  # don't care to compare MASTER account
-            mock_coin = Coin("BTC.BTC", self.mock_bitcoin.get_balance(addr))
-            sim_coin = Coin("BTC.BTC", sim_acct.get("BTC.BTC"))
+            if name == "VAULT" and chain.chain == "THOR":
+                continue # don't care about vault for thorchain
+            mock_coin = Coin(chain.coin, mock.get_balance(addr))
+            sim_coin = Coin(chain.coin, sim_acct.get(chain.coin))
             # dont raise error on reorg balance being invalidated
             # sim is not smart enough to subtract funds on reorg
-            if mock_coin.amount == 0 and self.bitcoin_reorg:
+            if mock_coin.amount == 0 and reorg:
                 return
             if sim_coin != mock_coin:
-                self.error(f"Bad bitcoin balance: {name} {mock_coin} != {sim_coin}")
-
-    def check_ethereum(self):
-        # compare simulation ethereum vs mock ethereum
-        for addr, sim_acct in self.ethereum.accounts.items():
-            name = get_alias(Ethereum.chain, addr)
-            if name == "MASTER":
-                continue  # don't care to compare MASTER account
-            mock_coin = Coin("ETH.ETH", self.mock_ethereum.get_balance(addr))
-            sim_coin = Coin("ETH.ETH", sim_acct.get("ETH.ETH"))
-            # dont raise error on reorg balance being invalidated
-            # sim is not smart enough to subtract funds on reorg
-            if mock_coin.amount == 0 and self.ethereum_reorg:
-                return
-            if sim_coin != mock_coin:
-                self.error(f"Bad ethereum balance: {name} {mock_coin} != {sim_coin}")
+                self.error(f"Bad {chain.name} balance: {name} {mock_coin} != {sim_coin}")
 
     def check_vaults(self):
         # check vault data
         vdata = self.thorchain_client.get_vault_data()
-        if int(vdata["total_reserve"]) != self.thorchain.reserve:
-            sim = self.thorchain.reserve
+        if int(vdata["total_reserve"]) != self.thorchain_state.reserve:
+            sim = self.thorchain_state.reserve
             real = vdata["total_reserve"]
             self.error(f"Mismatching reserves: {sim} != {real}")
-        if int(vdata["bond_reward_rune"]) != self.thorchain.bond_reward:
-            sim = self.thorchain.bond_reward
+        if int(vdata["bond_reward_rune"]) != self.thorchain_state.bond_reward:
+            sim = self.thorchain_state.bond_reward
             real = vdata["bond_reward_rune"]
             self.error(f"Mismatching bond reward: {sim} != {real}")
 
     def check_sdk_events(self):
         events = self.thorchain_client.get_sdk_events()
-        sim_events = self.thorchain.sdk_events
+        sim_events = self.thorchain_state.sdk_events
 
         # TODO remove when we switch to SDK events only
         if len(events) != len(sim_events):
@@ -266,7 +257,7 @@ class Smoker:
         events = [Event.from_dict(evt) for evt in raw_events]
 
         # get simulator events
-        sim_events = self.thorchain.get_events()
+        sim_events = self.thorchain_state.get_events()
 
         # check events
         for event, sim_event in zip(events, sim_events):
@@ -291,8 +282,8 @@ class Smoker:
             return self.mock_bitcoin.transfer(txn)
         if txn.chain == Ethereum.chain:
             return self.mock_ethereum.transfer(txn)
-        if txn.chain == ThorchainSigner.chain:
-            return self.thorchain_signer.transfer(txn)
+        if txn.chain == MockThorchain.chain:
+            return self.mock_thorchain.transfer(txn)
 
     def broadcast_simulator(self, txn):
         """
@@ -304,6 +295,8 @@ class Smoker:
             return self.bitcoin.transfer(txn)
         if txn.chain == Ethereum.chain:
             return self.ethereum.transfer(txn)
+        if txn.chain == Thorchain.chain:
+            return self.thorchain.transfer(txn)
 
     def sim_catch_up(self, txn):
         # At this point, we can assume that the transaction on real thorchain
@@ -321,7 +314,7 @@ class Smoker:
             events = [Event.from_dict(evt) for evt in events]
             evt_list = [evt.type for evt in events]  # convert evts to array of strings
 
-            sim_events = self.thorchain.get_events()
+            sim_events = self.thorchain_state.get_events()
             sim_evt_list = [
                 evt.type for evt in sim_events
             ]  # convert evts to array of strings
@@ -346,30 +339,30 @@ class Smoker:
                                     count += 1
                                     if count >= pool.transaction_count:
                                         break
-                        self.thorchain.handle_gas(todo)
+                        self.thorchain_state.handle_gas(todo)
                         # countdown til we've seen all expected gas evts
                         count_outbounds -= len(todo)
 
                     elif evt.type == "rewards":
-                        self.thorchain.handle_rewards()
+                        self.thorchain_state.handle_rewards()
 
                     else:
                         # sent a transaction to our simulated thorchain
-                        outbounds = self.thorchain.handle(txn)
+                        outbounds = self.thorchain_state.handle(txn)
                         # process transaction in thorchain
-                        outbounds = self.thorchain.handle_fee(txn, outbounds)
+                        outbounds = self.thorchain_state.handle_fee(txn, outbounds)
                         # we have now processed this inbound txn
                         processed_transaction = True
 
                         # replicate order of outbounds broadcast from thorchain
-                        self.thorchain.order_outbound_txns(outbounds)
+                        self.thorchain_state.order_outbound_txns(outbounds)
 
                         # expecting to see this many outbound txs
                         count_outbounds = 0
                         for o in outbounds:
                             if o.chain == "THOR":
                                 continue  # thorchain transactions are on chain
-                            pool = self.thorchain.get_pool(o.coins[0].asset)
+                            pool = self.thorchain_state.get_pool(o.coins[0].asset)
                             if pool.rune_balance == 0:
                                 continue  # no pool exists, skip it
                             count_outbounds += 1
@@ -378,7 +371,7 @@ class Smoker:
                             # update simulator state with outbound txs
                             self.broadcast_simulator(outbound)
 
-                        self.thorchain.generate_outbound_events(txn, outbounds)
+                        self.thorchain_state.generate_outbound_events(txn, outbounds)
                 continue
 
             # happy path exit
@@ -446,11 +439,14 @@ class Smoker:
             # self.check_sdk_events()
             self.check_events()
             self.check_pools()
+
             self.check_binance()
-            self.check_bitcoin()
-            self.check_ethereum()
+            self.check_chain(self.bitcoin, self.mock_bitcoin, self.bitcoin_reorg)
+            self.check_chain(self.ethereum, self.mock_ethereum, self.ethereum_reorg)
+            self.check_chain(self.thorchain, self.mock_thorchain, None)
+
             self.check_vaults()
-            self.run_health()
+            # self.run_health()
 
 
 if __name__ == "__main__":

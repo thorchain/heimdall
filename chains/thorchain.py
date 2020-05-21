@@ -8,8 +8,10 @@ import requests
 import ecdsa
 
 from utils.segwit_addr import address_from_public_key
-from utils.common import HttpClient, Coin
-from chains.aliases import get_alias_address, get_aliases
+from utils.common import HttpClient, Coin, Asset
+from chains.aliases import get_alias_address, get_aliases, get_alias
+from chains.chain import GenericChain
+from chains.account import Account
 
 # Init logging
 logging.basicConfig(
@@ -40,7 +42,7 @@ def privkey_to_address(privkey):
     return address_from_public_key(pubkey)
 
 
-class ThorchainSigner(HttpClient):
+class MockThorchain(HttpClient):
     """
     A local simple implementation of thorchain chain
     """
@@ -51,6 +53,22 @@ class ThorchainSigner(HttpClient):
         "STAKER-1": "289c2857d4598e37fb9647507e47a309d6133539bf21a8b9cb6df88fd5232032",
         "STAKER-2": "e810f1d7d6691b4a7a73476f3543bd87d601f9a53e7faf670eac2c5b517d83bf",
     }
+
+    def get_balance(self, address, asset=Asset('THOR.RUNE')):
+        """
+        Get THOR balance for an address
+        """
+        if "VAULT" == get_alias("THOR", address):
+            balance = self.fetch("/thorchain/balance/module/asgard")
+            for coin in balance:
+                if coin['denom'] == asset.get_symbol().lower():
+                    return int(coin['amount'])
+        else:
+            balance = self.fetch("/auth/accounts/" + address)
+            for coin in balance['result']['value']['coins']:
+                if coin['denom'] == asset.get_symbol().lower():
+                    return int(coin['amount'])
+        return 0
 
     def transfer(self, txns):
         if not isinstance(txns, list):
@@ -153,3 +171,37 @@ class ThorchainSigner(HttpClient):
 
     def _get_account(self, address):
         return self.fetch("/auth/accounts/" + address)
+
+
+class Thorchain(GenericChain):
+    """
+    A local simple implementation of thorchain chain
+    """
+
+    name = "THORChain"
+    chain = "THOR"
+    coin = Asset("THOR.RUNE")
+
+    def __init__(self):
+        super().__init__()
+
+        # seeding the users, these seeds are established in build/scripts/genesis.sh
+        acct = Account("thor1j08ys4ct2hzzc2hcz6h2hgrvlmsjynaw02vym4")
+        acct.add(Coin(self.coin, 5000000000000))
+        self.set_account(acct)
+
+        acct = Account("thor1zupk5lmc84r2dh738a9g3zscavannjy3h4s0hw")
+        acct.add(Coin(self.coin, 25000000000100))
+        self.set_account(acct)
+
+        acct = Account("thor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkdftjnal")
+        acct.add(Coin(self.coin, 5090000000000))
+        self.set_account(acct)
+
+    @classmethod
+    def _calculate_gas(cls, pool, txn):
+        """
+        With given coin set, calculates the gas owed
+        """
+        return Coin(cls.coin, 100000000)
+
