@@ -32,6 +32,8 @@ aliases_thor = {
     "STAKER-1": "thor1zupk5lmc84r2dh738a9g3zscavannjy3h4s0hw",
     "STAKER-2": "thor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkdftjnal",
     "VAULT": "thor1g98cy3n9mmjrpn0sxmn63lztelera37n8n67c0",
+    "RESERVE": "thor1dheycdevq39qlkxs2a6wuuzyn4aqxhve4qxtxt",
+    "BOND": "thor17gw75axcnr8747pkanye45pnrwk7p9c3cqncsv",
 }
 
 

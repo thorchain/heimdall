@@ -39,7 +39,7 @@ class TestAsset(unittest.TestCase):
         asset = Asset("BNB.BNB")
         self.assertEqual(asset.get_symbol(), "BNB")
         asset = Asset(RUNE)
-        self.assertEqual(asset.get_symbol(), RUNE.split(".")[-1])
+        self.assertEqual(asset.get_symbol(), RUNE.get_symbol())
         asset = Asset("LOK-3C0")
         self.assertEqual(asset.get_symbol(), "LOK-3C0")
 
@@ -47,7 +47,7 @@ class TestAsset(unittest.TestCase):
         asset = Asset("BNB.BNB")
         self.assertEqual(asset.get_chain(), "BNB")
         asset = Asset(RUNE)
-        self.assertEqual(asset.get_chain(), RUNE.split(".")[0])
+        self.assertEqual(asset.get_chain(), RUNE.get_chain())
         asset = Asset("LOK-3C0")
         self.assertEqual(asset.get_chain(), "THOR")
 

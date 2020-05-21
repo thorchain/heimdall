@@ -13,7 +13,7 @@ DEFAULT_RUNE_ASSET = "BNB.RUNE-A1F"
 
 
 def get_rune_asset():
-    return os.environ.get("RUNE", DEFAULT_RUNE_ASSET)
+    return Asset(os.environ.get("RUNE", DEFAULT_RUNE_ASSET))
 
 
 def requests_retry_session(

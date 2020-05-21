@@ -17,7 +17,6 @@ class Account:
         """
         if not isinstance(coins, list):
             coins = [coins]
-
         for coin in coins:
             for i, c in enumerate(self.balances):
                 if coin.asset == c.asset:
