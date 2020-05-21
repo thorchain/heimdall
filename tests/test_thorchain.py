@@ -118,7 +118,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.event.code, 109)
+        self.assertEqual(event.event.code, 108)
         self.assertEqual(event.event.reason, "emit asset 0 less than price limit 0")
         self.assertEqual(event.fee.coins, None)
         self.assertEqual(event.fee.pool_deduct, 0)
@@ -138,7 +138,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.type, "refund")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
-        self.assertEqual(event.event.code, 109)
+        self.assertEqual(event.event.code, 108)
         self.assertEqual(event.event.reason, "emit asset 0 less than price limit 0")
         self.assertEqual(event.fee.coins, [Coin(RUNE, 100000000)])
         self.assertEqual(event.fee.pool_deduct, 0)
@@ -162,7 +162,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
-        self.assertEqual(event.event.code, 109)
+        self.assertEqual(event.event.code, 108)
         self.assertEqual(
             event.event.reason,
             "emit asset 325254953 less than price limit 999999999999999999999",
