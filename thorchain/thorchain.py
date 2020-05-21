@@ -957,7 +957,7 @@ class ThorchainState:
         # check emit is non-zero and is not less than the target trade
         if emit.is_zero() or (emit.amount < target_trade):
             refund_event = RefundEvent(
-                109, f"emit asset {emit.amount} less than price limit {target_trade}"
+                108, f"emit asset {emit.amount} less than price limit {target_trade}"
             )
             return self.refund(in_txn, refund_event)
 

@@ -2844,7 +2844,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "code": 109,
+            "code": 108,
             "reason": "emit asset 26247311 less than price limit 26572599"
         },
         "status": "Refund"
@@ -3354,7 +3354,7 @@
             "pool_deduct": 0
         },
         "event": {
-            "code": 109,
+            "code": 108,
             "reason": "emit asset 23731782 less than price limit 23853375"
         },
         "status": "Refund"
