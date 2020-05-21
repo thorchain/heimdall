@@ -137,9 +137,6 @@ class Smoker:
 
         self.thorchain_signer = ThorchainSigner(thor)
 
-        self.mock_binance = MockBinance(bnb)
-        self.mock_binance.set_vault_address_by_pubkey(pubkey)
-
         self.mock_bitcoin = MockBitcoin(btc)
         # extract pubkey from bech32 encoded pubkey
         # removing first 5 bytes used by amino encoding
@@ -150,6 +147,9 @@ class Smoker:
         self.mock_ethereum = MockEthereum(eth)
         ethereum_address = MockEthereum.get_address_from_pubkey(raw_pubkey)
         self.mock_ethereum.set_vault_address(ethereum_address)
+
+        self.mock_binance = MockBinance(bnb)
+        self.mock_binance.set_vault_address_by_pubkey(raw_pubkey)
 
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
