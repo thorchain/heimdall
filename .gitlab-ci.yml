@@ -83,7 +83,7 @@ integration-native:
     - cd ..
   script:
     - make build
-    - NATIVE=true make smoke
+    - RUNE=THOR.RUNE make smoke
   after_script:
     - ./thornode/scripts/docker_logs.sh
 
