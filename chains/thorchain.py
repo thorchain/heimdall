@@ -5,7 +5,6 @@ import json
 import logging
 import requests
 
-import bech32
 import ecdsa
 
 from utils.segwit_addr import address_from_public_key
