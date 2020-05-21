@@ -2,10 +2,12 @@ import time
 import base64
 import hashlib
 
-from utils.common import Coin, HttpClient
+from utils.common import Coin, HttpClient, get_rune_asset
 from utils.segwit_addr import address_from_public_key
 from chains.aliases import aliases_bnb, get_aliases, get_alias_address
 from chains.account import Account
+
+RUNE = get_rune_asset()
 
 
 class MockBinance(HttpClient):
@@ -13,6 +15,12 @@ class MockBinance(HttpClient):
     An client implementation for a mock binance server
     https://gitlab.com/thorchain/bepswap/mock-binance
     """
+
+    def set_vault_address_by_pubkey(self, pubkey):
+        """
+        Set vault adddress by pubkey
+        """
+        self.set_vault_address(self.get_address_from_pubkey(pubkey))
 
     def set_vault_address(self, addr):
         """
@@ -95,6 +103,9 @@ class MockBinance(HttpClient):
                 asset = txn.get_asset_from_memo()
                 if asset:
                     chain = asset.get_chain()
+                if txn.memo.startswith("STAKE"):
+                    if asset and txn.chain == asset.get_chain():
+                        chain = RUNE.split(".")[0]
                 addr = get_alias_address(chain, alias)
                 txn.memo = txn.memo.replace(alias, addr)
 
