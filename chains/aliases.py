@@ -25,9 +25,28 @@ aliases_eth = {
     "VAULT": "",
 }
 
+aliases_thor = {
+    "MASTER": "thor1era6642crpv04sq0uc778jy2fac8q32qq5h4sf",
+    "CONTRIB": "thor16h4cf6cpq3nzy9k6zfstuwm0svvctlsyu72z8y",
+    "USER-1": "thor1j08ys4ct2hzzc2hcz6h2hgrvlmsjynaw02vym4",
+    "STAKER-1": "thor1zupk5lmc84r2dh738a9g3zscavannjy3h4s0hw",
+    "STAKER-2": "thor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkdftjnal",
+    "VAULT": "thor1g98cy3n9mmjrpn0sxmn63lztelera37n8n67c0",
+}
+
 
 def get_aliases():
     return aliases_btc.keys()
+
+
+def get_address_prefix(chain):
+    if chain == "BNB":
+        return "tbnb"
+    if chain == "BTC":
+        return "bc"
+    if chain == "THOR":
+        return "thor"
+    raise Exception(f"Address prefix not found, chain not supported ({chain})")
 
 
 def get_alias_address(chain, alias):
@@ -39,21 +58,9 @@ def get_alias_address(chain, alias):
         return aliases_btc[alias]
     if chain == "ETH":
         return aliases_eth[alias]
+    if chain == "THOR":
+        return aliases_thor[alias]
     raise Exception(f"Address for alias not found, chain not supported ({chain})")
-
-
-def get_bnb_address(chain, addr):
-    if chain == "BNB":
-        return addr
-    if chain == "BTC":
-        for alias, btc_addr in aliases_btc.items():
-            if addr == btc_addr:
-                return aliases_bnb[alias]
-    if chain == "ETH":
-        for alias, eth_addr in aliases_eth.items():
-            if addr == eth_addr:
-                return aliases_bnb[alias]
-    return addr
 
 
 def get_alias(chain, addr):
@@ -63,6 +70,8 @@ def get_alias(chain, addr):
         aliases = aliases_btc
     if chain == "ETH":
         aliases = aliases_eth
+    if chain == "THOR":
+        aliases = aliases_thor
     for name, alias_addr in aliases.items():
         if alias_addr == addr:
             return name

@@ -11,9 +11,10 @@ from utils.segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
 from chains.bitcoin import Bitcoin, MockBitcoin
 from chains.ethereum import Ethereum, MockEthereum
+from chains.thorchain import ThorchainSigner
 from thorchain.thorchain import ThorchainState, ThorchainClient, Event
 from scripts.health import Health
-from utils.common import Transaction, Coin, Asset
+from utils.common import Transaction, Coin, Asset, get_rune_asset
 from chains.aliases import aliases_bnb, get_alias
 
 # Init logging
@@ -21,6 +22,8 @@ logging.basicConfig(
     format="%(asctime)s | %(levelname).4s | %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
+
+RUNE = get_rune_asset()
 
 
 def main():
@@ -95,8 +98,8 @@ def main():
     try:
         smoker.run()
         sys.exit(smoker.exit)
-    except Exception as e:
-        logging.fatal(e)
+    except Exception:
+        logging.exception("Smoke tests failed")
         sys.exit(1)
 
 
@@ -126,24 +129,27 @@ class Smoker:
         self.txns = txns
 
         self.thorchain_client = ThorchainClient(thor, thor_websocket)
-        vault_address = self.thorchain_client.get_vault_address()
-        vault_pubkey = self.thorchain_client.get_vault_pubkey()
+        pubkey = self.thorchain_client.get_vault_pubkey()
 
-        self.thorchain.set_vault_pubkey(vault_pubkey)
+        self.thorchain.set_vault_pubkey(pubkey)
+        if RUNE.split(".")[0] == "THOR":
+            self.thorchain.reserve = 22000000000000000
 
-        self.mock_binance = MockBinance(bnb)
-        self.mock_binance.set_vault_address(vault_address)
+        self.thorchain_signer = ThorchainSigner(thor)
 
         self.mock_bitcoin = MockBitcoin(btc)
         # extract pubkey from bech32 encoded pubkey
         # removing first 5 bytes used by amino encoding
-        raw_pubkey = decode_address(vault_pubkey)[5:]
+        raw_pubkey = decode_address(pubkey)[5:]
         bitcoin_address = MockBitcoin.get_address_from_pubkey(raw_pubkey)
         self.mock_bitcoin.set_vault_address(bitcoin_address)
 
         self.mock_ethereum = MockEthereum(eth)
         ethereum_address = MockEthereum.get_address_from_pubkey(raw_pubkey)
         self.mock_ethereum.set_vault_address(ethereum_address)
+
+        self.mock_binance = MockBinance(bnb)
+        self.mock_binance.set_vault_address_by_pubkey(raw_pubkey)
 
         self.generate_balances = gen_balances
         self.fast_fail = fast_fail
@@ -285,6 +291,8 @@ class Smoker:
             return self.mock_bitcoin.transfer(txn)
         if txn.chain == Ethereum.chain:
             return self.mock_ethereum.transfer(txn)
+        if txn.chain == ThorchainSigner.chain:
+            return self.thorchain_signer.transfer(txn)
 
     def broadcast_simulator(self, txn):
         """
@@ -308,7 +316,7 @@ class Smoker:
         # keep track of how many outbound txs we created this inbound txn
         count_outbounds = 0
 
-        for x in range(0, 60):  # 60 attempts
+        for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.get_events()
             events = [Event.from_dict(evt) for evt in events]
             evt_list = [evt.type for evt in events]  # convert evts to array of strings
@@ -352,11 +360,19 @@ class Smoker:
                         outbounds = self.thorchain.handle_fee(txn, outbounds)
                         # we have now processed this inbound txn
                         processed_transaction = True
-                        # expecting to see this many outbound txs
-                        count_outbounds = len(outbounds)
 
                         # replicate order of outbounds broadcast from thorchain
                         self.thorchain.order_outbound_txns(outbounds)
+
+                        # expecting to see this many outbound txs
+                        count_outbounds = 0
+                        for o in outbounds:
+                            if o.chain == "THOR":
+                                continue  # thorchain transactions are on chain
+                            pool = self.thorchain.get_pool(o.coins[0].asset)
+                            if pool.rune_balance == 0:
+                                continue  # no pool exists, skip it
+                            count_outbounds += 1
 
                         for outbound in outbounds:
                             # update simulator state with outbound txs
@@ -378,7 +394,7 @@ class Smoker:
 
             time.sleep(1)
 
-        if count_outbounds != 0:
+        if count_outbounds > 0:
             self.error(
                 f"failed to send out all outbound transactions ({count_outbounds})"
             )

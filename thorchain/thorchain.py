@@ -15,10 +15,10 @@ from utils.common import (
     Jsonable,
     get_rune_asset,
 )
+
 from chains.aliases import get_alias, get_alias_address, get_aliases
 from chains.bitcoin import Bitcoin
 from chains.ethereum import Ethereum
-from chains.binance import Binance
 from tenacity import retry, stop_after_delay, wait_fixed
 
 RUNE = get_rune_asset()
@@ -111,9 +111,12 @@ class ThorchainClient(HttpClient):
         data = self.fetch("/thorchain/lastblock")
         return int(data["thorchain"])
 
-    def get_vault_address(self):
+    def get_vault_address(self, chain):
         data = self.fetch("/thorchain/pool_addresses")
-        return data["current"][0]["address"]
+        for d in data["current"]:
+            if chain == d["chain"]:
+                return d["address"]
+        return "address not found"
 
     def get_vault_pubkey(self):
         data = self.fetch("/thorchain/pool_addresses")
@@ -476,6 +479,10 @@ class ThorchainState:
         """
         txns = []
         for coin in txn.coins:
+            if not coin.is_rune():
+                pool = self.get_pool(coin.asset)
+                if pool.rune_balance == 0:
+                    continue  # no pool exists, skip it
             txns.append(
                 Transaction(
                     txn.chain,
@@ -528,6 +535,9 @@ class ThorchainState:
 
         """
         tx = deepcopy(txn)  # copy of transaction
+
+        if tx.chain == "THOR":
+            self.reserve += 100000000
         if tx.memo.startswith("STAKE:"):
             return self.handle_stake(tx)
         elif tx.memo.startswith("ADD:"):
@@ -673,7 +683,7 @@ class ThorchainState:
 
         # check address to stake to from memo
         address = txn.from_address
-        if txn.chain != Binance.chain and len(parts) > 2:
+        if txn.chain != RUNE.split(".")[0] and len(parts) > 2:
             address = parts[2]
 
         stake_units = pool.stake(address, rune_amt, asset_amt, asset)
@@ -754,8 +764,11 @@ class ThorchainState:
         # if this is our last staker of bnb, subtract a little BNB for gas.
         if pool.total_units == 0:
             if pool.asset.is_bnb():
-                asset_amt -= 75000
-                pool.asset_balance += 75000
+                fee_amt = 37500
+                if RUNE.split(".")[0] == "BNB":
+                    fee_amt *= 2
+                asset_amt -= fee_amt
+                pool.asset_balance += fee_amt
             elif pool.asset.is_btc() or pool.asset.is_eth():
                 asset_amt -= gas[0].amount
                 pool.asset_balance += gas[0].amount
@@ -776,7 +789,7 @@ class ThorchainState:
 
         out_txns = [
             Transaction(
-                Binance.chain,
+                RUNE.split(".")[0],
                 txn.to_address,
                 txn.from_address,
                 [Coin(RUNE, rune_amt)],
@@ -885,7 +898,7 @@ class ThorchainState:
             # generate event for SWAP transaction
             out_txns = [
                 Transaction(
-                    txn.chain,
+                    emit.asset.get_chain(),
                     txn.from_address,
                     txn.to_address,
                     [emit],
@@ -1182,7 +1195,7 @@ class Event(Jsonable):
         self.id = int(id) if id is not None else next(Event.id_iter)
         self.type = event_type
         self.in_tx = deepcopy(txn)
-        self.out_txs = txns_out
+        self.out_txs = txns_out or []
         self.fee = fee
         self.event = deepcopy(event)
         self.status = status
@@ -1666,7 +1679,7 @@ class Pool(Jsonable):
         staker = self.get_staker(address)
 
         # handle cross chain stake
-        if not asset.is_bnb():
+        if not asset.get_chain() == RUNE.split(".")[0]:
             if asset_amt == 0:
                 staker.pending_rune += rune_amt
                 self.set_staker(staker)

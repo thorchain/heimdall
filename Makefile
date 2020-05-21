@@ -1,8 +1,8 @@
 include Makefile.cicd
 IMAGE_NAME = registry.gitlab.com/thorchain/heimdall
 LOGLEVEL?=INFO
-DOCKER_OPTS = --network=host --rm -e LOGLEVEL=${LOGLEVEL} -e PYTHONPATH=/app -v ${PWD}:/app -w /app
 RUNE?=BNB.RUNE-A1F
+DOCKER_OPTS = --network=host --rm -e RUNE=${RUNE} -e LOGLEVEL=${LOGLEVEL} -e PYTHONPATH=/app -v ${PWD}:/app -w /app
 
 clean:
 	rm *.pyc
@@ -17,7 +17,7 @@ format:
 	@docker run --rm -v ${PWD}:/app cytopia/black /app
 
 test:
-	@docker run ${DOCKER_OPTS} -e RUNE=${RUNE} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} python -m unittest tests/test_*
+	@docker run ${DOCKER_OPTS} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} python -m unittest tests/test_*
 
 test-coverage:
 	@docker run ${DOCKER_OPTS} -e EXPORT=${EXPORT} -e EXPORT_EVENTS=${EXPORT_EVENTS} ${IMAGE_NAME} coverage run -m unittest tests/test_*
