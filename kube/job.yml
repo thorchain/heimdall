@@ -21,7 +21,7 @@ spec:
           - scripts/smoke.py
           - --fast-fail=True
           - --thorchain=http://thor-api:1317
-          - --binance=http://binance-daemon:26660
+          - --binance=http://binance-daemon:26657
           - --ethereum=http://ethereum-daemon:8545
           - --bitcoin=http://thorchain:password@bitcoin-daemon:18443
           - --thorchain-websocket=ws://thor-daemon:26657/websocket
