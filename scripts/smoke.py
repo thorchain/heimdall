@@ -445,7 +445,9 @@ class Smoker:
             self.check_binance()
             self.check_chain(self.bitcoin, self.mock_bitcoin, self.bitcoin_reorg)
             self.check_chain(self.ethereum, self.mock_ethereum, self.ethereum_reorg)
-            self.check_chain(self.thorchain, self.mock_thorchain, None)
+
+            if RUNE.get_chain() == "THOR":
+                self.check_chain(self.thorchain, self.mock_thorchain, None)
 
             self.check_vaults()
             self.run_health()
