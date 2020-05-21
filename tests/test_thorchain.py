@@ -399,7 +399,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "add")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs, [])
         self.assertEqual(event.event.pool, "BNB.BNB")
 
         # check add just rune
@@ -420,7 +420,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "add")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs, [])
         # FIXME? do we have RUNE pool
         self.assertEqual(event.event.pool, RUNE)
 
@@ -509,7 +509,7 @@ class TestThorchainState(unittest.TestCase):
             "ADD:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
-        self.assertEqual(len(outbound), 3)
+        self.assertEqual(len(outbound), 2)
 
         # check refund event generated for add with > 2 coins
         events = thorchain.get_events()
@@ -521,7 +521,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.out_txs[2].to_json(), outbound[2].to_json())
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "refund reason message")  # FIXME
 
@@ -543,7 +542,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "reserve")
         self.assertEqual(event.in_tx.to_json(), txn.to_json())
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs, [])
         self.assertEqual(event.event.reserve_contributor["address"], txn.from_address)
         self.assertEqual(event.event.reserve_contributor["amount"], txn.coins[0].amount)
 
@@ -613,7 +612,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "gas")
         self.assertEqual(event.in_tx.to_json(), Transaction.empty_txn().to_json())
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs, [])
         self.assertEqual(event.event.pools, [EventGasPool("BNB.BNB", 75000, 25000000)])
 
     def test_stake(self):
@@ -757,7 +756,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKE:BNB.BNB",
         )
         outbound = thorchain.handle(txn)
-        self.assertEqual(len(outbound), 3)
+        self.assertEqual(len(outbound), 2)
 
         # check refund event generated for stake with > 2 coins
         events = thorchain.get_events()
@@ -769,7 +768,6 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(event.out_txs), len(outbound))
         self.assertEqual(event.out_txs[0].to_json(), outbound[0].to_json())
         self.assertEqual(event.out_txs[1].to_json(), outbound[1].to_json())
-        self.assertEqual(event.out_txs[2].to_json(), outbound[2].to_json())
         self.assertEqual(event.event.code, 105)
         self.assertEqual(event.event.reason, "refund reason message")  # FIXME
 
@@ -970,7 +968,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(event.status, "Success")
         self.assertEqual(event.type, "pool")
         self.assertEqual(event.in_tx.to_json(), Transaction.empty_txn().to_json())
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs, [])
         self.assertEqual(event.event.pool, "BNB.BNB")
         self.assertEqual(event.event.status, "Bootstrap")
 
@@ -1273,7 +1271,7 @@ class TestEvent(unittest.TestCase):
             f"""
 Event #1 | Type REFUND | Status Success |
 InTx  Tx STAKER-1 ==> VAULT    | ADD:{RUNE} | 50,000,000,000_{RUNE}
-OutTx None
+OutTx []
 Fee   Coins None | Pool deduct 0
 Event RefundEvent Code 105 | Reason "memo can't be empty"
             """,
@@ -1295,7 +1293,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
             f"""
 Event #1 | Type REFUND | Status Refund |
 InTx  Tx STAKER-1 ==> VAULT    | ADD:{RUNE} | 50,000,000,000_{RUNE}
-OutTx None
+OutTx []
 Fee   Coins None | Pool deduct 0
 Event RefundEvent Code 105 | Reason "memo can't be empty"
             """,
@@ -1360,7 +1358,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
             '{"id": 1, "type": "refund", "in_tx": {"id": "TODO", "chain": "BNB", '
             '"from_address": "STAKER-1", "to_address": "VAULT", '
             '"memo": "ADD:' + RUNE + '", "coins": [{"asset": "' + RUNE + '", '
-            '"amount": 50000000000}], "gas": null}, "out_txs": null, '
+            '"amount": 50000000000}], "gas": null}, "out_txs": [], '
             '"fee": {"coins": null, "pool_deduct": 0}, "event": {"code": 105, '
             '"reason": "memo can\'t be empty"}, "status": "Success"}',
         )
@@ -1377,7 +1375,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
                 "coins": [{"asset": RUNE, "amount": 50000000000}],
                 "gas": None,
             },
-            "out_txs": None,
+            "out_txs": [],
             "fee": {"coins": None, "pool_deduct": 0},
             "event": {"code": 105, "reason": "memo can't be empty"},
             "status": "Success",
@@ -1391,7 +1389,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         self.assertEqual(event.in_tx.memo, "ADD:" + RUNE)
         self.assertEqual(event.in_tx.coins[0].asset, RUNE)
         self.assertEqual(event.in_tx.coins[0].amount, 50000000000)
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs, [])
         self.assertEqual(event.fee.coins, None)
         self.assertEqual(event.fee.pool_deduct, 0)
         self.assertEqual(event.event.code, 105)
@@ -1408,7 +1406,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
                 "coins": None,
                 "gas": None,
             },
-            "out_txs": None,
+            "out_txs": [],
             "event": {
                 "bond_reward": "1161881",
                 "pool_rewards": [
@@ -1427,7 +1425,7 @@ Event RefundEvent Code 105 | Reason "memo can't be empty"
         self.assertEqual(event.in_tx.to_address, "")
         self.assertEqual(event.in_tx.memo, "")
         self.assertEqual(event.in_tx.coins, None)
-        self.assertEqual(event.out_txs, None)
+        self.assertEqual(event.out_txs, [])
         self.assertEqual(event.fee.coins, None)
         self.assertEqual(event.fee.pool_deduct, 0)
         self.assertEqual(event.event.bond_reward, 1161881)
