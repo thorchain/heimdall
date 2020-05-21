@@ -54,20 +54,20 @@ class MockThorchain(HttpClient):
         "STAKER-2": "e810f1d7d6691b4a7a73476f3543bd87d601f9a53e7faf670eac2c5b517d83bf",
     }
 
-    def get_balance(self, address, asset=Asset('THOR.RUNE')):
+    def get_balance(self, address, asset=Asset("THOR.RUNE")):
         """
         Get THOR balance for an address
         """
         if "VAULT" == get_alias("THOR", address):
             balance = self.fetch("/thorchain/balance/module/asgard")
             for coin in balance:
-                if coin['denom'] == asset.get_symbol().lower():
-                    return int(coin['amount'])
+                if coin["denom"] == asset.get_symbol().lower():
+                    return int(coin["amount"])
         else:
             balance = self.fetch("/auth/accounts/" + address)
-            for coin in balance['result']['value']['coins']:
-                if coin['denom'] == asset.get_symbol().lower():
-                    return int(coin['amount'])
+            for coin in balance["result"]["value"]["coins"]:
+                if coin["denom"] == asset.get_symbol().lower():
+                    return int(coin["amount"])
         return 0
 
     def transfer(self, txns):
@@ -204,4 +204,3 @@ class Thorchain(GenericChain):
         With given coin set, calculates the gas owed
         """
         return Coin(cls.coin, 100000000)
-

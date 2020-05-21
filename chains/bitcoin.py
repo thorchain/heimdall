@@ -9,7 +9,6 @@ from bitcoin.core.script import CScript, OP_0
 from utils.common import Coin, HttpClient, get_rune_asset, Asset
 from decimal import Decimal, getcontext
 from chains.aliases import aliases_btc, get_aliases, get_alias_address
-from chains.account import Account
 from chains.chain import GenericChain
 from tenacity import retry, stop_after_delay, wait_fixed
 

@@ -5,7 +5,6 @@ import hashlib
 from utils.common import Coin, HttpClient, get_rune_asset, Asset
 from utils.segwit_addr import address_from_public_key
 from chains.aliases import aliases_bnb, get_aliases, get_alias_address
-from chains.account import Account
 from chains.chain import GenericChain
 
 RUNE = get_rune_asset()
