@@ -5,7 +5,7 @@ import requests
 
 from web3 import Web3, HTTPProvider
 from web3.middleware import geth_poa_middleware
-from solc import compile_standard
+from solcx import compile_standard
 from eth_keys import KeyAPI
 from eth_utils import keccak
 from utils.common import Coin, get_rune_asset, Asset
@@ -60,11 +60,11 @@ class MockEthereum:
         self.wait_for_node()
         tx = self.web3.eth.getTransactionFromBlock(1, 0)
         receipt = self.web3.eth.getTransactionReceipt(tx.hash)
-        abi = open("data/vault.json", "r")
-        self.vault = self.web3.eth.contract{
+        abi = json.loads(open("data/vault.json", "r"))
+        self.vault = self.web3.eth.contract(
             address=receipt.contractAddress,
             abi=abi
-        }
+        )
         self.token = self.deploy_token()
 
     @classmethod
@@ -93,35 +93,17 @@ class MockEthereum:
         return block["number"]
 
     def deploy_token(self):
-        f = open("data/token.sol", "r")
-        compiled_sol = compile_standard({
-            "language": "Solidity",
-             "sources": {
-                "token.sol": {
-                    "content": str(f)
-                }
-            },
-            "setings": {
-                "outputSelection": {
-                    "*": {
-                        "*": [
-                            "metadata", "evm.bytecode"
-                            , "evm.bytecode.sourceMap"
-                        ]
-                    }
-                }
-            }
-        })
-        bytecode = compiled_sol['contracts']['token.sol']['Token']['evm']['bytecode']['object']
-        abi = json.loads(compiled_sol['contracts']['token.sol']['Token']['metadata'])['output']['abi']
+        compiled_sol = compile_files("data/token.sol")
+        bytecode = compiled_sol['Token']['bytecode']['object']
+        abi = json.loads(compiled_sol['Token']['abi'])
         token = self.web3.eth.contract(abi=abi, bytecode=bytecode)
         tx_hash = token.constructor().transact()
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
         logging.info(f"{receipt.contractAddress.hex()}")
-        return self.web3.eth.contract{
+        return self.web3.eth.contract(
             address=receipt.contractAddress,
             abi=abi
-        }
+        )
 
     def get_block_hash(self, block_height):
         """
@@ -185,6 +167,7 @@ class MockEthereum:
         for account in self.web3.eth.accounts:
             if account == Web3.toChecksumAddress(txn.from_address):
                 self.web3.geth.personal.unlock_account(account, self.passphrase)
+                self.web3.eth.defaultAccount = account
 
         splits = txn.coins[0].asset.split('.')
         if len(splits) != 2:
@@ -206,9 +189,9 @@ class MockEthereum:
                 tx_hash = self.web3.geth.personal.send_transaction(tx, self.passphrase)
             else:
                 tx_hash = self.token.functions().transfer(Web3.toChecksumAddress(txn.to_address), txn.coins[0].amount).transact()
-        else:    
+        else:
             parts = txn.memo.split('-')
-            if len(part) != 2;
+            if len(parts) != 2:
                 logging.error(f"incorrect ETH txn memo")
             tx_hash = self.vault.functions().deposit(Web3.toChecksumAddress(parts[1]), txn.coins[0].amount, parts[0]).transact()
 
