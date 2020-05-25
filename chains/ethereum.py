@@ -155,7 +155,7 @@ class MockEthereum:
 
         tx_hash = self.web3.geth.personal.send_transaction(tx, self.passphrase)
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
-        txn.id = receipt["transactionHash"].hex()[2:]
+        txn.id = receipt["transactionHash"].hex()[2:].upper()
         txn.gas = [Coin("ETH.ETH", receipt["cumulativeGasUsed"] * self.gas_price)]
 
 

@@ -1,14 +1,11 @@
 import unittest
+import logging
 
 from thorchain.thorchain import (
+    ThorchainClient,
     ThorchainState,
     Pool,
     Event,
-    EventSDK,
-    RefundEvent,
-    RewardEvent,
-    EventGasPool,
-    GasEvent,
 )
 from chains.binance import Binance
 
@@ -35,7 +32,8 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
         # check refund event generated for swap with no pool
-        events = thorchain.get_events()
+        events = thorchain.events
+        logging.info(events)
         self.assertEqual(len(events), 1)
         event = events[0]
         self.assertEqual(event.status, "Refund")
@@ -1143,9 +1141,29 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(events[0].type, "unstake")
 
 
-class TestSDKEvent(unittest.TestCase):
+class TestEvent(unittest.TestCase):
+    def test_get(self):
+        swap = Event(
+            "swap",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "TODO"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
+        txid = swap.get("id")
+        self.assertEqual(txid, "TODO")
+        memo = swap.get("memo")
+        self.assertEqual(memo, "REFUND:FAAFF")
+        random = swap.get("random")
+        self.assertEqual(random, None)
+
     def test_eq(self):
-        outbound_sim = EventSDK(
+        outbound_sim = Event(
             "outbound",
             [
                 {"in_tx_id": "FAAFF"},
@@ -1157,7 +1175,7 @@ class TestSDKEvent(unittest.TestCase):
                 {"memo": "REFUND:FAAFF"},
             ],
         )
-        outbound = EventSDK(
+        outbound = Event(
             "outbound",
             [
                 {"in_tx_id": "FAAFF"},
@@ -1170,7 +1188,7 @@ class TestSDKEvent(unittest.TestCase):
             ],
         )
         self.assertEqual(outbound_sim, outbound)
-        swap_sim = EventSDK(
+        swap_sim = Event(
             "swap",
             [
                 {"in_tx_id": "FAAFF"},
@@ -1182,7 +1200,7 @@ class TestSDKEvent(unittest.TestCase):
                 {"memo": "REFUND:FAAFF"},
             ],
         )
-        swap = EventSDK(
+        swap = Event(
             "swap",
             [
                 {"in_tx_id": "FAAFF"},
@@ -1196,8 +1214,20 @@ class TestSDKEvent(unittest.TestCase):
         )
         self.assertNotEqual(swap_sim, swap)
 
+    def test_sort_events(self):
+        evt1 = Event("test", ["id": 1], 1, "block")
+        evt2 = Event("test", ["id": 2], 1, "tx")
+        evt3 = Event("test", ["id": 3], 6, "block")
+        evt4 = Event("test", ["id": 4], 3, "tx")
+        evt5 = Event("test", ["id": 5], 3, "block")
+        evt6 = Event("test", ["id": 6], 2, "block")
+        events = [evt1, evt2, evt3, evt4, evt5, evt6]
+        expected_events = [evt2, evt1, evt6, evt4, evt5, evt3]
+        ThorchainClient.sort_events(events)
+        self.assertEqual(events, expected_events)
+
     def test_sorted(self):
-        outbound_sim_1 = EventSDK(
+        outbound_sim_1 = Event(
             "outbound",
             [
                 {"in_tx_id": "FAAFF"},
@@ -1209,7 +1239,7 @@ class TestSDKEvent(unittest.TestCase):
                 {"memo": "REFUND:FAAFF"},
             ],
         )
-        outbound_sim_2 = EventSDK(
+        outbound_sim_2 = Event(
             "outbound",
             [
                 {"in_tx_id": "FAAFF"},
@@ -1222,7 +1252,7 @@ class TestSDKEvent(unittest.TestCase):
             ],
         )
         sim_events = [outbound_sim_1, outbound_sim_2]
-        outbound_1 = EventSDK(
+        outbound_1 = Event(
             "outbound",
             [
                 {"in_tx_id": "FAAFF"},
@@ -1234,7 +1264,7 @@ class TestSDKEvent(unittest.TestCase):
                 {"memo": "REFUND:FAAFF"},
             ],
         )
-        outbound_2 = EventSDK(
+        outbound_2 = Event(
             "outbound",
             [
                 {"in_tx_id": "FAAFF"},
@@ -1252,264 +1282,6 @@ class TestSDKEvent(unittest.TestCase):
         events = [outbound_2, outbound_1]
         self.assertNotEqual(sim_events, events)
         self.assertEqual(sorted(sim_events), sorted(events))
-
-
-class TestEvent(unittest.TestCase):
-    def test_str(self):
-        refund_event = RefundEvent(105, "memo can't be empty")
-        txn = Transaction(
-            Binance.chain,
-            "STAKER-1",
-            "VAULT",
-            [Coin(RUNE, 50000000000)],
-            "ADD:" + RUNE,
-        )
-        event = Event("refund", txn, None, refund_event)
-        event.id = 1
-        self.assertEqual(
-            str(event),
-            f"""
-Event #1 | Type REFUND | Status Success |
-InTx  Tx STAKER-1 ==> VAULT    | ADD:{RUNE} | 50,000,000,000_{RUNE}
-OutTx []
-Fee   Coins None | Pool deduct 0
-Event RefundEvent Code 105 | Reason "memo can't be empty"
-            """,
-        )
-
-    def test_repr(self):
-        refund_event = RefundEvent(105, "memo can't be empty")
-        txn = Transaction(
-            Binance.chain,
-            "STAKER-1",
-            "VAULT",
-            [Coin(RUNE, 50000000000)],
-            "ADD:" + RUNE,
-        )
-        event = Event("refund", txn, None, refund_event, status="Refund")
-        event.id = 1
-        self.assertEqual(
-            repr(event),
-            f"""
-Event #1 | Type REFUND | Status Refund |
-InTx  Tx STAKER-1 ==> VAULT    | ADD:{RUNE} | 50,000,000,000_{RUNE}
-OutTx []
-Fee   Coins None | Pool deduct 0
-Event RefundEvent Code 105 | Reason "memo can't be empty"
-            """,
-        )
-
-    def test_eq(self):
-        refund_event = RefundEvent(105, "memo can't be empty")
-        txn = Transaction(
-            Binance.chain,
-            "STAKER-1",
-            "VAULT",
-            [Coin(RUNE, 50000000000)],
-            "ADD:" + RUNE,
-        )
-        event1 = Event("refund", txn, None, refund_event, status="Refund")
-        event2 = Event("refund", txn, None, refund_event, status="Refund")
-        self.assertEqual(event1, event2)
-        event2.in_tx.coins = [Coin("BNB.BNB", 10000)]
-        list_unsorted = [event1, event2]
-        list_sorted = [event2, event1]
-        self.assertNotEqual(list_unsorted, list_sorted)
-        self.assertEqual(sorted(list_unsorted), list_sorted)
-
-        reward_event1 = RewardEvent(
-            1000, [Coin("BNB.BNB", 20000), Coin("BNB.LOK-3C0", 30000)]
-        )
-        reward_event2 = RewardEvent(
-            1000, [Coin("BNB.LOK-3C0", 30000), Coin("BNB.BNB", 20000)]
-        )
-        event1 = Event(
-            "rewards", Transaction.empty_txn(), None, reward_event1, status="Success"
-        )
-        event2 = Event(
-            "rewards", Transaction.empty_txn(), None, reward_event2, status="Success"
-        )
-        self.assertEqual(event1, event2)
-
-    def test_gas_pool_event_sort(self):
-        gas_pool_btc = EventGasPool("BTC.BTC", 100, 200)
-        gas_pool_eth = EventGasPool("ETH.ETH", 100, 200)
-        gas_pool_bnb = EventGasPool("BNB.BNB", 300, 400)
-        gas_event1 = GasEvent([gas_pool_btc, gas_pool_bnb])
-        gas_event2 = GasEvent([gas_pool_bnb, gas_pool_btc])
-        gas_event3 = GasEvent([gas_pool_bnb, gas_pool_eth])
-        gas_event4 = GasEvent([gas_pool_eth, gas_pool_bnb])
-        self.assertEqual(gas_event1, gas_event2)
-        self.assertEqual(gas_event3, gas_event4)
-
-    def test_to_json(self):
-        refund_event = RefundEvent(105, "memo can't be empty")
-        txn = Transaction(
-            Binance.chain,
-            "STAKER-1",
-            "VAULT",
-            [Coin(RUNE, 50000000000)],
-            "ADD:" + RUNE,
-        )
-        event = Event("refund", txn, None, refund_event)
-        event.id = 1
-        self.assertEqual(
-            event.to_json(),
-            '{"id": 1, "type": "refund", "in_tx": {"id": "TODO", "chain": "BNB", '
-            '"from_address": "STAKER-1", "to_address": "VAULT", '
-            '"memo": "ADD:' + RUNE + '", "coins": [{"asset": "' + RUNE + '", '
-            '"amount": 50000000000}], "gas": null}, "out_txs": [], '
-            '"fee": {"coins": null, "pool_deduct": 0}, "event": {"code": 105, '
-            '"reason": "memo can\'t be empty"}, "status": "Success"}',
-        )
-
-    def test_from_dict(self):
-        value = {
-            "id": 1,
-            "type": "refund",
-            "in_tx": {
-                "chain": "BNB",
-                "from_address": "STAKER-1",
-                "to_address": "VAULT",
-                "memo": "ADD:" + RUNE,
-                "coins": [{"asset": RUNE, "amount": 50000000000}],
-                "gas": None,
-            },
-            "out_txs": [],
-            "fee": {"coins": None, "pool_deduct": 0},
-            "event": {"code": 105, "reason": "memo can't be empty"},
-            "status": "Success",
-        }
-        event = Event.from_dict(value)
-        self.assertEqual(event.id, 1)
-        self.assertEqual(event.type, "refund")
-        self.assertEqual(event.in_tx.chain, "BNB")
-        self.assertEqual(event.in_tx.from_address, "STAKER-1")
-        self.assertEqual(event.in_tx.to_address, "VAULT")
-        self.assertEqual(event.in_tx.memo, "ADD:" + RUNE)
-        self.assertEqual(event.in_tx.coins[0].asset, RUNE)
-        self.assertEqual(event.in_tx.coins[0].amount, 50000000000)
-        self.assertEqual(event.out_txs, [])
-        self.assertEqual(event.fee.coins, None)
-        self.assertEqual(event.fee.pool_deduct, 0)
-        self.assertEqual(event.event.code, 105)
-        self.assertEqual(event.event.reason, "memo can't be empty")
-
-        value = {
-            "id": 1,
-            "type": "rewards",
-            "in_tx": {
-                "chain": "",
-                "from_address": "",
-                "to_address": "",
-                "memo": "",
-                "coins": None,
-                "gas": None,
-            },
-            "out_txs": [],
-            "event": {
-                "bond_reward": "1161881",
-                "pool_rewards": [
-                    {"asset": "BNB.BNB", "amount": -105552},
-                    {"asset": "BNB.LOK-3C0", "amount": -577814631},
-                ],
-            },
-            "fee": {"coins": None, "pool_deduct": 0},
-            "status": "Success",
-        }
-        event = Event.from_dict(value)
-        self.assertEqual(event.id, 1)
-        self.assertEqual(event.type, "rewards")
-        self.assertEqual(event.in_tx.chain, "")
-        self.assertEqual(event.in_tx.from_address, "")
-        self.assertEqual(event.in_tx.to_address, "")
-        self.assertEqual(event.in_tx.memo, "")
-        self.assertEqual(event.in_tx.coins, None)
-        self.assertEqual(event.out_txs, [])
-        self.assertEqual(event.fee.coins, None)
-        self.assertEqual(event.fee.pool_deduct, 0)
-        self.assertEqual(event.event.bond_reward, 1161881)
-        self.assertEqual(event.event.pool_rewards[0].asset, "BNB.BNB")
-        self.assertEqual(event.event.pool_rewards[0].amount, -105552)
-        self.assertEqual(event.event.pool_rewards[1].asset, "BNB.LOK-3C0")
-        self.assertEqual(event.event.pool_rewards[1].amount, -577814631)
-
-        value = {
-            "id": 1,
-            "type": "refund",
-            "in_tx": {
-                "chain": "BNB",
-                "from_address": "STAKER-1",
-                "to_address": "VAULT",
-                "memo": "",
-                "coins": [
-                    {"asset": RUNE, "amount": 50000000000},
-                    {"asset": "BNB.BNB", "amount": 30000000000},
-                ],
-                "gas": [{"asset": "BNB.BNB", "amount": 60000}],
-            },
-            "out_txs": [
-                {
-                    "chain": "BNB",
-                    "from_address": "VAULT",
-                    "to_address": "STAKER-1",
-                    "memo": "REFUND:TODO",
-                    "coins": [{"asset": RUNE, "amount": 50000000000}],
-                    "gas": [{"asset": "BNB.BNB", "amount": 35000}],
-                },
-                {
-                    "chain": "BNB",
-                    "from_address": "VAULT",
-                    "to_address": "STAKER-1",
-                    "memo": "REFUND:TODO",
-                    "coins": [{"asset": "BNB.BNB", "amount": 30000000000}],
-                    "gas": [{"asset": "BNB.BNB", "amount": 35000}],
-                },
-            ],
-            "fee": {
-                "coins": [{"asset": "BNB.BNB", "amount": "221464"}],
-                "pool_deduct": "100000000",
-            },
-            "event": {"code": "105", "reason": "memo can't be empty"},
-            "status": "Refund",
-        }
-        event = Event.from_dict(value)
-        self.assertEqual(event.id, 1)
-        self.assertEqual(event.type, "refund")
-        self.assertEqual(event.fee.coins[0], Coin("BNB.BNB", 221464))
-        self.assertEqual(event.fee.pool_deduct, 100000000)
-        # in_tx
-        self.assertEqual(event.in_tx.chain, "BNB")
-        self.assertEqual(event.in_tx.from_address, "STAKER-1")
-        self.assertEqual(event.in_tx.to_address, "VAULT")
-        self.assertEqual(event.in_tx.memo, "")
-        self.assertEqual(event.in_tx.coins[0].asset, RUNE)
-        self.assertEqual(event.in_tx.coins[0].amount, 50000000000)
-        self.assertEqual(event.in_tx.coins[1].asset, "BNB.BNB")
-        self.assertEqual(event.in_tx.coins[1].amount, 30000000000)
-        self.assertEqual(event.in_tx.gas[0].asset, "BNB.BNB")
-        self.assertEqual(event.in_tx.gas[0].amount, 60000)
-        # out_tx 1
-        self.assertEqual(event.out_txs[0].chain, "BNB")
-        self.assertEqual(event.out_txs[0].from_address, "VAULT")
-        self.assertEqual(event.out_txs[0].to_address, "STAKER-1")
-        self.assertEqual(event.out_txs[0].memo, "REFUND:TODO")
-        self.assertEqual(event.out_txs[0].coins[0].asset, RUNE)
-        self.assertEqual(event.out_txs[0].coins[0].amount, 50000000000)
-        self.assertEqual(event.out_txs[0].gas[0].asset, "BNB.BNB")
-        self.assertEqual(event.out_txs[0].gas[0].amount, 35000)
-        # out_tx 2
-        self.assertEqual(event.out_txs[1].chain, "BNB")
-        self.assertEqual(event.out_txs[1].from_address, "VAULT")
-        self.assertEqual(event.out_txs[1].to_address, "STAKER-1")
-        self.assertEqual(event.out_txs[1].memo, "REFUND:TODO")
-        self.assertEqual(event.out_txs[1].coins[0].asset, "BNB.BNB")
-        self.assertEqual(event.out_txs[1].coins[0].amount, 30000000000)
-        self.assertEqual(event.out_txs[1].gas[0].asset, "BNB.BNB")
-        self.assertEqual(event.out_txs[1].gas[0].amount, 35000)
-
-        self.assertEqual(event.event.code, 105)
-        self.assertEqual(event.event.reason, "memo can't be empty")
 
 
 if __name__ == "__main__":
