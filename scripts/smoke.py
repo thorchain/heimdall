@@ -298,9 +298,9 @@ class Smoker:
             # convert evts to array of strings
             sim_evt_list = [evt.type for evt in sim_events]
 
-            # logging.info(evt_list)
+            logging.info(evt_list)
             # logging.info([f"{e.block_height} {e.category}" for e in events])
-            # logging.info(sim_evt_list)
+            logging.info(sim_evt_list)
             logging.info(len(events))
             logging.info(len(sim_events))
 
@@ -323,12 +323,12 @@ class Smoker:
                     for o in outbounds:
                         if o.chain == "THOR":
                             continue  # thorchain transactions are on chain
-                        pool = self.thorchain_state.get_pool(o.coins[0].asset)
-                        if pool.rune_balance == 0:
-                            continue  # no pool exists, skip it
+                        # pool = self.thorchain_state.get_pool(o.coins[0].asset)
+                        # if pool.rune_balance == 0:
+                        #     continue  # no pool exists, skip it
                         count_outbounds += 1
 
-                    logging.info(f"HOW MANY OUTBOUNS {count_outbounds}")
+                    logging.info(f"HOW MANY OUTBOUNDS {count_outbounds}")
                     for outbound in outbounds:
                         # update simulator state with outbound txs
                         self.broadcast_simulator(outbound)
@@ -336,7 +336,7 @@ class Smoker:
                     self.thorchain_state.generate_outbound_events(txn, outbounds)
 
                 for evt in events[len(sim_events) :]:
-                    if evt.type == "gas":
+                    if evt.type == "gas" and count_outbounds > 0:
                         todo = []
                         # with the given gas pool event data, figure out
                         # which outbound txns are for this gas pool, vs
