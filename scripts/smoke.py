@@ -285,57 +285,19 @@ class Smoker:
 
         # used to track if we have already processed this txn
         processed_transaction = False
-        outbounds = []
+
         # keep track of how many outbound txs we created this inbound txn
+        outbounds = []
         count_outbounds = 0
+        processed_outbound_events = False
 
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
-            # convert evts to array of strings
-            evt_list = [evt.type for evt in events]
-
             sim_events = self.thorchain_state.events[:]
-            # convert evts to array of strings
-            sim_evt_list = [evt.type for evt in sim_events]
-
-            logging.info(evt_list)
-            # logging.info([f"{e.block_height} {e.category}" for e in events])
-            logging.info(sim_evt_list)
-            logging.info(len(events))
-            logging.info(len(sim_events))
-
 
             # we have more real events than sim, fill in the gaps
             if len(events) > len(sim_events):
-                if not processed_transaction:
-                    # sent a transaction to our simulated thorchain
-                    outbounds = self.thorchain_state.handle(txn)
-                    # process transaction in thorchain
-                    outbounds = self.thorchain_state.handle_fee(txn, outbounds)
-                    # we have now processed this inbound txn
-                    processed_transaction = True
-
-                    # replicate order of outbounds broadcast from thorchain
-                    self.thorchain_state.order_outbound_txns(outbounds)
-
-                    # expecting to see this many outbound txs
-                    count_outbounds = 0
-                    for o in outbounds:
-                        if o.chain == "THOR":
-                            continue  # thorchain transactions are on chain
-                        # pool = self.thorchain_state.get_pool(o.coins[0].asset)
-                        # if pool.rune_balance == 0:
-                        #     continue  # no pool exists, skip it
-                        count_outbounds += 1
-
-                    logging.info(f"HOW MANY OUTBOUNDS {count_outbounds}")
-                    for outbound in outbounds:
-                        # update simulator state with outbound txs
-                        self.broadcast_simulator(outbound)
-
-                    self.thorchain_state.generate_outbound_events(txn, outbounds)
-
-                for evt in events[len(sim_events) :]:
+                for evt in events[len(sim_events):]:
                     if evt.type == "gas" and count_outbounds > 0:
                         todo = []
                         # with the given gas pool event data, figure out
@@ -347,8 +309,6 @@ class Smoker:
                             # the same blockchain
                             event_chain = Asset(evt.get("asset")).get_chain()
                             out_chain = out.coins[0].asset.get_chain()
-                            logging.info(out)
-                            logging.info(evt)
                             if event_chain == out_chain:
                                 todo.append(out)
                                 count += 1
@@ -361,18 +321,50 @@ class Smoker:
                     elif evt.type == "rewards":
                         self.thorchain_state.handle_rewards()
 
+                    elif (
+                        evt.type == "outbound"
+                        and processed_transaction
+                        and not processed_outbound_events
+                    ):
+                        self.thorchain_state.generate_outbound_events(txn, outbounds)
+                        processed_outbound_events = True
+
+                    if not processed_transaction:
+                        # process transaction in thorchain
+                        outbounds = self.thorchain_state.handle(txn)
+                        outbounds = self.thorchain_state.handle_fee(txn, outbounds)
+                        processed_transaction = True
+
+                        # replicate order of outbounds broadcast from thorchain
+                        self.thorchain_state.order_outbound_txns(outbounds)
+
+                        # expecting to see this many outbound txs
+                        count_outbounds = 0
+                        for o in outbounds:
+                            if o.chain == "THOR":
+                                continue  # thorchain transactions are on chain
+                            count_outbounds += 1
+
+                        for outbound in outbounds:
+                            # update simulator state with outbound txs
+                            self.broadcast_simulator(outbound)
                 continue
 
             # happy path exit
             if (
-                sorted(evt_list) == sorted(sim_evt_list)
+                sorted(events) == sorted(sim_events)
                 and count_outbounds <= 0
                 and processed_transaction
             ):
-                logging.info("break happy path")
                 break
 
-            logging.info(f"SLEEP {count_outbounds}")
+            # not happy path exit, we got wrong events
+            if (
+                len(events) == len(sim_events)
+                and sorted(events) != sorted(sim_events)
+            ):
+                break
+
             time.sleep(1)
 
         if count_outbounds > 0:
@@ -435,7 +427,7 @@ class Smoker:
                 self.check_chain(self.thorchain, self.mock_thorchain, None)
 
             self.check_vaults()
-            self.run_health()
+            # self.run_health()
 
 
 if __name__ == "__main__":

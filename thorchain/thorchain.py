@@ -271,7 +271,7 @@ class ThorchainState:
         """
         Subtract transaction fee from given transactions
         """
-        outbound = []
+        outbounds = []
         if not isinstance(txns, list):
             txns = [txns]
 
@@ -285,7 +285,7 @@ class ThorchainState:
                     self.reserve += self.rune_fee
 
                     if coin.amount > 0:
-                        outbound.append(txn)
+                        outbounds.append(txn)
 
                     # add fee event
                     event = Event(
@@ -311,23 +311,28 @@ class ThorchainState:
                         self.set_pool(pool)
                         coin.amount -= asset_fee
 
-                        # add fee event
-                        event = Event(
-                            "fee",
-                            [
-                                {"tx_id": in_tx.id},
-                                {"coins": f"{asset_fee} {coin.asset}"},
-                                {"pool_deduct": self.rune_fee},
-                            ],
-                        )
-                        self.events.append(event)
+                        pool_deduct = self.rune_fee
+                        if self.rune_fee > pool.rune_balance:
+                            pool_deduct = pool.rune_balance
+
+                        if pool_deduct > 0 or asset_fee > 0:
+                            # add fee event
+                            event = Event(
+                                "fee",
+                                [
+                                    {"tx_id": in_tx.id},
+                                    {"coins": f"{asset_fee} {coin.asset}"},
+                                    {"pool_deduct": pool_deduct},
+                                ],
+                            )
+                            self.events.append(event)
 
                     # add to the reserve
                     self.reserve += self.rune_fee
                     if coin.amount > 0:
-                        outbound.append(txn)
+                        outbounds.append(txn)
 
-        return outbound
+        return outbounds
 
     def _total_liquidity(self):
         """
@@ -633,9 +638,12 @@ class ThorchainState:
         if txn.chain != RUNE.get_chain() and len(parts) > 2:
             address = parts[2]
 
-        stake_units = pool.stake(address, rune_amt, asset_amt, asset)
-
+        stake_units, rune_amt, pending_txid = pool.stake(address, rune_amt, asset_amt, asset, txn.id)
         self.set_pool(pool)
+
+        # stake cross chain so event will be dispatched on asset stake
+        if stake_units == 0:
+            return []
 
         # generate event for STAKE transaction
         event = Event(
@@ -643,9 +651,14 @@ class ThorchainState:
             [
                 {"pool": pool.asset},
                 {"stake_units": stake_units},
-                *txn.get_attributes(),
+                {"rune_address": address},
+                {"rune_amount": rune_amt},
+                {"asset_amount": asset_amt},
+                {f"{txn.chain}_txid": txn.id},
             ],
         )
+        if pending_txid:
+            event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid})
         self.events.append(event)
 
         return []
@@ -822,6 +835,21 @@ class ThorchainState:
             # here we copy the txn to break references cause
             # the tx is split in 2 events and gas is handled only once
             in_txn = deepcopy(txn)
+
+            # generate first swap "fake" outbound event
+            out_txn = Transaction(
+                emit.asset.get_chain(),
+                txn.from_address,
+                txn.to_address,
+                [emit],
+                txn.memo,
+                id=Transaction.empty_id,
+            )
+
+            event = Event(
+                "outbound", [{"in_tx_id": in_txn.id}, *out_txn.get_attributes()]
+            )
+            self.events.append(event)
 
             # generate event for SWAP transaction
             event = Event(
@@ -1141,7 +1169,7 @@ class Pool(Jsonable):
 
         self.stakers.append(staker)
 
-    def stake(self, address, rune_amt, asset_amt, asset):
+    def stake(self, address, rune_amt, asset_amt, asset, txid):
         """
         Stake rune/asset for an address
         """
@@ -1151,8 +1179,9 @@ class Pool(Jsonable):
         if not asset.get_chain() == RUNE.get_chain():
             if asset_amt == 0:
                 staker.pending_rune += rune_amt
+                staker.pending_tx = txid
                 self.set_staker(staker)
-                return 0
+                return 0, 0, None
 
             rune_amt += staker.pending_rune
             staker.pending_rune = 0
@@ -1165,7 +1194,7 @@ class Pool(Jsonable):
         self.total_units += units
         staker.units += units
         self.set_staker(staker)
-        return units
+        return units, rune_amt, staker.pending_tx
 
     def unstake(self, address, withdraw_basis_points):
         """
@@ -1235,6 +1264,7 @@ class Staker(Jsonable):
         self.address = address
         self.units = 0
         self.pending_rune = 0
+        self.pending_tx = None
 
     def add(self, units):
         """
