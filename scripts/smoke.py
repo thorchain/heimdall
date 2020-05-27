@@ -243,7 +243,7 @@ class Smoker:
         for event, sim_event in zip(sorted(events), sorted(sim_events)):
             if sim_event != event:
                 logging.error(
-                    f"Event Thorchain \n{event} {event.block_height}\n   !="
+                    f"Event Thorchain \n{event}\n   !="
                     f"  \nEvent Simulator \n{sim_event}"
                 )
                 self.error("Events mismatch")
