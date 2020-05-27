@@ -42,7 +42,7 @@ def get_events():
         contents = f.read()
         contents = contents.replace(DEFAULT_RUNE_ASSET, RUNE)
         events = json.loads(contents)
-        return [Event.from_dict(evt) for evt in events]
+        return [Event(e["type"], e["attributes"]) for e in events]
     raise Exception("could not load events")
 
 
@@ -133,6 +133,14 @@ class TestSmoke(unittest.TestCase):
                 if not export:
                     raise Exception("did not match!")
 
+        if export:
+            with open(export, "w") as fp:
+                json.dump(snaps, fp, indent=4)
+
+        if export_events:
+            with open(export_events, "w") as fp:
+                json.dump(thorchain.events, fp, default=lambda x: x.__dict__, indent=4)
+
         # check events against expected
         expected_events = get_events()
         for event, expected_event in zip(thorchain.events, expected_events):
@@ -143,14 +151,6 @@ class TestSmoke(unittest.TestCase):
                 )
                 if not export_events:
                     raise Exception("Events mismatch")
-
-        if export:
-            with open(export, "w") as fp:
-                json.dump(snaps, fp, indent=4)
-
-        if export_events:
-            with open(export_events, "w") as fp:
-                json.dump(thorchain.events, fp, default=lambda x: x.__dict__, indent=4)
 
         if failure:
             raise Exception("Fail")
