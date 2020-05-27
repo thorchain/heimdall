@@ -25,7 +25,10 @@ def get_balance(idx):
     """
     Retrieve expected balance with given id
     """
-    with open("data/smoke_test_balances.json") as f:
+    file = "data/smoke_test_balances.json"
+    if RUNE.get_chain() == "THOR":
+        file = "data/smoke_test_native_balances.json"
+    with open(file) as f:
         contents = f.read()
         contents = contents.replace(DEFAULT_RUNE_ASSET, RUNE)
         balances = json.loads(contents)
@@ -38,7 +41,10 @@ def get_events():
     """
     Retrieve expected events
     """
-    with open("data/smoke_test_events.json") as f:
+    file = "data/smoke_test_events.json"
+    if RUNE.get_chain() == "THOR":
+        file = "data/smoke_test_native_events.json"
+    with open(file) as f:
         contents = f.read()
         contents = contents.replace(DEFAULT_RUNE_ASSET, RUNE)
         events = json.loads(contents)

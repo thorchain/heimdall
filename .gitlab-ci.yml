@@ -30,8 +30,10 @@ unit_tests:
   script:
     - make test-coverage
     - make test-coverage-report
+    - RUNE=THOR.RUNE make test-coverage
+    - RUNE=THOR.RUNE make test-coverage-report
 
-integration-bep2:
+integration_bep2:
   image: docker/compose:alpine-1.25.4
   stage: integration
   tags:
@@ -59,7 +61,7 @@ integration-bep2:
   after_script:
     - ./thornode/scripts/docker_logs.sh
 
-integration-native:
+integration_native:
   image: docker/compose:alpine-1.25.4
   stage: integration
   tags:
