@@ -322,8 +322,6 @@ class Smoker:
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
 
-            logging.info(sim_events)
-
             # we have more real events than sim, fill in the gaps
             if len(events) > len(sim_events):
                 for evt in events[len(sim_events) :]:

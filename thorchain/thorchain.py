@@ -604,10 +604,8 @@ class ThorchainState:
                     )
 
         if len(parts) < 3 and asset.get_chain() != RUNE.get_chain():
-            reason = (
-                f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based"
-                " pool without providing an associated address",
-            )
+            reason = f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based"
+            reason += " pool without providing an associated address"
             return self.refund(txn, 105, reason)
 
         pool = self.get_pool(asset)
