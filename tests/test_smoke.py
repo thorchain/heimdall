@@ -65,9 +65,12 @@ class TestSmoke(unittest.TestCase):
         eth = Ethereum()  # init local ethereum chain
         thorchain = ThorchainState()  # init local thorchain
 
-        with open("data/smoke_test_transactions.json", "r") as f:
+        file = "data/smoke_test_transactions.json"
+        if RUNE.get_chain() == "THOR":
+            file = "data/smoke_test_native_transactions.json"
+
+        with open(file, "r") as f:
             contents = f.read()
-            contents = contents.replace(DEFAULT_RUNE_ASSET, RUNE)
             loaded = json.loads(contents)
 
         for i, txn in enumerate(loaded):

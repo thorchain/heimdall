@@ -12,7 +12,7 @@ from chains.binance import Binance, MockBinance
 from chains.bitcoin import Bitcoin, MockBitcoin
 from chains.ethereum import Ethereum, MockEthereum
 from chains.thorchain import Thorchain, MockThorchain
-from thorchain.thorchain import ThorchainState, ThorchainClient, Event
+from thorchain.thorchain import ThorchainState, ThorchainClient
 from scripts.health import Health
 from utils.common import Transaction, Coin, Asset, get_rune_asset
 from chains.aliases import aliases_bnb, get_alias
@@ -278,6 +278,27 @@ class Smoker:
         if txn.chain == Thorchain.chain:
             return self.thorchain.transfer(txn)
 
+    def sim_trigger_tx(self, txn):
+        # process transaction in thorchain
+        outbounds = self.thorchain_state.handle(txn)
+        outbounds = self.thorchain_state.handle_fee(txn, outbounds)
+
+        # replicate order of outbounds broadcast from thorchain
+        self.thorchain_state.order_outbound_txns(outbounds)
+
+        # expecting to see this many outbound txs
+        count_outbounds = 0
+        for o in outbounds:
+            if o.chain == "THOR":
+                continue  # thorchain transactions are on chain
+            count_outbounds += 1
+
+        for outbound in outbounds:
+            # update simulator state with outbound txs
+            self.broadcast_simulator(outbound)
+
+        return outbounds, count_outbounds
+
     def sim_catch_up(self, txn):
         # At this point, we can assume that the transaction on real thorchain
         # has already occurred, and we can now play "catch up" in our simulated
@@ -291,13 +312,21 @@ class Smoker:
         count_outbounds = 0
         processed_outbound_events = False
 
+        if txn.is_cross_chain_stake():
+            outbounds, count_outbounds = self.sim_trigger_tx(txn)
+            processed_transaction = True
+            # still need to wait for thorchain to process it
+            time.sleep(5)
+
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
 
+            logging.info(sim_events)
+
             # we have more real events than sim, fill in the gaps
             if len(events) > len(sim_events):
-                for evt in events[len(sim_events):]:
+                for evt in events[len(sim_events) :]:
                     if evt.type == "gas" and count_outbounds > 0:
                         todo = []
                         # with the given gas pool event data, figure out
@@ -330,24 +359,8 @@ class Smoker:
                         processed_outbound_events = True
 
                     if not processed_transaction:
-                        # process transaction in thorchain
-                        outbounds = self.thorchain_state.handle(txn)
-                        outbounds = self.thorchain_state.handle_fee(txn, outbounds)
+                        outbounds, count_outbounds = self.sim_trigger_tx(txn)
                         processed_transaction = True
-
-                        # replicate order of outbounds broadcast from thorchain
-                        self.thorchain_state.order_outbound_txns(outbounds)
-
-                        # expecting to see this many outbound txs
-                        count_outbounds = 0
-                        for o in outbounds:
-                            if o.chain == "THOR":
-                                continue  # thorchain transactions are on chain
-                            count_outbounds += 1
-
-                        for outbound in outbounds:
-                            # update simulator state with outbound txs
-                            self.broadcast_simulator(outbound)
                 continue
 
             # happy path exit
@@ -359,10 +372,7 @@ class Smoker:
                 break
 
             # not happy path exit, we got wrong events
-            if (
-                len(events) == len(sim_events)
-                and sorted(events) != sorted(sim_events)
-            ):
+            if len(events) == len(sim_events) and sorted(events) != sorted(sim_events):
                 break
 
             time.sleep(1)
