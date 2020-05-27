@@ -246,6 +246,22 @@ class TestTransaction(unittest.TestCase):
             " Gas [<Coin 37,500_BNB.BNB>]>",
         )
 
+    def test_is_cross_chain_stake(self):
+        tx = Transaction(
+            Binance.chain,
+            "USER",
+            "VAULT",
+            Coin("BNB.BNB", 100),
+            "STAKE:BNB.BNB:STAKER-1",
+        )
+        self.assertEqual(tx.is_cross_chain_stake(), False)
+        tx = Transaction(
+            "THOR", "USER", "VAULT", Coin("THOR.RUNE", 100), "STAKE:BNB.BNB:STAKER-1",
+        )
+        self.assertEqual(tx.is_cross_chain_stake(), True)
+        tx = Transaction("THOR", "USER", "VAULT", Coin("THOR.RUNE", 100), "STAKE:",)
+        self.assertEqual(tx.is_cross_chain_stake(), False)
+
     def test_eq(self):
         tx1 = Transaction(
             Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "STAKE:BNB",

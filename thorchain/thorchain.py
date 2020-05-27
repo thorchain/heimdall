@@ -1,6 +1,5 @@
 import base64
 import logging
-import itertools
 import threading
 import websocket
 import json
@@ -22,8 +21,18 @@ from chains.ethereum import Ethereum
 from tenacity import retry, stop_after_delay, wait_fixed
 
 RUNE = get_rune_asset()
-SUBSCRIBE_BLOCK = {"jsonrpc": "2.0", "id": 0, "method": "subscribe", "params": {"query": "tm.event='NewBlock'"}}
-SUBSCRIBE_TX = {"jsonrpc": "2.0", "id": 0, "method": "subscribe", "params": {"query": "tm.event='Tx'"}}
+SUBSCRIBE_BLOCK = {
+    "jsonrpc": "2.0",
+    "id": 0,
+    "method": "subscribe",
+    "params": {"query": "tm.event='NewBlock'"},
+}
+SUBSCRIBE_TX = {
+    "jsonrpc": "2.0",
+    "id": 0,
+    "method": "subscribe",
+    "params": {"query": "tm.event='Tx'"},
+}
 
 
 class ThorchainClient(HttpClient):
@@ -88,15 +97,10 @@ class ThorchainClient(HttpClient):
     def process_events(self, events, block_height, category):
         new_events = []
         for event in events:
-            if event["type"] == "message":
+            if event["type"] in ["message", "transfer"]:
                 continue
             self.decode_event(event)
-            evt = Event(
-                event["type"],
-                event["attributes"],
-                block_height,
-                category,
-            )
+            evt = Event(event["type"], event["attributes"], block_height, category,)
             new_events.append(evt)
         new_events += self.events
         self.sort_events(new_events)
@@ -108,10 +112,7 @@ class ThorchainClient(HttpClient):
         Sort events by block height and category
         with block events after tx events
         """
-        return events.sort(key=lambda e: (
-            int(e.block_height),
-            (e.category == "block")
-        ))
+        return events.sort(key=lambda e: (int(e.block_height), (e.category == "block")))
 
     def decode_event(self, event):
         attributes = []
@@ -234,8 +235,6 @@ class ThorchainState:
 
         if not len(gas_coins.items()):
             return
-
-        gas_pools = []
 
         for asset, gas in gas_coins.items():
             pool = self.get_pool(gas.asset)
@@ -457,12 +456,7 @@ class ThorchainState:
 
         # generate event REFUND for the transaction
         event = Event(
-            "refund",
-            [
-                {"code": code},
-                {"reason": reason},
-                *txn.get_attributes(),
-            ],
+            "refund", [{"code": code}, {"reason": reason}, *txn.get_attributes()],
         )
         self.events.append(event)
         return txns
@@ -472,9 +466,7 @@ class ThorchainState:
         Generate outbound events for txns
         """
         for txn in txns:
-            event = Event(
-                "outbound", [{"in_tx_id": in_tx.id}, *txn.get_attributes()]
-            )
+            event = Event("outbound", [{"in_tx_id": in_tx.id}, *txn.get_attributes()])
             self.events.append(event)
 
     def order_outbound_txns(self, txns):
@@ -571,13 +563,7 @@ class ThorchainState:
         self.set_pool(pool)
 
         # generate event for ADD transaction
-        event = Event(
-            "add",
-            [
-                {"pool": pool.asset},
-                *txn.get_attributes(),
-            ],
-        )
+        event = Event("add", [{"pool": pool.asset}, *txn.get_attributes()])
         self.events.append(event)
 
         return []
@@ -619,8 +605,8 @@ class ThorchainState:
 
         if len(parts) < 3 and asset.get_chain() != RUNE.get_chain():
             reason = (
-                f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based",
-                f" pool without providing an associated address",
+                f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based"
+                " pool without providing an associated address",
             )
             return self.refund(txn, 105, reason)
 
@@ -638,7 +624,9 @@ class ThorchainState:
         if txn.chain != RUNE.get_chain() and len(parts) > 2:
             address = parts[2]
 
-        stake_units, rune_amt, pending_txid = pool.stake(address, rune_amt, asset_amt, asset, txn.id)
+        stake_units, rune_amt, pending_txid = pool.stake(
+            address, rune_amt, asset_amt, asset, txn.id
+        )
         self.set_pool(pool)
 
         # stake cross chain so event will be dispatched on asset stake
@@ -1046,11 +1034,7 @@ class Event(Jsonable):
     """
 
     def __init__(
-        self,
-        event_type,
-        attributes,
-        block_height=None,
-        category=None,
+        self, event_type, attributes, block_height=None, category=None,
     ):
         self.type = event_type
         for attr in attributes:
@@ -1176,7 +1160,7 @@ class Pool(Jsonable):
         staker = self.get_staker(address)
 
         # handle cross chain stake
-        if not asset.get_chain() == RUNE.get_chain():
+        if asset.get_chain() != RUNE.get_chain():
             if asset_amt == 0:
                 staker.pending_rune += rune_amt
                 staker.pending_tx = txid
