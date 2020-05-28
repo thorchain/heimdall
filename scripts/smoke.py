@@ -248,7 +248,7 @@ class Smoker:
                 )
                 self.error("Events mismatch")
 
-    @retry(stop=stop_after_delay(60), wait=wait_fixed(1), reraise=True)
+    @retry(stop=stop_after_delay(30), wait=wait_fixed(1), reraise=True)
     def run_health(self):
         self.health.run()
 
@@ -312,12 +312,6 @@ class Smoker:
         count_outbounds = 0
         processed_outbound_events = False
 
-        if txn.is_cross_chain_stake():
-            outbounds, count_outbounds = self.sim_trigger_tx(txn)
-            processed_transaction = True
-            # still need to wait for thorchain to process it
-            time.sleep(5)
-
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
@@ -356,9 +350,17 @@ class Smoker:
                         self.thorchain_state.generate_outbound_events(txn, outbounds)
                         processed_outbound_events = True
 
-                    if not processed_transaction:
+                    elif not processed_transaction:
                         outbounds, count_outbounds = self.sim_trigger_tx(txn)
                         processed_transaction = True
+                continue
+
+            # we have same count of events but its a cross chain stake
+            elif txn.is_cross_chain_stake() and not processed_transaction:
+                outbounds, count_outbounds = self.sim_trigger_tx(txn)
+                processed_transaction = True
+                # still need to wait for thorchain to process it
+                time.sleep(5)
                 continue
 
             # happy path exit
