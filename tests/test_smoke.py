@@ -25,7 +25,10 @@ def get_balance(idx):
     """
     Retrieve expected balance with given id
     """
-    with open("data/smoke_test_balances.json") as f:
+    file = "data/smoke_test_balances.json"
+    if RUNE.get_chain() == "THOR":
+        file = "data/smoke_test_native_balances.json"
+    with open(file) as f:
         contents = f.read()
         contents = contents.replace(DEFAULT_RUNE_ASSET, RUNE)
         balances = json.loads(contents)
@@ -38,11 +41,14 @@ def get_events():
     """
     Retrieve expected events
     """
-    with open("data/smoke_test_events.json") as f:
+    file = "data/smoke_test_events.json"
+    if RUNE.get_chain() == "THOR":
+        file = "data/smoke_test_native_events.json"
+    with open(file) as f:
         contents = f.read()
         contents = contents.replace(DEFAULT_RUNE_ASSET, RUNE)
         events = json.loads(contents)
-        return [Event.from_dict(evt) for evt in events]
+        return [Event(e["type"], e["attributes"]) for e in events]
     raise Exception("could not load events")
 
 
@@ -65,9 +71,12 @@ class TestSmoke(unittest.TestCase):
         eth = Ethereum()  # init local ethereum chain
         thorchain = ThorchainState()  # init local thorchain
 
-        with open("data/smoke_test_transactions.json", "r") as f:
+        file = "data/smoke_test_transactions.json"
+        if RUNE.get_chain() == "THOR":
+            file = "data/smoke_test_native_transactions.json"
+
+        with open(file, "r") as f:
             contents = f.read()
-            contents = contents.replace(DEFAULT_RUNE_ASSET, RUNE)
             loaded = json.loads(contents)
 
         for i, txn in enumerate(loaded):
@@ -133,6 +142,14 @@ class TestSmoke(unittest.TestCase):
                 if not export:
                     raise Exception("did not match!")
 
+        if export:
+            with open(export, "w") as fp:
+                json.dump(snaps, fp, indent=4)
+
+        if export_events:
+            with open(export_events, "w") as fp:
+                json.dump(thorchain.events, fp, default=lambda x: x.__dict__, indent=4)
+
         # check events against expected
         expected_events = get_events()
         for event, expected_event in zip(thorchain.events, expected_events):
@@ -143,14 +160,6 @@ class TestSmoke(unittest.TestCase):
                 )
                 if not export_events:
                     raise Exception("Events mismatch")
-
-        if export:
-            with open(export, "w") as fp:
-                json.dump(snaps, fp, indent=4)
-
-        if export_events:
-            with open(export_events, "w") as fp:
-                json.dump(thorchain.events, fp, default=lambda x: x.__dict__, indent=4)
 
         if failure:
             raise Exception("Fail")
