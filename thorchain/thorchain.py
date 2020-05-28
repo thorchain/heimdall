@@ -1,6 +1,5 @@
 import base64
 import logging
-import itertools
 import threading
 import websocket
 import json
@@ -22,8 +21,18 @@ from chains.ethereum import Ethereum
 from tenacity import retry, stop_after_delay, wait_fixed
 
 RUNE = get_rune_asset()
-SUBSCRIBE_BLOCK = {"method": "subscribe", "params": {"query": "tm.event='NewBlock'"}}
-SUBSCRIBE_TX = {"method": "subscribe", "params": {"query": "tm.event='Tx'"}}
+SUBSCRIBE_BLOCK = {
+    "jsonrpc": "2.0",
+    "id": 0,
+    "method": "subscribe",
+    "params": {"query": "tm.event='NewBlock'"},
+}
+SUBSCRIBE_TX = {
+    "jsonrpc": "2.0",
+    "id": 0,
+    "method": "subscribe",
+    "params": {"query": "tm.event='Tx'"},
+}
 
 
 class ThorchainClient(HttpClient):
@@ -67,6 +76,7 @@ class ThorchainClient(HttpClient):
         """
         try:
             msg = json.loads(msg)
+            logging.debug(f"websocket msg: {msg}")
             if "data" not in msg["result"]:
                 return
             event_category = msg["result"]["data"]["type"]
@@ -75,19 +85,34 @@ class ThorchainClient(HttpClient):
                 if "events" not in value["result_end_block"]:
                     return
                 events = value["result_end_block"]["events"]
+                block_height = value["block"]["header"]["height"]
+                self.process_events(events, block_height, "block")
             if "Tx" in event_category:
                 events = value["TxResult"]["result"]["events"]
-            self.process_events(events)
+                block_height = value["TxResult"]["height"]
+                self.process_events(events, block_height, "tx")
         except Exception as e:
             logging.error(f"Message: {msg} Exception: {e}")
 
-    def process_events(self, events):
+    def process_events(self, events, block_height, category):
+        new_events = []
         for event in events:
-            if event["type"] == "message":
+            if event["type"] in ["message", "transfer"]:
                 continue
             self.decode_event(event)
-            logging.debug(f"websocket event: {event}")
-            self.events.append(EventSDK(event["type"], event["attributes"]))
+            evt = Event(event["type"], event["attributes"], block_height, category,)
+            new_events.append(evt)
+        new_events += self.events
+        self.sort_events(new_events)
+        self.events = new_events
+
+    @classmethod
+    def sort_events(self, events):
+        """
+        Sort events by block height and category
+        with block events after tx events
+        """
+        return events.sort(key=lambda e: (int(e.block_height), (e.category == "block")))
 
     def decode_event(self, event):
         attributes = []
@@ -131,20 +156,6 @@ class ThorchainClient(HttpClient):
     def get_pools(self):
         return self.fetch("/thorchain/pools")
 
-    def get_events(self, evtID=1):
-        events = []
-        while True:
-            new_events = self.fetch(f"/thorchain/events/{evtID}")
-            events += new_events
-            if len(new_events) < 100:
-                break
-            else:
-                evtID = int(new_events[-1]["id"]) + 1
-        return events
-
-    def get_sdk_events(self):
-        return self.events
-
 
 class ThorchainState:
     """
@@ -156,7 +167,6 @@ class ThorchainState:
     def __init__(self):
         self.pools = []
         self.events = []
-        self.sdk_events = []
         self.reserve = 0
         self.liquidity = {}
         self.total_bonded = 0
@@ -194,33 +204,15 @@ class ThorchainState:
                     pool.status = "Bootstrap"
 
                     # Generate pool event with new status
-                    pool_event = PoolEvent(pool.asset, pool.status)
-                    event = Event("pool", Transaction.empty_txn(), None, pool_event)
-                    self.events.append(event)
-
-                    event = EventSDK(
+                    event = Event(
                         "pool", [{"pool": pool.asset}, {"pool_status": pool.status}]
                     )
-                    self.sdk_events.append(event)
+                    self.events.append(event)
 
                 self.pools[i] = pool
                 return
 
         self.pools.append(pool)
-
-    def get_events(self, id=1):
-        """
-        Get events starting from id
-
-        :param int id: id number to start getting events
-        :returns: list of events
-
-        """
-        events = []
-        for event in self.events:
-            if event.id >= id:
-                events.append(event)
-        return events
 
     def handle_gas(self, txns):
         """
@@ -244,8 +236,6 @@ class ThorchainState:
         if not len(gas_coins.items()):
             return
 
-        gas_pools = []
-
         for asset, gas in gas_coins.items():
             pool = self.get_pool(gas.asset)
             # TODO: this is a hacky way to avoid
@@ -262,12 +252,10 @@ class ThorchainState:
                 pool.add(rune_amt, 0)  # replenish gas costs with rune
                 pool.sub(0, gas.amount)  # subtract gas from pool
 
-            # update gas event
-            gas_pool = EventGasPool(asset, gas.amount, rune_amt, gas_coin_count[asset])
-            gas_pools.append(gas_pool)
             self.set_pool(pool)
 
-            event = EventSDK(
+            # add gas event
+            event = Event(
                 "gas",
                 [
                     {"asset": asset},
@@ -276,93 +264,74 @@ class ThorchainState:
                     {"transaction_count": gas_coin_count[asset]},
                 ],
             )
-            self.sdk_events.append(event)
-
-        gas_event = GasEvent(gas_pools)
-        event = Event("gas", Transaction.empty_txn(), None, gas_event)
-        self.events.append(event)
+            self.events.append(event)
 
     def handle_fee(self, in_tx, txns):
         """
         Subtract transaction fee from given transactions
         """
-        outbound = []
+        outbounds = []
         if not isinstance(txns, list):
             txns = [txns]
-
-        event_fee = EventFee()
 
         for txn in txns:
             for coin in txn.coins:
                 if coin.is_rune():
-                    coin.amount -= self.rune_fee  # deduct 1 rune transaction fee
+                    # deduct 1 rune transaction fee
+                    coin.amount -= self.rune_fee
 
-                    # update event fee
-                    coin_fee = Coin(coin.asset, self.rune_fee)
-                    if event_fee.coins:
-                        event_fee.coins.append(coin_fee)
-                    else:
-                        event_fee.coins = [coin_fee]
+                    # add to the reserve
+                    self.reserve += self.rune_fee
 
-                    self.reserve += self.rune_fee  # add to the reserve
                     if coin.amount > 0:
-                        outbound.append(txn)
+                        outbounds.append(txn)
 
-                    # add sdk fee event
-                    event = EventSDK(
+                    # add fee event
+                    event = Event(
                         "fee",
                         [
                             {"tx_id": in_tx.id},
-                            {"coins": f"{coin_fee.amount} {coin_fee.asset}"},
+                            {"coins": f"{self.rune_fee} {coin.asset}"},
                             {"pool_deduct": 0},
                         ],
                     )
-                    self.sdk_events.append(event)
+                    self.events.append(event)
 
                 else:
                     pool = self.get_pool(coin.asset)
 
                     if not pool.is_zero():
-                        asset_fee = (
-                            pool.get_asset_fee()
-                        )  # default to zero if pool is empty
+                        # default to zero if pool is empty
+                        asset_fee = pool.get_asset_fee()
+
                         pool.add(0, asset_fee)
                         if pool.rune_balance >= self.rune_fee:
                             pool.sub(self.rune_fee, 0)
                         self.set_pool(pool)
                         coin.amount -= asset_fee
 
-                        # update event fee
-                        coin_fee = Coin(coin.asset, asset_fee)
-                        if event_fee.coins:
-                            event_fee.coins.append(coin_fee)
-                        else:
-                            event_fee.coins = [coin_fee]
-                        event_fee.pool_deduct += self.rune_fee
+                        pool_deduct = self.rune_fee
+                        if self.rune_fee > pool.rune_balance:
+                            pool_deduct = pool.rune_balance
 
-                        # add sdk fee event
-                        event = EventSDK(
-                            "fee",
-                            [
-                                {"tx_id": in_tx.id},
-                                {"coins": f"{coin_fee.amount} {coin_fee.asset}"},
-                                {"pool_deduct": self.rune_fee},
-                            ],
-                        )
-                        self.sdk_events.append(event)
+                        if pool_deduct > 0 or asset_fee > 0:
+                            # add fee event
+                            event = Event(
+                                "fee",
+                                [
+                                    {"tx_id": in_tx.id},
+                                    {"coins": f"{asset_fee} {coin.asset}"},
+                                    {"pool_deduct": pool_deduct},
+                                ],
+                            )
+                            self.events.append(event)
 
-                    self.reserve += self.rune_fee  # add to the reserve
+                    # add to the reserve
+                    self.reserve += self.rune_fee
                     if coin.amount > 0:
-                        outbound.append(txn)
+                        outbounds.append(txn)
 
-        # we also need to update the last event out_txs
-        # with the new outbound txs only if no stake, stake events have
-        # empty tx in outbound
-        if self.events[-1].type != "stake":
-            self.events[-1].out_txs = outbound
-            self.events[-1].fee = event_fee
-
-        return outbound
+        return outbounds
 
     def _total_liquidity(self):
         """
@@ -380,6 +349,15 @@ class ThorchainState:
         if self.reserve == 0:
             return
 
+        # get the total staked
+        # TODO: skip non-enabled pools
+        total_staked = 0
+        for pool in self.pools:
+            total_staked += pool.rune_balance
+
+        if total_staked == 0:  # nothing staked, no rewards
+            return
+
         # calculate the block rewards based on the reserve, emission curve, and
         # blocks in a year
         emission_curve = 6
@@ -390,15 +368,6 @@ class ThorchainState:
 
         # total income made on the network
         system_income = block_rewards + self._total_liquidity()
-
-        # get the total staked
-        # TODO: skip non-enabled pools
-        total_staked = 0
-        for pool in self.pools:
-            total_staked += pool.rune_balance
-
-        if total_staked == 0:  # nothing staked, no rewards
-            return
 
         # Targets a linear change in rewards from 0% staked, 33% staked, 100% staked.
         # 0% staked: All rewards to stakers, 0 to bonders
@@ -433,9 +402,7 @@ class ThorchainState:
         self.bond_reward += bond_reward  # add to bond reward pool
 
         # Generate rewards event
-        reward_event = RewardEvent(0, [])
-        reward_event.bond_reward = bond_reward
-        reward_sdk_event = EventSDK("rewards", [{"bond_reward": bond_reward}])
+        reward_event = Event("rewards", [{"bond_reward": bond_reward}])
 
         if pool_reward > 0:
             # TODO: subtract any remaining gas, from the pool rewards
@@ -447,8 +414,7 @@ class ThorchainState:
                     self.set_pool(pool)
 
                     # Append pool reward to event
-                    reward_event.pool_rewards.append(Coin(pool.asset, share))
-                    reward_sdk_event.attributes.append({pool.asset: str(share)})
+                    reward_event.attributes.append({pool.asset: str(share)})
             else:
                 pass  # TODO: Pool Rewards are based on Depth Share
         else:
@@ -460,20 +426,15 @@ class ThorchainState:
                 self.set_pool(pool)
 
                 # Append pool reward to event
-                reward_event.pool_rewards.append(Coin(pool.asset, -share))
-                reward_sdk_event.attributes.append({pool.asset: str(-share)})
+                reward_event.attributes.append({pool.asset: str(-share)})
 
         # generate event REWARDS
-        event = Event(
-            "rewards", Transaction.empty_txn(), None, reward_event, status="Success"
-        )
-        self.events.append(event)
-        self.sdk_events.append(reward_sdk_event)
+        self.events.append(reward_event)
 
         # clear summed liquidity fees
         self.liquidity = {}
 
-    def refund(self, txn, refund_event=None):
+    def refund(self, txn, code, reason):
         """
         Returns a list of refund transactions based on given txn
         """
@@ -494,18 +455,10 @@ class ThorchainState:
             )
 
         # generate event REFUND for the transaction
-        event = Event("refund", txn, txns, refund_event, status="Refund")
-        self.events.append(event)
-
-        event = EventSDK(
-            "refund",
-            [
-                {"code": refund_event.code},
-                {"reason": refund_event.reason},
-                *txn.get_attributes(),
-            ],
+        event = Event(
+            "refund", [{"code": code}, {"reason": reason}, *txn.get_attributes()],
         )
-        self.sdk_events.append(event)
+        self.events.append(event)
         return txns
 
     def generate_outbound_events(self, in_tx, txns):
@@ -513,10 +466,8 @@ class ThorchainState:
         Generate outbound events for txns
         """
         for txn in txns:
-            event = EventSDK(
-                "outbound", [{"in_tx_id": in_tx.id}, *txn.get_attributes()]
-            )
-            self.sdk_events.append(event)
+            event = Event("outbound", [{"in_tx_id": in_tx.id}, *txn.get_attributes()])
+            self.events.append(event)
 
     def order_outbound_txns(self, txns):
         """
@@ -550,10 +501,8 @@ class ThorchainState:
             return self.handle_reserve(tx)
         else:
             if tx.memo == "":
-                refund_event = RefundEvent(105, "memo can't be empty")
-            else:
-                refund_event = RefundEvent(105, f"invalid tx type: {tx.memo}")
-            return self.refund(tx, refund_event)
+                return self.refund(tx, 105, "memo can't be empty")
+            return self.refund(tx, 105, f"invalid tx type: {tx.memo}")
 
     def handle_reserve(self, txn):
         """
@@ -567,11 +516,7 @@ class ThorchainState:
                 amount += coin.amount
 
         # generate event for RESERVE transaction
-        reserve_event = ReserveEvent(txn.from_address, amount)
-        event = Event("reserve", txn, None, reserve_event)
-        self.events.append(event)
-
-        event = EventSDK(
+        event = Event(
             "reserve",
             [
                 {"contributor_address": txn.from_address},
@@ -579,7 +524,7 @@ class ThorchainState:
                 *txn.get_attributes(),
             ],
         )
-        self.sdk_events.append(event)
+        self.events.append(event)
 
         return []
 
@@ -592,25 +537,21 @@ class ThorchainState:
         parts = txn.memo.split(":")
         if len(parts) < 2:
             if txn.memo == "":
-                refund_event = RefundEvent(105, "memo can't be empty")
-            else:
-                refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
-            return self.refund(txn, refund_event)
+                return self.refund(txn, 105, "memo can't be empty")
+            return self.refund(txn, 105, f"invalid tx type: {txn.memo}")
 
         asset = Asset(parts[1])
 
         # check that we have one rune and one asset
         if len(txn.coins) > 2:
             # FIXME real world message
-            refund_event = RefundEvent(105, "refund reason message")
-            return self.refund(txn, refund_event)
+            return self.refund(txn, 105, "refund reason message")
 
         for coin in txn.coins:
             if not coin.is_rune():
                 if not asset == coin.asset:
                     # mismatch coin asset and memo
-                    refund_event = RefundEvent(105, "Invalid symbol")
-                    return self.refund(txn, refund_event)
+                    return self.refund(txn, 105, "Invalid symbol")
 
         pool = self.get_pool(asset)
         for coin in txn.coins:
@@ -622,12 +563,8 @@ class ThorchainState:
         self.set_pool(pool)
 
         # generate event for ADD transaction
-        add_event = AddEvent(pool.asset)
-        event = Event("add", txn, None, add_event)
+        event = Event("add", [{"pool": pool.asset}, *txn.get_attributes()])
         self.events.append(event)
-
-        event = EventSDK("add", [{"pool": pool.asset}, *txn.get_attributes()])
-        self.sdk_events.append(event)
 
         return []
 
@@ -640,45 +577,36 @@ class ThorchainState:
         parts = txn.memo.split(":")
         if len(parts) < 2:
             if txn.memo == "":
-                refund_event = RefundEvent(105, "memo can't be empty")
-            else:
-                refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
-            return self.refund(txn, refund_event)
+                return self.refund(txn, 105, "memo can't be empty")
+            return self.refund(txn, 105, f"invalid tx type: {txn.memo}")
 
             # empty asset
         if parts[1] == "":
-            refund_event = RefundEvent(105, "Invalid symbol")
-            return self.refund(txn, refund_event)
+            return self.refund(txn, 105, "Invalid symbol")
 
         asset = Asset(parts[1])
 
         # cant have rune memo
         if asset.is_rune():
-            refund_event = RefundEvent(105, "invalid stake memo:invalid pool asset")
-            return self.refund(txn, refund_event)
+            return self.refund(txn, 105, "invalid stake memo:invalid pool asset")
 
         # check that we have one rune and one asset
         if len(txn.coins) > 2:
             # FIXME real world message
-            refund_event = RefundEvent(105, "refund reason message")
-            return self.refund(txn, refund_event)
+            return self.refund(txn, 105, "refund reason message")
 
         # check for mismatch coin asset and memo
         for coin in txn.coins:
             if not coin.is_rune():
                 if not asset == coin.asset:
-                    refund_event = RefundEvent(
-                        105, f"invalid stake memo:did not find {asset} "
+                    return self.refund(
+                        txn, 105, f"invalid stake memo:did not find {asset} "
                     )
-                    return self.refund(txn, refund_event)
 
         if len(parts) < 3 and asset.get_chain() != RUNE.get_chain():
-            refund_event = RefundEvent(
-                105,
-                f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based"
-                + " pool without providing an associated address",
-            )
-            return self.refund(txn, refund_event)
+            reason = f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based"
+            reason += " pool without providing an associated address"
+            return self.refund(txn, 105, reason)
 
         pool = self.get_pool(asset)
         rune_amt = 0
@@ -694,24 +622,30 @@ class ThorchainState:
         if txn.chain != RUNE.get_chain() and len(parts) > 2:
             address = parts[2]
 
-        stake_units = pool.stake(address, rune_amt, asset_amt, asset)
-
+        stake_units, rune_amt, pending_txid = pool.stake(
+            address, rune_amt, asset_amt, asset, txn.id
+        )
         self.set_pool(pool)
 
-        # generate event for STAKE transaction
-        stake_event = StakeEvent(pool.asset, stake_units)
-        event = Event("stake", txn, [Transaction.empty_txn()], stake_event)
-        self.events.append(event)
+        # stake cross chain so event will be dispatched on asset stake
+        if stake_units == 0:
+            return []
 
-        event = EventSDK(
+        # generate event for STAKE transaction
+        event = Event(
             "stake",
             [
                 {"pool": pool.asset},
                 {"stake_units": stake_units},
-                *txn.get_attributes(),
+                {"rune_address": address},
+                {"rune_amount": rune_amt},
+                {"asset_amount": asset_amt},
+                {f"{txn.chain}_txid": txn.id},
             ],
         )
-        self.sdk_events.append(event)
+        if pending_txid:
+            event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid})
+        self.events.append(event)
 
         return []
 
@@ -726,10 +660,8 @@ class ThorchainState:
         parts = txn.memo.split(":")
         if len(parts) < 2:
             if txn.memo == "":
-                refund_event = RefundEvent(105, "memo can't be empty")
-            else:
-                refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
-            return self.refund(txn, refund_event)
+                return self.refund(txn, 105, "memo can't be empty")
+            return self.refund(txn, 105, f"invalid tx type: {txn.memo}")
 
         # get withdrawal basis points, if it exists in the memo
         if len(parts) >= 3:
@@ -737,8 +669,7 @@ class ThorchainState:
 
         # empty asset
         if parts[1] == "":
-            refund_event = RefundEvent(105, "Invalid symbol")
-            return self.refund(txn, refund_event)
+            return self.refund(txn, 105, "Invalid symbol")
 
         asset = Asset(parts[1])
 
@@ -753,8 +684,7 @@ class ThorchainState:
         staker = pool.get_staker(txn.from_address)
         if staker.is_zero():
             # FIXME real world message
-            refund_event = RefundEvent(105, "refund reason message")
-            return self.refund(txn, refund_event)
+            return self.refund(txn, 105, "refund reason message")
 
         # calculate gas prior to update pool in case we empty the pool
         # and need to subtract
@@ -814,13 +744,7 @@ class ThorchainState:
         ]
 
         # generate event for UNSTAKE transaction
-        unstake_event = UnstakeEvent(
-            pool.asset, unstake_units, withdraw_basis_points, 0
-        )
-        event = Event("unstake", txn, out_txns, unstake_event)
-        self.events.append(event)
-
-        event = EventSDK(
+        event = Event(
             "unstake",
             [
                 {"pool": pool.asset},
@@ -830,7 +754,7 @@ class ThorchainState:
                 *txn.get_attributes(),
             ],
         )
-        self.sdk_events.append(event)
+        self.events.append(event)
 
         return out_txns
 
@@ -843,10 +767,8 @@ class ThorchainState:
         parts = txn.memo.split(":")
         if len(parts) < 2:
             if txn.memo == "":
-                refund_event = RefundEvent(105, "memo can't be empty")
-            else:
-                refund_event = RefundEvent(105, f"invalid tx type: {txn.memo}")
-            return self.refund(txn, refund_event)
+                return self.refund(txn, 105, "memo can't be empty")
+            return self.refund(txn, 105, f"invalid tx type: {txn.memo}")
 
         address = txn.from_address
         # check address to send to from memo
@@ -854,10 +776,8 @@ class ThorchainState:
             address = parts[2]
             # checking if address is for mainnet, not testnet
             if address.lower().startswith("bnb"):
-                refund_event = RefundEvent(
-                    105, f"address format not supported: {address}"
-                )
-                return self.refund(txn, refund_event)
+                reason = f"address format not supported: {address}"
+                return self.refund(txn, 105, reason)
 
         # get trade target, if exists
         target_trade = 0
@@ -868,10 +788,8 @@ class ThorchainState:
 
         # check that we have one coin
         if len(txn.coins) != 1:
-            refund_event = RefundEvent(
-                105, "invalid swap memo:not expecting multiple coins in a swap"
-            )
-            return self.refund(txn, refund_event)
+            reason = "invalid swap memo:not expecting multiple coins in a swap"
+            return self.refund(txn, 105, reason)
 
         source = txn.coins[0].asset
         target = asset
@@ -879,10 +797,8 @@ class ThorchainState:
         # refund if we're trying to swap with the coin we given ie swapping bnb
         # with bnb
         if source == asset:
-            refund_event = RefundEvent(
-                105, f"invalid swap memo:swap from {source} to {target} is noop, refund"
-            )
-            return self.refund(txn, refund_event)
+            reason = f"invalid swap memo:swap from {source} to {target} is noop, refund"
+            return self.refund(txn, 105, reason)
 
         pools = []
 
@@ -893,8 +809,7 @@ class ThorchainState:
             pool = self.get_pool(source)
             if pool.is_zero():
                 # FIXME real world message
-                refund_event = RefundEvent(105, "refund reason message")
-                return self.refund(txn, refund_event)
+                return self.refund(txn, 105, "refund reason message")
 
             emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
                 txn.coins[0], RUNE
@@ -903,28 +818,27 @@ class ThorchainState:
                 self.liquidity[str(pool.asset)] = 0
             self.liquidity[str(pool.asset)] += liquidity_fee_in_rune
 
-            # generate event for SWAP transaction
-            out_txns = [
-                Transaction(
-                    emit.asset.get_chain(),
-                    txn.from_address,
-                    txn.to_address,
-                    [emit],
-                    txn.memo,
-                    id=Transaction.empty_id,
-                )
-            ]
-
-            # here we copy the txn to break references cause the tx is split in 2 events
-            # and gas is handled only once
+            # here we copy the txn to break references cause
+            # the tx is split in 2 events and gas is handled only once
             in_txn = deepcopy(txn)
-            swap_event = SwapEvent(
-                pool.asset, 0, trade_slip, liquidity_fee, liquidity_fee_in_rune
+
+            # generate first swap "fake" outbound event
+            out_txn = Transaction(
+                emit.asset.get_chain(),
+                txn.from_address,
+                txn.to_address,
+                [emit],
+                txn.memo,
+                id=Transaction.empty_id,
             )
-            event = Event("swap", in_txn, out_txns, swap_event)
+
+            event = Event(
+                "outbound", [{"in_tx_id": in_txn.id}, *out_txn.get_attributes()]
+            )
             self.events.append(event)
 
-            event = EventSDK(
+            # generate event for SWAP transaction
+            event = Event(
                 "swap",
                 [
                     {"pool": pool.asset},
@@ -935,7 +849,7 @@ class ThorchainState:
                     *in_txn.get_attributes(),
                 ],
             )
-            self.sdk_events.append(event)
+            self.events.append(event)
 
             # and we remove the gas on in_txn for the next event so we don't
             # have it twice
@@ -954,8 +868,7 @@ class ThorchainState:
         pool = self.get_pool(asset)
         if pool.is_zero():
             # FIXME real world message
-            refund_event = RefundEvent(105, "refund reason message: pool is zero")
-            return self.refund(in_txn, refund_event)
+            return self.refund(in_txn, 105, "refund reason message: pool is zero")
 
         emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
             in_txn.coins[0], asset
@@ -964,10 +877,8 @@ class ThorchainState:
 
         # check emit is non-zero and is not less than the target trade
         if emit.is_zero() or (emit.amount < target_trade):
-            refund_event = RefundEvent(
-                108, f"emit asset {emit.amount} less than price limit {target_trade}"
-            )
-            return self.refund(in_txn, refund_event)
+            reason = f"emit asset {emit.amount} less than price limit {target_trade}"
+            return self.refund(in_txn, 108, reason)
 
         if str(pool.asset) not in self.liquidity:
             self.liquidity[str(pool.asset)] = 0
@@ -1005,13 +916,7 @@ class ThorchainState:
         ]
 
         # generate event for SWAP transaction
-        swap_event = SwapEvent(
-            pool.asset, target_trade, trade_slip, liquidity_fee, liquidity_fee_in_rune
-        )
-        event = Event("swap", in_txn, out_txns, swap_event)
-        self.events.append(event)
-
-        event = EventSDK(
+        event = Event(
             "swap",
             [
                 {"pool": pool.asset},
@@ -1022,7 +927,7 @@ class ThorchainState:
                 *in_txn.get_attributes(),
             ],
         )
-        self.sdk_events.append(event)
+        self.events.append(event)
 
         return out_txns
 
@@ -1120,47 +1025,22 @@ class ThorchainState:
         return int((x * X * Y) / (x + X) ** 2)
 
 
-class EventFee(Jsonable):
-    """
-    Event Fee class associated to each event.
-    """
-
-    def __init__(self, coins=None, pool_deduct=0):
-        self.coins = coins
-        self.pool_deduct = int(pool_deduct)
-
-    def __str__(self):
-        return f"Coins {self.coins} | Pool deduct {self.pool_deduct}"
-
-    def __eq__(self, other):
-        return (
-            sorted(self.coins) == sorted(other.coins)
-            and self.pool_deduct == other.pool_deduct
-        )
-
-    @classmethod
-    def from_dict(cls, value):
-        coins = None
-        if value and value["coins"]:
-            coins = [Coin.from_dict(c) for c in value["coins"]]
-        pool_deduct = value["pool_deduct"] if value else 0
-        return cls(coins=coins, pool_deduct=pool_deduct)
-
-
-class EventSDK(Jsonable):
+class Event(Jsonable):
     """
     Event class representing events generated by thorchain
     using tendermint sdk events
     """
 
     def __init__(
-        self, event_type, attributes,
+        self, event_type, attributes, block_height=None, category=None,
     ):
         self.type = event_type
         for attr in attributes:
             for key, value in attr.items():
                 attr[key] = str(value)
         self.attributes = attributes
+        self.block_height = block_height
+        self.category = category
 
     def __str__(self):
         attrs = " ".join(map(str, self.attributes))
@@ -1181,420 +1061,11 @@ class EventSDK(Jsonable):
     def __lt__(self, other):
         return (self.type, hash(self)) < (other.type, hash(other))
 
-
-class Event(Jsonable):
-    """
-    Event class representing events generated by thorchain
-    after handling transactions.
-    """
-
-    id_iter = itertools.count(1)
-
-    def __init__(
-        self,
-        event_type,
-        txn,
-        txns_out,
-        event,
-        fee=EventFee(),
-        status="Success",
-        id=None,
-    ):
-        self.id = int(id) if id is not None else next(Event.id_iter)
-        self.type = event_type
-        self.in_tx = deepcopy(txn)
-        self.out_txs = txns_out or []
-        self.fee = fee
-        self.event = deepcopy(event)
-        self.status = status
-
-    def __hash__(self):
-        return hash(self.id)
-
-    def __str__(self):
-        return f"""
-Event #{self.id} | Type {self.type.upper()} | Status {self.status} |
-InTx  {self.in_tx}
-OutTx {self.out_txs}
-Fee   {self.fee}
-Event {self.event}
-            """
-
-    def __repr__(self):
-        return str(self)
-
-    def __eq__(self, other):
-        out_txs = self.out_txs or []
-        other_out_txs = other.out_txs or []
-        return (
-            self.type == other.type
-            and self.status == other.status
-            and self.in_tx == other.in_tx
-            and sorted(out_txs) == sorted(other_out_txs)
-            and self.event == other.event
-        )
-
-    def __lt__(self, other):
-        coins = self.in_tx.coins or []
-        other_coins = other.in_tx.coins or []
-        return sorted(coins) < sorted(other_coins)
-
-    @classmethod
-    def from_dict(cls, value):
-        event = cls(
-            value["type"],
-            Transaction.from_dict(value["in_tx"]),
-            None,
-            None,
-            status=value["status"],
-            fee=EventFee.from_dict(value["fee"]),
-            id=value["id"],
-        )
-
-        if "out_txs" in value and value["out_txs"]:
-            event.out_txs = [Transaction.from_dict(t) for t in value["out_txs"] or []]
-
-        if "event" in value and value["event"]:
-            if value["type"] == "refund":
-                event.event = RefundEvent.from_dict(value["event"])
-            if value["type"] == "add":
-                event.event = AddEvent.from_dict(value["event"])
-            if value["type"] == "gas":
-                event.event = GasEvent.from_dict(value["event"])
-            if value["type"] == "stake":
-                event.event = StakeEvent.from_dict(value["event"])
-            if value["type"] == "unstake":
-                event.event = UnstakeEvent.from_dict(value["event"])
-            if value["type"] == "swap":
-                event.event = SwapEvent.from_dict(value["event"])
-            if value["type"] == "reserve":
-                event.event = ReserveEvent.from_dict(value["event"])
-            if value["type"] == "rewards":
-                event.event = RewardEvent.from_dict(value["event"])
-            if value["type"] == "pool":
-                event.event = PoolEvent.from_dict(value["event"])
-        return event
-
-
-class RefundEvent(Jsonable):
-    """
-    Event refund class specific to REFUND events.
-    """
-
-    def __init__(self, code, reason):
-        self.code = int(code)
-        self.reason = reason
-
-    def __eq__(self, other):
-        return self.code == other.code and self.reason == other.reason
-
-    def __str__(self):
-        return f'RefundEvent Code {self.code} | Reason "{self.reason}"'
-
-    def __repr__(self):
-        return f'<RefundEvent Code {self.code} | Reason "{self.reason}">'
-
-    @classmethod
-    def from_dict(cls, value):
-        return cls(value["code"], value["reason"])
-
-
-class PoolEvent(Jsonable):
-    """
-    Event pool class specific to POOL events.
-    """
-
-    def __init__(self, pool, status):
-        self.pool = pool
-        self.status = status
-
-    def __eq__(self, other):
-        return self.pool == other.pool and self.status == other.status
-
-    def __str__(self):
-        return f'PoolEvent Pool {self.pool} | Status "{self.status}"'
-
-    def __repr__(self):
-        return f'<PoolEvent Pool {self.pool} | Status "{self.status}">'
-
-    @classmethod
-    def from_dict(cls, value):
-        return cls(value["pool"], value["status"])
-
-
-class RewardEvent(Jsonable):
-    """
-    Event reward class specific to REWARD events.
-    """
-
-    def __init__(self, bond_reward, pool_rewards):
-        self.bond_reward = int(bond_reward)
-        self.pool_rewards = pool_rewards
-
-    def __eq__(self, other):
-        return self.bond_reward == other.bond_reward and sorted(
-            self.pool_rewards
-        ) == sorted(other.pool_rewards)
-
-    def __str__(self):
-        return (
-            f"RewardEvent Bond Reward {self.bond_reward} | "
-            f"Pool Rewards {self.pool_rewards}"
-        )
-
-    def __repr__(self):
-        return (
-            f"<RewardEvent Bond Reward {self.bond_reward} | "
-            f"Pool Rewards {self.pool_rewards}>"
-        )
-
-    @classmethod
-    def from_dict(cls, value):
-        return cls(
-            value["bond_reward"],
-            [Coin.from_dict(c) for c in value["pool_rewards"] or []],
-        )
-
-
-class ReserveEvent(Jsonable):
-    """
-    Event reserve class specific to RESERVE events.
-    """
-
-    def __init__(self, address, amount):
-        self.reserve_contributor = {
-            "address": address,
-            "amount": int(amount),
-        }
-
-    def __eq__(self, other):
-        return self.reserve_contributor["amount"] == other.reserve_contributor["amount"]
-
-    def __str__(self):
-        return (
-            f"ReserveEvent Address {self.reserve_contributor['address']} "
-            f"| Amount {self.reserve_contributor['amount']:0,.0f}"
-        )
-
-    def __repr__(self):
-        return (
-            f"<ReserveEvent Address {self.reserve_contributor['address']} | "
-            f"Amount {self.reserve_contributor['amount']:0,.0f}>"
-        )
-
-    @classmethod
-    def from_dict(cls, value):
-        return cls(
-            value["reserve_contributor"]["address"],
-            value["reserve_contributor"]["amount"],
-        )
-
-
-class EventGasPool(Jsonable):
-    """
-    GasPool in Gas Event
-    """
-
-    def __init__(self, asset, asset_amt, rune_amt, transaction_count=0):
-        self.asset = asset
-        if isinstance(asset, str):
-            self.asset = Asset(asset)
-        self.asset_amt = int(asset_amt)
-        self.rune_amt = int(rune_amt)
-        self.transaction_count = transaction_count
-
-    def __eq__(self, other):
-        return (
-            self.asset == other.asset
-            and self.asset_amt == other.asset_amt
-            and self.rune_amt == other.rune_amt
-        )
-
-    def __str__(self):
-        return (
-            f"GasPool {self.asset} | "
-            f"Asset {self.asset_amt:0,.0f} | Rune {self.rune_amt:0,.0f} | "
-            f"Transaction Count {self.transaction_count}"
-        )
-
-    def __repr__(self):
-        return str(self)
-
-    def __lt__(self, other):
-        return self.asset_amt < other.asset_amt and self.rune_amt < other.rune_amt
-
-    @classmethod
-    def from_dict(cls, value):
-        return cls(
-            value["asset"],
-            value["asset_amt"],
-            value["rune_amt"],
-            value["transaction_count"],
-        )
-
-
-class GasEvent(Jsonable):
-    """
-    Event gas class specific to GAS events.
-    """
-
-    def __init__(self, pools=None):
-        self.pools = pools
-
-    def __eq__(self, other):
-        return sorted(self.pools) == sorted(other.pools)
-
-    def __str__(self):
-        pools = ", ".join([str(p) for p in self.pools]) if self.pools else "No Pools"
-        return f"GasEvent {pools}"
-
-    def __repr__(self):
-        pools = ", ".join([str(p) for p in self.pools]) if self.pools else "No Pools"
-        return f"<GasEvent {pools}>"
-
-    @classmethod
-    def from_dict(cls, value):
-        pools = [EventGasPool.from_dict(g) for g in value["pools"]]
-        return cls(pools)
-
-
-class SwapEvent(Jsonable):
-    """
-    Event swap class specific to SWAP events.
-    """
-
-    def __init__(
-        self, pool, price_target, trade_slip, liquidity_fee, liquidity_fee_in_rune
-    ):
-        self.pool = pool
-        self.price_target = int(price_target)
-        self.trade_slip = int(trade_slip)
-        self.liquidity_fee = int(liquidity_fee)
-        self.liquidity_fee_in_rune = int(liquidity_fee_in_rune)
-
-    def __eq__(self, other):
-        return (
-            self.pool == other.pool
-            and self.price_target == other.price_target
-            and self.trade_slip == other.trade_slip
-            and self.liquidity_fee == other.liquidity_fee
-            and self.liquidity_fee_in_rune == other.liquidity_fee_in_rune
-        )
-
-    def __str__(self):
-        return (
-            f"SwapEvent Pool {self.pool} | "
-            f"PriceTarget {self.price_target:0,.0f} | "
-            f"TradeSlip {self.trade_slip:0,.0f} | "
-            f"LiquidityFee {self.liquidity_fee:0,.0f} | "
-            f"LiquidityFeeInRune {self.liquidity_fee_in_rune:0,.0f}"
-        )
-
-    def __repr__(self):
-        return (
-            f"<SwapEvent Pool {self.pool} | "
-            f"PriceTarget {self.price_target:0,.0f} | "
-            f"TradeSlip {self.trade_slip:0,.0f} | "
-            f"LiquidityFee {self.liquidity_fee:0,.0f} | "
-            f"LiquidityFeeInRune {self.liquidity_fee:0,.0f}>"
-        )
-
-    @classmethod
-    def from_dict(cls, value):
-        return cls(
-            value["pool"],
-            value["price_target"],
-            value["trade_slip"],
-            value["liquidity_fee"],
-            value["liquidity_fee_in_rune"],
-        )
-
-
-class StakeEvent(Jsonable):
-    """
-    Event stake class specific to STAKE events.
-    """
-
-    def __init__(self, asset, pool_units):
-        self.pool = asset
-        self.stake_units = int(pool_units)
-
-    def __eq__(self, other):
-        return self.pool == other.pool and self.stake_units == other.stake_units
-
-    def __str__(self):
-        return f"StakeEvent Pool {self.pool} | Units {self.stake_units:0,.0f}"
-
-    def __repr__(self):
-        return f"<StakeEvent Pool {self.pool} | Units {self.stake_units:0,.0f}>"
-
-    @classmethod
-    def from_dict(cls, value):
-        return cls(value["pool"], value["stake_units"])
-
-
-class UnstakeEvent(Jsonable):
-    """
-    Event unstake class specific to UNSTAKE events.
-    """
-
-    def __init__(self, asset, pool_units, basis_points, asymmetry):
-        self.pool = asset
-        self.stake_units = int(pool_units)
-        self.basis_points = int(basis_points)
-        self.asymmetry = int(float(asymmetry))
-
-    def __eq__(self, other):
-        return (
-            self.pool == other.pool
-            and self.stake_units == other.stake_units
-            and self.basis_points == other.basis_points
-            and self.asymmetry == other.asymmetry
-        )
-
-    def __str__(self):
-        return (
-            f"UnstakeEvent Pool {self.pool} | Units {self.stake_units:0,.0f} "
-            f"| BasisPoints {self.basis_points:0,.0f} "
-            f"| Asymmetry {self.asymmetry}"
-        )
-
-    def __repr__(self):
-        return (
-            f"<UnstakeEvent Pool {self.pool} | Units {self.stake_units} "
-            f"| BasisPoints {self.basis_points} | Asymmetry {self.asymmetry}>"
-        )
-
-    @classmethod
-    def from_dict(cls, value):
-        return cls(
-            value["pool"],
-            value["stake_units"],
-            value["basis_points"],
-            value["asymmetry"],
-        )
-
-
-class AddEvent(Jsonable):
-    """
-    Event add class specific to ADD events.
-    """
-
-    def __init__(self, asset):
-        self.pool = asset
-
-    def __eq__(self, other):
-        return self.pool == other.pool
-
-    def __str__(self):
-        return f"AddEvent Pool {self.pool}"
-
-    def __repr__(self):
-        return f"<AddEvent Pool {self.pool}>"
-
-    @classmethod
-    def from_dict(cls, value):
-        return cls(value["pool"])
+    def get(self, attr):
+        for a in self.attributes:
+            if list(a.keys())[0] == attr:
+                return a[attr]
+        return None
 
 
 class Pool(Jsonable):
@@ -1680,18 +1151,19 @@ class Pool(Jsonable):
 
         self.stakers.append(staker)
 
-    def stake(self, address, rune_amt, asset_amt, asset):
+    def stake(self, address, rune_amt, asset_amt, asset, txid):
         """
         Stake rune/asset for an address
         """
         staker = self.get_staker(address)
 
         # handle cross chain stake
-        if not asset.get_chain() == RUNE.get_chain():
+        if asset.get_chain() != RUNE.get_chain():
             if asset_amt == 0:
                 staker.pending_rune += rune_amt
+                staker.pending_tx = txid
                 self.set_staker(staker)
-                return 0
+                return 0, 0, None
 
             rune_amt += staker.pending_rune
             staker.pending_rune = 0
@@ -1704,7 +1176,7 @@ class Pool(Jsonable):
         self.total_units += units
         staker.units += units
         self.set_staker(staker)
-        return units
+        return units, rune_amt, staker.pending_tx
 
     def unstake(self, address, withdraw_basis_points):
         """
@@ -1774,6 +1246,7 @@ class Staker(Jsonable):
         self.address = address
         self.units = 0
         self.pending_rune = 0
+        self.pending_tx = None
 
     def add(self, units):
         """
