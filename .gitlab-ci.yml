@@ -16,7 +16,7 @@ lint:
   script:
     - flake8
 
-unit_tests:
+unit-tests-bep2:
   image: docker/compose:alpine-1.25.4
   stage: test
   tags:
@@ -30,6 +30,21 @@ unit_tests:
   script:
     - make test-coverage
     - make test-coverage-report
+
+unit-tests-native:
+  image: docker/compose:alpine-1.25.4
+  stage: test
+  tags:
+    - thorchain
+  services:
+    - docker:19-dind
+  before_script:
+    - apk update
+    - apk add git make
+    - make build
+  script:
+    - RUNE=THOR.RUNE make test-coverage
+    - RUNE=THOR.RUNE make test-coverage-report
 
 integration-bep2:
   image: docker/compose:alpine-1.25.4

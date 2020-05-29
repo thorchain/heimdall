@@ -198,7 +198,7 @@ class MockEthereum:
             )
 
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
-        txn.id = receipt.transactionHash.hex()[2:]
+        txn.id = receipt.transactionHash.hex()[2:].upper()
         txn.gas = [Coin("ETH.ETH-0x0000000000000000000000000000000000000000", receipt.cumulativeGasUsed * self.gas_price)]
         logging.info(f"gas {txn.memo} {receipt.cumulativeGasUsed}")
 
