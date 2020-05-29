@@ -5,7 +5,7 @@ import requests
 
 from web3 import Web3, HTTPProvider
 from web3.middleware import geth_poa_middleware
-from solcx import compile_standard
+from solcx import compile_files, install_solc
 from eth_keys import KeyAPI
 from eth_utils import keccak
 from utils.common import Coin, get_rune_asset, Asset
@@ -28,10 +28,11 @@ class MockEthereum:
     gas_per_byte = 68
     gas_price = 1
     passphrase = "the-passphrase"
-    zero_address = "ETH.ETH-0x0000000000000000000000000000000000000000"
+    zero_address = "ETH-0x0000000000000000000000000000000000000000"
     seed = "SEED"
     stake = "STAKE"
     eth = "ETH."
+    tokens = dict()
 
     private_keys = [
         "ef235aacf90d9f4aadd8c92e4b2562e1d9eb97f0df9ba3b508258739cb013db2",
@@ -43,7 +44,10 @@ class MockEthereum:
 
     def __init__(self, base_url, eth_address):
         self.url = base_url
+        self.web3 = Web3(HTTPProvider(base_url))
+        self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
         for key in self.private_keys:
+            logging.info(f"{self.web3.geth.personal.list_accounts()}")
             payload = json.dumps(
                 {"method": "personal_importRawKey", "params": [key, self.passphrase]}
             )
@@ -52,17 +56,18 @@ class MockEthereum:
                 requests.request("POST", base_url, data=payload, headers=headers)
             except requests.exceptions.RequestException as e:
                 logging.error(f"{e}")
-        self.web3 = Web3(HTTPProvider(base_url))
-        self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
-        self.accounts = self.web3.eth.list_accounts()
-        self.web3.geth.personal.unlock_account(self.accounts[0], self.passphrase)
-        self.web3.eth.defaultAccount = self.web3.eth.accounts[0]
+        self.accounts = self.web3.geth.personal.list_accounts()
+        logging.info(f"{self.accounts}")
+        self.web3.eth.defaultAccount = self.accounts[1]
+        self.web3.geth.personal.unlock_account(self.web3.eth.defaultAccount, self.passphrase)
         self.wait_for_node()
-        tx = self.web3.eth.getTransactionFromBlock(1, 0)
+        tx = self.web3.eth.getTransactionByBlock(2, 0)
         receipt = self.web3.eth.getTransactionReceipt(tx.hash)
-        abi = json.loads(open("data/vault.json", "r"))
+        abi = json.load(open("data/vault.json"))
         self.vault = self.web3.eth.contract(address=receipt.contractAddress, abi=abi)
-        self.token = self.deploy_token()
+        token = self.deploy_token()
+        symbol = token.functions.symbol().call()
+        self.tokens[symbol+"-"+token.address] = token
 
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
@@ -90,13 +95,12 @@ class MockEthereum:
         return block["number"]
 
     def deploy_token(self):
-        compiled_sol = compile_files("data/token.sol")
-        bytecode = compiled_sol["Token"]["bytecode"]["object"]
-        abi = json.loads(compiled_sol["Token"]["abi"])
+        abi = json.load(open("data/token.json"))
+        bytecode = open("data/bytecode.txt", "r").read()
         token = self.web3.eth.contract(abi=abi, bytecode=bytecode)
         tx_hash = token.constructor().transact()
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
-        logging.info(f"{receipt.contractAddress.hex()}")
+        logging.info(f"{receipt.contractAddress}")
         return self.web3.eth.contract(address=receipt.contractAddress, abi=abi)
 
     def get_block_hash(self, block_height):
@@ -130,7 +134,7 @@ class MockEthereum:
         It can take a while depending on the machine specs so we retry.
         """
         current_height = self.get_block_height()
-        while current_height < 1:
+        while current_height < 2:
             current_height = self.get_block_height()
 
     def transfer(self, txn):
@@ -160,19 +164,11 @@ class MockEthereum:
 
         for account in self.web3.eth.accounts:
             if account == Web3.toChecksumAddress(txn.from_address):
-                self.web3.geth.personal.unlock_account(account, self.passphrase)
+                #self.web3.geth.personal.unlock_account(account, self.passphrase)
                 self.web3.eth.defaultAccount = account
 
-        splits = txn.coins[0].asset.split(".")
-        if len(splits) != 2:
-            logging.error(f"incorrect txn coins asset format")
-        parts = splits[1].split("-")
-        if len(parts) != 2:
-            logging.error(f"incorrect txn coins asset format")
-        coin = self.eth + parts[0]
-
         if txn.memo == self.seed:
-            if coin == self.zero_address:
+            if txn.coins[0].asset.get_symbol() == self.zero_address:
                 tx = {
                     "from": Web3.toChecksumAddress(txn.from_address),
                     "to": Web3.toChecksumAddress(txn.to_address),
@@ -183,7 +179,7 @@ class MockEthereum:
                 tx_hash = self.web3.geth.personal.send_transaction(tx, self.passphrase)
             else:
                 tx_hash = (
-                    self.token.functions()
+                    self.tokens[txn.coins[0].asset.get_symbol()].functions()
                     .transfer(
                         Web3.toChecksumAddress(txn.to_address), txn.coins[0].amount
                     )
@@ -202,8 +198,8 @@ class MockEthereum:
             )
 
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
-        txn.id = receipt["transactionHash"].hex()[2:]
-        txn.gas = [Coin(coin, receipt["cumulativeGasUsed"] * self.gas_price)]
+        txn.id = receipt.transactionHash.hex()[2:]
+        txn.gas = [Coin("ETH.ETH-0x0000000000000000000000000000000000000000", receipt.cumulativeGasUsed * self.gas_price)]
         logging.info(f"gas {txn.memo} {receipt.cumulativeGasUsed}")
 
 
