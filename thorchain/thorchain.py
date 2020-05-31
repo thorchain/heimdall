@@ -1048,6 +1048,9 @@ class Event(Jsonable):
 
     def __hash__(self):
         attrs = sorted(self.attributes, key=lambda x: sorted(x.items()))
+        for attr in attrs:
+            for key, value in attr.items():
+                attr[key] = value.upper()
         if self.type == "outbound":
             attrs = [a for a in attrs if list(a.keys())[0] != "id"]
         return hash(str(attrs))
