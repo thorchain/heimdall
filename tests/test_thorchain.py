@@ -1084,6 +1084,31 @@ class TestEvent(unittest.TestCase):
             ],
         )
         self.assertNotEqual(swap_sim, swap)
+        swap_sim = Event(
+            "swap",
+            [
+                {"pool": "ETH.ETH-0X0000000000000000000000000000000000000000"},
+                {"stake_units": "27000000000"},
+                {"rune_address": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q"},
+                {"rune_amount": "50000000000"},
+                {"asset_amount": "4000000000"},
+                {"BNB_txid": "9573683032CBEE28E1A3C01648F"},
+                {"ETH_txid": "FBBB33A59B9AA3F787743EC4176"},
+            ],
+        )
+        swap = Event(
+            "swap",
+            [
+                {"pool": "ETH.ETH-0x0000000000000000000000000000000000000000"},
+                {"stake_units": "27000000000"},
+                {"rune_address": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q"},
+                {"rune_amount": "50000000000"},
+                {"asset_amount": "4000000000"},
+                {"ETH_txid": "FBBB33A59B9AA3F787743EC4176"},
+                {"BNB_txid": "9573683032CBEE28E1A3C01648F"},
+            ],
+        )
+        self.assertEqual(swap_sim, swap)
 
     def test_sort_events(self):
         evt1 = Event("test", [{"id": 1}], 1, "block")
