@@ -14,7 +14,47 @@ RUNE = get_rune_asset()
 
 
 class TestThorchainState(unittest.TestCase):
+    def test_get_rune_fee(self):
+        # pool empty
+        thorchain = ThorchainState()
+        rune_fee = thorchain.get_rune_fee("BNB", 37500)
+        self.assertEqual(rune_fee, 0)
+
+        # happy path
+        thorchain.pools = [Pool("BNB.BNB", 50 * Coin.ONE, 50 * Coin.ONE)]
+        rune_fee = thorchain.get_rune_fee("BNB", 37500)
+        self.assertEqual(rune_fee, 112500)
+
+        thorchain.pools = [Pool("BTC.BTC", 50 * Coin.ONE, 50 * Coin.ONE)]
+        rune_fee = thorchain.get_rune_fee("BTC", 1)
+        self.assertEqual(rune_fee, 3)
+
+        thorchain.pools = [Pool("ETH.ETH", 50 * Coin.ONE, 50 * Coin.ONE)]
+        rune_fee = thorchain.get_rune_fee("ETH", 1)
+        self.assertEqual(rune_fee, 3)
+
+    def test_handle_fee(self):
+        thorchain = ThorchainState()
+        network_fees = { "BNB": 37500 }
+        thorchain.pools = [Pool("BNB.BNB", 100 * Coin.ONE, 10 * Coin.ONE)]
+        txn = Transaction(
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 10 * Coin.ONE)],
+            "SWAP:BNB.BNB",
+        )
+
+        outbound = thorchain.handle(txn)
+        self.assertEqual(outbound[0].coins[0].amount, 82644628)
+        self.assertEqual(thorchain.reserve, 0)
+
+        outbound = thorchain.handle_fee(txn, outbound, network_fees)
+        self.assertEqual(outbound[0].coins[0].amount, 82532128)
+        self.assertEqual(thorchain.reserve, 1348986)
+
     def test_swap(self):
+        network_fees = { "BNB": 37500 }
         # no pool, should emit a refund
         thorchain = ThorchainState()
         txn = Transaction(
@@ -26,7 +66,7 @@ class TestThorchainState(unittest.TestCase):
         )
 
         outbound = thorchain.handle(txn)
-        outbound = thorchain.handle_fee(txn, outbound)
+        outbound = thorchain.handle_fee(txn, outbound, network_fees)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
@@ -55,7 +95,7 @@ class TestThorchainState(unittest.TestCase):
         # do a regular swap
         thorchain.pools = [Pool("BNB.BNB", 50 * 100000000, 50 * 100000000)]
         outbound = thorchain.handle(txn)
-        outbound = thorchain.handle_fee(txn, outbound)
+        outbound = thorchain.handle_fee(txn, outbound, network_fees)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
         self.assertEqual(outbound[0].coins[0].asset, "BNB.BNB")
@@ -88,7 +128,7 @@ class TestThorchainState(unittest.TestCase):
         # swap with two coins on the inbound tx
         txn.coins = [Coin("BNB.BNB", 1000000000), Coin(RUNE, 1000000000)]
         outbound = thorchain.handle(txn)
-        outbound = thorchain.handle_fee(txn, outbound)
+        outbound = thorchain.handle_fee(txn, outbound, network_fees)
         self.assertEqual(len(outbound), 2)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
@@ -120,7 +160,6 @@ class TestThorchainState(unittest.TestCase):
         # swap with zero return, refunds and doesn't change pools
         txn.coins = [Coin(RUNE, 1)]
         outbound = thorchain.handle(txn)
-        # outbound = thorchain.handle_fee(txn, outbound)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
         self.assertEqual(thorchain.pools[0].rune_balance, 58 * 100000000)
@@ -142,7 +181,7 @@ class TestThorchainState(unittest.TestCase):
         # swap with zero return, not enough coin to pay fee so no refund
         txn.coins = [Coin(RUNE, 1)]
         outbound = thorchain.handle(txn)
-        outbound = thorchain.handle_fee(txn, outbound)
+        outbound = thorchain.handle_fee(txn, outbound, network_fees)
         self.assertEqual(len(outbound), 0)
         self.assertEqual(thorchain.pools[0].rune_balance, 58 * 100000000)
 
@@ -171,7 +210,7 @@ class TestThorchainState(unittest.TestCase):
         txn.coins = [Coin(RUNE, 500000000)]
         txn.memo = "SWAP:BNB.BNB::999999999999999999999"
         outbound = thorchain.handle(txn)
-        outbound = thorchain.handle_fee(txn, outbound)
+        outbound = thorchain.handle_fee(txn, outbound, network_fees)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
         self.assertEqual(outbound[0].coins, [Coin(RUNE, 400000000)])
@@ -198,7 +237,7 @@ class TestThorchainState(unittest.TestCase):
         txn.coins = [Coin(RUNE, 500000000)]
         txn.memo = "SWAP:BNB.BNB:NOMNOM:"
         outbound = thorchain.handle(txn)
-        outbound = thorchain.handle_fee(txn, outbound)
+        outbound = thorchain.handle_fee(txn, outbound, network_fees)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
         self.assertEqual(outbound[0].to_address, "NOMNOM")
@@ -231,7 +270,7 @@ class TestThorchainState(unittest.TestCase):
         txn.coins = [Coin(RUNE, 500000000)]
         txn.memo = "SWAP:BNB.BNB:BNBNOMNOM"
         outbound = thorchain.handle(txn)
-        outbound = thorchain.handle_fee(txn, outbound)
+        outbound = thorchain.handle_fee(txn, outbound, network_fees)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
 
@@ -261,7 +300,7 @@ class TestThorchainState(unittest.TestCase):
         txn.memo = "SWAP:BNB.LOK-3C0"
         thorchain.pools.append(Pool("BNB.LOK-3C0", 30 * 100000000, 30 * 100000000))
         outbound = thorchain.handle(txn)
-        outbound = thorchain.handle_fee(txn, outbound)
+        outbound = thorchain.handle_fee(txn, outbound, network_fees)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
         self.assertEqual(outbound[0].coins[0].asset, "BNB.LOK-3C0")

@@ -13,6 +13,11 @@ from utils.breakpoint import Breakpoint
 from utils.common import Transaction, get_rune_asset, DEFAULT_RUNE_ASSET
 
 RUNE = get_rune_asset()
+NETWORK_FEES = {
+    "BNB": 37500,
+    "BTC": 1,
+    "ETH": 1,
+}
 
 # Init logging
 logging.basicConfig(
@@ -94,7 +99,7 @@ class TestSmoke(unittest.TestCase):
                 continue
 
             outbound = thorchain.handle(txn)  # process transaction in thorchain
-            outbound = thorchain.handle_fee(txn, outbound)
+            outbound = thorchain.handle_fee(txn, outbound, NETWORK_FEES)
             thorchain.order_outbound_txns(outbound)
 
             for txn in outbound:
