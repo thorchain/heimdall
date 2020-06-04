@@ -18,6 +18,7 @@ from utils.common import (
 from chains.aliases import get_alias, get_alias_address, get_aliases
 from chains.bitcoin import Bitcoin
 from chains.ethereum import Ethereum
+from chains.binance import Binance
 from tenacity import retry, stop_after_delay, wait_fixed
 
 RUNE = get_rune_asset()
@@ -266,23 +267,35 @@ class ThorchainState:
             )
             self.events.append(event)
 
-    def handle_fee(self, in_tx, txns):
+    def get_rune_fee(self, chain, network_fee):
+        if chain == "BNB":
+            pool = self.get_pool(Binance.coin)
+        if chain == "BTC":
+            pool = self.get_pool(Bitcoin.coin)
+        if chain == "ETH":
+            pool = self.get_pool(Ethereum.coin)
+        return pool.get_asset_in_rune(network_fee * 3)
+
+    def handle_fee(self, in_tx, txns, network_fees):
         """
         Subtract transaction fee from given transactions
+        using dynamic fees calculate form averages on chains
         """
         outbounds = []
         if not isinstance(txns, list):
             txns = [txns]
 
         for txn in txns:
+            # fee amount in chain asset value
+            chain_fee = network_fees[txn.chain]
+            rune_fee = self.get_rune_fee(txn.chain, chain_fee)
+
             for coin in txn.coins:
+                # add to the reserve
+                self.reserve += rune_fee
+
                 if coin.is_rune():
-                    # deduct 1 rune transaction fee
-                    coin.amount -= self.rune_fee
-
-                    # add to the reserve
-                    self.reserve += self.rune_fee
-
+                    coin.amount -= rune_fee
                     if coin.amount > 0:
                         outbounds.append(txn)
 
@@ -291,7 +304,7 @@ class ThorchainState:
                         "fee",
                         [
                             {"tx_id": in_tx.id},
-                            {"coins": f"{self.rune_fee} {coin.asset}"},
+                            {"coins": f"{rune_fee} {coin.asset}"},
                             {"pool_deduct": 0},
                         ],
                     )
@@ -301,17 +314,14 @@ class ThorchainState:
                     pool = self.get_pool(coin.asset)
 
                     if not pool.is_zero():
-                        # default to zero if pool is empty
-                        asset_fee = pool.get_asset_fee()
-
+                        asset_fee = pool.get_rune_in_asset(rune_fee)
                         pool.add(0, asset_fee)
-                        if pool.rune_balance >= self.rune_fee:
-                            pool.sub(self.rune_fee, 0)
+                        if pool.rune_balance >= rune_fee:
+                            pool.sub(rune_fee, 0)
                         self.set_pool(pool)
                         coin.amount -= asset_fee
-
-                        pool_deduct = self.rune_fee
-                        if self.rune_fee > pool.rune_balance:
+                        pool_deduct = rune_fee
+                        if rune_fee > pool.rune_balance:
                             pool_deduct = pool.rune_balance
 
                         if pool_deduct > 0 or asset_fee > 0:
@@ -325,9 +335,6 @@ class ThorchainState:
                                 ],
                             )
                             self.events.append(event)
-
-                    # add to the reserve
-                    self.reserve += self.rune_fee
                     if coin.amount > 0:
                         outbounds.append(txn)
 
@@ -468,6 +475,8 @@ class ThorchainState:
         for txn in txns:
             event = Event("outbound", [{"in_tx_id": in_tx.id}, *txn.get_attributes()])
             self.events.append(event)
+            # remove gas from reserve on succesful outbound tx
+            self.reserve -= txn.gas[0].amount
 
     def order_outbound_txns(self, txns):
         """

@@ -83,6 +83,18 @@ class MockBitcoin(HttpClient):
         """
         return self.call("getblockhash", int(block_height))
 
+    def get_block_stats(self, block_height=None):
+        """
+        Get the block hash for a height
+        """
+        if not block_height:
+            block_height = self.get_block_height()
+        result = self.call("getblockstats", int(block_height))
+        return {
+            "avg_tx_size": result["avgtxsize"],
+            "avg_fee_rate": result["avgfeerate"],
+        }
+
     def wait_for_blocks(self, count):
         """
         Wait for the given number of blocks
