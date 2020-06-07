@@ -449,8 +449,10 @@ class ThorchainState:
         for coin in txn.coins:
             if not coin.is_rune():
                 pool = self.get_pool(coin.asset)
-                if pool.rune_balance == 0:
-                    continue  # no pool exists, skip it
+            else:
+                pool = self.get_pool(txn.get_asset_from_memo())
+            if pool.rune_balance == 0:
+                continue  # no pool exists, skip it
             txns.append(
                 Transaction(
                     txn.chain,
@@ -462,10 +464,11 @@ class ThorchainState:
             )
 
         # generate event REFUND for the transaction
-        event = Event(
-            "refund", [{"code": code}, {"reason": reason}, *txn.get_attributes()],
-        )
-        self.events.append(event)
+        if len(txns):
+            event = Event(
+                "refund", [{"code": code}, {"reason": reason}, *txn.get_attributes()],
+            )
+            self.events.append(event)
         return txns
 
     def generate_outbound_events(self, in_tx, txns):
