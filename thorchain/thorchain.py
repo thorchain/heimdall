@@ -479,12 +479,14 @@ class ThorchainState:
                 )
             )
 
+
+        in_tx = deepcopy(tx)  # copy of transaction
         out_txs = self.handle_fee(tx, out_txs)
 
         if len(out_txs):
             # generate event REFUND for the transaction
             event = Event(
-                "refund", [{"code": code}, {"reason": reason}, *tx.get_attributes()],
+                "refund", [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
             )
             self.events.append(event)
 
@@ -534,7 +536,8 @@ class ThorchainState:
         else:
             if tx.memo == "":
                 out_txs = self.refund(tx, 105, "memo can't be empty")
-            out_txs = self.refund(tx, 105, f"invalid tx type: {tx.memo}")
+            else:
+                out_txs = self.refund(tx, 105, f"invalid tx type: {tx.memo}")
         self.order_outbound_txs(out_txs)
         return out_txs
 
@@ -964,7 +967,7 @@ class ThorchainState:
                     {"trade_slip": trade_slip},
                     {"liquidity_fee": liquidity_fee},
                     {"liquidity_fee_in_rune": liquidity_fee_in_rune},
-                    *in_tx.get_attributes(),
+                    *tx.get_attributes(),
                 ],
             )
             self.events.append(event)
