@@ -498,8 +498,6 @@ class ThorchainState:
         for tx in txs:
             event = Event("outbound", [{"in_tx_id": in_tx.id}, *tx.get_attributes()])
             self.events.append(event)
-            # remove gas from reserve on succesful outbound tx
-            self.reserve -= tx.gas[0].amount
 
     def order_outbound_txs(self, txs):
         """
