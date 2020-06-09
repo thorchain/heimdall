@@ -278,24 +278,22 @@ class Smoker:
         if txn.chain == Thorchain.chain:
             return self.thorchain.transfer(txn)
 
-    def set_network_fees(self, txns):
+    def set_network_fees(self):
         """
         Retrieve network fees on chain for each txn
         and update thorchain state
         """
         fees = {}
-        for txn in txns:
-            if txn.chain == "BTC":
-                stats = self.mock_bitcoin.get_block_stats()
-            if txn.chain == "ETH":
-                stats = self.mock_ethereum.get_block_stats()
-            fees[txn.chain] = stats["avg_tx_size"] * stats["avg_fee_rate"]
+        stats = self.mock_bitcoin.get_block_stats()
+        fees["BTC"] = stats["avg_tx_size"] * stats["avg_fee_rate"]
+        # stats = self.mock_ethereum.get_block_stats()
+        # fees["ETH"] = stats["avg_tx_size"] * stats["avg_fee_rate"]
         self.thorchain_state.set_network_fees(fees)
         return fees
 
     def sim_trigger_tx(self, txn):
         # process transaction in thorchain
-        self.set_network_fees(outbounds)
+        self.set_network_fees()
         outbounds = self.thorchain_state.handle(txn)
 
         # expecting to see this many outbound txs
