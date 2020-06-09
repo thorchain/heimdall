@@ -283,7 +283,9 @@ class Smoker:
         Retrieve network fees on chain for each txn
         and update thorchain state
         """
-        fees = {}
+        fees = {
+            "BNB": 37500
+        }
         stats = self.mock_bitcoin.get_block_stats()
         fees["BTC"] = stats["avg_tx_size"] * stats["avg_fee_rate"]
         # stats = self.mock_ethereum.get_block_stats()
