@@ -284,7 +284,7 @@ class ThorchainState:
 
     def get_rune_fee(self, chain):
         if chain not in self.network_fees:
-            return 0
+            return self.rune_fee
         chain_fee = self.network_fees[chain]
         gas_asset = self.get_gas_asset(chain)
         pool = self.get_pool(gas_asset)
@@ -306,9 +306,6 @@ class ThorchainState:
             rune_fee = self.get_rune_fee(tx.chain)
 
             for coin in tx.coins:
-                # add to the reserve
-                self.reserve += rune_fee
-
                 if coin.is_rune():
                     if coin.amount <= rune_fee:
                         rune_fee = coin.amount
@@ -330,12 +327,15 @@ class ThorchainState:
                 else:
                     pool = self.get_pool(coin.asset)
                     asset_fee = pool.get_rune_in_asset(rune_fee)
-                    if coin.amount <= asset_fee:
+                    if coin.amount <= asset_fee or asset_fee == 0:
                         asset_fee = coin.amount
+                        rune_fee = pool.get_asset_in_rune(asset_fee)
+
                     if pool.rune_balance >= rune_fee:
                         pool.sub(rune_fee, 0)
                     pool.add(0, asset_fee)
                     self.set_pool(pool)
+
                     coin.amount -= asset_fee
                     pool_deduct = rune_fee
                     if rune_fee > pool.rune_balance:
@@ -355,6 +355,8 @@ class ThorchainState:
                     if coin.amount > 0:
                         outbounds.append(tx)
 
+                # add to the reserve
+                self.reserve += rune_fee
         return outbounds
 
     def _total_liquidity(self):
@@ -465,20 +467,17 @@ class ThorchainState:
         out_txs = []
         for coin in tx.coins:
             # check we have gas liquidity
-            gas_asset = self.get_gas_asset(coin.asset.get_chain())
-            pool = self.get_pool(gas_asset)
-            if pool.rune_balance == 0:
-                continue
+            chain = coin.asset.get_chain()
+            if chain != RUNE.get_chain():
+                gas_asset = self.get_gas_asset(coin.asset.get_chain())
+                pool = self.get_pool(gas_asset)
+                if pool.rune_balance == 0:
+                    continue
             out_txs.append(
                 Transaction(
-                    tx.chain,
-                    tx.to_address,
-                    tx.from_address,
-                    [coin],
-                    f"REFUND:{tx.id}",
+                    tx.chain, tx.to_address, tx.from_address, [coin], f"REFUND:{tx.id}",
                 )
             )
-
 
         in_tx = deepcopy(tx)  # copy of transaction
         out_txs = self.handle_fee(tx, out_txs)
@@ -1090,7 +1089,7 @@ class Event(Jsonable):
         return f"Event {self.type} | {attrs}"
 
     def __hash__(self):
-        attrs = sorted(self.attributes, key=lambda x: sorted(x.items()))
+        attrs = deepcopy(sorted(self.attributes, key=lambda x: sorted(x.items())))
         for attr in attrs:
             for key, value in attr.items():
                 attr[key] = value.upper()

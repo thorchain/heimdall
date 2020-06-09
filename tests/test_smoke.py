@@ -69,7 +69,7 @@ class TestSmoke(unittest.TestCase):
         btc = Bitcoin()  # init local bitcoin chain
         eth = Ethereum()  # init local ethereum chain
         thorchain = ThorchainState()  # init local thorchain
-        thorchain.network_fees = { # init fixed network fees
+        thorchain.network_fees = {  # init fixed network fees
             "BNB": 37500,
             "BTC": 1,
             "ETH": 1,
