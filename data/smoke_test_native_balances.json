@@ -955,10 +955,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "THOR.RUNE": 50000000000
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -999,10 +995,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "THOR.RUNE": 50000000000
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1043,10 +1035,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "THOR.RUNE": 50000000000
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1087,10 +1075,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "THOR.RUNE": 50000000000
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1131,10 +1115,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "THOR.RUNE": 50000000000
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1175,10 +1155,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "THOR.RUNE": 50000000000
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1219,10 +1195,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "THOR.RUNE": 50000000000
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1263,10 +1235,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "THOR.RUNE": 50000000000
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1307,10 +1275,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40000000000,
             "THOR.RUNE": 50000000000
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1351,10 +1315,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 45000000000,
             "THOR.RUNE": 45061728396
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1395,10 +1355,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 40988292423,
             "THOR.RUNE": 50020347574
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1439,10 +1395,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 45988292423,
             "THOR.RUNE": 45173247716
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1483,10 +1435,6 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 44193018453,
             "THOR.RUNE": 47093496309
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
@@ -1527,15 +1475,11 @@
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 44193018453,
             "THOR.RUNE": 47093496309
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
-            "THOR.RUNE": 0
         }
     },
     {
         "TX": 49,
-        "OUT": 1,
+        "OUT": 2,
         "CONTRIB": {
             "BNB.BNB": 1000000000
         },
@@ -1545,20 +1489,20 @@
         },
         "STAKER-1": {
             "BNB.BNB": 460335999,
-            "BNB.LOK-3C0": 40000000000
+            "BNB.LOK-3C0": 84193018453
         },
         "STAKER-2": {
             "BNB.BNB": 49587500,
             "BNB.LOK-3C0": 10000000000
         },
         "VAULT": {
-            "BNB.BNB": 126219599,
-            "BNB.LOK-3C0": 44193018453,
+            "BNB.BNB": 126182099,
+            "BNB.LOK-3C0": 0,
             "BNB.TCAN-014": 1000000
         },
         "POOL.BNB.BNB": {
-            "BNB.BNB": 126219599,
-            "THOR.RUNE": 49578446290
+            "BNB.BNB": 126182099,
+            "THOR.RUNE": 49593176108
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 134744488,
@@ -1569,11 +1513,7 @@
             "THOR.RUNE": 45609024227
         },
         "POOL.BNB.LOK-3C0": {
-            "BNB.LOK-3C0": 44193018453,
-            "THOR.RUNE": 0
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
+            "BNB.LOK-3C0": 0,
             "THOR.RUNE": 0
         }
     },
@@ -1588,21 +1528,21 @@
             "BNB.LOK-3C0": 145806981547
         },
         "STAKER-1": {
-            "BNB.BNB": 544388622,
-            "BNB.LOK-3C0": 40000000000
+            "BNB.BNB": 544363617,
+            "BNB.LOK-3C0": 84193018453
         },
         "STAKER-2": {
             "BNB.BNB": 49587500,
             "BNB.LOK-3C0": 10000000000
         },
         "VAULT": {
-            "BNB.BNB": 42129476,
-            "BNB.LOK-3C0": 44193018453,
+            "BNB.BNB": 42116981,
+            "BNB.LOK-3C0": 0,
             "BNB.TCAN-014": 1000000
         },
         "POOL.BNB.BNB": {
-            "BNB.BNB": 42129476,
-            "THOR.RUNE": 16489255812
+            "BNB.BNB": 42116981,
+            "THOR.RUNE": 16494145985
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 134744488,
@@ -1613,17 +1553,13 @@
             "THOR.RUNE": 45609024227
         },
         "POOL.BNB.LOK-3C0": {
-            "BNB.LOK-3C0": 44193018453,
-            "THOR.RUNE": 0
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
+            "BNB.LOK-3C0": 0,
             "THOR.RUNE": 0
         }
     },
     {
         "TX": 51,
-        "OUT": 1,
+        "OUT": 2,
         "CONTRIB": {
             "BNB.BNB": 1000000000
         },
@@ -1632,24 +1568,24 @@
             "BNB.LOK-3C0": 145806981547
         },
         "STAKER-1": {
-            "BNB.BNB": 544388622,
-            "BNB.LOK-3C0": 40000000000
+            "BNB.BNB": 544363617,
+            "BNB.LOK-3C0": 84193018453
         },
         "STAKER-2": {
             "BNB.BNB": 49587500,
             "BNB.LOK-3C0": 10000000000
         },
         "VAULT": {
-            "BNB.BNB": 42129476,
-            "BNB.LOK-3C0": 44193018453,
+            "BNB.BNB": 42116981,
+            "BNB.LOK-3C0": 0,
             "BNB.TCAN-014": 1000000
         },
         "POOL.BNB.BNB": {
-            "BNB.BNB": 42129476,
-            "THOR.RUNE": 16489255812
+            "BNB.BNB": 42116981,
+            "THOR.RUNE": 16494145985
         },
         "POOL.BTC.BTC": {
-            "BTC.BTC": 134744488,
+            "BTC.BTC": 0,
             "THOR.RUNE": 0
         },
         "POOL.ETH.ETH": {
@@ -1657,17 +1593,13 @@
             "THOR.RUNE": 45609024227
         },
         "POOL.BNB.LOK-3C0": {
-            "BNB.LOK-3C0": 44193018453,
-            "THOR.RUNE": 0
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
+            "BNB.LOK-3C0": 0,
             "THOR.RUNE": 0
         }
     },
     {
         "TX": 52,
-        "OUT": 1,
+        "OUT": 2,
         "CONTRIB": {
             "BNB.BNB": 1000000000
         },
@@ -1676,24 +1608,24 @@
             "BNB.LOK-3C0": 145806981547
         },
         "STAKER-1": {
-            "BNB.BNB": 544388622,
-            "BNB.LOK-3C0": 40000000000
+            "BNB.BNB": 544363617,
+            "BNB.LOK-3C0": 84193018453
         },
         "STAKER-2": {
-            "BNB.BNB": 49587500,
+            "BNB.BNB": 91666981,
             "BNB.LOK-3C0": 10000000000
         },
         "VAULT": {
-            "BNB.BNB": 42129476,
-            "BNB.LOK-3C0": 44193018453,
+            "BNB.BNB": 0,
+            "BNB.LOK-3C0": 0,
             "BNB.TCAN-014": 1000000
         },
         "POOL.BNB.BNB": {
-            "BNB.BNB": 42129476,
+            "BNB.BNB": 0,
             "THOR.RUNE": 0
         },
         "POOL.BTC.BTC": {
-            "BTC.BTC": 134744488,
+            "BTC.BTC": 0,
             "THOR.RUNE": 0
         },
         "POOL.ETH.ETH": {
@@ -1701,11 +1633,7 @@
             "THOR.RUNE": 45609024227
         },
         "POOL.BNB.LOK-3C0": {
-            "BNB.LOK-3C0": 44193018453,
-            "THOR.RUNE": 0
-        },
-        "POOL.BNB.TCAN-014": {
-            "BNB.TCAN-014": 1000000,
+            "BNB.LOK-3C0": 0,
             "THOR.RUNE": 0
         }
     }

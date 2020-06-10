@@ -286,12 +286,12 @@ class Transaction(Jsonable):
 
     def custom_hash(self, pubkey):
         coins = (
-            ",".join([f"{c.amount}{c.asset}" for c in self.coins])
+            ", ".join([f"{c.amount} {c.asset}" for c in self.coins])
             if self.coins
-            else "<nil>."
+            else ""
         )
         in_hash = self.memo.split(":")[1]
-        tmp = f"{self.chain}|{self.to_address}|{pubkey}|{coins}|{self.memo}|{in_hash}"
+        tmp = f"{self.chain}|{self.to_address}|{pubkey}|{coins}||{in_hash}"
         return hashlib.new("sha256", tmp.encode()).digest().hex().upper()
 
     def get_attributes(self):

@@ -240,7 +240,7 @@ class Smoker:
         events = self.thorchain_client.events
         sim_events = self.thorchain_state.events
 
-        for event, sim_event in zip(sorted(events), sorted(sim_events)):
+        for event, sim_event in zip(events, sim_events):
             if sim_event != event:
                 logging.error(
                     f"Event Thorchain \n{event}\n   !="
@@ -283,13 +283,10 @@ class Smoker:
         Retrieve network fees on chain for each txn
         and update thorchain state
         """
-        fees = {
-            "BNB": 37500
-        }
+        fees = {"BNB": 37500}
         stats = self.mock_bitcoin.get_block_stats()
         fees["BTC"] = stats["avg_tx_size"] * stats["avg_fee_rate"]
-        # stats = self.mock_ethereum.get_block_stats()
-        # fees["ETH"] = stats["avg_tx_size"] * stats["avg_fee_rate"]
+        fees["ETH"] = 1
         self.thorchain_state.set_network_fees(fees)
         return fees
 
@@ -376,15 +373,11 @@ class Smoker:
                 continue
 
             # happy path exit
-            if (
-                sorted(events) == sorted(sim_events)
-                and count_outbounds <= 0
-                and processed_transaction
-            ):
+            if events == sim_events and count_outbounds <= 0 and processed_transaction:
                 break
 
             # not happy path exit, we got wrong events
-            if len(events) == len(sim_events) and sorted(events) != sorted(sim_events):
+            if len(events) == len(sim_events) and events != sim_events:
                 break
 
             time.sleep(1)
