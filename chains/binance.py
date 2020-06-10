@@ -16,6 +16,9 @@ class MockBinance(HttpClient):
     https://gitlab.com/thorchain/bepswap/mock-binance
     """
 
+    singleton_gas = 37500
+    multi_gas = 30000
+
     def set_vault_address_by_pubkey(self, pubkey):
         """
         Set vault adddress by pubkey
@@ -136,5 +139,5 @@ class Binance(GenericChain):
         With given coin set, calculates the gas owed
         """
         if not isinstance(txn.coins, list) or len(txn.coins) == 1:
-            return Coin(cls.coin, 37500)
-        return Coin(cls.coin, 30000 * len(txn.coins))
+            return Coin(cls.coin, MockBinance.singleton_gas)
+        return Coin(cls.coin, MockBinance.multi_gas * len(txn.coins))

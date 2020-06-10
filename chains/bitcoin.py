@@ -1,6 +1,7 @@
 import time
 import codecs
 import logging
+import threading
 
 from bitcoin import SelectParams
 from bitcoin.wallet import CBitcoinSecret, P2WPKHBitcoinAddress
@@ -30,6 +31,10 @@ class MockBitcoin(HttpClient):
         "9294f4d108465fd293f7fe299e6923ef71a77f2cb1eb6d4394839c64ec25d5c0",
     ]
     default_gas = 1000000
+    block_stats = {
+        "avg_fee_rate": 0,
+        "avg_tx_size": 0,
+    }
 
     def __init__(self, base_url):
         super().__init__(base_url)
@@ -39,6 +44,22 @@ class MockBitcoin(HttpClient):
         for key in self.private_keys:
             seckey = CBitcoinSecret.from_secret_bytes(codecs.decode(key, "hex_codec"))
             self.call("importprivkey", str(seckey))
+
+        threading.Thread(target=self.scan_blocks, daemon=True).start()
+
+    def scan_blocks(self):
+        height = self.get_block_height()
+        while True:
+            try:
+                result = self.get_block_stats(height)
+                if result["avgfeerate"] != 0 and result["avgtxsize"] != 0:
+                    self.block_stats["avg_fee_rate"] = result["avgfeerate"]
+                    self.block_stats["avg_tx_size"] = result["avgtxsize"]
+                height += 1
+            except Exception as e:
+                continue
+            finally:
+                time.sleep(1)
 
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
@@ -89,11 +110,7 @@ class MockBitcoin(HttpClient):
         """
         if not block_height:
             block_height = self.get_block_height()
-        result = self.call("getblockstats", int(block_height))
-        return {
-            "avg_tx_size": result["avgtxsize"],
-            "avg_fee_rate": result["avgfeerate"],
-        }
+        return self.call("getblockstats", int(block_height))
 
     def wait_for_blocks(self, count):
         """

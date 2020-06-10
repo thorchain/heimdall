@@ -308,6 +308,7 @@ class ThorchainState:
             rune_fee = self.get_rune_fee(tx.chain)
 
             for coin in tx.coins:
+                logging.info(f"BEFORE COIN {coin}  RUNE FEE {rune_fee}")
                 if coin.is_rune():
                     if coin.amount <= rune_fee:
                         rune_fee = coin.amount
@@ -343,6 +344,7 @@ class ThorchainState:
                     if rune_fee > pool.rune_balance:
                         pool_deduct = pool.rune_balance
 
+                    logging.info(f"AFTER COIN {coin} ")
                     if pool_deduct > 0 or asset_fee > 0:
                         # add fee event
                         event = Event(
@@ -786,23 +788,18 @@ class ThorchainState:
             ),
         ]
 
-        out_txs = self.handle_fee(tx, out_txs)
-
-        if len(out_txs):
-            # generate event for UNSTAKE transaction
-            event = Event(
-                "unstake",
-                [
-                    {"pool": pool.asset},
-                    {"stake_units": unstake_units},
-                    {"basis_points": withdraw_basis_points},
-                    {"asymmetry": "0.000000000000000000"},
-                    *tx.get_attributes(),
-                ],
-            )
-            self.events.append(event)
-
-        return out_txs
+        # generate event for UNSTAKE transaction
+        self.events.append(Event(
+            "unstake",
+            [
+                {"pool": pool.asset},
+                {"stake_units": unstake_units},
+                {"basis_points": withdraw_basis_points},
+                {"asymmetry": "0.000000000000000000"},
+                *tx.get_attributes(),
+            ],
+        ))
+        return self.handle_fee(tx, out_txs)
 
     def handle_swap(self, tx):
         """
@@ -847,8 +844,13 @@ class ThorchainState:
             return self.refund(txn, 105, reason)
 
         pools = []
-
         in_tx = tx
+
+        # check if we have enough to cover the fee
+        rune_fee = self.get_rune_fee(target.get_chain())
+        in_coin = in_tx.coins[0]
+        if in_coin.is_rune() and in_coin.amount <= rune_fee:
+            return self.refund(tx, 108, "fail swap, not enough fee")
 
         if not tx.coins[0].is_rune() and not asset.is_rune():
             # its a double swap
@@ -860,6 +862,11 @@ class ThorchainState:
             emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
                 tx.coins[0], RUNE
             )
+
+            # check if we have enough to cover the fee
+            if emit.is_rune() and emit.amount <= rune_fee:
+                return self.refund(tx, 108, "fail swap, not enough fee")
+
             if str(pool.asset) not in self.liquidity:
                 self.liquidity[str(pool.asset)] = 0
             self.liquidity[str(pool.asset)] += liquidity_fee_in_rune
@@ -878,13 +885,12 @@ class ThorchainState:
                 id=Transaction.empty_id,
             )
 
-            event = Event(
+            self.events.append(Event(
                 "outbound", [{"in_tx_id": in_tx.id}, *out_tx.get_attributes()]
-            )
-            self.events.append(event)
+            ))
 
             # generate event for SWAP transaction
-            event = Event(
+            self.events.append(Event(
                 "swap",
                 [
                     {"pool": pool.asset},
@@ -894,8 +900,7 @@ class ThorchainState:
                     {"liquidity_fee_in_rune": liquidity_fee_in_rune},
                     *in_tx.get_attributes(),
                 ],
-            )
-            self.events.append(event)
+            ))
 
             # and we remove the gas on in_tx for the next event so we don't
             # have it twice
@@ -906,15 +911,21 @@ class ThorchainState:
             source = RUNE
             target = asset
 
+
         # set asset to non-rune asset
         asset = source
         if asset.is_rune():
             asset = target
 
+        # check if we have enough to cover the fee
+        rune_fee = self.get_rune_fee(target.get_chain())
+        in_coin = in_tx.coins[0]
+        if in_coin.is_rune() and in_coin.amount <= rune_fee:
+            return self.refund(tx, 108, "fail swap, not enough fee")
+
         pool = self.get_pool(asset)
         if pool.is_zero():
-            # FIXME real world message
-            return self.refund(in_tx, 105, "refund reason message: pool is zero")
+            return self.refund(tx, 105, "refund reason message: pool is zero")
 
         emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
             in_tx.coins[0], asset
@@ -924,7 +935,7 @@ class ThorchainState:
         # check emit is non-zero and is not less than the target trade
         if emit.is_zero() or (emit.amount < target_trade):
             reason = f"emit asset {emit.amount} less than price limit {target_trade}"
-            return self.refund(in_tx, 108, reason)
+            return self.refund(tx, 108, reason)
 
         if str(pool.asset) not in self.liquidity:
             self.liquidity[str(pool.asset)] = 0
@@ -961,24 +972,19 @@ class ThorchainState:
             )
         ]
 
-        out_txs = self.handle_fee(tx, out_txs)
-
-        if len(out_txs):
-            # generate event for SWAP transaction
-            event = Event(
-                "swap",
-                [
-                    {"pool": pool.asset},
-                    {"price_target": target_trade},
-                    {"trade_slip": trade_slip},
-                    {"liquidity_fee": liquidity_fee},
-                    {"liquidity_fee_in_rune": liquidity_fee_in_rune},
-                    *tx.get_attributes(),
-                ],
-            )
-            self.events.append(event)
-
-        return out_txs
+        # generate event for SWAP transaction
+        self.events.append(Event(
+            "swap",
+            [
+                {"pool": pool.asset},
+                {"price_target": target_trade},
+                {"trade_slip": trade_slip},
+                {"liquidity_fee": liquidity_fee},
+                {"liquidity_fee_in_rune": liquidity_fee_in_rune},
+                *in_tx.get_attributes(),
+            ],
+        ))
+        return self.handle_fee(tx, out_txs)
 
     def swap(self, coin, asset):
         """
