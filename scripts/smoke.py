@@ -242,6 +242,11 @@ class Smoker:
 
         for event, sim_event in zip(events, sim_events):
             if sim_event != event:
+                logging.info(f"EVENTS {[e.type for e in events][-10:]}")
+                logging.info(f"EVENTS {[e for e in events][-10:]}")
+                logging.info(f"SIM_EVENTS {[e.type for e in sim_events][-10:]}")
+                logging.info(f"SIM_EVENTS {[e for e in sim_events][-10:]}")
+
                 logging.error(
                     f"Event Thorchain \n{event}\n   !="
                     f"  \nEvent Simulator \n{sim_event}"
@@ -283,12 +288,13 @@ class Smoker:
         Retrieve network fees on chain for each txn
         and update thorchain state
         """
-        fees = {"BNB": 37500}
-        stats = self.mock_bitcoin.get_block_stats()
-        fees["BTC"] = stats["avg_tx_size"] * stats["avg_fee_rate"]
-        fees["ETH"] = 1
+        btc = self.mock_bitcoin.block_stats
+        fees = {
+            "BNB": self.mock_binance.singleton_gas,
+            "ETH": self.mock_ethereum.default_gas,
+            "BTC": btc["avg_tx_size"] * btc["avg_fee_rate"],
+        }
         self.thorchain_state.set_network_fees(fees)
-        return fees
 
     def sim_trigger_tx(self, txn):
         # process transaction in thorchain
@@ -372,12 +378,7 @@ class Smoker:
                 time.sleep(5)
                 continue
 
-            # happy path exit
-            if events == sim_events and count_outbounds <= 0 and processed_transaction:
-                break
-
-            # not happy path exit, we got wrong events
-            if len(events) == len(sim_events) and events != sim_events:
+            if len(events) == len(sim_events) and count_outbounds <= 0 and processed_transaction:
                 break
 
             time.sleep(1)
