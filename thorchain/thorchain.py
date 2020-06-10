@@ -286,6 +286,8 @@ class ThorchainState:
         if chain not in self.network_fees:
             return self.rune_fee
         chain_fee = self.network_fees[chain]
+        if chain_fee == 0:
+            return self.rune_fee
         gas_asset = self.get_gas_asset(chain)
         pool = self.get_pool(gas_asset)
         if pool.asset_balance == 0 or pool.rune_balance == 0:
@@ -327,7 +329,7 @@ class ThorchainState:
                 else:
                     pool = self.get_pool(coin.asset)
                     asset_fee = pool.get_rune_in_asset(rune_fee)
-                    if coin.amount <= asset_fee or asset_fee == 0:
+                    if coin.amount <= asset_fee:
                         asset_fee = coin.amount
                         rune_fee = pool.get_asset_in_rune(asset_fee)
 
@@ -473,6 +475,13 @@ class ThorchainState:
                 pool = self.get_pool(gas_asset)
                 if pool.rune_balance == 0:
                     continue
+
+            # check if refund against empty pool rune balance
+            # we swallow the tx cause we wont be able to figure out fee
+            pool = self.get_pool(coin.asset)
+            if not coin.is_rune() and pool.rune_balance == 0:
+                continue
+
             out_txs.append(
                 Transaction(
                     tx.chain, tx.to_address, tx.from_address, [coin], f"REFUND:{tx.id}",
