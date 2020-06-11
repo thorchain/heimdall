@@ -242,11 +242,6 @@ class Smoker:
 
         for event, sim_event in zip(events, sim_events):
             if sim_event != event:
-                logging.info(f"EVENTS {[e.type for e in events][-10:]}")
-                logging.info(f"EVENTS {[e for e in events][-10:]}")
-                logging.info(f"SIM_EVENTS {[e.type for e in sim_events][-10:]}")
-                logging.info(f"SIM_EVENTS {[e for e in sim_events][-10:]}")
-
                 logging.error(
                     f"Event Thorchain \n{event}\n   !="
                     f"  \nEvent Simulator \n{sim_event}"
@@ -325,7 +320,7 @@ class Smoker:
         # keep track of how many outbound txs we created this inbound txn
         outbounds = []
         count_outbounds = 0
-        processed_outbound_events = False
+        count_outbound_events = 0
 
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
@@ -360,33 +355,58 @@ class Smoker:
                     elif (
                         evt.type == "outbound"
                         and processed_transaction
-                        and not processed_outbound_events
+                        and count_outbound_events > 0
                     ):
-                        self.thorchain_state.generate_outbound_events(txn, outbounds)
-                        processed_outbound_events = True
+                        # figure out which outbound event is which tx
+                        for out in outbounds:
+                            if out.coins_str() == evt.get("coin"):
+                                self.thorchain_state.generate_outbound_events(
+                                    txn, [out]
+                                )
+                                count_outbound_events -= 1
 
                     elif not processed_transaction:
                         outbounds, count_outbounds = self.sim_trigger_tx(txn)
+                        count_outbound_events = len(outbounds)
                         processed_transaction = True
                 continue
 
             # we have same count of events but its a cross chain stake
             elif txn.is_cross_chain_stake() and not processed_transaction:
                 outbounds, count_outbounds = self.sim_trigger_tx(txn)
+                count_outbound_events = len(outbounds)
                 processed_transaction = True
                 # still need to wait for thorchain to process it
                 time.sleep(5)
                 continue
 
-            if len(events) == len(sim_events) and count_outbounds <= 0 and processed_transaction:
+            if (
+                len(events) == len(sim_events)
+                and count_outbounds <= 0
+                and count_outbound_events <= 0
+                and processed_transaction
+            ):
                 break
 
             time.sleep(1)
 
-        if count_outbounds > 0:
+        if count_outbounds > 0 or count_outbound_events > 0:
             self.error(
                 f"failed to send out all outbound transactions ({count_outbounds})"
             )
+        return outbounds
+
+    def log_result(self, tx, outbounds):
+        """
+        Log result after a tx was processed
+        """
+        if len(outbounds) == 0:
+            return
+        result = "[+]"
+        if "REFUND" in outbounds[0].memo:
+            result = "[-]"
+        for outbound in outbounds:
+            logging.info(f"{result} {outbound.short()}")
 
     def run(self):
         for i, txn in enumerate(self.txns):
@@ -426,7 +446,7 @@ class Smoker:
             if txn.memo == "SEED":
                 continue
 
-            self.sim_catch_up(txn)
+            outbounds = self.sim_catch_up(txn)
 
             # check if we are verifying the results
             if self.no_verify:
@@ -444,6 +464,8 @@ class Smoker:
 
             self.check_vaults()
             self.run_health()
+
+            self.log_result(txn, outbounds)
 
 
 if __name__ == "__main__":
