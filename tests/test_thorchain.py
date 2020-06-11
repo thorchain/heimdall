@@ -465,7 +465,12 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with zero return
         expected_events += [
             Event(
-                "refund", [{"code": "108"}, {"reason": "fail swap, not enough fee"}, *tx.get_attributes()],
+                "refund",
+                [
+                    {"code": "108"},
+                    {"reason": "fail swap, not enough fee"},
+                    *tx.get_attributes(),
+                ],
             ),
         ]
         self.assertEqual(events, expected_events)
@@ -479,7 +484,12 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with zero return
         expected_events += [
             Event(
-                "refund", [{"code": "108"}, {"reason": "fail swap, not enough fee"}, *tx.get_attributes()],
+                "refund",
+                [
+                    {"code": "108"},
+                    {"reason": "fail swap, not enough fee"},
+                    *tx.get_attributes(),
+                ],
             ),
         ]
         self.assertEqual(events, expected_events)
@@ -1838,11 +1848,7 @@ class TestThorchainState(unittest.TestCase):
         expected_events += [
             Event(
                 "refund",
-                [
-                    {"code": "105"},
-                    {"reason": "Invalid symbol"},
-                    *tx.get_attributes(),
-                ],
+                [{"code": "105"}, {"reason": "Invalid symbol"}, *tx.get_attributes()],
             ),
         ]
         self.assertEqual(thorchain.events, expected_events)
@@ -1857,11 +1863,7 @@ class TestThorchainState(unittest.TestCase):
         expected_events += [
             Event(
                 "refund",
-                [
-                    {"code": "105"},
-                    {"reason": "Invalid symbol"},
-                    *tx.get_attributes(),
-                ],
+                [{"code": "105"}, {"reason": "Invalid symbol"}, *tx.get_attributes()],
             ),
         ]
         self.assertEqual(thorchain.events, expected_events)
@@ -1874,11 +1876,7 @@ class TestThorchainState(unittest.TestCase):
         expected_events += [
             Event(
                 "refund",
-                [
-                    {"code": "105"},
-                    {"reason": "Invalid symbol"},
-                    *tx.get_attributes(),
-                ],
+                [{"code": "105"}, {"reason": "Invalid symbol"}, *tx.get_attributes()],
             ),
         ]
         self.assertEqual(thorchain.events, expected_events)
