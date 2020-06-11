@@ -368,19 +368,19 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with native RUNE
         expected_events = [
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": "100000000 THOR.RUNE"},
-                    {"pool_deduct": "0"},
-                ],
-            ),
-            Event(
                 "refund",
                 [
                     {"code": "105"},
                     {"reason": "REFUND REASON MESSAGE: POOL IS ZERO"},
                     *tx.get_attributes(),
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 THOR.RUNE"},
+                    {"pool_deduct": "0"},
                 ],
             ),
         ]
@@ -465,8 +465,7 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with zero return
         expected_events += [
             Event(
-                "fee",
-                [{"tx_id": "TODO"}, {"coins": f"1 {RUNE}"}, {"pool_deduct": "0"}],
+                "refund", [{"code": "108"}, {"reason": "fail swap, not enough fee"}, *tx.get_attributes()],
             ),
         ]
         self.assertEqual(events, expected_events)
@@ -480,8 +479,7 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with zero return
         expected_events += [
             Event(
-                "fee",
-                [{"tx_id": "TODO"}, {"coins": f"1 {RUNE}"}, {"pool_deduct": "0"}],
+                "refund", [{"code": "108"}, {"reason": "fail swap, not enough fee"}, *tx.get_attributes()],
             ),
         ]
         self.assertEqual(events, expected_events)
@@ -499,15 +497,15 @@ class TestThorchainState(unittest.TestCase):
         reason = "emit asset 305749416 less than price limit 999999999999999999999"
         expected_events += [
             Event(
+                "refund", [{"code": "108"}, {"reason": reason}, *tx.get_attributes()],
+            ),
+            Event(
                 "fee",
                 [
                     {"tx_id": "TODO"},
                     {"coins": f"100000000 {RUNE}"},
                     {"pool_deduct": "0"},
                 ],
-            ),
-            Event(
-                "refund", [{"code": "108"}, {"reason": reason}, *tx.get_attributes()],
             ),
         ]
         self.assertEqual(events, expected_events)
@@ -554,19 +552,19 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with different network
         expected_events += [
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": f"100000000 {RUNE}"},
-                    {"pool_deduct": "0"},
-                ],
-            ),
-            Event(
                 "refund",
                 [
                     {"code": "105"},
                     {"reason": "address format not supported: BNBNOMNOM"},
                     *tx.get_attributes(),
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": f"100000000 {RUNE}"},
+                    {"pool_deduct": "0"},
                 ],
             ),
         ]
@@ -620,7 +618,7 @@ class TestThorchainState(unittest.TestCase):
                     {"liquidity_fee": "74360499"},
                     {"liquidity_fee_in_rune": "74360499"},
                     {"id": "TODO"},
-                    {"chain": RUNE.get_chain()},
+                    {"chain": "BNB"},
                     {"from": "STAKER-1"},
                     {"to": "VAULT"},
                     {"coin": f"694444444 {RUNE}"},
@@ -1493,19 +1491,19 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for stake with no memo
         expected_events += [
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": "100000000 THOR.RUNE"},
-                    {"pool_deduct": "0"},
-                ],
-            ),
-            Event(
                 "refund",
                 [
                     {"code": "105"},
                     {"reason": "memo can't be empty"},
                     *tx.get_attributes(),
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 THOR.RUNE"},
+                    {"pool_deduct": "0"},
                 ],
             ),
         ]
@@ -1839,9 +1837,13 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with bad memo
         expected_events += [
             Event(
-                "fee",
-                [{"tx_id": "TODO"}, {"coins": "1 THOR.RUNE"}, {"pool_deduct": "0"}],
-            )
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "Invalid symbol"},
+                    *tx.get_attributes(),
+                ],
+            ),
         ]
         self.assertEqual(thorchain.events, expected_events)
 
@@ -1854,9 +1856,13 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with bad withdraw basis points
         expected_events += [
             Event(
-                "fee",
-                [{"tx_id": "TODO"}, {"coins": "1 THOR.RUNE"}, {"pool_deduct": "0"}],
-            )
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "Invalid symbol"},
+                    *tx.get_attributes(),
+                ],
+            ),
         ]
         self.assertEqual(thorchain.events, expected_events)
 
@@ -1867,9 +1873,13 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with bad memo
         expected_events += [
             Event(
-                "fee",
-                [{"tx_id": "TODO"}, {"coins": "1 THOR.RUNE"}, {"pool_deduct": "0"}],
-            )
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "Invalid symbol"},
+                    *tx.get_attributes(),
+                ],
+            ),
         ]
         self.assertEqual(thorchain.events, expected_events)
 
@@ -1928,9 +1938,13 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with 0 units left
         expected_events += [
             Event(
-                "fee",
-                [{"tx_id": "TODO"}, {"coins": "1 THOR.RUNE"}, {"pool_deduct": "0"}],
-            )
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "refund reason message"},
+                    *tx.get_attributes(),
+                ],
+            ),
         ]
         self.assertEqual(thorchain.events, expected_events)
 
