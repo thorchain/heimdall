@@ -48,15 +48,13 @@ class MockBitcoin(HttpClient):
         threading.Thread(target=self.scan_blocks, daemon=True).start()
 
     def scan_blocks(self):
-        height = self.get_block_height()
         while True:
             try:
-                result = self.get_block_stats(height)
+                result = self.get_block_stats()
                 if result["avgfeerate"] != 0 and result["avgtxsize"] != 0:
                     self.block_stats["avg_fee_rate"] = result["avgfeerate"]
                     self.block_stats["avg_tx_size"] = result["avgtxsize"]
-                height += 1
-            except Exception as e:
+            except Exception:
                 continue
             finally:
                 time.sleep(1)
@@ -81,8 +79,7 @@ class MockBitcoin(HttpClient):
         }
         result = self.post("/", payload)
         if result.get("error"):
-            logging.error(result["error"])
-            raise (result["error"])
+            raise result["error"]
         return result["result"]
 
     def set_vault_address(self, addr):

@@ -126,14 +126,6 @@ class TestThorchainState(unittest.TestCase):
         # check swap event generated for successful swap
         expected_events += [
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": "112500 BNB.BNB"},
-                    {"pool_deduct": "156774"},
-                ],
-            ),
-            Event(
                 "swap",
                 [
                     {"pool": "BNB.BNB"},
@@ -142,6 +134,14 @@ class TestThorchainState(unittest.TestCase):
                     {"liquidity_fee": "138888888"},
                     {"liquidity_fee_in_rune": "138888888"},
                     *tx.get_attributes(),
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "156774"},
                 ],
             ),
         ]
@@ -234,14 +234,6 @@ class TestThorchainState(unittest.TestCase):
         # check swap event generated for successful swap
         expected_events += [
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": "112500 BNB.BNB"},
-                    {"pool_deduct": "182802"},
-                ],
-            ),
-            Event(
                 "swap",
                 [
                     {"pool": "BNB.BNB"},
@@ -250,6 +242,14 @@ class TestThorchainState(unittest.TestCase):
                     {"liquidity_fee": "25480449"},
                     {"liquidity_fee_in_rune": "35504528"},
                     *tx.get_attributes(),
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "182802"},
                 ],
             ),
         ]
@@ -319,14 +319,6 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": "55548 BNB.LOK-3C0"},
-                    {"pool_deduct": "80729"},
-                ],
-            ),
-            Event(
                 "swap",
                 [
                     {"pool": "BNB.LOK-3C0"},
@@ -334,7 +326,20 @@ class TestThorchainState(unittest.TestCase):
                     {"trade_slip": "5165"},
                     {"liquidity_fee": "105998077"},
                     {"liquidity_fee_in_rune": "105998077"},
-                    *tx.get_attributes(),
+                    {"id": "TODO"},
+                    {"chain": RUNE.get_chain()},
+                    {"from": "STAKER-1"},
+                    {"to": "VAULT"},
+                    {"coin": f"694444444 {RUNE}"},
+                    {"memo": "SWAP:BNB.LOK-3C0"},
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "55548 BNB.LOK-3C0"},
+                    {"pool_deduct": "80729"},
                 ],
             ),
         ]
@@ -396,14 +401,6 @@ class TestThorchainState(unittest.TestCase):
         # check swap event generated for successful swap
         expected_events += [
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": "112500 BNB.BNB"},
-                    {"pool_deduct": "156774"},
-                ],
-            ),
-            Event(
                 "swap",
                 [
                     {"pool": "BNB.BNB"},
@@ -412,6 +409,14 @@ class TestThorchainState(unittest.TestCase):
                     {"liquidity_fee": "138888888"},
                     {"liquidity_fee_in_rune": "138888888"},
                     *tx.get_attributes(),
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "156774"},
                 ],
             ),
         ]
@@ -518,14 +523,6 @@ class TestThorchainState(unittest.TestCase):
         # check swap event generated for successful swap
         expected_events += [
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": "112500 BNB.BNB"},
-                    {"pool_deduct": "182802"},
-                ],
-            ),
-            Event(
                 "swap",
                 [
                     {"pool": "BNB.BNB"},
@@ -534,6 +531,14 @@ class TestThorchainState(unittest.TestCase):
                     {"liquidity_fee": "25480449"},
                     {"liquidity_fee_in_rune": "35504528"},
                     *tx.get_attributes(),
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "182802"},
                 ],
             ),
         ]
@@ -607,14 +612,6 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": "63294 BNB.LOK-3C0"},
-                    {"pool_deduct": "80729"},
-                ],
-            ),
-            Event(
                 "swap",
                 [
                     {"pool": "BNB.LOK-3C0"},
@@ -622,7 +619,20 @@ class TestThorchainState(unittest.TestCase):
                     {"trade_slip": "2971"},
                     {"liquidity_fee": "74360499"},
                     {"liquidity_fee_in_rune": "74360499"},
-                    *tx.get_attributes(),
+                    {"id": "TODO"},
+                    {"chain": RUNE.get_chain()},
+                    {"from": "STAKER-1"},
+                    {"to": "VAULT"},
+                    {"coin": f"694444444 {RUNE}"},
+                    {"memo": "SWAP:BNB.LOK-3C0"},
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "63294 BNB.LOK-3C0"},
+                    {"pool_deduct": "80729"},
                 ],
             ),
         ]
@@ -1574,8 +1584,8 @@ class TestThorchainState(unittest.TestCase):
         )
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 2)
-        self.assertEqual(outbounds[0].coins[0], Coin(RUNE, 548798545))
-        self.assertEqual(outbounds[1].coins[0], Coin("BNB.BNB", 51387500))
+        self.assertEqual(outbounds[0].coins[0], Coin("BNB.BNB", 51387500))
+        self.assertEqual(outbounds[1].coins[0], Coin(RUNE, 548798598))
 
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 54448798543)
@@ -1586,11 +1596,13 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful unstake
         expected_events += [
             Event(
-                "fee",
+                "unstake",
                 [
-                    {"tx_id": "TODO"},
-                    {"coins": "1201456 BNB.RUNE-A1F"},
-                    {"pool_deduct": "0"},
+                    {"pool": "BNB.BNB"},
+                    {"stake_units": "141084400"},
+                    {"basis_points": "100"},
+                    {"asymmetry": "0.000000000000000000"},
+                    *tx.get_attributes(),
                 ],
             ),
             Event(
@@ -1602,13 +1614,11 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "unstake",
+                "fee",
                 [
-                    {"pool": "BNB.BNB"},
-                    {"stake_units": "141084400"},
-                    {"basis_points": "100"},
-                    {"asymmetry": "0.000000000000000000"},
-                    *tx.get_attributes(),
+                    {"tx_id": "TODO"},
+                    {"coins": "1201403 BNB.RUNE-A1F"},
+                    {"pool_deduct": "0"},
                 ],
             ),
         ]
@@ -1677,14 +1687,6 @@ class TestThorchainState(unittest.TestCase):
         expected_events += [
             Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Bootstrap"}]),
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": "100000000 BNB.RUNE-A1F"},
-                    {"pool_deduct": "0"},
-                ],
-            ),
-            Event(
                 "unstake",
                 [
                     {"pool": "BNB.BNB"},
@@ -1692,6 +1694,14 @@ class TestThorchainState(unittest.TestCase):
                     {"basis_points": "10000"},
                     {"asymmetry": "0.000000000000000000"},
                     *tx.get_attributes(),
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 BNB.RUNE-A1F"},
+                    {"pool_deduct": "0"},
                 ],
             ),
         ]
@@ -1791,11 +1801,13 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful unstake
         expected_events += [
             Event(
-                "fee",
+                "unstake",
                 [
-                    {"tx_id": "TODO"},
-                    {"coins": "100000000 THOR.RUNE"},
-                    {"pool_deduct": "0"},
+                    {"pool": "BNB.BNB"},
+                    {"stake_units": "141084400"},
+                    {"basis_points": "100"},
+                    {"asymmetry": "0.000000000000000000"},
+                    *tx.get_attributes(),
                 ],
             ),
             Event(
@@ -1807,13 +1819,11 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "unstake",
+                "fee",
                 [
-                    {"pool": "BNB.BNB"},
-                    {"stake_units": "141084400"},
-                    {"basis_points": "100"},
-                    {"asymmetry": "0.000000000000000000"},
-                    *tx.get_attributes(),
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 THOR.RUNE"},
+                    {"pool_deduct": "0"},
                 ],
             ),
         ]
@@ -1882,14 +1892,6 @@ class TestThorchainState(unittest.TestCase):
         expected_events += [
             Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Bootstrap"}]),
             Event(
-                "fee",
-                [
-                    {"tx_id": "TODO"},
-                    {"coins": "100000000 THOR.RUNE"},
-                    {"pool_deduct": "0"},
-                ],
-            ),
-            Event(
                 "unstake",
                 [
                     {"pool": "BNB.BNB"},
@@ -1897,6 +1899,14 @@ class TestThorchainState(unittest.TestCase):
                     {"basis_points": "10000"},
                     {"asymmetry": "0.000000000000000000"},
                     *tx.get_attributes(),
+                ],
+            ),
+            Event(
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 THOR.RUNE"},
+                    {"pool_deduct": "0"},
                 ],
             ),
         ]

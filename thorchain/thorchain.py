@@ -282,6 +282,19 @@ class ThorchainState:
             return Ethereum.coin
         return None
 
+    def get_gas(self, chain):
+        if chain == "THOR":
+            return None
+        rune_fee = self.get_rune_fee(chain)
+        gas_asset = self.get_gas_asset(chain)
+        pool = self.get_pool(gas_asset)
+        amount = pool.get_rune_in_asset(rune_fee) / 2
+        if chain == "BNB":
+            amount = pool.get_rune_in_asset(rune_fee) / 3
+        if chain == "ETH":
+            amount = 21000
+        return Coin(gas_asset, amount)
+
     def get_rune_fee(self, chain):
         if chain not in self.network_fees:
             return self.rune_fee
@@ -306,9 +319,10 @@ class ThorchainState:
         for tx in txs:
             # fee amount in rune value
             rune_fee = self.get_rune_fee(tx.chain)
+            if not tx.gas:
+                tx.gas = [self.get_gas(tx.chain)]
 
             for coin in tx.coins:
-                logging.info(f"BEFORE COIN {coin}  RUNE FEE {rune_fee}")
                 if coin.is_rune():
                     if coin.amount <= rune_fee:
                         rune_fee = coin.amount
@@ -326,6 +340,7 @@ class ThorchainState:
                             ],
                         )
                         self.events.append(event)
+                        tx.fee = Coin(coin.asset, rune_fee)
 
                 else:
                     pool = self.get_pool(coin.asset)
@@ -344,7 +359,6 @@ class ThorchainState:
                     if rune_fee > pool.rune_balance:
                         pool_deduct = pool.rune_balance
 
-                    logging.info(f"AFTER COIN {coin} ")
                     if pool_deduct > 0 or asset_fee > 0:
                         # add fee event
                         event = Event(
@@ -357,6 +371,7 @@ class ThorchainState:
                         )
                         self.events.append(event)
                     if coin.amount > 0:
+                        tx.fee = Coin(coin.asset, asset_fee)
                         outbounds.append(tx)
 
                 # add to the reserve
@@ -733,12 +748,7 @@ class ThorchainState:
 
         # calculate gas prior to update pool in case we empty the pool
         # and need to subtract
-        gas = None
-        if asset.get_chain() == "BTC":
-            gas = [Bitcoin._calculate_gas(pool, tx)]
-
-        if asset.get_chain() == "ETH":
-            gas = [Ethereum._calculate_gas(pool, tx)]
+        gas = self.get_gas(asset.get_chain())
 
         unstake_units, rune_amt, asset_amt = pool.unstake(
             tx.from_address, withdraw_basis_points
@@ -747,14 +757,14 @@ class ThorchainState:
         # if this is our last staker of bnb, subtract a little BNB for gas.
         if pool.total_units == 0:
             if pool.asset.is_bnb():
-                fee_amt = 37500
+                fee_amt = gas.amount
                 if RUNE.get_chain() == "BNB":
                     fee_amt *= 2
                 asset_amt -= fee_amt
                 pool.asset_balance += fee_amt
             elif pool.asset.is_btc() or pool.asset.is_eth():
-                asset_amt -= gas[0].amount
-                pool.asset_balance += gas[0].amount
+                asset_amt -= gas.amount
+                pool.asset_balance += gas.amount
 
         self.set_pool(pool)
 
@@ -772,33 +782,35 @@ class ThorchainState:
 
         out_txs = [
             Transaction(
+                asset.get_chain(),
+                from_address,
+                to_address,
+                [Coin(asset, asset_amt)],
+                f"OUTBOUND:{tx.id.upper()}",
+                gas=[gas],
+            ),
+            Transaction(
                 RUNE.get_chain(),
                 tx.to_address,
                 tx.from_address,
                 [Coin(RUNE, rune_amt)],
                 f"OUTBOUND:{tx.id.upper()}",
             ),
-            Transaction(
-                asset.get_chain(),
-                from_address,
-                to_address,
-                [Coin(asset, asset_amt)],
-                f"OUTBOUND:{tx.id.upper()}",
-                gas=gas,
-            ),
         ]
 
         # generate event for UNSTAKE transaction
-        self.events.append(Event(
-            "unstake",
-            [
-                {"pool": pool.asset},
-                {"stake_units": unstake_units},
-                {"basis_points": withdraw_basis_points},
-                {"asymmetry": "0.000000000000000000"},
-                *tx.get_attributes(),
-            ],
-        ))
+        self.events.append(
+            Event(
+                "unstake",
+                [
+                    {"pool": pool.asset},
+                    {"stake_units": unstake_units},
+                    {"basis_points": withdraw_basis_points},
+                    {"asymmetry": "0.000000000000000000"},
+                    *tx.get_attributes(),
+                ],
+            )
+        )
         return self.handle_fee(tx, out_txs)
 
     def handle_swap(self, tx):
@@ -885,32 +897,34 @@ class ThorchainState:
                 id=Transaction.empty_id,
             )
 
-            self.events.append(Event(
-                "outbound", [{"in_tx_id": in_tx.id}, *out_tx.get_attributes()]
-            ))
+            self.events.append(
+                Event("outbound", [{"in_tx_id": in_tx.id}, *out_tx.get_attributes()])
+            )
 
             # generate event for SWAP transaction
-            self.events.append(Event(
-                "swap",
-                [
-                    {"pool": pool.asset},
-                    {"price_target": 0},
-                    {"trade_slip": trade_slip},
-                    {"liquidity_fee": liquidity_fee},
-                    {"liquidity_fee_in_rune": liquidity_fee_in_rune},
-                    *in_tx.get_attributes(),
-                ],
-            ))
+            self.events.append(
+                Event(
+                    "swap",
+                    [
+                        {"pool": pool.asset},
+                        {"price_target": 0},
+                        {"trade_slip": trade_slip},
+                        {"liquidity_fee": liquidity_fee},
+                        {"liquidity_fee_in_rune": liquidity_fee_in_rune},
+                        *in_tx.get_attributes(),
+                    ],
+                )
+            )
 
             # and we remove the gas on in_tx for the next event so we don't
             # have it twice
             in_tx.gas = None
+            in_tx.chain = RUNE.get_chain()
 
             pools.append(pool)
             in_tx.coins[0] = emit
             source = RUNE
             target = asset
-
 
         # set asset to non-rune asset
         asset = source
@@ -951,16 +965,6 @@ class ThorchainState:
             from_alias = get_alias(in_tx.chain, from_address)
             from_address = get_alias_address(target.get_chain(), from_alias)
 
-        gas = None
-
-        # calculate gas if BTC
-        if target.get_chain() == "BTC":
-            gas = [Bitcoin._calculate_gas(pool, tx)]
-
-        # calculate gas if ETH
-        if target.get_chain() == "ETH":
-            gas = [Ethereum._calculate_gas(pool, tx)]
-
         out_txs = [
             Transaction(
                 target.get_chain(),
@@ -968,22 +972,23 @@ class ThorchainState:
                 address,
                 [emit],
                 f"OUTBOUND:{tx.id.upper()}",
-                gas=gas,
             )
         ]
 
         # generate event for SWAP transaction
-        self.events.append(Event(
-            "swap",
-            [
-                {"pool": pool.asset},
-                {"price_target": target_trade},
-                {"trade_slip": trade_slip},
-                {"liquidity_fee": liquidity_fee},
-                {"liquidity_fee_in_rune": liquidity_fee_in_rune},
-                *in_tx.get_attributes(),
-            ],
-        ))
+        self.events.append(
+            Event(
+                "swap",
+                [
+                    {"pool": pool.asset},
+                    {"price_target": target_trade},
+                    {"trade_slip": trade_slip},
+                    {"liquidity_fee": liquidity_fee},
+                    {"liquidity_fee_in_rune": liquidity_fee_in_rune},
+                    *in_tx.get_attributes(),
+                ],
+            )
+        )
         return self.handle_fee(tx, out_txs)
 
     def swap(self, coin, asset):

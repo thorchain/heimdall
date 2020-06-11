@@ -218,28 +218,37 @@ class Transaction(Jsonable):
         if gas and not isinstance(gas, list):
             gas = [gas]
         self.gas = gas
+        self.fee = None
 
     def __repr__(self):
         coins = self.coins if self.coins else "No Coins"
         gas = f" | Gas {self.gas}" if self.gas else ""
+        fee = f" | Fee {self.fee}" if self.fee else ""
         id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
         return (
-            f"<Tx {self.from_address:>8} ==> {self.to_address:8} | "
-            f"{self.memo} | {coins}{gas}{id}>"
+            f"<Tx {self.from_address:>8} => {self.to_address:8} | "
+            f"{self.memo} | {coins}{gas}{fee}{id}>"
         )
 
     def __str__(self):
         coins = ", ".join([str(c) for c in self.coins]) if self.coins else "No Coins"
         gas = " | Gas " + ", ".join([str(g) for g in self.gas]) if self.gas else ""
+        fee = f" | Fee {str(self.fee)}" if self.fee else ""
         id = (
             f" | ID {self.id.upper()}"
             if self.id != "TODO" and self.id != self.empty_id
             else ""
         )
         return (
-            f"Tx {self.from_address:>8} ==> {self.to_address:8} | "
-            f"{self.memo} | {coins}{gas}{id}"
+            f"Tx {self.from_address:>8} => {self.to_address:8} | "
+            f"{self.memo} | {coins}{gas}{fee}{id}"
         )
+
+    def short(self):
+        coins = ", ".join([str(c) for c in self.coins]) if self.coins else "No Coins"
+        gas = ", ".join([str(g) for g in self.gas]) if self.gas else ""
+        fee = str(self.fee) if self.fee else ""
+        return f"{coins} | Fee {fee} | Gas {gas}"
 
     def __eq__(self, other):
         """
@@ -295,15 +304,17 @@ class Transaction(Jsonable):
         return hashlib.new("sha256", tmp.encode()).digest().hex().upper()
 
     def get_attributes(self):
-        coin = ", ".join([f"{c.amount} {c.asset}" for c in self.coins])
         return [
             {"id": self.id},
             {"chain": self.chain},
             {"from": self.from_address},
             {"to": self.to_address},
-            {"coin": coin},
+            {"coin": self.coins_str()},
             {"memo": self.memo},
         ]
+
+    def coins_str(self):
+        return ", ".join([f"{c.amount} {c.asset}" for c in self.coins])
 
     @classmethod
     def from_dict(cls, value):
