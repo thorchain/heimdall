@@ -284,7 +284,7 @@ class ThorchainState:
 
     def get_gas(self, chain):
         if chain == "THOR":
-            return None
+            return Coin(RUNE, self.rune_fee)
         rune_fee = self.get_rune_fee(chain)
         gas_asset = self.get_gas_asset(chain)
         pool = self.get_pool(gas_asset)
@@ -506,15 +506,21 @@ class ThorchainState:
             )
 
         in_tx = deepcopy(tx)  # copy of transaction
-        out_txs = self.handle_fee(tx, out_txs)
 
-        if len(out_txs):
-            # generate event REFUND for the transaction
-            event = Event(
-                "refund", [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
-            )
+        # generate event REFUND for the transaction
+        event = Event(
+            "refund", [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
+        )
+
+        if tx.chain == "THOR":
             self.events.append(event)
-
+            out_txs = self.handle_fee(tx, out_txs)
+            if len(out_txs) == 0:
+                del self.events[-1]
+        else:
+            out_txs = self.handle_fee(tx, out_txs)
+            if len(out_txs):
+                self.events.append(event)
         return out_txs
 
     def generate_outbound_events(self, in_tx, txs):
@@ -919,7 +925,6 @@ class ThorchainState:
             # and we remove the gas on in_tx for the next event so we don't
             # have it twice
             in_tx.gas = None
-            in_tx.chain = RUNE.get_chain()
 
             pools.append(pool)
             in_tx.coins[0] = emit
