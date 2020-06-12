@@ -833,7 +833,7 @@ class ThorchainState:
 
         address = tx.from_address
         # check address to send to from memo
-        if len(parts) > 2:
+        if len(parts) > 2 and parts[2] != "":
             address = parts[2]
             # checking if address is for mainnet, not testnet
             if address.lower().startswith("bnb"):
