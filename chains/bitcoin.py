@@ -32,8 +32,8 @@ class MockBitcoin(HttpClient):
     ]
     default_gas = 1000000
     block_stats = {
-        "avg_fee_rate": 0,
-        "avg_tx_size": 0,
+        "tx_rate": 0,
+        "tx_size": 0,
     }
 
     def __init__(self, base_url):
@@ -51,9 +51,9 @@ class MockBitcoin(HttpClient):
         while True:
             try:
                 result = self.get_block_stats()
-                if result["avgfeerate"] != 0 and result["avgtxsize"] != 0:
-                    self.block_stats["avg_fee_rate"] = result["avgfeerate"]
-                    self.block_stats["avg_tx_size"] = result["avgtxsize"]
+                if result["medianfee"] != 0 and result["mediantxsize"] != 0:
+                    self.block_stats["tx_rate"] = int(result["medianfee"] / result["mediantxsize"])
+                    self.block_stats["tx_size"] = result["mediantxsize"]
             except Exception:
                 continue
             finally:

@@ -287,7 +287,7 @@ class Smoker:
         fees = {
             "BNB": self.mock_binance.singleton_gas,
             "ETH": self.mock_ethereum.default_gas,
-            "BTC": btc["avg_tx_size"] * btc["avg_fee_rate"],
+            "BTC": btc["tx_size"] * btc["tx_rate"],
         }
         self.thorchain_state.set_network_fees(fees)
 
@@ -325,6 +325,11 @@ class Smoker:
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
+
+            logging.info(f"events{[e.type for e in events][-6:]}")
+            logging.info(f"simeve{[e.type for e in sim_events][-6:]}")
+            logging.info(f"events{[e for e in events][-6:]}")
+            logging.info(f"simeve{[e for e in sim_events][-6:]}")
 
             # we have more real events than sim, fill in the gaps
             if len(events) > len(sim_events):
