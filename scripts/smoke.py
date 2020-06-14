@@ -327,7 +327,7 @@ class Smoker:
             new_events = [e for e in events if e not in sim_events]
 
             # we have more real events than sim, fill in the gaps
-            if len(new_events):
+            if len(new_events) > 0:
                 for evt in new_events:
                     if evt.type == "gas" and count_outbounds > 0:
                         todo = []
