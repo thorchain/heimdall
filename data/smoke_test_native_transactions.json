@@ -20,7 +20,7 @@
         "coins": [
             {
                 "asset": "BNB.BNB",
-                "amount": 300000000
+                "amount": 600000000
             },
             {
                 "asset": "BNB.LOK-3C0",
@@ -406,13 +406,13 @@
         "gas": null
     },
     {
-        "chain": "THOR",
+        "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
         "memo": "SWAP:BTC.BTC:USER-1",
         "coins": [
             {
-                "asset": "THOR.RUNE",
+                "asset": "BNB.BNB",
                 "amount": 500000000
             }
         ],

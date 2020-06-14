@@ -232,32 +232,26 @@ class ThorchainState:
         gas_coin_count = {}
 
         for tx in txs:
-            if tx.gas:
-                for gas in tx.gas:
-                    if gas.asset not in gas_coins:
-                        gas_coins[gas.asset] = Coin(gas.asset)
-                        gas_coin_count[gas.asset] = 0
-                    gas_coins[gas.asset].amount += gas.amount
-                    gas_coin_count[gas.asset] += 1
+            if not tx.gas:
+                continue
+            for gas in tx.gas:
+                if gas.asset not in gas_coins:
+                    gas_coins[gas.asset] = Coin(gas.asset)
+                    gas_coin_count[gas.asset] = 0
+                gas_coins[gas.asset].amount += gas.amount
+                gas_coin_count[gas.asset] += 1
 
         if not len(gas_coins.items()):
             return
 
         for asset, gas in gas_coins.items():
             pool = self.get_pool(gas.asset)
-            # TODO: this is a hacky way to avoid
-            # the problem of gas overdrawing a
-            # balance. clean this up later
-            if pool.asset_balance <= gas.amount:
-                pool.asset_balance = 0
-                rune_amt = 0
-            else:
-                # figure out how much rune is an equal amount to gas.amount
-                rune_amt = pool.get_asset_in_rune(gas.amount)
-                self.reserve -= rune_amt  # take rune from the reserve
+            # figure out how much rune is an equal amount to gas.amount
+            rune_amt = pool.get_asset_in_rune(gas.amount)
+            self.reserve -= rune_amt  # take rune from the reserve
 
-                pool.add(rune_amt, 0)  # replenish gas costs with rune
-                pool.sub(0, gas.amount)  # subtract gas from pool
+            pool.add(rune_amt, 0)  # replenish gas costs with rune
+            pool.sub(0, gas.amount)  # subtract gas from pool
 
             self.set_pool(pool)
 
@@ -288,9 +282,9 @@ class ThorchainState:
         rune_fee = self.get_rune_fee(chain)
         gas_asset = self.get_gas_asset(chain)
         pool = self.get_pool(gas_asset)
-        amount = pool.get_rune_in_asset(rune_fee) / 2
+        amount = pool.get_rune_in_asset(int(round(rune_fee / 2)))
         if chain == "BNB":
-            amount = pool.get_rune_in_asset(rune_fee) / 3
+            amount = pool.get_rune_in_asset(int(round(rune_fee / 3)))
         if chain == "ETH":
             amount = 21000
         return Coin(gas_asset, amount)
@@ -755,6 +749,7 @@ class ThorchainState:
         # calculate gas prior to update pool in case we empty the pool
         # and need to subtract
         gas = self.get_gas(asset.get_chain())
+        tx_rune_gas = self.get_gas(RUNE.get_chain())
 
         unstake_units, rune_amt, asset_amt = pool.unstake(
             tx.from_address, withdraw_basis_points
@@ -763,11 +758,11 @@ class ThorchainState:
         # if this is our last staker of bnb, subtract a little BNB for gas.
         if pool.total_units == 0:
             if pool.asset.is_bnb():
-                fee_amt = gas.amount
+                gas_amt = gas.amount
                 if RUNE.get_chain() == "BNB":
-                    fee_amt *= 2
-                asset_amt -= fee_amt
-                pool.asset_balance += fee_amt
+                    gas_amt *= 2
+                asset_amt -= gas_amt
+                pool.asset_balance += gas_amt
             elif pool.asset.is_btc() or pool.asset.is_eth():
                 asset_amt -= gas.amount
                 pool.asset_balance += gas.amount
@@ -801,6 +796,7 @@ class ThorchainState:
                 tx.from_address,
                 [Coin(RUNE, rune_amt)],
                 f"OUTBOUND:{tx.id.upper()}",
+                gas=[tx_rune_gas],
             ),
         ]
 
