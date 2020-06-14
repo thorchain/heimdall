@@ -28,7 +28,7 @@ class MockEthereum:
     gas_per_byte = 68
     gas_price = 1
     passphrase = "the-passphrase"
-    zero_address = "ETH-0x0000000000000000000000000000000000000000"
+    zero_address = "ETH-0X0000000000000000000000000000000000000000"
     seed = "SEED"
     stake = "STAKE"
     eth = "ETH."
@@ -47,7 +47,6 @@ class MockEthereum:
         self.web3 = Web3(HTTPProvider(base_url))
         self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
         for key in self.private_keys:
-            logging.info(f"{self.web3.geth.personal.list_accounts()}")
             payload = json.dumps(
                 {"method": "personal_importRawKey", "params": [key, self.passphrase]}
             )
@@ -57,9 +56,10 @@ class MockEthereum:
             except requests.exceptions.RequestException as e:
                 logging.error(f"{e}")
         self.accounts = self.web3.geth.personal.list_accounts()
-        logging.info(f"{self.accounts}")
         self.web3.eth.defaultAccount = self.accounts[1]
-        self.web3.geth.personal.unlock_account(self.web3.eth.defaultAccount, self.passphrase)
+        self.web3.geth.personal.unlock_account(
+            self.web3.eth.defaultAccount, self.passphrase
+        )
         self.wait_for_node()
         tx = self.web3.eth.getTransactionByBlock(2, 0)
         receipt = self.web3.eth.getTransactionReceipt(tx.hash)
@@ -67,7 +67,8 @@ class MockEthereum:
         self.vault = self.web3.eth.contract(address=receipt.contractAddress, abi=abi)
         token = self.deploy_token()
         symbol = token.functions.symbol().call()
-        self.tokens[symbol+"-"+token.address] = token
+        self.tokens[symbol] = token
+        aliases_eth["VAULT"] = receipt.contractAddress
 
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
@@ -85,7 +86,7 @@ class MockEthereum:
         """
         Set the vault eth address
         """
-        aliases_eth["VAULT"] = addr
+        aliases_eth["ASGARD"] = addr
 
     def get_block_height(self):
         """
@@ -100,7 +101,6 @@ class MockEthereum:
         token = self.web3.eth.contract(abi=abi, bytecode=bytecode)
         tx_hash = token.constructor().transact()
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
-        logging.info(f"{receipt.contractAddress}")
         return self.web3.eth.contract(address=receipt.contractAddress, abi=abi)
 
     def get_block_hash(self, block_height):
@@ -121,11 +121,18 @@ class MockEthereum:
         except requests.exceptions.RequestException as e:
             logging.error(f"{e}")
 
-    def get_balance(self, address):
+    def get_balance(self, address, symbol):
         """
-        Get ETH balance for an address
+        Get ETH or token balance for an address
         """
-        return self.web3.eth.getBalance(Web3.toChecksumAddress(address), "latest")
+        if symbol == "ETH":
+            return self.web3.eth.getBalance(Web3.toChecksumAddress(address), "latest")
+
+        return (
+            self.tokens[symbol]
+            .functions.balanceOf(Web3.toChecksumAddress(address))
+            .call()
+        )
 
     def wait_for_node(self):
         """
@@ -144,10 +151,10 @@ class MockEthereum:
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
-        if txn.to_address in get_aliases():
+        if txn.to_address in aliases_eth.keys():
             txn.to_address = get_alias_address(txn.chain, txn.to_address)
 
-        if txn.from_address in get_aliases():
+        if txn.from_address in aliases_eth.keys():
             txn.from_address = get_alias_address(txn.chain, txn.from_address)
 
         # update memo with actual address (over alias name)
@@ -164,9 +171,10 @@ class MockEthereum:
 
         for account in self.web3.eth.accounts:
             if account == Web3.toChecksumAddress(txn.from_address):
-                #self.web3.geth.personal.unlock_account(account, self.passphrase)
+                self.web3.geth.personal.unlock_account(account, self.passphrase)
                 self.web3.eth.defaultAccount = account
 
+        spent_gas = 0
         if txn.memo == self.seed:
             if txn.coins[0].asset.get_symbol() == self.zero_address:
                 tx = {
@@ -179,28 +187,54 @@ class MockEthereum:
                 tx_hash = self.web3.geth.personal.send_transaction(tx, self.passphrase)
             else:
                 tx_hash = (
-                    self.tokens[txn.coins[0].asset.get_symbol()].functions()
-                    .transfer(
+                    self.tokens[txn.coins[0].asset.get_symbol().split("-")[0]]
+                    .functions.transfer(
                         Web3.toChecksumAddress(txn.to_address), txn.coins[0].amount
                     )
                     .transact()
                 )
         else:
-            parts = txn.memo.split("-")
-            if len(parts) != 2:
-                logging.error(f"incorrect ETH txn memo")
-            tx_hash = (
-                self.vault.functions()
-                .deposit(
-                    Web3.toChecksumAddress(parts[1]), txn.coins[0].amount, parts[0]
+            value = 0
+            if txn.coins[0].asset.get_symbol() == self.zero_address:
+                value = txn.coins[0].amount
+            else:
+                tx_hash = (
+                    self.tokens[txn.coins[0].asset.get_symbol().split("-")[0]]
+                    .functions.approve(
+                        Web3.toChecksumAddress(txn.to_address), txn.coins[0].amount
+                    )
+                    .transact()
                 )
-                .transact()
-            )
+                receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
+                spent_gas = receipt.cumulativeGasUsed
+            if txn.memo.find(":ETH.") != -1:
+                splits = txn.coins[0].asset.get_symbol().split("-")
+                parts = txn.memo.split("-")
+                if len(parts) != 2 or len(splits) != 2:
+                    logging.error(f"incorrect ETH txn memo")
+                ps = parts[1].split(":")
+                if len(ps) != 2:
+                    logging.error(f"incorrect ETH txn memo")
+                memo = parts[0] + ":" + ps[1]
+            else:
+                memo = txn.memo
+            tx_hash = self.vault.functions.deposit(
+                Web3.toChecksumAddress(txn.coins[0].asset.get_symbol().split("-")[1]),
+                txn.coins[0].amount,
+                memo.encode("utf-8"),
+            ).transact({"value": value})
 
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
+        tx_full = self.web3.eth.getTransaction(tx_hash.hex())
         txn.id = receipt.transactionHash.hex()[2:].upper()
-        txn.gas = [Coin("ETH.ETH-0x0000000000000000000000000000000000000000", receipt.cumulativeGasUsed * self.gas_price)]
-        logging.info(f"gas {txn.memo} {receipt.cumulativeGasUsed}")
+        logging.info(f"tx {tx_full}")
+        logging.info(f"rec {receipt}")
+        txn.gas = [
+            Coin(
+                "ETH.ETH-0X0000000000000000000000000000000000000000",
+                (receipt.cumulativeGasUsed + spent_gas) * self.gas_price,
+            )
+        ]
 
 
 class Ethereum(GenericChain):
@@ -210,7 +244,7 @@ class Ethereum(GenericChain):
 
     name = "Ethereum"
     chain = "ETH"
-    coin = Asset("ETH.ETH-0x0000000000000000000000000000000000000000")
+    coin = Asset("ETH.ETH-0X0000000000000000000000000000000000000000")
 
     @classmethod
     def _calculate_gas(cls, pool, txn):
@@ -218,4 +252,14 @@ class Ethereum(GenericChain):
         Calculate gas according to RUNE thorchain fee
         1 RUNE / 2 in ETH value
         """
-        return Coin(cls.coin, calculate_gas("") * MockEthereum.gas_price)
+        gas = 33546
+        if txn.memo.startswith("WITHDRAW"):
+            if txn.memo.find("ETH.ETH") != -1:
+                gas = 33610
+            else:
+                gas = 46507
+        if txn.memo.startswith("SWAP:ETH."):
+            gas = 33546
+            if txn.memo.find("ETH.ETH") == -1:
+                gas = 46443
+        return Coin(cls.coin, gas * MockEthereum.gas_price)

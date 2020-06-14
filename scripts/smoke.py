@@ -176,16 +176,15 @@ class Smoker:
         for rpool in real_pools:
             spool = self.thorchain_state.get_pool(Asset(rpool["asset"]))
             if int(spool.rune_balance) != int(rpool["balance_rune"]):
-                #self.error(
-                #    f"Bad Pool-{rpool['asset']} balance: RUNE "
-                #    f"{spool.rune_balance} != {rpool['balance_rune']}"
-                #)
+                self.error(
+                    f"Bad Pool-{rpool['asset']} balance: RUNE "
+                    f"{spool.rune_balance} != {rpool['balance_rune']}"
+                )
                 if int(spool.asset_balance) != int(rpool["balance_asset"]):
-                #    self.error(
-                #        f"Bad Pool-{rpool['asset']} balance: ASSET "
-                #        f"{spool.asset_balance} != {rpool['balance_asset']}"
-                #    )
-                    logging.info(f"{spool} lol {rpool.balance_asset}")
+                    self.error(
+                        f"Bad Pool-{rpool['asset']} balance: ASSET "
+                        f"{spool.asset_balance} != {rpool['balance_asset']}"
+                    )
 
     def check_binance(self):
         # compare simulation binance vs mock binance
@@ -221,10 +220,33 @@ class Smoker:
             if mock_coin.amount == 0 and reorg:
                 return
             if sim_coin != mock_coin:
-                #self.error(
-                #    f"Bad {chain.name} balance: {name} {mock_coin} != {sim_coin}"
-                #)
-                logging.info(f"{sim_coin} {mock_coin}")
+                self.error(
+                    f"Bad {chain.name} balance: {name} {mock_coin} != {sim_coin}"
+                )
+
+    def check_ethereum(self):
+        # compare simulation bitcoin vs mock bitcoin
+        for addr, sim_acct in self.ethereum.accounts.items():
+            name = get_alias(self.ethereum.chain, addr)
+            if name == "MASTER" or name == "ASGARD" or name == "VAULT":
+                continue  # don't care to compare MASTER or ASGARD account
+            for sim_coin in sim_acct.balances:
+                if not sim_coin.asset.is_eth():
+                    continue
+                mock_coin = Coin(
+                    "ETH." + sim_coin.asset.get_symbol(),
+                    self.mock_ethereum.get_balance(
+                        addr, sim_coin.asset.get_symbol().split("-")[0]
+                    ),
+                )
+                # dont raise error on reorg balance being invalidated
+                # sim is not smart enough to subtract funds on reorg
+                if mock_coin.amount == 0 and self.ethereum_reorg:
+                    return
+                if sim_coin != mock_coin:
+                    self.error(
+                        f"Bad {self.ethereum.name} balance: {name} {mock_coin} != {sim_coin}"
+                    )
 
     def check_vaults(self):
         # check vault data
@@ -236,20 +258,18 @@ class Smoker:
         if int(vdata["bond_reward_rune"]) != self.thorchain_state.bond_reward:
             sim = self.thorchain_state.bond_reward
             real = vdata["bond_reward_rune"]
-            #self.error(f"Mismatching bond reward: {sim} != {real}")
-            logging.info(f"{sim} {real}")
+            self.error(f"Mismatching bond reward: {sim} != {real}")
 
     def check_events(self):
         events = self.thorchain_client.events
         sim_events = self.thorchain_state.events
-
         for event, sim_event in zip(sorted(events), sorted(sim_events)):
             if sim_event != event:
                 logging.error(
                     f"Event Thorchain \n{event}\n   !="
                     f"  \nEvent Simulator \n{sim_event}"
                 )
-                #self.error("Events mismatch")
+                self.error("Events mismatch")
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1), reraise=True)
     def run_health(self):
@@ -434,7 +454,7 @@ class Smoker:
 
             self.check_binance()
             self.check_chain(self.bitcoin, self.mock_bitcoin, self.bitcoin_reorg)
-            self.check_chain(self.ethereum, self.mock_ethereum, self.ethereum_reorg)
+            self.check_ethereum()
 
             if RUNE.get_chain() == "THOR":
                 self.check_chain(self.thorchain, self.mock_thorchain, None)

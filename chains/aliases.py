@@ -23,6 +23,7 @@ aliases_eth = {
     "STAKER-1": "0xfabb9cc6ec839b1214bb11c53377a56a6ed81762",
     "STAKER-2": "0x1f30a82340f08177aba70e6f48054917c74d7d38",
     "VAULT": "",
+    "ASGARD": "",
 }
 
 aliases_thor = {
