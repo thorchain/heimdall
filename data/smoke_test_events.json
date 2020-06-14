@@ -82,7 +82,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "25007500000"
+                "stake_units": "25075000000"
             },
             {
                 "rune_address": "STAKER-1"
@@ -91,7 +91,7 @@
                 "rune_amount": "50000000000"
             },
             {
-                "asset_amount": "15000000"
+                "asset_amount": "150000000"
             },
             {
                 "BTC_txid": "TODO"
@@ -178,7 +178,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "1191300525"
+                "stake_units": "174783322"
             },
             {
                 "rune_address": "STAKER-2"
@@ -1140,10 +1140,10 @@
                 "trade_slip": "10830"
             },
             {
-                "liquidity_fee": "1556418"
+                "liquidity_fee": "14290754"
             },
             {
-                "liquidity_fee_in_rune": "4735283855"
+                "liquidity_fee_in_rune": "4735286144"
             },
             {
                 "id": "TODO"
@@ -1177,7 +1177,7 @@
                 "coins": "3 BTC.BTC"
             },
             {
-                "pool_deduct": "16734"
+                "pool_deduct": "1823"
             }
         ],
         "block_height": null,
@@ -1187,13 +1187,13 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "41900103827"
+                "bond_reward": "41900106116"
             },
             {
                 "BNB.BNB": "-37059190885"
             },
             {
-                "BTC.BTC": "-4735283855"
+                "BTC.BTC": "-4735286144"
             }
         ],
         "block_height": null,
@@ -1206,10 +1206,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "1"
+                "asset_amt": "2"
             },
             {
-                "rune_amt": "5213"
+                "rune_amt": "1136"
             },
             {
                 "transaction_count": "1"
@@ -1387,13 +1387,13 @@
                 "price_target": "0"
             },
             {
-                "trade_slip": "2443"
+                "trade_slip": "253"
             },
             {
-                "liquidity_fee": "725797459"
+                "liquidity_fee": "10447890"
             },
             {
-                "liquidity_fee_in_rune": "725797459"
+                "liquidity_fee_in_rune": "10447890"
             },
             {
                 "id": "TODO"
@@ -1437,10 +1437,10 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "831425437"
+                "bond_reward": "116075868"
             },
             {
-                "BTC.BTC": "-725797459"
+                "BTC.BTC": "-10447890"
             }
         ],
         "block_height": null,
@@ -1525,7 +1525,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "106326776"
+                "bond_reward": "106326795"
             },
             {
                 "ETH.ETH": "-698820"
@@ -1626,7 +1626,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105627953"
+                "bond_reward": "105627972"
             }
         ],
         "block_height": null,
@@ -1737,7 +1737,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105627951"
+                "bond_reward": "105627970"
             }
         ],
         "block_height": null,
@@ -1822,7 +1822,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105907317"
+                "bond_reward": "105907336"
             },
             {
                 "BNB.BNB": "-279369"
@@ -1910,7 +1910,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "1815239740"
+                "bond_reward": "1815239759"
             },
             {
                 "BNB.BNB": "-1709611795"
@@ -1998,7 +1998,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "1615060518"
+                "bond_reward": "1615060537"
             },
             {
                 "BNB.BNB": "-1509432620"
@@ -2033,7 +2033,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "2500750000"
+                "stake_units": "2507500000"
             },
             {
                 "basis_points": "1000"
@@ -2073,7 +2073,7 @@
                 "coins": "3 BTC.BTC"
             },
             {
-                "pool_deduct": "12570"
+                "pool_deduct": "1661"
             }
         ],
         "block_height": null,
@@ -2099,7 +2099,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105627855"
+                "bond_reward": "105627874"
             }
         ],
         "block_height": null,
@@ -2131,10 +2131,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "2"
+                "asset_amt": "1"
             },
             {
-                "rune_amt": "8380"
+                "rune_amt": "554"
             },
             {
                 "transaction_count": "1"
@@ -2203,7 +2203,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "121653673"
+                "bond_reward": "121653691"
             },
             {
                 "BNB.BNB": "-16025820"
@@ -2291,7 +2291,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "1466372013"
+                "bond_reward": "1466372032"
             },
             {
                 "BNB.BNB": "-1360744163"
@@ -2379,7 +2379,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "1327511770"
+                "bond_reward": "1327511789"
             },
             {
                 "BNB.BNB": "-1221883959"
@@ -2458,7 +2458,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105627777"
+                "bond_reward": "105627795"
             }
         ],
         "block_height": null,
@@ -2543,7 +2543,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "722911724"
+                "bond_reward": "722911743"
             },
             {
                 "BNB.LOK-3C0": "-617283950"
@@ -2631,7 +2631,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "560115824"
+                "bond_reward": "560115843"
             },
             {
                 "BNB.LOK-3C0": "-454488069"
@@ -2787,7 +2787,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "972702858"
+                "bond_reward": "972702877"
             },
             {
                 "BNB.LOK-3C0": "-580499461"
@@ -2946,7 +2946,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "133364274"
+                "bond_reward": "133364292"
             },
             {
                 "BNB.BNB": "-10762050"
@@ -3050,7 +3050,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105627713"
+                "bond_reward": "105627732"
             }
         ],
         "block_height": null,
@@ -3145,7 +3145,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105627711"
+                "bond_reward": "105627730"
             }
         ],
         "block_height": null,
@@ -3243,7 +3243,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105627709"
+                "bond_reward": "105627728"
             }
         ],
         "block_height": null,
@@ -3275,7 +3275,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "1191300525"
+                "stake_units": "174783322"
             },
             {
                 "basis_points": "10000"
@@ -3315,7 +3315,7 @@
                 "coins": "3 BTC.BTC"
             },
             {
-                "pool_deduct": "12570"
+                "pool_deduct": "1661"
             }
         ],
         "block_height": null,
@@ -3341,7 +3341,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105627706"
+                "bond_reward": "105627725"
             }
         ],
         "block_height": null,
@@ -3373,10 +3373,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "2"
+                "asset_amt": "1"
             },
             {
-                "rune_amt": "8380"
+                "rune_amt": "554"
             },
             {
                 "transaction_count": "1"
@@ -3455,7 +3455,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105627708"
+                "bond_reward": "105627727"
             }
         ],
         "block_height": null,
