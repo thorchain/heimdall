@@ -13,7 +13,7 @@ from chains.aliases import aliases_btc, get_aliases, get_alias_address
 from chains.chain import GenericChain
 from tenacity import retry, stop_after_delay, wait_fixed
 
-getcontext().prec = 15
+getcontext().prec = 8
 
 RUNE = get_rune_asset()
 
@@ -30,7 +30,7 @@ class MockBitcoin(HttpClient):
         "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330",
         "9294f4d108465fd293f7fe299e6923ef71a77f2cb1eb6d4394839c64ec25d5c0",
     ]
-    default_gas = 1000000
+    default_gas = 100000
     block_stats = {
         "tx_rate": 0,
         "tx_size": 0,
@@ -52,7 +52,9 @@ class MockBitcoin(HttpClient):
             try:
                 result = self.get_block_stats()
                 if result["medianfee"] != 0 and result["mediantxsize"] != 0:
-                    self.block_stats["tx_rate"] = int(result["medianfee"] / result["mediantxsize"])
+                    self.block_stats["tx_rate"] = int(
+                        Decimal(result["medianfee"]) / Decimal(result["mediantxsize"])
+                    )
                     self.block_stats["tx_size"] = result["mediantxsize"]
             except Exception:
                 continue
@@ -195,7 +197,9 @@ class MockBitcoin(HttpClient):
         amount_utxo = float(unspent["amount"])
         amount_change = Decimal(amount_utxo) - Decimal(min_amount)
         if amount_change > 0:
-            tx_out.append({txn.from_address: float(amount_change)})
+            if "SEED" in txn.memo:
+                amount_change -= Decimal(self.default_gas / Coin.ONE)
+            tx_out.append({txn.from_address: round(float(amount_change), 8)})
 
         tx_out.append(tx_out_op_return)
 

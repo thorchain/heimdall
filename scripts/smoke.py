@@ -237,16 +237,15 @@ class Smoker:
             self.error(f"Mismatching bond reward: {sim} != {real}")
 
     def check_events(self):
-        events = self.thorchain_client.events
-        sim_events = self.thorchain_state.events
+        events = sorted(self.thorchain_client.events)
+        sim_events = sorted(self.thorchain_state.events)
 
-        for event, sim_event in zip(events, sim_events):
-            if sim_event != event:
-                logging.error(
-                    f"Event Thorchain \n{event}\n   !="
-                    f"  \nEvent Simulator \n{sim_event}"
-                )
-                self.error("Events mismatch")
+        if events != sim_events:
+            wrong_events = [e for e in events if e not in sim_events]
+            wrong_sim_events = [e for e in sim_events if e not in events]
+            logging.error(f"THORChain Events {wrong_events}")
+            logging.error(f"Simulator Events {wrong_sim_events}")
+            self.error("Events mismatch")
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1), reraise=True)
     def run_health(self):
@@ -325,15 +324,11 @@ class Smoker:
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
-
-            logging.info(f"events{[e.type for e in events][-6:]}")
-            logging.info(f"simeve{[e.type for e in sim_events][-6:]}")
-            logging.info(f"events{[e for e in events][-6:]}")
-            logging.info(f"simeve{[e for e in sim_events][-6:]}")
+            new_events = [e for e in events if e not in sim_events]
 
             # we have more real events than sim, fill in the gaps
-            if len(events) > len(sim_events):
-                for evt in events[len(sim_events) :]:
+            if len(new_events):
+                for evt in new_events:
                     if evt.type == "gas" and count_outbounds > 0:
                         todo = []
                         # with the given gas pool event data, figure out
