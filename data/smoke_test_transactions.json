@@ -216,7 +216,7 @@
         "coins": [
             {
                 "asset": "BTC.BTC",
-                "amount": 15000000
+                "amount": 150000000
             }
         ],
         "gas": null
