@@ -1,13 +1,10 @@
-import time
 import logging
 import json
 import requests
 
 from web3 import Web3, HTTPProvider
 from web3.middleware import geth_poa_middleware
-from solcx import compile_files, install_solc
 from eth_keys import KeyAPI
-from eth_utils import keccak
 from utils.common import Coin, get_rune_asset, Asset
 from chains.aliases import aliases_eth, get_aliases, get_alias_address
 from chains.chain import GenericChain
@@ -85,7 +82,7 @@ class MockEthereum:
         tx_hash = self.vault.functions.addAsgard(
             Web3.toChecksumAddress(addr)
         ).transact()
-        receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
+        self.web3.eth.waitForTransactionReceipt(tx_hash)
 
     def get_block_height(self):
         """
@@ -221,10 +218,10 @@ class MockEthereum:
                 splits = txn.coins[0].asset.get_symbol().split("-")
                 parts = txn.memo.split("-")
                 if len(parts) != 2 or len(splits) != 2:
-                    logging.error(f"incorrect ETH txn memo")
+                    logging.error("incorrect ETH txn memo")
                 ps = parts[1].split(":")
                 if len(ps) != 2:
-                    logging.error(f"incorrect ETH txn memo")
+                    logging.error("incorrect ETH txn memo")
                 memo = parts[0] + ":" + ps[1]
             else:
                 memo = txn.memo
@@ -236,7 +233,6 @@ class MockEthereum:
             ).transact({"value": value})
 
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
-        tx_full = self.web3.eth.getTransaction(tx_hash.hex())
         txn.id = receipt.transactionHash.hex()[2:].upper()
         txn.gas = [
             Coin(

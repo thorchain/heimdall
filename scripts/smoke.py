@@ -244,9 +244,7 @@ class Smoker:
                 if mock_coin.amount == 0 and self.ethereum_reorg:
                     return
                 if sim_coin != mock_coin:
-                    self.error(
-                        f"Bad {self.ethereum.name} balance: {name} {mock_coin} != {sim_coin}"
-                    )
+                    self.error(f"Bad ETH balance: {name} {mock_coin} != {sim_coin}")
 
     def check_vaults(self):
         # check vault data
