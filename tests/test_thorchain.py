@@ -1,7 +1,6 @@
 import unittest
 
 from thorchain.thorchain import (
-    ThorchainClient,
     ThorchainState,
     Pool,
     Event,
@@ -2124,18 +2123,6 @@ class TestEvent(unittest.TestCase):
             ],
         )
         self.assertEqual(swap_sim, swap)
-
-    def test_sort_events(self):
-        evt1 = Event("test", [{"id": 1}], 1, "block")
-        evt2 = Event("test", [{"id": 2}], 1, "tx")
-        evt3 = Event("test", [{"id": 3}], 6, "block")
-        evt4 = Event("test", [{"id": 4}], 3, "tx")
-        evt5 = Event("test", [{"id": 5}], 3, "block")
-        evt6 = Event("test", [{"id": 6}], 2, "block")
-        events = [evt1, evt2, evt3, evt4, evt5, evt6]
-        expected_events = [evt2, evt1, evt6, evt4, evt5, evt3]
-        ThorchainClient.sort_events(events)
-        self.assertEqual(events, expected_events)
 
     def test_sorted(self):
         outbound_sim_1 = Event(

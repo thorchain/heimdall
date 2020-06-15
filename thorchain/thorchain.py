@@ -28,12 +28,6 @@ SUBSCRIBE_BLOCK = {
     "method": "subscribe",
     "params": {"query": "tm.event='NewBlock'"},
 }
-SUBSCRIBE_TX = {
-    "jsonrpc": "2.0",
-    "id": 0,
-    "method": "subscribe",
-    "params": {"query": "tm.event='Tx'"},
-}
 
 
 class ThorchainClient(HttpClient):
@@ -41,20 +35,30 @@ class ThorchainClient(HttpClient):
     A client implementation to thorchain API
     """
 
-    def __init__(self, api_url, websocket_url=None):
+    def __init__(self, api_url, enable_websocket=False):
         super().__init__(api_url)
 
         self.wait_for_node()
+        self.rpc = HttpClient(self.get_rpc_url())
 
-        if websocket_url:
+        if enable_websocket:
             self.ws = websocket.WebSocketApp(
-                websocket_url,
+                self.get_ws_url(),
                 on_open=self.ws_open,
                 on_error=self.ws_error,
                 on_message=self.ws_message,
             )
             self.events = []
             threading.Thread(target=self.ws.run_forever, daemon=True).start()
+
+    def get_ws_url(self):
+        url = self.get_rpc_url()
+        url = url.replace("http", "ws")
+        return f"{url}/websocket"
+
+    def get_rpc_url(self):
+        url = self.base_url.replace("1317", "26657")
+        return url
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
     def wait_for_node(self):
@@ -67,59 +71,40 @@ class ThorchainClient(HttpClient):
         """
         Websocket connection open, subscribe to events
         """
-        logging.debug("websocket opened")
         self.ws.send(json.dumps(SUBSCRIBE_BLOCK))
-        self.ws.send(json.dumps(SUBSCRIBE_TX))
 
     def ws_message(self, msg):
         """
         Websocket message handler
         """
-        try:
-            msg = json.loads(msg)
-            logging.debug(f"websocket msg: {msg}")
-            if "data" not in msg["result"]:
-                return
-            event_category = msg["result"]["data"]["type"]
-            value = msg["result"]["data"]["value"]
-            if "NewBlock" in event_category:
-                if "events" not in value["result_end_block"]:
-                    return
-                events = value["result_end_block"]["events"]
-                block_height = value["block"]["header"]["height"]
-                self.process_events(events, block_height, "block")
-            if "Tx" in event_category:
-                events = value["TxResult"]["result"]["events"]
-                block_height = value["TxResult"]["height"]
-                self.process_events(events, block_height, "tx")
-        except Exception as e:
-            logging.error(f"Message: {msg} Exception: {e}")
+        msg = json.loads(msg)
+        if "data" not in msg["result"]:
+            return
+        value = msg["result"]["data"]["value"]
+        block_height = value["block"]["header"]["height"]
+        result = self.get_events(block_height)["result"]
+        if result["txs_results"]:
+            for tx in result["txs_results"]:
+                self.process_events(tx["events"])
+        if result["end_block_events"]:
+            self.process_events(result["end_block_events"])
 
-    def process_events(self, events, block_height, category):
-        new_events = []
+    def process_events(self, events):
         for event in events:
             if event["type"] in ["message", "transfer"]:
                 continue
             self.decode_event(event)
-            evt = Event(event["type"], event["attributes"], block_height, category,)
-            new_events.append(evt)
-        new_events += self.events
-        self.sort_events(new_events)
-        self.events = new_events
-
-    @classmethod
-    def sort_events(self, events):
-        """
-        Sort events by block height and category
-        with block events after tx events
-        """
-        return events.sort(key=lambda e: (int(e.block_height), (e.category == "block")))
+            event = Event(event["type"], event["attributes"])
+            self.events.append(event)
 
     def decode_event(self, event):
         attributes = []
         for attr in event["attributes"]:
             key = base64.b64decode(attr["key"]).decode("utf-8")
-            value = base64.b64decode(attr["value"]).decode("utf-8")
+            if attr["value"]:
+                value = base64.b64decode(attr["value"]).decode("utf-8")
+            else:
+                value = ""
             attributes.append({key: value})
         event["attributes"] = attributes
 
@@ -156,6 +141,9 @@ class ThorchainClient(HttpClient):
 
     def get_pools(self):
         return self.fetch("/thorchain/pools")
+
+    def get_events(self, block_height):
+        return self.rpc.fetch(f"/block_results?height={block_height}")
 
 
 class ThorchainState:
@@ -1092,16 +1080,12 @@ class Event(Jsonable):
     using tendermint sdk events
     """
 
-    def __init__(
-        self, event_type, attributes, block_height=None, category=None,
-    ):
+    def __init__(self, event_type, attributes):
         self.type = event_type
         for attr in attributes:
             for key, value in attr.items():
                 attr[key] = str(value)
         self.attributes = attributes
-        self.block_height = block_height
-        self.category = category
 
     def __str__(self):
         attrs = " ".join(map(str, self.attributes))
