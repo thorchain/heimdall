@@ -231,8 +231,8 @@ class Smoker:
             self.error(f"Mismatching bond reward: {sim} != {real}")
 
     def check_events(self):
-        events = sorted(self.thorchain_client.events)
-        sim_events = sorted(self.thorchain_state.events)
+        events = self.thorchain_client.events
+        sim_events = self.thorchain_state.events
 
         if events != sim_events:
             wrong_events = [e for e in events if e not in sim_events]
@@ -289,18 +289,11 @@ class Smoker:
         self.set_network_fees()
         outbounds = self.thorchain_state.handle(txn)
 
-        # expecting to see this many outbound txs
-        count_outbounds = 0
-        for o in outbounds:
-            if o.chain == "THOR":
-                continue  # thorchain transactions are on chain
-            count_outbounds += 1
-
         for outbound in outbounds:
             # update simulator state with outbound txs
             self.broadcast_simulator(outbound)
 
-        return outbounds, count_outbounds
+        return outbounds
 
     def sim_catch_up(self, txn):
         # At this point, we can assume that the transaction on real thorchain
@@ -308,12 +301,9 @@ class Smoker:
         # thorchain state
 
         # used to track if we have already processed this txn
-        processed_transaction = False
-
-        # keep track of how many outbound txs we created this inbound txn
         outbounds = []
-        count_outbounds = 0
-        count_outbound_events = 0
+        processed = False
+        pending_txs = 0
 
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
@@ -323,7 +313,7 @@ class Smoker:
             # we have more real events than sim, fill in the gaps
             if len(new_events) > 0:
                 for evt in new_events:
-                    if evt.type == "gas" and count_outbounds > 0:
+                    if evt.type == "gas":
                         todo = []
                         # with the given gas pool event data, figure out
                         # which outbound txns are for this gas pool, vs
@@ -340,54 +330,41 @@ class Smoker:
                                 if count >= int(evt.get("transaction_count")):
                                     break
                         self.thorchain_state.handle_gas(todo)
-                        # countdown til we've seen all expected gas evts
-                        count_outbounds -= len(todo)
 
                     elif evt.type == "rewards":
                         self.thorchain_state.handle_rewards()
 
-                    elif (
-                        evt.type == "outbound"
-                        and processed_transaction
-                        and count_outbound_events > 0
-                    ):
+                    elif evt.type == "outbound" and processed and pending_txs > 0:
                         # figure out which outbound event is which tx
                         for out in outbounds:
                             if out.coins_str() == evt.get("coin"):
                                 self.thorchain_state.generate_outbound_events(
                                     txn, [out]
                                 )
-                                count_outbound_events -= 1
+                                pending_txs -= 1
 
-                    elif not processed_transaction:
-                        outbounds, count_outbounds = self.sim_trigger_tx(txn)
-                        count_outbound_events = len(outbounds)
-                        processed_transaction = True
+                    elif not processed:
+                        outbounds = self.sim_trigger_tx(txn)
+                        pending_txs = len(outbounds)
+                        processed = True
                 continue
 
             # we have same count of events but its a cross chain stake
-            elif txn.is_cross_chain_stake() and not processed_transaction:
-                outbounds, count_outbounds = self.sim_trigger_tx(txn)
-                count_outbound_events = len(outbounds)
-                processed_transaction = True
-                # still need to wait for thorchain to process it
-                time.sleep(6)
+            elif txn.is_cross_chain_stake() and not processed:
+                outbounds = self.sim_trigger_tx(txn)
+                pending_txs = len(outbounds)
+                processed = True
+                time.sleep(6)  # need to wait for thorchain to handle it
                 continue
 
-            if (
-                len(events) == len(sim_events)
-                and count_outbounds <= 0
-                and count_outbound_events <= 0
-                and processed_transaction
-            ):
+            if len(events) == len(sim_events) and pending_txs <= 0 and processed:
                 break
 
             time.sleep(1)
 
-        if count_outbounds > 0 or count_outbound_events > 0:
-            self.error(
-                f"failed to send out all outbound transactions ({count_outbounds})"
-            )
+        if pending_txs > 0:
+            msg = f"failed to send all outbound transactions {pending_txs}"
+            self.error(msg)
         return outbounds
 
     def log_result(self, tx, outbounds):
