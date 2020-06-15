@@ -43,11 +43,6 @@ def main():
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
     )
     parser.add_argument(
-        "--thorchain-websocket",
-        default="ws://localhost:26657/websocket",
-        help="Thorchain Websocket url",
-    )
-    parser.add_argument(
         "--midgard", default="http://localhost:8080", help="Midgard API url"
     )
     parser.add_argument(
@@ -96,13 +91,13 @@ def main():
         args.no_verify,
         args.bitcoin_reorg,
         args.ethereum_reorg,
-        args.thorchain_websocket,
     )
     try:
         smoker.run()
         sys.exit(smoker.exit)
-    except Exception:
-        logging.exception("Smoke tests failed")
+    except Exception as e:
+        logging.error(e)
+        logging.error("Smoke tests failed")
         sys.exit(1)
 
 
@@ -120,7 +115,6 @@ class Smoker:
         no_verify=False,
         bitcoin_reorg=False,
         ethereum_reorg=False,
-        thor_websocket=None,
     ):
         self.binance = Binance()
         self.bitcoin = Bitcoin()
@@ -132,7 +126,7 @@ class Smoker:
 
         self.txns = txns
 
-        self.thorchain_client = ThorchainClient(thor, thor_websocket)
+        self.thorchain_client = ThorchainClient(thor, enable_websocket=True)
         pubkey = self.thorchain_client.get_vault_pubkey()
 
         self.thorchain_state.set_vault_pubkey(pubkey)
@@ -324,7 +318,7 @@ class Smoker:
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
-            new_events = events[len(sim_events):]
+            new_events = events[len(sim_events) :]
 
             # we have more real events than sim, fill in the gaps
             if len(new_events) > 0:
@@ -377,7 +371,7 @@ class Smoker:
                 count_outbound_events = len(outbounds)
                 processed_transaction = True
                 # still need to wait for thorchain to process it
-                time.sleep(5)
+                time.sleep(6)
                 continue
 
             if (
