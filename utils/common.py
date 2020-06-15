@@ -111,6 +111,12 @@ class Asset(str, Jsonable):
         """
         return self.get_symbol().startswith("ETH")
 
+    def is_erc(self):
+        """
+        Is this asset erc20?
+        """
+        return self.get_chain() == "ETH" and not self.get_symbol().startswith("ETH")
+
     def is_rune(self):
         """
         Is this asset rune?

@@ -51,12 +51,7 @@ class GenericChain:
         if not txn.gas:
             txn.gas = [self._calculate_gas(None, txn)]
 
-        if txn.chain != "ETH" or (
-            txn.chain == "ETH"
-            and txn.from_address != "VAULT"
-            and get_alias_address("ETH", "VAULT") != txn.from_address
-        ):
-            from_acct.sub(txn.gas[0])
+        from_acct.sub(txn.gas[0])
 
         from_acct.sub(txn.coins)
         to_acct.add(txn.coins)

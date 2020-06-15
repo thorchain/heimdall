@@ -60,15 +60,10 @@ class MockEthereum:
         self.web3.geth.personal.unlock_account(
             self.web3.eth.defaultAccount, self.passphrase
         )
-        self.wait_for_node()
-        tx = self.web3.eth.getTransactionByBlock(2, 0)
-        receipt = self.web3.eth.getTransactionReceipt(tx.hash)
-        abi = json.load(open("data/vault.json"))
-        self.vault = self.web3.eth.contract(address=receipt.contractAddress, abi=abi)
+        self.vault = self.deploy_vault()
         token = self.deploy_token()
         symbol = token.functions.symbol().call()
         self.tokens[symbol] = token
-        aliases_eth["VAULT"] = receipt.contractAddress
 
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
@@ -86,7 +81,11 @@ class MockEthereum:
         """
         Set the vault eth address
         """
-        aliases_eth["ASGARD"] = addr
+        aliases_eth["VAULT"] = addr
+        tx_hash = self.vault.functions.addAsgard(
+            Web3.toChecksumAddress(addr)
+        ).transact()
+        receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
 
     def get_block_height(self):
         """
@@ -97,9 +96,17 @@ class MockEthereum:
 
     def deploy_token(self):
         abi = json.load(open("data/token.json"))
-        bytecode = open("data/bytecode.txt", "r").read()
+        bytecode = open("data/token.txt", "r").read()
         token = self.web3.eth.contract(abi=abi, bytecode=bytecode)
         tx_hash = token.constructor().transact()
+        receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
+        return self.web3.eth.contract(address=receipt.contractAddress, abi=abi)
+
+    def deploy_vault(self):
+        abi = json.load(open("data/vault.json"))
+        bytecode = open("data/vault.txt", "r").read()
+        vault = self.web3.eth.contract(abi=abi, bytecode=bytecode)
+        tx_hash = vault.constructor().transact()
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
         return self.web3.eth.contract(address=receipt.contractAddress, abi=abi)
 
@@ -127,6 +134,9 @@ class MockEthereum:
         """
         if symbol == "ETH":
             return self.web3.eth.getBalance(Web3.toChecksumAddress(address), "latest")
+
+        if address == "VAULT" or address == aliases_eth["VAULT"]:
+            address = self.vault.address
 
         return (
             self.tokens[symbol]
@@ -201,7 +211,7 @@ class MockEthereum:
                 tx_hash = (
                     self.tokens[txn.coins[0].asset.get_symbol().split("-")[0]]
                     .functions.approve(
-                        Web3.toChecksumAddress(txn.to_address), txn.coins[0].amount
+                        Web3.toChecksumAddress(self.vault.address), txn.coins[0].amount
                     )
                     .transact()
                 )
@@ -220,6 +230,7 @@ class MockEthereum:
                 memo = txn.memo
             tx_hash = self.vault.functions.deposit(
                 Web3.toChecksumAddress(txn.coins[0].asset.get_symbol().split("-")[1]),
+                Web3.toChecksumAddress(aliases_eth["VAULT"]),
                 txn.coins[0].amount,
                 memo.encode("utf-8"),
             ).transact({"value": value})
@@ -227,8 +238,6 @@ class MockEthereum:
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
         tx_full = self.web3.eth.getTransaction(tx_hash.hex())
         txn.id = receipt.transactionHash.hex()[2:].upper()
-        logging.info(f"tx {tx_full}")
-        logging.info(f"rec {receipt}")
         txn.gas = [
             Coin(
                 "ETH.ETH-0X0000000000000000000000000000000000000000",
@@ -252,14 +261,9 @@ class Ethereum(GenericChain):
         Calculate gas according to RUNE thorchain fee
         1 RUNE / 2 in ETH value
         """
-        gas = 33546
-        if txn.memo.startswith("WITHDRAW"):
-            if txn.memo.find("ETH.ETH") != -1:
-                gas = 33610
-            else:
-                gas = 46507
-        if txn.memo.startswith("SWAP:ETH."):
-            gas = 33546
-            if txn.memo.find("ETH.ETH") == -1:
-                gas = 46443
+        gas = 21000
+        if txn.memo.startswith("WITHDRAW") and txn.memo.find("ETH.ETH") == -1:
+            gas = 47997
+        if txn.memo.startswith("SWAP:ETH.") and txn.memo.find("ETH.ETH") == -1:
+            gas = 47933
         return Coin(cls.coin, gas * MockEthereum.gas_price)

@@ -1047,23 +1047,6 @@ class Event(Jsonable):
 
     def __hash__(self):
         attrs = sorted(self.attributes, key=lambda x: sorted(x.items()))
-        is_eth = False
-        for attr in attrs:
-            # hack for ETH asgrad <=> vault
-            if "chain" in attr and attr["chain"] == "ETH":
-                is_eth = True
-            if (
-                is_eth
-                and "from" in attr
-                and attr["from"] == get_alias_address("ETH", "VAULT")
-            ):
-                attr["from"] = get_alias_address("ETH", "ASGARD")
-            if (
-                is_eth
-                and "to" in attr
-                and attr["to"] == get_alias_address("ETH", "VAULT")
-            ):
-                attr["to"] = get_alias_address("ETH", "ASGARD")
         for attr in attrs:
             for key, value in attr.items():
                 attr[key] = value.upper()
@@ -1156,16 +1139,12 @@ class Pool(Jsonable):
         for staker in self.stakers:
             if staker.address == address:
                 return staker
-        # logging.info(f"get staker {address}")
         return Staker(address)
 
     def set_staker(self, staker):
         """
         Set a staker
         """
-
-        # logging.info(f"staker {staker}")
-        # logging.info(f"stakers {self.stakers}")
         for i, s in enumerate(self.stakers):
             if s.address == staker.address:
                 self.stakers[i] = staker
@@ -1194,7 +1173,6 @@ class Pool(Jsonable):
         units = self._calc_stake_units(
             self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
-        # logging.info(f"set staker {address} {rune_amt} {asset_amt} {asset} {txid} {staker}")
         self.total_units += units
         staker.units += units
         self.set_staker(staker)

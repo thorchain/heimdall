@@ -148,19 +148,6 @@
     {
         "chain": "ETH",
         "from_address": "MASTER",
-        "to_address": "ASGARD",
-        "memo": "SEED",
-        "coins": [
-            {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000",
-                "amount": 400000000000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "ETH",
-        "from_address": "MASTER",
         "to_address": "USER-1",
         "memo": "SEED",
         "coins": [

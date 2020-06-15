@@ -225,11 +225,11 @@ class Smoker:
                 )
 
     def check_ethereum(self):
-        # compare simulation bitcoin vs mock bitcoin
+        # compare simulation ethereum vs mock ethereum
         for addr, sim_acct in self.ethereum.accounts.items():
             name = get_alias(self.ethereum.chain, addr)
-            if name == "MASTER" or name == "ASGARD" or name == "VAULT":
-                continue  # don't care to compare MASTER or ASGARD account
+            if name == "MASTER":
+                continue  # don't care to compare MASTER account
             for sim_coin in sim_acct.balances:
                 if not sim_coin.asset.is_eth():
                     continue
