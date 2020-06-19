@@ -80,7 +80,7 @@ class MockEthereum:
         """
         aliases_eth["VAULT"] = addr
         tx_hash = self.vault.functions.addAsgard(
-            Web3.toChecksumAddress(addr)
+            [Web3.toChecksumAddress(addr)]
         ).transact()
         self.web3.eth.waitForTransactionReceipt(tx_hash)
 
@@ -227,7 +227,6 @@ class MockEthereum:
                 memo = txn.memo
             tx_hash = self.vault.functions.deposit(
                 Web3.toChecksumAddress(txn.coins[0].asset.get_symbol().split("-")[1]),
-                Web3.toChecksumAddress(aliases_eth["VAULT"]),
                 txn.coins[0].amount,
                 memo.encode("utf-8"),
             ).transact({"value": value})
@@ -259,7 +258,7 @@ class Ethereum(GenericChain):
         """
         gas = 21000
         if txn.memo.startswith("WITHDRAW") and txn.memo.find("ETH.ETH") == -1:
-            gas = 47997
+            gas = 54734
         if txn.memo.startswith("SWAP:ETH.") and txn.memo.find("ETH.ETH") == -1:
-            gas = 47933
+            gas = 54670
         return Coin(cls.coin, gas * MockEthereum.gas_price)

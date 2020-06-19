@@ -9,9 +9,9 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "address",
-          "name": "asgard",
-          "type": "address"
+          "internalType": "address payable[]",
+          "name": "arrayAsgards",
+          "type": "address[]"
         }
       ],
       "name": "AddAsgard",
@@ -24,12 +24,6 @@
           "indexed": false,
           "internalType": "address",
           "name": "asset",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "receiver",
           "type": "address"
         },
         {
@@ -54,26 +48,13 @@
         {
           "indexed": false,
           "internalType": "address",
-          "name": "asgard",
-          "type": "address"
-        }
-      ],
-      "name": "RemoveAsgard",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "receiver",
+          "name": "to",
           "type": "address"
         },
         {
           "indexed": false,
           "internalType": "address",
-          "name": "token",
+          "name": "asset",
           "type": "address"
         },
         {
@@ -93,11 +74,61 @@
       "type": "event"
     },
     {
+      "anonymous": false,
       "inputs": [
         {
-          "internalType": "address payable",
-          "name": "newAsgard",
+          "indexed": false,
+          "internalType": "address",
+          "name": "yggdrasil",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "YggdrasilMinus",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "yggdrasil",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "YggdrasilPlus",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address payable[]",
+          "name": "newAsgards",
+          "type": "address[]"
         }
       ],
       "name": "addAsgard",
@@ -106,8 +137,33 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "asgard",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "allowance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "arrayAsgards",
       "outputs": [
         {
           "internalType": "address payable",
@@ -116,6 +172,34 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "memo",
+          "type": "string"
+        }
+      ],
+      "name": "asgardTransfer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -140,13 +224,8 @@
     {
       "inputs": [
         {
-          "internalType": "address payable",
+          "internalType": "address",
           "name": "asset",
-          "type": "address"
-        },
-        {
-          "internalType": "address payable",
-          "name": "receiver",
           "type": "address"
         },
         {
@@ -166,14 +245,56 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getAsgardCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
-          "name": "oldAsgard",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
           "type": "address"
         }
       ],
-      "name": "removeAsgard",
+      "name": "yggAllowance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "yggdrasilMinus",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -182,12 +303,35 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "receiver",
+          "name": "yggdrasil",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "token",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "yggdrasilPlus",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "asset",
           "type": "address"
         },
         {
@@ -201,7 +345,7 @@
           "type": "string"
         }
       ],
-      "name": "transfer",
+      "name": "yggdrasilTransfer",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
