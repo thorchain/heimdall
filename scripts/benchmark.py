@@ -51,9 +51,7 @@ def main():
 
 
 class Benchie:
-    def __init__(
-        self, bnb, thor, tx_type, num, thor_ws=None
-    ):
+    def __init__(self, bnb, thor, tx_type, num, thor_ws=None):
         self.thorchain = ThorchainState()
 
         self.thorchain_client = ThorchainClient(thor, thor_ws)
