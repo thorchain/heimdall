@@ -600,7 +600,7 @@ class ThorchainState:
             if not coin.is_rune():
                 if not asset == coin.asset:
                     return self.refund(
-                        txn, 105, f"unknown request: did not find both coins"
+                        txn, 105, "unknown request: did not find both coins"
                     )
 
         if len(parts) < 3 and asset.get_chain() != RUNE.get_chain():
@@ -797,7 +797,7 @@ class ThorchainState:
         # refund if we're trying to swap with the coin we given ie swapping bnb
         # with bnb
         if source == asset:
-            reason = f"unknown request: swap Source and Target cannot be the same."
+            reason = "unknown request: swap Source and Target cannot be the same."
             return self.refund(txn, 105, reason)
 
         pools = []
