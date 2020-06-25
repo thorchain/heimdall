@@ -13,7 +13,7 @@ RUNE = get_rune_asset()
 
 
 def calculate_gas(msg):
-    return MockEthereum.default_gas + MockEthereum.gas_per_byte * len(msg)
+    return MockEthereum.default_gas + Ethereum.gas_per_byte * len(msg)
 
 
 class MockEthereum:
@@ -22,14 +22,12 @@ class MockEthereum:
     """
 
     default_gas = 21000
-    gas_per_byte = 68
     gas_price = 1
     passphrase = "the-passphrase"
-    zero_address = "ETH-0X0000000000000000000000000000000000000000"
     seed = "SEED"
     stake = "STAKE"
-    eth = "ETH."
     tokens = dict()
+    zero_address = "0x0000000000000000000000000000000000000000"
 
     private_keys = [
         "ef235aacf90d9f4aadd8c92e4b2562e1d9eb97f0df9ba3b508258739cb013db2",
@@ -183,7 +181,7 @@ class MockEthereum:
 
         spent_gas = 0
         if txn.memo == self.seed:
-            if txn.coins[0].asset.get_symbol() == self.zero_address:
+            if txn.coins[0].asset.get_symbol() == Ethereum.chain:
                 tx = {
                     "from": Web3.toChecksumAddress(txn.from_address),
                     "to": Web3.toChecksumAddress(txn.to_address),
@@ -202,7 +200,8 @@ class MockEthereum:
                 )
         else:
             value = 0
-            if txn.coins[0].asset.get_symbol() == self.zero_address:
+            memo = txn.memo
+            if txn.coins[0].asset.get_symbol() == Ethereum.chain:
                 value = txn.coins[0].amount
             else:
                 tx_hash = (
@@ -217,16 +216,20 @@ class MockEthereum:
             if txn.memo.find(":ETH.") != -1:
                 splits = txn.coins[0].asset.get_symbol().split("-")
                 parts = txn.memo.split("-")
-                if len(parts) != 2 or len(splits) != 2:
-                    logging.error("incorrect ETH txn memo")
-                ps = parts[1].split(":")
-                if len(ps) != 2:
-                    logging.error("incorrect ETH txn memo")
-                memo = parts[0] + ":" + ps[1]
+                if txn.coins[0].asset.get_symbol() != Ethereum.chain:
+                    if len(parts) != 2 or len(splits) != 2:
+                        logging.error("incorrect ETH txn memo")
+                    ps = parts[1].split(":")
+                    if len(ps) != 2:
+                        logging.error("incorrect ETH txn memo")
+                    memo = parts[0] + ":" + ps[1]
             else:
                 memo = txn.memo
+            asset = self.zero_address
+            if txn.coins[0].asset.get_symbol().split("-")[0] != Ethereum.chain:
+                asset = txn.coins[0].asset.get_symbol().split("-")[1]
             tx_hash = self.vault.functions.deposit(
-                Web3.toChecksumAddress(txn.coins[0].asset.get_symbol().split("-")[1]),
+                Web3.toChecksumAddress(asset),
                 txn.coins[0].amount,
                 memo.encode("utf-8"),
             ).transact({"value": value})
@@ -234,10 +237,7 @@ class MockEthereum:
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
         txn.id = receipt.transactionHash.hex()[2:].upper()
         txn.gas = [
-            Coin(
-                "ETH.ETH-0X0000000000000000000000000000000000000000",
-                (receipt.cumulativeGasUsed + spent_gas) * self.gas_price,
-            )
+            Coin("ETH.ETH", (receipt.cumulativeGasUsed + spent_gas) * self.gas_price,)
         ]
 
 
@@ -247,8 +247,9 @@ class Ethereum(GenericChain):
     """
 
     name = "Ethereum"
+    gas_per_byte = 68
     chain = "ETH"
-    coin = Asset("ETH.ETH-0X0000000000000000000000000000000000000000")
+    coin = Asset("ETH.ETH")
 
     @classmethod
     def _calculate_gas(cls, pool, txn):
@@ -256,7 +257,7 @@ class Ethereum(GenericChain):
         Calculate gas according to RUNE thorchain fee
         1 RUNE / 2 in ETH value
         """
-        gas = 21000
+        gas = 25964
         if txn.memo.startswith("WITHDRAW") and txn.memo.find("ETH.ETH") == -1:
             gas = 54734
         if txn.memo.startswith("SWAP:ETH.") and txn.memo.find("ETH.ETH") == -1:

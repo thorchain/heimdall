@@ -146,7 +146,7 @@
         "memo": "SEED",
         "coins": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000",
+                "asset": "ETH.ETH",
                 "amount": 40000000000000
             }
         ],
@@ -159,7 +159,7 @@
         "memo": "SEED",
         "coins": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000",
+                "asset": "ETH.ETH",
                 "amount": 40000000000000
             }
         ],
@@ -251,7 +251,7 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:ETH.ETH-0X0000000000000000000000000000000000000000:STAKER-1",
+        "memo": "STAKE:ETH.ETH:STAKER-1",
         "coins": [
             {
                 "asset": "BNB.RUNE-A1F",
@@ -264,10 +264,10 @@
         "chain": "ETH",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:ETH.ETH-0X0000000000000000000000000000000000000000:STAKER-1",
+        "memo": "STAKE:ETH.ETH:STAKER-1",
         "coins": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000",
+                "asset": "ETH.ETH",
                 "amount": 4000000000
             }
         ],
@@ -552,7 +552,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:ETH.ETH-0X0000000000000000000000000000000000000000:USER-1",
+        "memo": "SWAP:ETH.ETH:USER-1",
         "coins": [
             {
                 "asset": "BNB.RUNE-A1F",
@@ -568,7 +568,7 @@
         "memo": "SWAP:BNB.RUNE-A1F:USER-1",
         "coins": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000",
+                "asset": "ETH.ETH",
                 "amount": 150000000
             }
         ],
@@ -604,7 +604,7 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "WITHDRAW:ETH.ETH-0X0000000000000000000000000000000000000000:1000",
+        "memo": "WITHDRAW:ETH.ETH:1000",
         "coins": [
             {
                 "asset": "BNB.RUNE-A1F",

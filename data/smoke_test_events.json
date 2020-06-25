@@ -127,7 +127,7 @@
         "type": "stake",
         "attributes": [
             {
-                "pool": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "pool": "ETH.ETH"
             },
             {
                 "stake_units": "27000000000"
@@ -1358,7 +1358,7 @@
         "type": "swap",
         "attributes": [
             {
-                "pool": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "pool": "ETH.ETH"
             },
             {
                 "price_target": "0"
@@ -1388,7 +1388,7 @@
                 "coin": "50000000000 BNB.RUNE-A1F"
             },
             {
-                "memo": "SWAP:ETH.ETH-0X0000000000000000000000000000000000000000:USER-1"
+                "memo": "SWAP:ETH.ETH:USER-1"
             }
         ],
         "block_height": null,
@@ -1401,7 +1401,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "3000000 ETH.ETH-0X0000000000000000000000000000000000000000"
+                "coins": "3000000 ETH.ETH"
             },
             {
                 "pool_deduct": "100000000"
@@ -1417,7 +1417,7 @@
                 "bond_reward": "12605629102"
             },
             {
-                "ETH.ETH-0X0000000000000000000000000000000000000000": "-12500000000"
+                "ETH.ETH": "-12500000000"
             }
         ],
         "block_height": null,
@@ -1427,7 +1427,7 @@
         "type": "gas",
         "attributes": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "asset": "ETH.ETH"
             },
             {
                 "asset_amt": "21000"
@@ -1446,7 +1446,7 @@
         "type": "swap",
         "attributes": [
             {
-                "pool": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "pool": "ETH.ETH"
             },
             {
                 "price_target": "0"
@@ -1473,7 +1473,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "150000000 ETH.ETH-0X0000000000000000000000000000000000000000"
+                "coin": "150000000 ETH.ETH"
             },
             {
                 "memo": "SWAP:BNB.RUNE-A1F:USER-1"
@@ -1505,7 +1505,7 @@
                 "bond_reward": "303441772"
             },
             {
-                "ETH.ETH-0X0000000000000000000000000000000000000000": "-197813000"
+                "ETH.ETH": "-197813000"
             }
         ],
         "block_height": null,
@@ -1603,7 +1603,7 @@
         "type": "gas",
         "attributes": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "asset": "ETH.ETH"
             },
             {
                 "asset_amt": "54670"
@@ -1710,7 +1710,7 @@
         "type": "unstake",
         "attributes": [
             {
-                "pool": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "pool": "ETH.ETH"
             },
             {
                 "stake_units": "2700000000"
@@ -1737,7 +1737,7 @@
                 "coin": "1 BNB.RUNE-A1F"
             },
             {
-                "memo": "WITHDRAW:ETH.ETH-0X0000000000000000000000000000000000000000:1000"
+                "memo": "WITHDRAW:ETH.ETH:1000"
             }
         ],
         "block_height": null,
@@ -1766,7 +1766,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "3787567 ETH.ETH-0X0000000000000000000000000000000000000000"
+                "coins": "3787567 ETH.ETH"
             },
             {
                 "pool_deduct": "100000000"
@@ -1808,7 +1808,7 @@
         "type": "gas",
         "attributes": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "asset": "ETH.ETH"
             },
             {
                 "asset_amt": "21000"
@@ -1925,7 +1925,7 @@
         "type": "gas",
         "attributes": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "asset": "ETH.ETH"
             },
             {
                 "asset_amt": "54734"
