@@ -416,7 +416,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid stake memo:invalid pool asset"
+                "reason": "unknown request: invalid pool asset"
             },
             {
                 "id": "TODO"
@@ -790,7 +790,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid swap memo:swap from BNB.BNB to BNB.BNB is noop, refund"
+                "reason": "unknown request: swap Source and Target cannot be the same."
             },
             {
                 "id": "TODO"
@@ -1349,7 +1349,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid swap memo:not expecting multiple coins in a swap"
+                "reason": "unknown request: not expecting multiple coins in a swap"
             },
             {
                 "id": "TODO"
