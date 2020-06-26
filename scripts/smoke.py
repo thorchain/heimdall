@@ -148,8 +148,8 @@ class Smoker:
         bitcoin_address = MockBitcoin.get_address_from_pubkey(raw_pubkey)
         self.mock_bitcoin.set_vault_address(bitcoin_address)
 
+        self.mock_ethereum = MockEthereum(eth)
         ethereum_address = MockEthereum.get_address_from_pubkey(raw_pubkey)
-        self.mock_ethereum = MockEthereum(eth, ethereum_address)
         self.mock_ethereum.set_vault_address(ethereum_address)
 
         self.mock_binance = MockBinance(bnb)
@@ -261,6 +261,7 @@ class Smoker:
     def check_events(self):
         events = self.thorchain_client.events
         sim_events = self.thorchain_state.events
+
         for event, sim_event in zip(sorted(events), sorted(sim_events)):
             if sim_event != event:
                 logging.error(

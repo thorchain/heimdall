@@ -1430,10 +1430,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "25964"
             },
             {
-                "rune_amt": "611189"
+                "rune_amt": "755662"
             },
             {
                 "transaction_count": "1"
@@ -1455,10 +1455,10 @@
                 "trade_slip": "1024"
             },
             {
-                "liquidity_fee": "197813000"
+                "liquidity_fee": "197813950"
             },
             {
-                "liquidity_fee_in_rune": "197813000"
+                "liquidity_fee_in_rune": "197813950"
             },
             {
                 "id": "TODO"
@@ -1502,10 +1502,10 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "303441772"
+                "bond_reward": "303442722"
             },
             {
-                "ETH.ETH": "-197813000"
+                "ETH.ETH": "-197813950"
             }
         ],
         "block_height": null,
@@ -1609,7 +1609,7 @@
                 "asset_amt": "54670"
             },
             {
-                "rune_amt": "1443357"
+                "rune_amt": "1443361"
             },
             {
                 "transaction_count": "1"
@@ -1766,7 +1766,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "3787567 ETH.ETH"
+                "coins": "3787555 ETH.ETH"
             },
             {
                 "pool_deduct": "100000000"
@@ -1811,10 +1811,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "25964"
             },
             {
-                "rune_amt": "552967"
+                "rune_amt": "683681"
             },
             {
                 "transaction_count": "1"
@@ -1931,7 +1931,7 @@
                 "asset_amt": "54734"
             },
             {
-                "rune_amt": "1441265"
+                "rune_amt": "1441275"
             },
             {
                 "transaction_count": "1"

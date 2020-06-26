@@ -28,6 +28,11 @@ def main():
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
     )
     parser.add_argument(
+        "--thorchain-websocket",
+        default="ws://localhost:26657/websocket",
+        help="Thorchain Websocket url",
+    )
+    parser.add_argument(
         "--tx-type", default="swap", help="Transactions type to perform (swap or stake)"
     )
     parser.add_argument(
@@ -35,7 +40,9 @@ def main():
     )
     args = parser.parse_args()
 
-    benchie = Benchie(args.binance, args.thorchain, args.tx_type, args.num,)
+    benchie = Benchie(
+        args.binance, args.thorchain, args.tx_type, args.num, args.thorchain_websocket
+    )
     try:
         benchie.run()
     except Exception as e:
@@ -44,13 +51,11 @@ def main():
 
 
 class Benchie:
-    def __init__(
-        self, bnb, thor, tx_type, num,
-    ):
+    def __init__(self, bnb, thor, tx_type, num, thor_ws=None):
         self.thorchain = ThorchainState()
 
-        self.thorchain_client = ThorchainClient(thor)
-        vault_address = self.thorchain_client.get_vault_address()
+        self.thorchain_client = ThorchainClient(thor, thor_ws)
+        vault_address = self.thorchain_client.get_vault_address("BNB")
         vault_pubkey = self.thorchain_client.get_vault_pubkey()
 
         self.thorchain.set_vault_pubkey(vault_pubkey)
@@ -152,18 +157,15 @@ class Benchie:
         start_block_height = self.thorchain_client.get_block_height()
         t1 = time.time()
         completed = 0
-        last_event_id = 1
 
         pbar = tqdm(total=self.num)
         while completed < self.num:
-            events = self.thorchain_client.get_events(last_event_id)
+            events = self.thorchain_client.events
             if len(events) == 0:
                 time.sleep(1)
                 continue
-            last_event_id = events[-1]["id"]
-            events = [e for e in events if e["type"] == memo.split(":")[0].lower()]
-            completed += len(events)
-            pbar.update(len(events))
+            completed = len([e for e in events if e.type == self.tx_type.lower()])
+            pbar.update(completed)
             time.sleep(1)
         pbar.close()
 

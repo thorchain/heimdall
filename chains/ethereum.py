@@ -37,7 +37,7 @@ class MockEthereum:
         "9294f4d108465fd293f7fe299e6923ef71a77f2cb1eb6d4394839c64ec25d5c0",
     ]
 
-    def __init__(self, base_url, eth_address):
+    def __init__(self, base_url):
         self.url = base_url
         self.web3 = Web3(HTTPProvider(base_url))
         self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
@@ -199,20 +199,7 @@ class MockEthereum:
                     .transact()
                 )
         else:
-            value = 0
             memo = txn.memo
-            if txn.coins[0].asset.get_symbol() == Ethereum.chain:
-                value = txn.coins[0].amount
-            else:
-                tx_hash = (
-                    self.tokens[txn.coins[0].asset.get_symbol().split("-")[0]]
-                    .functions.approve(
-                        Web3.toChecksumAddress(self.vault.address), txn.coins[0].amount
-                    )
-                    .transact()
-                )
-                receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
-                spent_gas = receipt.cumulativeGasUsed
             if txn.memo.find(":ETH.") != -1:
                 splits = txn.coins[0].asset.get_symbol().split("-")
                 parts = txn.memo.split("-")
@@ -225,14 +212,27 @@ class MockEthereum:
                     memo = parts[0] + ":" + ps[1]
             else:
                 memo = txn.memo
-            asset = self.zero_address
             if txn.coins[0].asset.get_symbol().split("-")[0] != Ethereum.chain:
-                asset = txn.coins[0].asset.get_symbol().split("-")[1]
-            tx_hash = self.vault.functions.deposit(
-                Web3.toChecksumAddress(asset),
-                txn.coins[0].amount,
-                memo.encode("utf-8"),
-            ).transact({"value": value})
+                tx_hash = self.vault.functions.deposit(self.zero_address,).transact(
+                    {"value": txn.coins[0].amount}
+                )
+            else:
+                tx_hash = (
+                    self.tokens[txn.coins[0].asset.get_symbol().split("-")[0]]
+                    .functions.approve(
+                        Web3.toChecksumAddress(self.vault.address), txn.coins[0].amount
+                    )
+                    .transact()
+                )
+                receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
+                spent_gas = receipt.cumulativeGasUsed
+                tx_hash = self.vault.functions.deposit(
+                    Web3.toChecksumAddress(
+                        txn.coins[0].asset.get_symbol().split("-")[1]
+                    ),
+                    txn.coins[0].amount,
+                    memo.encode("utf-8"),
+                ).transact()
 
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
         txn.id = receipt.transactionHash.hex()[2:].upper()
