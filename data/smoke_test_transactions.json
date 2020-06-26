@@ -347,8 +347,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "USER-1",
->>>>>>> c0e9171... Update ETH values scale, tests
+        "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "STAKE:ETH.ETH:STAKER-1",
         "coins": [
