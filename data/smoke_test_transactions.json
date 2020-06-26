@@ -327,32 +327,6 @@
         "coins": [
             {
                 "asset": "ETH.ETH",
-                "amount": 150000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "BNB",
-        "from_address": "STAKER-1",
-        "to_address": "VAULT",
-        "memo": "STAKE:ETH.ETH:STAKER-1",
-        "coins": [
-            {
-                "asset": "BNB.RUNE-A1F",
-                "amount": 50000000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "ETH",
-        "from_address": "STAKER-1",
-        "to_address": "VAULT",
-        "memo": "STAKE:ETH.ETH:STAKER-1",
-        "coins": [
-            {
-                "asset": "ETH.ETH",
                 "amount": 4000000000
             }
         ],
