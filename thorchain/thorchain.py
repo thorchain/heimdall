@@ -589,7 +589,7 @@ class ThorchainState:
 
         # cant have rune memo
         if asset.is_rune():
-            return self.refund(txn, 105, "invalid stake memo:invalid pool asset")
+            return self.refund(txn, 105, "unknown request: invalid pool asset")
 
         # check that we have one rune and one asset
         if len(txn.coins) > 2:

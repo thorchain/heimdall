@@ -32,7 +32,7 @@ class MockEthereum:
     private_keys = [
         "ef235aacf90d9f4aadd8c92e4b2562e1d9eb97f0df9ba3b508258739cb013db2",
         "289c2857d4598e37fb9647507e47a309d6133539bf21a8b9cb6df88fd5232032",
-        "e810f1d7d6691b4a7a73476f3543bd87d601f9a53e7faf670eac2c5    b517d83bf",
+        "e810f1d7d6691b4a7a73476f3543bd87d601f9a53e7faf670eac2c5b517d83bf",
         "a96e62ed3955e65be32703f12d87b6b5cf26039ecfa948dc5107a495418e5330",
         "9294f4d108465fd293f7fe299e6923ef71a77f2cb1eb6d4394839c64ec25d5c0",
     ]
@@ -175,7 +175,7 @@ class MockEthereum:
             txn.memo = txn.memo.replace(alias, addr)
 
         for account in self.web3.eth.accounts:
-            if account == Web3.toChecksumAddress(txn.from_address):
+            if account.lower() == txn.from_address.lower():
                 self.web3.geth.personal.unlock_account(account, self.passphrase)
                 self.web3.eth.defaultAccount = account
 
@@ -213,7 +213,7 @@ class MockEthereum:
             else:
                 memo = txn.memo
             if txn.coins[0].asset.get_symbol().split("-")[0] == Ethereum.chain:
-                tx_hash = self.vault.functions.deposit(self.zero_address,).transact(
+                tx_hash = self.vault.functions.deposit(memo.encode("utf-8")).transact(
                     {"value": txn.coins[0].amount}
                 )
             else:
@@ -259,7 +259,7 @@ class Ethereum(GenericChain):
         """
         gas = 25964
         if txn.memo.startswith("WITHDRAW") and txn.memo.find("ETH.ETH") == -1:
-            gas = 54734
+            gas = 61079
         if txn.memo.startswith("SWAP:ETH.") and txn.memo.find("ETH.ETH") == -1:
-            gas = 54670
+            gas = 61015
         return Coin(cls.coin, gas * MockEthereum.gas_price)

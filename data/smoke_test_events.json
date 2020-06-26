@@ -559,7 +559,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid stake memo:did not find BNB.TCAN-014 "
+                "reason": "unknown request: did not find both coins"
             },
             {
                 "id": "TODO"
@@ -651,7 +651,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid stake memo:invalid pool asset"
+                "reason": "unknown request: invalid pool asset"
             },
             {
                 "id": "TODO"
@@ -1038,7 +1038,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid swap memo:swap from BNB.BNB to BNB.BNB is noop, refund"
+                "reason": "unknown request: swap Source and Target cannot be the same."
             },
             {
                 "id": "TODO"
@@ -1606,10 +1606,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "54670"
+                "asset_amt": "61015"
             },
             {
-                "rune_amt": "1443361"
+                "rune_amt": "1610878"
             },
             {
                 "transaction_count": "1"
@@ -1766,7 +1766,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "3787555 ETH.ETH"
+                "coins": "3787540 ETH.ETH"
             },
             {
                 "pool_deduct": "100000000"
@@ -1814,7 +1814,7 @@
                 "asset_amt": "25964"
             },
             {
-                "rune_amt": "683681"
+                "rune_amt": "683683"
             },
             {
                 "transaction_count": "1"
@@ -1928,10 +1928,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "54734"
+                "asset_amt": "61079"
             },
             {
-                "rune_amt": "1441275"
+                "rune_amt": "1608360"
             },
             {
                 "transaction_count": "1"
@@ -1947,7 +1947,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid swap memo:not expecting multiple coins in a swap"
+                "reason": "unknown request: not expecting multiple coins in a swap"
             },
             {
                 "id": "TODO"
@@ -2704,7 +2704,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105628387"
+                "bond_reward": "105628386"
             }
         ],
         "block_height": null,

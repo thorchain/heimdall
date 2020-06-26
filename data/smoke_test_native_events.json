@@ -99,7 +99,7 @@
         "type": "stake",
         "attributes": [
             {
-                "pool": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "pool": "ETH.ETH"
             },
             {
                 "stake_units": "27000000000"
@@ -464,7 +464,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid stake memo:invalid pool asset"
+                "reason": "unknown request: invalid pool asset"
             },
             {
                 "id": "TODO"
@@ -838,7 +838,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid swap memo:swap from BNB.BNB to BNB.BNB is noop, refund"
+                "reason": "unknown request: swap Source and Target cannot be the same."
             },
             {
                 "id": "TODO"
@@ -1068,7 +1068,7 @@
         "type": "swap",
         "attributes": [
             {
-                "pool": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "pool": "ETH.ETH"
             },
             {
                 "price_target": "0"
@@ -1098,7 +1098,7 @@
                 "coin": "50000000000 THOR.RUNE"
             },
             {
-                "memo": "SWAP:ETH.ETH-0X0000000000000000000000000000000000000000:USER-1"
+                "memo": "SWAP:ETH.ETH:USER-1"
             }
         ],
         "block_height": null,
@@ -1111,7 +1111,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "3000000 ETH.ETH-0X0000000000000000000000000000000000000000"
+                "coins": "3000000 ETH.ETH"
             },
             {
                 "pool_deduct": "100000000"
@@ -1124,13 +1124,13 @@
         "type": "gas",
         "attributes": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "25964"
             },
             {
-                "rune_amt": "698601"
+                "rune_amt": "863737"
             },
             {
                 "transaction_count": "1"
@@ -1143,7 +1143,7 @@
         "type": "swap",
         "attributes": [
             {
-                "pool": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "pool": "ETH.ETH"
             },
             {
                 "price_target": "0"
@@ -1152,10 +1152,10 @@
                 "trade_slip": "1024"
             },
             {
-                "liquidity_fee": "226104333"
+                "liquidity_fee": "226105419"
             },
             {
-                "liquidity_fee_in_rune": "226104333"
+                "liquidity_fee_in_rune": "226105419"
             },
             {
                 "id": "TODO"
@@ -1170,7 +1170,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "150000000 ETH.ETH-0X0000000000000000000000000000000000000000"
+                "coin": "150000000 ETH.ETH"
             },
             {
                 "memo": "SWAP:THOR.RUNE:USER-1"
@@ -1255,13 +1255,13 @@
         "type": "gas",
         "attributes": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "54670"
+                "asset_amt": "61015"
             },
             {
-                "rune_amt": "1653707"
+                "rune_amt": "1845642"
             },
             {
                 "transaction_count": "1"
@@ -1330,7 +1330,7 @@
         "type": "unstake",
         "attributes": [
             {
-                "pool": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "pool": "ETH.ETH"
             },
             {
                 "stake_units": "2700000000"
@@ -1357,7 +1357,7 @@
                 "coin": "1 THOR.RUNE"
             },
             {
-                "memo": "WITHDRAW:ETH.ETH-0X0000000000000000000000000000000000000000:1000"
+                "memo": "WITHDRAW:ETH.ETH:1000"
             }
         ],
         "block_height": null,
@@ -1386,7 +1386,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "3305792 ETH.ETH-0X0000000000000000000000000000000000000000"
+                "coins": "3305768 ETH.ETH"
             },
             {
                 "pool_deduct": "100000000"
@@ -1399,13 +1399,13 @@
         "type": "gas",
         "attributes": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "25964"
             },
             {
-                "rune_amt": "633770"
+                "rune_amt": "783587"
             },
             {
                 "transaction_count": "1"
@@ -1487,13 +1487,13 @@
         "type": "gas",
         "attributes": [
             {
-                "asset": "ETH.ETH-0X0000000000000000000000000000000000000000"
+                "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "54734"
+                "asset_amt": "61079"
             },
             {
-                "rune_amt": "1651871"
+                "rune_amt": "1843383"
             },
             {
                 "transaction_count": "1"
@@ -1509,7 +1509,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid swap memo:not expecting multiple coins in a swap"
+                "reason": "unknown request: not expecting multiple coins in a swap"
             },
             {
                 "id": "TODO"
