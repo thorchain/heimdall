@@ -117,6 +117,12 @@ class Asset(str, Jsonable):
         """
         return self.get_symbol().startswith("RUNE")
 
+    def is_erc(self):
+        """
+        Is this asset erc20?
+        """
+        return self.get_chain() == "ETH" and not self.get_symbol().startswith("ETH")
+
     def get_symbol(self):
         """
         Return symbol part of the asset string

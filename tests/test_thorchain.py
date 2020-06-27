@@ -1087,7 +1087,7 @@ class TestEvent(unittest.TestCase):
         swap_sim = Event(
             "swap",
             [
-                {"pool": "ETH.ETH-0X0000000000000000000000000000000000000000"},
+                {"pool": "ETH.ETH"},
                 {"stake_units": "27000000000"},
                 {"rune_address": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q"},
                 {"rune_amount": "50000000000"},
@@ -1099,7 +1099,7 @@ class TestEvent(unittest.TestCase):
         swap = Event(
             "swap",
             [
-                {"pool": "ETH.ETH-0x0000000000000000000000000000000000000000"},
+                {"pool": "ETH.ETH"},
                 {"stake_units": "27000000000"},
                 {"rune_address": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q"},
                 {"rune_amount": "50000000000"},

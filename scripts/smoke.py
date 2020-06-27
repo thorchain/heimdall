@@ -224,6 +224,28 @@ class Smoker:
                     f"Bad {chain.name} balance: {name} {mock_coin} != {sim_coin}"
                 )
 
+    def check_ethereum(self):
+        # compare simulation ethereum vs mock ethereum
+        for addr, sim_acct in self.ethereum.accounts.items():
+            name = get_alias(self.ethereum.chain, addr)
+            if name == "MASTER":
+                continue  # don't care to compare MASTER account
+            for sim_coin in sim_acct.balances:
+                if not sim_coin.asset.is_eth():
+                    continue
+                mock_coin = Coin(
+                    "ETH." + sim_coin.asset.get_symbol(),
+                    self.mock_ethereum.get_balance(
+                        addr, sim_coin.asset.get_symbol().split("-")[0]
+                    ),
+                )
+                # dont raise error on reorg balance being invalidated
+                # sim is not smart enough to subtract funds on reorg
+                if mock_coin.amount == 0 and self.ethereum_reorg:
+                    return
+                if sim_coin != mock_coin:
+                    self.error(f"Bad ETH balance: {name} {mock_coin} != {sim_coin}")
+
     def check_vaults(self):
         # check vault data
         vdata = self.thorchain_client.get_vault_data()
@@ -431,7 +453,7 @@ class Smoker:
 
             self.check_binance()
             self.check_chain(self.bitcoin, self.mock_bitcoin, self.bitcoin_reorg)
-            self.check_chain(self.ethereum, self.mock_ethereum, self.ethereum_reorg)
+            self.check_ethereum()
 
             if RUNE.get_chain() == "THOR":
                 self.check_chain(self.thorchain, self.mock_thorchain, None)
