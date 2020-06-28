@@ -41,13 +41,13 @@ class TestThorchainState(unittest.TestCase):
         # no network fees defined
         # default to 1 RUNE
         thorchain = ThorchainState()
-        gas = thorchain.get_gas("BTC")
+        gas = thorchain.get_gas("BTC", {})
         self.assertEqual(gas, Coin("BTC.BTC", 0))
 
         # happy path
         thorchain.network_fees = {"BTC": 99813}
         thorchain.pools = [Pool("BTC.BTC", 59983570781, 127225819)]
-        gas = thorchain.get_gas("BTC")
+        gas = thorchain.get_gas("BTC", {})
         self.assertEqual(gas, Coin("BTC.BTC", 149720))
 
     def test_handle_fee(self):

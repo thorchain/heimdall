@@ -264,7 +264,7 @@ class ThorchainState:
             return Ethereum.coin
         return None
 
-    def get_gas(self, chain):
+    def get_gas(self, chain, tx):
         if chain == "THOR":
             return Coin(RUNE, self.rune_fee)
         rune_fee = self.get_rune_fee(chain)
@@ -274,7 +274,12 @@ class ThorchainState:
         if chain == "BNB":
             amount = pool.get_rune_in_asset(int(round(rune_fee / 3)))
         if chain == "ETH":
-            amount = 21000
+            if tx.memo.find("ETH.ETH") != -1:
+                amount = 25964
+            elif tx.memo.startswith("SWAP:"):
+                amount = 61015
+            else:
+                amount = 61079
         return Coin(gas_asset, amount)
 
     def get_rune_fee(self, chain):
@@ -302,7 +307,7 @@ class ThorchainState:
             # fee amount in rune value
             rune_fee = self.get_rune_fee(tx.chain)
             if not tx.gas:
-                tx.gas = [self.get_gas(tx.chain)]
+                tx.gas = [self.get_gas(tx.chain, in_tx)]
 
             for coin in tx.coins:
                 if coin.is_rune():
@@ -736,8 +741,8 @@ class ThorchainState:
 
         # calculate gas prior to update pool in case we empty the pool
         # and need to subtract
-        gas = self.get_gas(asset.get_chain())
-        tx_rune_gas = self.get_gas(RUNE.get_chain())
+        gas = self.get_gas(asset.get_chain(), tx)
+        tx_rune_gas = self.get_gas(RUNE.get_chain(), tx)
 
         unstake_units, rune_amt, asset_amt = pool.unstake(
             tx.from_address, withdraw_basis_points

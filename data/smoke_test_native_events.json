@@ -1051,10 +1051,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "25964"
             },
             {
-                "rune_amt": "700000"
+                "rune_amt": "865467"
             },
             {
                 "transaction_count": "1"
@@ -1074,10 +1074,10 @@
                 "trade_slip": "100"
             },
             {
-                "liquidity_fee": "2475238"
+                "liquidity_fee": "2475250"
             },
             {
-                "liquidity_fee_in_rune": "2475238"
+                "liquidity_fee_in_rune": "2475250"
             },
             {
                 "id": "TODO"
@@ -1172,10 +1172,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "61015"
             },
             {
-                "rune_amt": "693079"
+                "rune_amt": "2013731"
             },
             {
                 "transaction_count": "1"
@@ -1304,10 +1304,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "25964"
             },
             {
-                "rune_amt": "693089"
+                "rune_amt": "856947"
             },
             {
                 "transaction_count": "1"
@@ -1384,10 +1384,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "61079"
             },
             {
-                "rune_amt": "693099"
+                "rune_amt": "2015964"
             },
             {
                 "transaction_count": "1"
