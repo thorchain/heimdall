@@ -304,7 +304,7 @@ class Smoker:
         btc = self.mock_bitcoin.block_stats
         fees = {
             "BNB": self.mock_binance.singleton_gas,
-            "ETH": self.mock_ethereum.default_gas,
+            "ETH": self.mock_ethereum.gas_price * self.mock_ethereum.default_gas,
             "BTC": btc["tx_size"] * btc["tx_rate"],
         }
         self.thorchain_state.set_network_fees(fees)
