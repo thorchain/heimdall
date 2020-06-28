@@ -102,6 +102,8 @@ def main():
         sys.exit(smoker.exit)
     except Exception as e:
         logging.error(e)
+        logging.exception("Smoke tests failed")
+        sys.exit(1)
 
 
 class Smoker:
