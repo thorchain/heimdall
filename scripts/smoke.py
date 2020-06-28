@@ -357,7 +357,7 @@ class Smoker:
 
                     elif evt.type == "rewards":
                         self.thorchain_state.handle_rewards()
-=
+
                     elif evt.type == "outbound" and processed and pending_txs > 0:
                         # figure out which outbound event is which tx
                         for out in outbounds:

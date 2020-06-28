@@ -132,17 +132,6 @@ class MockEthereum:
         except requests.exceptions.RequestException as e:
             logging.error(f"{e}")
 
-    def set_block(self, block_height):
-        """
-        Set head for reorg
-        """
-        payload = json.dumps({"method": "debug_setHead", "params": [block_height]})
-        headers = {"content-type": "application/json", "cache-control": "no-cache"}
-        try:
-            requests.request("POST", self.url, data=payload, headers=headers)
-        except requests.exceptions.RequestException as e:
-            logging.error(f"{e}")
-
     def get_balance(self, address, symbol):
         """
         Get ETH or token balance for an address
