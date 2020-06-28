@@ -1313,10 +1313,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "25964"
             },
             {
-                "rune_amt": "612500"
+                "rune_amt": "757283"
             },
             {
                 "transaction_count": "1"
@@ -1336,10 +1336,10 @@
                 "trade_slip": "1025"
             },
             {
-                "liquidity_fee": "198416732"
+                "liquidity_fee": "198417685"
             },
             {
-                "liquidity_fee_in_rune": "198416732"
+                "liquidity_fee_in_rune": "198417685"
             },
             {
                 "id": "TODO"
@@ -1379,10 +1379,10 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "304044180"
+                "bond_reward": "304045133"
             },
             {
-                "ETH.ETH": "-198416732"
+                "ETH.ETH": "-198417685"
             }
         ]
     },
@@ -1473,10 +1473,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "61015"
             },
             {
-                "rune_amt": "555563"
+                "rune_amt": "1614180"
             },
             {
                 "transaction_count": "1"
@@ -1658,10 +1658,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "25964"
             },
             {
-                "rune_amt": "555570"
+                "rune_amt": "686916"
             },
             {
                 "transaction_count": "1"
@@ -1763,10 +1763,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "21000"
+                "asset_amt": "61079"
             },
             {
-                "rune_amt": "555579"
+                "rune_amt": "1615965"
             },
             {
                 "transaction_count": "1"
