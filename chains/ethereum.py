@@ -21,7 +21,7 @@ class MockEthereum:
     An client implementation for a localnet/rinkebye/ropston Ethereum server
     """
 
-    default_gas = 21000
+    default_gas = 62000
     gas_price = 1
     passphrase = "the-passphrase"
     seed = "SEED"
