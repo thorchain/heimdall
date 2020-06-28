@@ -112,6 +112,26 @@ class MockEthereum:
         block = self.web3.eth.getBlock(block_height)
         return block["hash"].hex()
 
+    def get_block_stats(self, block_height=None):
+        """
+        Get the block hash for a height
+        """
+        return {
+            "avg_tx_size": 1,
+            "avg_fee_rate": 1,
+        }
+
+    def set_block(self, block_height):
+        """
+        Set head for reorg
+        """
+        payload = json.dumps({"method": "debug_setHead", "params": [block_height]})
+        headers = {"content-type": "application/json", "cache-control": "no-cache"}
+        try:
+            requests.request("POST", self.url, data=payload, headers=headers)
+        except requests.exceptions.RequestException as e:
+            logging.error(f"{e}")
+
     def set_block(self, block_height):
         """
         Set head for reorg
@@ -141,7 +161,7 @@ class MockEthereum:
 
     def wait_for_node(self):
         """
-        Ethereum pow localnet node is started with directly mining 4 blocks
+        Ethereum pow localnet node is started with directly mining 2 blocks
         to be able to start handling transactions.
         It can take a while depending on the machine specs so we retry.
         """
@@ -237,7 +257,7 @@ class MockEthereum:
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
         txn.id = receipt.transactionHash.hex()[2:].upper()
         txn.gas = [
-            Coin("ETH.ETH", (receipt.cumulativeGasUsed + spent_gas) * self.gas_price,)
+            Coin("ETH.ETH", (receipt.cumulativeGasUsed + spent_gas) * self.gas_price)
         ]
 
 
@@ -255,7 +275,6 @@ class Ethereum(GenericChain):
     def _calculate_gas(cls, pool, txn):
         """
         Calculate gas according to RUNE thorchain fee
-        1 RUNE / 2 in ETH value
         """
         gas = 25964
         if txn.memo.startswith("WITHDRAW") and txn.memo.find("ETH.ETH") == -1:

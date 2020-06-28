@@ -70,6 +70,11 @@ class TestSmoke(unittest.TestCase):
         btc = Bitcoin()  # init local bitcoin chain
         eth = Ethereum()  # init local ethereum chain
         thorchain = ThorchainState()  # init local thorchain
+        thorchain.network_fees = {  # init fixed network fees
+            "BNB": 37500,
+            "BTC": 1,
+            "ETH": 1,
+        }
 
         file = "data/smoke_test_transactions.json"
         if RUNE.get_chain() == "THOR":
@@ -94,8 +99,6 @@ class TestSmoke(unittest.TestCase):
                 continue
 
             outbound = thorchain.handle(txn)  # process transaction in thorchain
-            outbound = thorchain.handle_fee(txn, outbound)
-            thorchain.order_outbound_txns(outbound)
 
             for txn in outbound:
                 if txn.chain == Binance.chain:

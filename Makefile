@@ -38,13 +38,7 @@ smoke:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True
 
 kube-smoke:
-	@kubectl replace --force -f kube/smoke.yml
-
-kube-benchmark-stake:
-	@sed -e 's|NUM|${NUM}|g' kube/benchmark-stake.yml | kubectl replace --force -f -
-
-kube-benchmark-swap:
-	@sed -e 's|NUM|${NUM}|g' kube/benchmark-swap.yml | kubectl replace --force -f -
+	@kubectl replace --force -f kube/job.yml
 
 health:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py

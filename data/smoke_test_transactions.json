@@ -24,11 +24,11 @@
         "coins": [
             {
                 "asset": "BNB.BNB",
-                "amount": 300000000
+                "amount": 600000000
             },
             {
                 "asset": "BNB.RUNE-A1F",
-                "amount": 150000000000
+                "amount": 200000000000
             },
             {
                 "asset": "BNB.LOK-3C0",
@@ -320,7 +320,7 @@
         "coins": [
             {
                 "asset": "BTC.BTC",
-                "amount": 150000000
+                "amount": 1500000
             }
         ],
         "gas": null
@@ -530,7 +530,7 @@
         "coins": [
             {
                 "asset": "BNB.BNB",
-                "amount": 500000
+                "amount": 500000000
             }
         ],
         "gas": null
