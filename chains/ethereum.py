@@ -259,6 +259,8 @@ class Ethereum(GenericChain):
     gas_per_byte = 68
     chain = "ETH"
     coin = Asset("ETH.ETH")
+    withdrawals = {}
+    swaps = {}
 
     @classmethod
     def _calculate_gas(cls, pool, txn):
@@ -267,7 +269,16 @@ class Ethereum(GenericChain):
         """
         gas = 25964
         if txn.memo.startswith("WITHDRAW") and txn.memo.find("ETH.ETH") == -1:
-            gas = 61079
+            index = s.rfind(":")
+            if index != -1 and txn.memo[index + 1 :].lower() in self.withdrawals:
+                gas = 31079
+            else:
+                self.withdrawals[txn.memo[index + 1 :].lower()] = 1
+                gas = 61079
         if txn.memo.startswith("SWAP:ETH.") and txn.memo.find("ETH.ETH") == -1:
-            gas = 61015
+            if index != -1 and txn.memo[index + 1 :].lower() in self.swaps:
+                gas = 31015
+            else:
+                self.swaps[txn.memo[index + 1 :].lower()] = 1
+                gas = 61015
         return Coin(cls.coin, gas * MockEthereum.gas_price)
