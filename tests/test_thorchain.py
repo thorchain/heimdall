@@ -118,8 +118,8 @@ class TestThorchainState(unittest.TestCase):
             Event(
                 "refund",
                 [
-                    {"code": "105"},
-                    {"reason": "refund reason message: pool is zero"},
+                    {"code": "108"},
+                    {"reason": "fail swap, invalid balance"},
                     *tx.get_attributes(),
                 ],
             ),
@@ -382,8 +382,8 @@ class TestThorchainState(unittest.TestCase):
             Event(
                 "refund",
                 [
-                    {"code": "105"},
-                    {"reason": "REFUND REASON MESSAGE: POOL IS ZERO"},
+                    {"code": "108"},
+                    {"reason": "fail swap, invalid balance"},
                     *tx.get_attributes(),
                 ],
             ),
