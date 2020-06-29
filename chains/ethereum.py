@@ -271,7 +271,7 @@ class Ethereum(GenericChain):
         if txn.memo.startswith("WITHDRAW") and txn.memo.find("ETH.ETH") == -1:
             from_address = txn.from_address
             if not from_address.startswith("0x"):
-                from_address = get_alias_address("ETH", from_address)
+                from_address = get_alias_address(txn.chain, from_address)
             if from_address in Ethereum.withdrawals:
                 gas = 31079
             else:
@@ -281,7 +281,7 @@ class Ethereum(GenericChain):
             index = txn.memo.rfind(":")
             from_address = txn.memo[index + 1 :]
             if not from_address.startswith("0x"):
-                from_address = get_alias_address("ETH", from_address)
+                from_address = get_alias_address(txn.chain, from_address)
             if index != -1 and from_address in Ethereum.swaps:
                 gas = 31015
             else:
