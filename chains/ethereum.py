@@ -277,7 +277,7 @@ class Ethereum(GenericChain):
                 gas = 61079
         if txn.memo.startswith("SWAP:ETH.") and txn.memo.find("ETH.ETH") == -1:
             index = txn.memo.rfind(":")
-            from_address = get_alias_address("ETH", txn.memo[index + 1: ])
+            from_address = get_alias_address("ETH", txn.memo[index + 1 :])
             if index != -1 and from_address in Ethereum.swaps:
                 gas = 31015
             else:
