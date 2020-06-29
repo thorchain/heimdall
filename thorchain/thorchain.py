@@ -736,8 +736,7 @@ class ThorchainState:
         pool = self.get_pool(asset)
         staker = pool.get_staker(tx.from_address)
         if staker.is_zero():
-            # FIXME real world message
-            return self.refund(tx, 105, "refund reason message")
+            return self.refund(tx, 108, "fail swap, invalid balance")
 
         # calculate gas prior to update pool in case we empty the pool
         # and need to subtract
@@ -749,7 +748,9 @@ class ThorchainState:
         )
 
         # if this is our last staker of bnb, subtract a little BNB for gas.
-        if pool.total_units == 0:
+        gas_pool = self.get_pool(self.get_gas_asset(asset.get_chain()))
+        if pool.total_units == 0 and pool == gas_pool:
+            logging.info(pool)
             if pool.asset.is_bnb():
                 gas_amt = gas.amount
                 if RUNE.get_chain() == "BNB":

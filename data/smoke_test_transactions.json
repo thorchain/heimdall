@@ -899,6 +899,45 @@
     },
     {
         "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:ETH.ETH",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:BTC.BTC",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BTC.BTC",
