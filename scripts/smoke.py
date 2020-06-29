@@ -43,11 +43,6 @@ def main():
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
     )
     parser.add_argument(
-        "--thorchain-websocket",
-        default="ws://localhost:26657/websocket",
-        help="Thorchain Websocket url",
-    )
-    parser.add_argument(
         "--midgard", default="http://localhost:8080", help="Midgard API url"
     )
     parser.add_argument(
@@ -318,7 +313,6 @@ class Smoker:
         for outbound in outbounds:
             # update simulator state with outbound txs
             self.broadcast_simulator(outbound)
-
         return outbounds
 
     def sim_catch_up(self, txn):
