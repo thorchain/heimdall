@@ -153,7 +153,7 @@ class ThorchainState:
 
     rune_fee = 1 * Coin.ONE
 
-    def __init__(self):
+    def __init__(self, eth):
         self.pools = []
         self.events = []
         self.reserve = 0
@@ -162,6 +162,7 @@ class ThorchainState:
         self.bond_reward = 0
         self.vault_pubkey = None
         self.network_fees = {}
+        self.ethereum = eth
 
     def set_vault_pubkey(self, pubkey):
         """
@@ -274,12 +275,7 @@ class ThorchainState:
         if chain == "BNB":
             amount = pool.get_rune_in_asset(int(round(rune_fee / 3)))
         if chain == "ETH":
-            if tx.memo.find("ETH.ETH") != -1:
-                amount = 25964
-            elif tx.memo.startswith("SWAP:"):
-                amount = 61015
-            else:
-                amount = 61079
+            return self.ethereum._calculate_gas(None, tx)
         return Coin(gas_asset, amount)
 
     def get_rune_fee(self, chain):

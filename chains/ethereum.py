@@ -259,16 +259,28 @@ class Ethereum(GenericChain):
     gas_per_byte = 68
     chain = "ETH"
     coin = Asset("ETH.ETH")
+    withdrawals = {}
+    swaps = {}
 
     @classmethod
     def _calculate_gas(cls, pool, txn):
         """
         Calculate gas according to RUNE thorchain fee
-        1 RUNE / 2 in ETH value
         """
         gas = 25964
         if txn.memo.startswith("WITHDRAW") and txn.memo.find("ETH.ETH") == -1:
-            gas = 61079
+            from_address = get_alias_address("ETH", txn.from_address)
+            if from_address in Ethereum.withdrawals:
+                gas = 31079
+            else:
+                Ethereum.withdrawals[from_address] = 1
+                gas = 61079
         if txn.memo.startswith("SWAP:ETH.") and txn.memo.find("ETH.ETH") == -1:
-            gas = 61015
+            index = txn.memo.rfind(":")
+            from_address = get_alias_address("ETH", txn.memo[index + 1: ])
+            if index != -1 and from_address in Ethereum.swaps:
+                gas = 31015
+            else:
+                Ethereum.swaps[from_address] = 1
+                gas = 61015
         return Coin(cls.coin, gas * MockEthereum.gas_price)

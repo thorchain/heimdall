@@ -120,7 +120,7 @@ class Smoker:
         self.bitcoin = Bitcoin()
         self.ethereum = Ethereum()
         self.thorchain = Thorchain()
-        self.thorchain_state = ThorchainState()
+        self.thorchain_state = ThorchainState(self.ethereum)
 
         self.health = health
 
