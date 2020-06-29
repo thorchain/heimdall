@@ -191,7 +191,7 @@ class ThorchainState:
         Set a pool
         """
         for i, p in enumerate(self.pools):
-            if pool.asset == p.asset:
+            if p.asset == pool.asset:
                 if (
                     pool.asset_balance == 0 or pool.rune_balance == 0
                 ) and pool.status == "Enabled":
@@ -669,6 +669,7 @@ class ThorchainState:
                 rune_amt = coin.amount
             else:
                 asset_amt = coin.amount
+
         # check address to stake to from memo
         address = tx.from_address
         if tx.chain != RUNE.get_chain() and len(parts) > 2:
@@ -862,8 +863,7 @@ class ThorchainState:
             # its a double swap
             pool = self.get_pool(source)
             if pool.is_zero():
-                # FIXME real world message
-                return self.refund(tx, 105, "refund reason message")
+                return self.refund(tx, 108, "fail swap, invalid balance")
 
             emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
                 tx.coins[0], RUNE
@@ -932,7 +932,7 @@ class ThorchainState:
 
         pool = self.get_pool(asset)
         if pool.is_zero():
-            return self.refund(tx, 105, "refund reason message: pool is zero")
+            return self.refund(tx, 108, "fail swap, invalid balance")
 
         emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
             in_tx.coins[0], asset
@@ -1189,6 +1189,7 @@ class Pool(Jsonable):
         for staker in self.stakers:
             if staker.address == address:
                 return staker
+
         return Staker(address)
 
     def set_staker(self, staker):
@@ -1223,6 +1224,7 @@ class Pool(Jsonable):
         units = self._calc_stake_units(
             self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
+
         self.total_units += units
         staker.units += units
         self.set_staker(staker)
