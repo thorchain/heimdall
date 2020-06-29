@@ -112,6 +112,15 @@ class MockEthereum:
         block = self.web3.eth.getBlock(block_height)
         return block["hash"].hex()
 
+    def get_block_stats(self, block_height=None):
+        """
+        Get the block hash for a height
+        """
+        return {
+            "avg_tx_size": 1,
+            "avg_fee_rate": 1,
+        }
+
     def set_block(self, block_height):
         """
         Set head for reorg

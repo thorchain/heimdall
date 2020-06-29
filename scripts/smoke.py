@@ -43,11 +43,6 @@ def main():
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
     )
     parser.add_argument(
-        "--thorchain-websocket",
-        default="ws://localhost:26657/websocket",
-        help="Thorchain Websocket url",
-    )
-    parser.add_argument(
         "--midgard", default="http://localhost:8080", help="Midgard API url"
     )
     parser.add_argument(
@@ -96,12 +91,12 @@ def main():
         args.no_verify,
         args.bitcoin_reorg,
         args.ethereum_reorg,
-        args.thorchain_websocket,
     )
     try:
         smoker.run()
         sys.exit(smoker.exit)
-    except Exception:
+    except Exception as e:
+        logging.error(e)
         logging.exception("Smoke tests failed")
         sys.exit(1)
 
@@ -120,7 +115,6 @@ class Smoker:
         no_verify=False,
         bitcoin_reorg=False,
         ethereum_reorg=False,
-        thor_websocket=None,
     ):
         self.binance = Binance()
         self.bitcoin = Bitcoin()
@@ -132,7 +126,7 @@ class Smoker:
 
         self.txns = txns
 
-        self.thorchain_client = ThorchainClient(thor, thor_websocket)
+        self.thorchain_client = ThorchainClient(thor, enable_websocket=True)
         pubkey = self.thorchain_client.get_vault_pubkey()
 
         self.thorchain_state.set_vault_pubkey(pubkey)
@@ -262,13 +256,12 @@ class Smoker:
         events = self.thorchain_client.events
         sim_events = self.thorchain_state.events
 
-        for event, sim_event in zip(sorted(events), sorted(sim_events)):
-            if sim_event != event:
-                logging.error(
-                    f"Event Thorchain \n{event}\n   !="
-                    f"  \nEvent Simulator \n{sim_event}"
-                )
-                self.error("Events mismatch")
+        if events != sim_events:
+            wrong_events = [e for e in events if e not in sim_events]
+            wrong_sim_events = [e for e in sim_events if e not in events]
+            logging.error(f"THORChain Events {wrong_events}")
+            logging.error(f"Simulator Events {wrong_sim_events}")
+            self.error("Events mismatch")
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1), reraise=True)
     def run_health(self):
@@ -300,26 +293,29 @@ class Smoker:
         if txn.chain == Thorchain.chain:
             return self.thorchain.transfer(txn)
 
+    def set_network_fees(self):
+        """
+        Retrieve network fees on chain for each txn
+        and update thorchain state
+        """
+        btc = self.mock_bitcoin.block_stats
+        fees = {
+            "BNB": self.mock_binance.singleton_gas,
+            "ETH": self.mock_ethereum.default_gas,
+            "BTC": btc["tx_size"] * btc["tx_rate"],
+        }
+        self.thorchain_state.set_network_fees(fees)
+
     def sim_trigger_tx(self, txn):
         # process transaction in thorchain
+        self.set_network_fees()
         outbounds = self.thorchain_state.handle(txn)
-        outbounds = self.thorchain_state.handle_fee(txn, outbounds)
-
-        # replicate order of outbounds broadcast from thorchain
-        self.thorchain_state.order_outbound_txns(outbounds)
-
-        # expecting to see this many outbound txs
-        count_outbounds = 0
-        for o in outbounds:
-            if o.chain == "THOR":
-                continue  # thorchain transactions are on chain
-            count_outbounds += 1
 
         for outbound in outbounds:
             # update simulator state with outbound txs
             self.broadcast_simulator(outbound)
 
-        return outbounds, count_outbounds
+        return outbounds
 
     def sim_catch_up(self, txn):
         # At this point, we can assume that the transaction on real thorchain
@@ -327,21 +323,19 @@ class Smoker:
         # thorchain state
 
         # used to track if we have already processed this txn
-        processed_transaction = False
-
-        # keep track of how many outbound txs we created this inbound txn
         outbounds = []
-        count_outbounds = 0
-        processed_outbound_events = False
+        processed = False
+        pending_txs = 0
 
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
+            new_events = events[len(sim_events) :]
 
             # we have more real events than sim, fill in the gaps
-            if len(events) > len(sim_events):
-                for evt in events[len(sim_events) :]:
-                    if evt.type == "gas" and count_outbounds > 0:
+            if len(new_events) > 0:
+                for evt in new_events:
+                    if evt.type == "gas":
                         todo = []
                         # with the given gas pool event data, figure out
                         # which outbound txns are for this gas pool, vs
@@ -358,51 +352,54 @@ class Smoker:
                                 if count >= int(evt.get("transaction_count")):
                                     break
                         self.thorchain_state.handle_gas(todo)
-                        # countdown til we've seen all expected gas evts
-                        count_outbounds -= len(todo)
 
                     elif evt.type == "rewards":
                         self.thorchain_state.handle_rewards()
 
-                    elif (
-                        evt.type == "outbound"
-                        and processed_transaction
-                        and not processed_outbound_events
-                    ):
-                        self.thorchain_state.generate_outbound_events(txn, outbounds)
-                        processed_outbound_events = True
+                    elif evt.type == "outbound" and processed and pending_txs > 0:
+                        # figure out which outbound event is which tx
+                        for out in outbounds:
+                            if out.coins_str() == evt.get("coin"):
+                                self.thorchain_state.generate_outbound_events(
+                                    txn, [out]
+                                )
+                                pending_txs -= 1
 
-                    elif not processed_transaction:
-                        outbounds, count_outbounds = self.sim_trigger_tx(txn)
-                        processed_transaction = True
+                    elif not processed:
+                        outbounds = self.sim_trigger_tx(txn)
+                        pending_txs = len(outbounds)
+                        processed = True
                 continue
 
             # we have same count of events but its a cross chain stake
-            elif txn.is_cross_chain_stake() and not processed_transaction:
-                outbounds, count_outbounds = self.sim_trigger_tx(txn)
-                processed_transaction = True
-                # still need to wait for thorchain to process it
-                time.sleep(5)
+            elif txn.is_cross_chain_stake() and not processed:
+                outbounds = self.sim_trigger_tx(txn)
+                pending_txs = len(outbounds)
+                processed = True
+                time.sleep(6)  # need to wait for thorchain to handle it
                 continue
 
-            # happy path exit
-            if (
-                sorted(events) == sorted(sim_events)
-                and count_outbounds <= 0
-                and processed_transaction
-            ):
-                break
-
-            # not happy path exit, we got wrong events
-            if len(events) == len(sim_events) and sorted(events) != sorted(sim_events):
+            if len(events) == len(sim_events) and pending_txs <= 0 and processed:
                 break
 
             time.sleep(1)
 
-        if count_outbounds > 0:
-            self.error(
-                f"failed to send out all outbound transactions ({count_outbounds})"
-            )
+        if pending_txs > 0:
+            msg = f"failed to send all outbound transactions {pending_txs}"
+            self.error(msg)
+        return outbounds
+
+    def log_result(self, tx, outbounds):
+        """
+        Log result after a tx was processed
+        """
+        if len(outbounds) == 0:
+            return
+        result = "[+]"
+        if "REFUND" in outbounds[0].memo:
+            result = "[-]"
+        for outbound in outbounds:
+            logging.info(f"{result} {outbound.short()}")
 
     def run(self):
         for i, txn in enumerate(self.txns):
@@ -442,7 +439,7 @@ class Smoker:
             if txn.memo == "SEED":
                 continue
 
-            self.sim_catch_up(txn)
+            outbounds = self.sim_catch_up(txn)
 
             # check if we are verifying the results
             if self.no_verify:
@@ -460,6 +457,8 @@ class Smoker:
 
             self.check_vaults()
             self.run_health()
+
+            self.log_result(txn, outbounds)
 
 
 if __name__ == "__main__":
