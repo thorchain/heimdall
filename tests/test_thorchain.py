@@ -443,7 +443,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(outbound[1].coins[0], Coin("BNB.BNB", 999887500))
 
         # check refund event generated for swap with two coins
-        reason = "invalid swap memo:not expecting multiple coins in a swap"
+        reason = "unknown request: not expecting multiple coins in a swap"
         expected_events += [
             Event(
                 "fee",
@@ -1280,7 +1280,7 @@ class TestThorchainState(unittest.TestCase):
                 "refund",
                 [
                     {"code": "105"},
-                    {"reason": "invalid stake memo:did not find BNB.TCAN-014 "},
+                    {"reason": "unknown request: did not find both coins"},
                     *tx.get_attributes(),
                 ],
             ),
@@ -1320,7 +1320,7 @@ class TestThorchainState(unittest.TestCase):
                 "refund",
                 [
                     {"code": "105"},
-                    {"reason": "invalid stake memo:invalid pool asset"},
+                    {"reason": "unknown request: invalid pool asset"},
                     *tx.get_attributes(),
                 ],
             ),
