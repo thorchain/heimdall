@@ -153,7 +153,7 @@ class ThorchainState:
 
     rune_fee = 1 * Coin.ONE
 
-    def __init__(self, eth):
+    def __init__(self):
         self.pools = []
         self.events = []
         self.reserve = 0
@@ -162,7 +162,6 @@ class ThorchainState:
         self.bond_reward = 0
         self.vault_pubkey = None
         self.network_fees = {}
-        self.ethereum = eth
 
     def set_vault_pubkey(self, pubkey):
         """
@@ -268,14 +267,21 @@ class ThorchainState:
     def get_gas(self, chain, tx):
         if chain == "THOR":
             return Coin(RUNE, self.rune_fee)
+        if chain == "ETH":
+            return Ethereum._calculate_gas(None, tx)
+        return self.get_max_gas(chain)
+
+    def get_max_gas(self, chain):
+        if chain == "THOR":
+            return Coin(RUNE, self.rune_fee)
         rune_fee = self.get_rune_fee(chain)
         gas_asset = self.get_gas_asset(chain)
         pool = self.get_pool(gas_asset)
         amount = pool.get_rune_in_asset(int(round(rune_fee / 2)))
         if chain == "BNB":
             amount = pool.get_rune_in_asset(int(round(rune_fee / 3)))
-        if chain == "ETH":
-            return self.ethereum._calculate_gas(None, tx)
+        else:
+            amount = pool.get_rune_in_asset(int(round(rune_fee / 2)))
         return Coin(gas_asset, amount)
 
     def get_rune_fee(self, chain):
@@ -332,12 +338,13 @@ class ThorchainState:
                         asset_fee = coin.amount
                         rune_fee = pool.get_asset_in_rune(asset_fee)
 
+                    coin.amount -= asset_fee
+                    pool.add(0, asset_fee)
+
                     if pool.rune_balance >= rune_fee:
                         pool.sub(rune_fee, 0)
-                    pool.add(0, asset_fee)
                     self.set_pool(pool)
 
-                    coin.amount -= asset_fee
                     pool_deduct = rune_fee
                     if rune_fee > pool.rune_balance:
                         pool_deduct = pool.rune_balance
@@ -737,25 +744,26 @@ class ThorchainState:
         # calculate gas prior to update pool in case we empty the pool
         # and need to subtract
         gas = self.get_gas(asset.get_chain(), tx)
+        max_gas = self.get_max_gas(asset.get_chain())
         tx_rune_gas = self.get_gas(RUNE.get_chain(), tx)
+        gas_pool = self.get_pool(gas.asset)
 
         unstake_units, rune_amt, asset_amt = pool.unstake(
             tx.from_address, withdraw_basis_points
         )
 
         # if this is our last staker of bnb, subtract a little BNB for gas.
-        gas_pool = self.get_pool(self.get_gas_asset(asset.get_chain()))
         if pool.total_units == 0 and pool == gas_pool:
-            logging.info(pool)
             if pool.asset.is_bnb():
                 gas_amt = gas.amount
                 if RUNE.get_chain() == "BNB":
                     gas_amt *= 2
                 asset_amt -= gas_amt
                 pool.asset_balance += gas_amt
-            elif pool.asset.is_btc() or pool.asset.is_eth():
-                asset_amt -= gas.amount
-                pool.asset_balance += gas.amount
+            # if BTC or ETH we take max gas out
+            else:
+                asset_amt -= max_gas.amount
+                pool.asset_balance += max_gas.amount
 
         self.set_pool(pool)
 

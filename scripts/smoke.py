@@ -5,7 +5,7 @@ import os
 import sys
 import json
 
-from tenacity import retry, stop_after_delay, wait_fixed
+from tenacity import retry, stop_after_delay, wait_fixed, stop_after_attempt
 
 from utils.segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
@@ -120,7 +120,7 @@ class Smoker:
         self.bitcoin = Bitcoin()
         self.ethereum = Ethereum()
         self.thorchain = Thorchain()
-        self.thorchain_state = ThorchainState(self.ethereum)
+        self.thorchain_state = ThorchainState()
 
         self.health = health
 
@@ -240,6 +240,7 @@ class Smoker:
                 if sim_coin != mock_coin:
                     self.error(f"Bad ETH balance: {name} {mock_coin} != {sim_coin}")
 
+    @retry(stop=stop_after_attempt(5), wait=wait_fixed(2), reraise=True)
     def check_vaults(self):
         # check vault data
         vdata = self.thorchain_client.get_vault_data()
@@ -327,10 +328,10 @@ class Smoker:
         processed = False
         pending_txs = 0
 
-        for x in range(0, 30):  # 30 attempts
+        for x in range(0, 60):  # 60 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
-            new_events = events[len(sim_events) :]
+            new_events = events[len(sim_events):]
 
             # we have more real events than sim, fill in the gaps
             if len(new_events) > 0:
@@ -341,10 +342,10 @@ class Smoker:
                         # which outbound txns are for this gas pool, vs
                         # another later on
                         count = 0
+                        event_chain = Asset(evt.get("asset")).get_chain()
                         for out in outbounds:
                             # a gas pool matches a txn if their from
                             # the same blockchain
-                            event_chain = Asset(evt.get("asset")).get_chain()
                             out_chain = out.coins[0].asset.get_chain()
                             if event_chain == out_chain:
                                 todo.append(out)
@@ -359,7 +360,7 @@ class Smoker:
                     elif evt.type == "outbound" and processed and pending_txs > 0:
                         # figure out which outbound event is which tx
                         for out in outbounds:
-                            if out.coins_str() == evt.get("coin"):
+                            if str(out.coins[0].asset) in evt.get("coin"):
                                 self.thorchain_state.generate_outbound_events(
                                     txn, [out]
                                 )

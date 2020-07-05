@@ -18,7 +18,7 @@ class TestThorchainState(unittest.TestCase):
     def test_get_rune_fee(self):
         # no network fees defined
         # default to 1 RUNE
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         rune_fee = thorchain.get_rune_fee("BNB")
         self.assertEqual(rune_fee, 1 * Coin.ONE)
 
@@ -41,7 +41,7 @@ class TestThorchainState(unittest.TestCase):
     def test_get_gas(self):
         # no network fees defined
         # default to 1 RUNE
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         gas = thorchain.get_gas("BTC", {})
         self.assertEqual(gas, Coin("BTC.BTC", 0))
 
@@ -52,7 +52,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(gas, Coin("BTC.BTC", 149720))
 
     def test_handle_fee(self):
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
         thorchain.pools = [Pool("BNB.BNB", 100 * Coin.ONE, 10 * Coin.ONE)]
         tx = Transaction(
@@ -70,7 +70,7 @@ class TestThorchainState(unittest.TestCase):
     def test_swap_bep2(self):
         if RUNE.get_chain() == "THOR":
             return
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
         events = thorchain.events
 
@@ -362,7 +362,7 @@ class TestThorchainState(unittest.TestCase):
         if RUNE.get_chain() == "BNB":
             return
 
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
         events = thorchain.events
 
@@ -663,7 +663,7 @@ class TestThorchainState(unittest.TestCase):
         if RUNE.get_chain() == "THOR":
             return
 
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
@@ -838,7 +838,7 @@ class TestThorchainState(unittest.TestCase):
     def test_add_native(self):
         if RUNE.get_chain() == "BNB":
             return
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
@@ -876,7 +876,7 @@ class TestThorchainState(unittest.TestCase):
     def test_reserve_bep2(self):
         if RUNE.get_chain() == "THOR":
             return
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         tx = Transaction(
             Binance.chain, "STAKER-1", "VAULT", [Coin(RUNE, 50000000000)], "RESERVE",
         )
@@ -902,7 +902,7 @@ class TestThorchainState(unittest.TestCase):
     def test_reserve_native(self):
         if RUNE.get_chain() == "BNB":
             return
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         tx = Transaction(
             Thorchain.chain, "STAKER-1", "VAULT", [Coin(RUNE, 50000000000)], "RESERVE",
         )
@@ -927,7 +927,7 @@ class TestThorchainState(unittest.TestCase):
     def test_gas_bep2(self):
         if RUNE.get_chain() == "THOR":
             return
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
@@ -1025,7 +1025,7 @@ class TestThorchainState(unittest.TestCase):
     def test_gas_native(self):
         if RUNE.get_chain() == "BNB":
             return
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
@@ -1136,7 +1136,7 @@ class TestThorchainState(unittest.TestCase):
         if RUNE.get_chain() == "THOR":
             return
 
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
@@ -1456,7 +1456,7 @@ class TestThorchainState(unittest.TestCase):
         if RUNE.get_chain() == "BNB":
             return
 
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
@@ -1564,7 +1564,7 @@ class TestThorchainState(unittest.TestCase):
         if RUNE.get_chain() == "THOR":
             return
 
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
         thorchain.pools = [Pool("BNB.BNB", 50 * Coin.ONE, 50 * Coin.ONE)]
 
@@ -1755,7 +1755,7 @@ class TestThorchainState(unittest.TestCase):
         if RUNE.get_chain() == "BNB":
             return
 
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.network_fees = {"BNB": 37500}
         thorchain.pools = [Pool("BNB.BNB", 50 * Coin.ONE, 50 * Coin.ONE)]
 
@@ -1981,14 +1981,14 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(stake_units, 45000000000)
 
     def test_calc_liquidity_fee(self):
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         fee = thorchain._calc_liquidity_fee(94382619747, 100001000, 301902607)
         self.assertEqual(fee, 338)
         fee = thorchain._calc_liquidity_fee(10000000000, 1000000000, 10000000000)
         self.assertEqual(fee, 82644628)
 
     def test_calc_trade_slip(self):
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         slip = thorchain._calc_trade_slip(10000000000, 1000000000)
         self.assertEqual(slip, 2100)
         slip = thorchain._calc_trade_slip(94405967833, 10000000000)
@@ -2006,7 +2006,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.get_asset_fee(), 301052)
 
     def test_handle_rewards(self):
-        thorchain = ThorchainState(Ethereum())
+        thorchain = ThorchainState()
         thorchain.pools.append(Pool("BNB.BNB", 94382620747, 301902605))
         thorchain.pools.append(Pool("BNB.LOKI", 50000000000, 100))
         thorchain.reserve = 40001517380253
