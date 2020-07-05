@@ -6,7 +6,6 @@ from thorchain.thorchain import (
     Event,
 )
 from chains.binance import Binance
-from chains.ethereum import Ethereum
 from chains.thorchain import Thorchain
 
 from utils.common import Transaction, Coin, get_rune_asset

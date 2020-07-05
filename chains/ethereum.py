@@ -268,15 +268,17 @@ class Ethereum(GenericChain):
         Calculate gas according to RUNE thorchain fee
         """
         gas = 25964
-        if (txn.memo.startswith("WITHDRAW") and
-                txn.get_asset_from_memo() != Asset("ETH.ETH")):
+        if txn.memo.startswith("WITHDRAW") and txn.get_asset_from_memo() != Asset(
+            "ETH.ETH"
+        ):
             if txn.from_address in Ethereum.withdrawals:
                 gas = 31079
             else:
                 Ethereum.withdrawals[txn.from_address] = 1
                 gas = 61079
-        if (txn.memo.startswith("SWAP:ETH.") and
-                txn.get_asset_from_memo() != Asset("ETH.ETH")):
+        if txn.memo.startswith("SWAP:ETH.") and txn.get_asset_from_memo() != Asset(
+            "ETH.ETH"
+        ):
             index = txn.memo.rfind(":")
             from_address = txn.memo[index + 1 :]
             if index != -1 and from_address in Ethereum.swaps:

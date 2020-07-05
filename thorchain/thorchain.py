@@ -341,13 +341,13 @@ class ThorchainState:
                     coin.amount -= asset_fee
                     pool.add(0, asset_fee)
 
-                    if pool.rune_balance >= rune_fee:
-                        pool.sub(rune_fee, 0)
-                    self.set_pool(pool)
-
                     pool_deduct = rune_fee
                     if rune_fee > pool.rune_balance:
                         pool_deduct = pool.rune_balance
+
+                    if pool.rune_balance >= rune_fee:
+                        pool.sub(rune_fee, 0)
+                    self.set_pool(pool)
 
                     if pool_deduct > 0 or asset_fee > 0:
                         # add fee event

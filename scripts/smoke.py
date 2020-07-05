@@ -331,7 +331,7 @@ class Smoker:
         for x in range(0, 60):  # 60 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
-            new_events = events[len(sim_events):]
+            new_events = events[len(sim_events) :]
 
             # we have more real events than sim, fill in the gaps
             if len(new_events) > 0:

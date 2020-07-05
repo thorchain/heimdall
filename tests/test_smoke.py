@@ -71,8 +71,8 @@ class TestSmoke(unittest.TestCase):
         thorchain = ThorchainState()  # init local thorchain
         thorchain.network_fees = {  # init fixed network fees
             "BNB": 37500,
-            "BTC": 1,
-            "ETH": 1,
+            "BTC": 10000,
+            "ETH": 65000,
         }
 
         file = "data/smoke_test_transactions.json"
