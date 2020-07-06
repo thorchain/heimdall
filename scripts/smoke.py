@@ -5,7 +5,7 @@ import os
 import sys
 import json
 
-from tenacity import retry, stop_after_delay, wait_fixed, stop_after_attempt
+from tenacity import retry, stop_after_delay, wait_fixed
 
 from utils.segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
@@ -240,7 +240,6 @@ class Smoker:
                 if sim_coin != mock_coin:
                     self.error(f"Bad ETH balance: {name} {mock_coin} != {sim_coin}")
 
-    @retry(stop=stop_after_attempt(5), wait=wait_fixed(2), reraise=True)
     def check_vaults(self):
         # check vault data
         vdata = self.thorchain_client.get_vault_data()
@@ -447,6 +446,7 @@ class Smoker:
                 continue
 
             self.check_events()
+            self.check_vaults()
             self.check_pools()
 
             self.check_binance()
@@ -456,7 +456,6 @@ class Smoker:
             if RUNE.get_chain() == "THOR":
                 self.check_chain(self.thorchain, self.mock_thorchain, None)
 
-            self.check_vaults()
             self.run_health()
 
             self.log_result(txn, outbounds)

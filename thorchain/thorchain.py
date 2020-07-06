@@ -265,8 +265,6 @@ class ThorchainState:
         return None
 
     def get_gas(self, chain, tx):
-        if chain == "THOR":
-            return Coin(RUNE, self.rune_fee)
         if chain == "ETH":
             return Ethereum._calculate_gas(None, tx)
         return self.get_max_gas(chain)
@@ -277,11 +275,9 @@ class ThorchainState:
         rune_fee = self.get_rune_fee(chain)
         gas_asset = self.get_gas_asset(chain)
         pool = self.get_pool(gas_asset)
-        amount = pool.get_rune_in_asset(int(round(rune_fee / 2)))
+        amount = pool.get_rune_in_asset(int(rune_fee / 2))
         if chain == "BNB":
-            amount = pool.get_rune_in_asset(int(round(rune_fee / 3)))
-        else:
-            amount = pool.get_rune_in_asset(int(round(rune_fee / 2)))
+            amount = pool.get_rune_in_asset(int(rune_fee / 3))
         return Coin(gas_asset, amount)
 
     def get_rune_fee(self, chain):
@@ -761,7 +757,7 @@ class ThorchainState:
                 asset_amt -= gas_amt
                 pool.asset_balance += gas_amt
             # if BTC or ETH we take max gas out
-            else:
+            elif pool.asset.is_eth() or pool.asset.is_btc():
                 asset_amt -= max_gas.amount
                 pool.asset_balance += max_gas.amount
 
