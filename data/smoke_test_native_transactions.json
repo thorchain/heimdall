@@ -686,6 +686,32 @@
         "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
+        "memo": "WITHDRAW:ETH.ETH",
+        "coins": [
+            {
+                "asset": "THOR.RUNE",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "THOR",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:BTC.BTC",
+        "coins": [
+            {
+                "asset": "THOR.RUNE",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "THOR",
+        "from_address": "STAKER-2",
+        "to_address": "VAULT",
         "memo": "WITHDRAW:BTC.BTC",
         "coins": [
             {
