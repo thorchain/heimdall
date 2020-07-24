@@ -391,7 +391,7 @@ class TestTransaction(unittest.TestCase):
         if DEFAULT_RUNE_ASSET == RUNE:
             self.assertEqual(
                 txn.custom_hash(pubkey),
-                "2CA3A2B2A758ABD7F464C51071C0E0DAC39D7583F418D98FF9D30894CDB7FF49",
+                "158D75777A5C23A5C8A39B55C0812252C0ABA9A87816D5E74BB7166EB95EDB73",
             )
 
     def test_to_json(self):
