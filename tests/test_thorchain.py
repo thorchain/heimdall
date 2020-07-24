@@ -723,7 +723,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(outbound), 0)
 
         # check event generated for successful stake
-        # only if BNB.RUNE-A1F as with native RUNE it would
+        # only if BNB.RUNE-67C as with native RUNE it would
         # be a cross chain stake and no event on first stake
         if RUNE.get_chain() == "BNB":
             expected_events += [
@@ -1143,7 +1143,7 @@ class TestEvent(unittest.TestCase):
                 {"chain": "BNB"},
                 {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
                 {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                {"coin": "500000000 BNB.RUNE-A1F"},
+                {"coin": "500000000 BNB.RUNE-67C"},
                 {"memo": "REFUND:FAAFF"},
             ],
         )
@@ -1168,7 +1168,7 @@ class TestEvent(unittest.TestCase):
                 {"chain": "BNB"},
                 {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
                 {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                {"coin": "500000000 BNB.RUNE-A1F"},
+                {"coin": "500000000 BNB.RUNE-67C"},
                 {"memo": "REFUND:FAAFF"},
             ],
         )
