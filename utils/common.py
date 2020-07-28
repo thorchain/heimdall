@@ -9,7 +9,7 @@ from decimal import Decimal, getcontext
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-DEFAULT_RUNE_ASSET = "BNB.RUNE-A1F"
+DEFAULT_RUNE_ASSET = "BNB.RUNE-67C"
 
 
 def get_rune_asset():

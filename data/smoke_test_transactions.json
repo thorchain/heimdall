@@ -10,7 +10,7 @@
                 "amount": 1000000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 2000000000000000000
             }
         ],
@@ -27,7 +27,7 @@
                 "amount": 600000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 200000000000
             },
             {
@@ -48,7 +48,7 @@
                 "amount": 100000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             },
             {
@@ -69,7 +69,7 @@
                 "amount": 200000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 150000000001
             },
             {
@@ -90,7 +90,7 @@
                 "amount": 200000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 150000000001
             },
             {
@@ -111,7 +111,7 @@
                 "amount": 600000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 200000000001
             },
             {
@@ -132,7 +132,7 @@
                 "amount": 200000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 51000000000
             },
             {
@@ -240,7 +240,7 @@
         "memo": "RESERVE",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 4000000000000000
             }
         ],
@@ -257,7 +257,7 @@
                 "amount": 150000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -270,7 +270,7 @@
         "memo": "STAKE:BTC.BTC:STAKER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -300,7 +300,7 @@
                 "amount": 150000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -313,7 +313,7 @@
         "memo": "STAKE:ETH.ETH:STAKER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -339,7 +339,7 @@
         "memo": "STAKE:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A:STAKER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -365,7 +365,7 @@
         "memo": "STAKE:BTC.BTC:STAKER-2",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 200000000
             }
         ],
@@ -395,7 +395,7 @@
                 "amount": 40000000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -412,7 +412,7 @@
                 "amount": 150000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -429,7 +429,7 @@
                 "amount": 150000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -459,7 +459,7 @@
                 "amount": 150000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -469,14 +469,14 @@
         "chain": "BNB",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.RUNE-A1F",
+        "memo": "STAKE:BNB.RUNE-67C",
         "coins": [
             {
                 "asset": "BNB.BNB",
                 "amount": 150000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -502,7 +502,7 @@
         "memo": "STAKE:BNB.BNB",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 10000000000
             }
         ],
@@ -519,7 +519,7 @@
                 "amount": 90000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 30000000000
             }
         ],
@@ -536,7 +536,7 @@
                 "amount": 30000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 5000000000
             }
         ],
@@ -549,7 +549,7 @@
         "memo": " ",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 200000000
             }
         ],
@@ -562,7 +562,7 @@
         "memo": "ABDG?",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 200000000
             }
         ],
@@ -598,7 +598,7 @@
         "chain": "BTC",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F:USER-1",
+        "memo": "SWAP:BNB.RUNE-67C:USER-1",
         "coins": [
             {
                 "asset": "BTC.BTC",
@@ -614,7 +614,7 @@
         "memo": "SWAP:ETH.ETH:USER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -624,7 +624,7 @@
         "chain": "ETH",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F:USER-1",
+        "memo": "SWAP:BNB.RUNE-67C:USER-1",
         "coins": [
             {
                 "asset": "ETH.ETH",
@@ -640,7 +640,7 @@
         "memo": "SWAP:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A:USER-1",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 50000000000
             }
         ],
@@ -650,7 +650,7 @@
         "chain": "ETH",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F:USER-1",
+        "memo": "SWAP:BNB.RUNE-67C:USER-1",
         "coins": [
             {
                 "asset": "ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
@@ -666,7 +666,7 @@
         "memo": "WITHDRAW:ETH.ETH:1000",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],
@@ -679,7 +679,7 @@
         "memo": "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A:1000",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],
@@ -696,7 +696,7 @@
                 "amount": 30000000
             },
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 100000000
             }
         ],
@@ -709,7 +709,7 @@
         "memo": "SWAP:BNB.BNB",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 100001000
             }
         ],
@@ -722,7 +722,7 @@
         "memo": "SWAP:BNB.BNB::26572599",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 10000000000
             }
         ],
@@ -735,7 +735,7 @@
         "memo": "SWAP:BNB.BNB",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 10000000000
             }
         ],
@@ -748,7 +748,7 @@
         "memo": "WITHDRAW:BTC.BTC:1000",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],
@@ -758,7 +758,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F",
+        "memo": "SWAP:BNB.RUNE-67C",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -774,7 +774,7 @@
         "memo": "SWAP:BNB.BNB:STAKER-1:23853375",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 10000000000
             }
         ],
@@ -787,7 +787,7 @@
         "memo": "SWAP:BNB.BNB:STAKER-1:22460886",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 10000000000
             }
         ],
@@ -797,7 +797,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F:bnbSTAKER-1",
+        "memo": "SWAP:BNB.RUNE-67C:bnbSTAKER-1",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -810,7 +810,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-A1F",
+        "memo": "SWAP:BNB.RUNE-67C",
         "coins": [
             {
                 "asset": "BNB.LOK-3C0",
@@ -826,7 +826,7 @@
         "memo": "SWAP:BNB.LOK-3C0",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 5000000000
             }
         ],
@@ -865,7 +865,7 @@
         "memo": "WITHDRAW:BNB.BNB:5000",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],
@@ -878,7 +878,7 @@
         "memo": "WITHDRAW:BNB.LOK-3C0",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],
@@ -891,7 +891,7 @@
         "memo": "WITHDRAW:BNB.BNB:10000",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],
@@ -904,7 +904,7 @@
         "memo": "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],
@@ -917,7 +917,7 @@
         "memo": "WITHDRAW:ETH.ETH",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],
@@ -930,7 +930,7 @@
         "memo": "WITHDRAW:BTC.BTC",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],
@@ -943,7 +943,7 @@
         "memo": "WITHDRAW:BTC.BTC",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],
@@ -956,7 +956,7 @@
         "memo": "WITHDRAW:BNB.BNB",
         "coins": [
             {
-                "asset": "BNB.RUNE-A1F",
+                "asset": "BNB.RUNE-67C",
                 "amount": 1
             }
         ],

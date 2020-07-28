@@ -48,7 +48,7 @@ class TestThorchainState(unittest.TestCase):
         thorchain.network_fees = {"BTC": 99813}
         thorchain.pools = [Pool("BTC.BTC", 59983570781, 127225819)]
         gas = thorchain.get_gas("BTC", {})
-        self.assertEqual(gas, Coin("BTC.BTC", 149720))
+        self.assertEqual(gas, Coin("BTC.BTC", 149719))
 
     def test_handle_fee(self):
         thorchain = ThorchainState()
@@ -79,7 +79,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 10 * Coin.ONE)],
-            "SWAP:BNB.RUNE-A1F",
+            "SWAP:BNB.RUNE-67C",
         )
 
         outbound = thorchain.handle(tx)
@@ -111,7 +111,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "100000000 BNB.RUNE-A1F"},
+                    {"coins": "100000000 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -707,7 +707,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "37443792 BNB.RUNE-A1F"},
+                    {"coins": "37443792 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -743,7 +743,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "37387711 BNB.RUNE-A1F"},
+                    {"coins": "37387711 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -779,7 +779,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "37331755 BNB.RUNE-A1F"},
+                    {"coins": "37331755 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -819,7 +819,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "37275925 BNB.RUNE-A1F"},
+                    {"coins": "37275925 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -987,7 +987,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "37443792 BNB.RUNE-A1F"},
+                    {"coins": "37443792 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -1196,7 +1196,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "37443792 BNB.RUNE-A1F"},
+                    {"coins": "37443792 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -1236,7 +1236,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "37387711 BNB.RUNE-A1F"},
+                    {"coins": "37387711 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -1272,7 +1272,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "37331755 BNB.RUNE-A1F"},
+                    {"coins": "37331755 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -1312,7 +1312,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "37275925 BNB.RUNE-A1F"},
+                    {"coins": "37275925 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -1356,7 +1356,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "37220220 BNB.RUNE-A1F"},
+                    {"coins": "37220220 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -1637,7 +1637,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "1201403 BNB.RUNE-A1F"},
+                    {"coins": "1201403 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -1655,7 +1655,7 @@ class TestThorchainState(unittest.TestCase):
         expected_events += [
             Event(
                 "fee",
-                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-A1F"}, {"pool_deduct": "0"}],
+                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"}, {"pool_deduct": "0"}],
             )
         ]
         self.assertEqual(thorchain.events, expected_events)
@@ -1670,7 +1670,7 @@ class TestThorchainState(unittest.TestCase):
         expected_events += [
             Event(
                 "fee",
-                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-A1F"}, {"pool_deduct": "0"}],
+                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"}, {"pool_deduct": "0"}],
             )
         ]
         self.assertEqual(thorchain.events, expected_events)
@@ -1683,7 +1683,7 @@ class TestThorchainState(unittest.TestCase):
         expected_events += [
             Event(
                 "fee",
-                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-A1F"}, {"pool_deduct": "0"}],
+                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"}, {"pool_deduct": "0"}],
             )
         ]
         self.assertEqual(thorchain.events, expected_events)
@@ -1720,7 +1720,7 @@ class TestThorchainState(unittest.TestCase):
                 "fee",
                 [
                     {"tx_id": "TODO"},
-                    {"coins": "100000000 BNB.RUNE-A1F"},
+                    {"coins": "100000000 BNB.RUNE-67C"},
                     {"pool_deduct": "0"},
                 ],
             ),
@@ -1744,13 +1744,16 @@ class TestThorchainState(unittest.TestCase):
         expected_events += [
             Event(
                 "fee",
-                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-A1F"}, {"pool_deduct": "0"}],
+                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"}, {"pool_deduct": "0"}],
             ),
         ]
         self.assertEqual(thorchain.events, expected_events)
 
     def test_unstake_native(self):
 
+        # check event generated for successful stake
+        # only if BNB.RUNE-67C as with native RUNE it would
+        # be a cross chain stake and no event on first stake
         if RUNE.get_chain() == "BNB":
             return
 
@@ -2145,7 +2148,7 @@ class TestEvent(unittest.TestCase):
                 {"chain": "BNB"},
                 {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
                 {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                {"coin": "500000000 BNB.RUNE-A1F"},
+                {"coin": "500000000 BNB.RUNE-67C"},
                 {"memo": "REFUND:FAAFF"},
             ],
         )
@@ -2170,7 +2173,7 @@ class TestEvent(unittest.TestCase):
                 {"chain": "BNB"},
                 {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
                 {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                {"coin": "500000000 BNB.RUNE-A1F"},
+                {"coin": "500000000 BNB.RUNE-67C"},
                 {"memo": "REFUND:FAAFF"},
             ],
         )

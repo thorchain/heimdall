@@ -8,6 +8,7 @@ from utils.common import (
     Coin,
     get_share,
     get_rune_asset,
+    DEFAULT_RUNE_ASSET,
 )
 from chains.binance import Binance
 
@@ -383,6 +384,11 @@ class TestTransaction(unittest.TestCase):
             txn.custom_hash(pubkey),
             "3B2624E03C79DEC01E16303143DFC145DD4870F9AE522926F6694A8FAF5C948C",
         )
+        if DEFAULT_RUNE_ASSET == RUNE:
+            self.assertEqual(
+                txn.custom_hash(pubkey),
+                "3B2624E03C79DEC01E16303143DFC145DD4870F9AE522926F6694A8FAF5C948C",
+            )
 
     def test_to_json(self):
         txn = Transaction(
