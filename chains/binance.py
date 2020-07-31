@@ -69,6 +69,9 @@ class MockBinance(HttpClient):
     def accounts(self):
         return self.fetch("/accounts")
 
+    def account(self, address):
+        return self.fetch(f"/account/{address}")
+
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
         """

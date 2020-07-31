@@ -40,6 +40,9 @@ smoke:
 kube-smoke:
 	@kubectl replace --force -f kube/smoke.yml
 
+kube-health:
+	@kubectl replace --force -f kube/health.yml
+
 kube-benchmark-stake:
 	@sed -e 's|NUM|${NUM}|g' kube/benchmark-stake.yml | kubectl replace --force -f -
 
