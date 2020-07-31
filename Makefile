@@ -52,6 +52,9 @@ kube-benchmark-swap:
 health:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py
 
+health-prod:
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health_prod.py --binance=${BINANCE_API} --thorchain=http://${NODE_IP}:1317 --midgard=http://${NODE_IP}:8080
+
 bitcoin-reorg:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True --bitcoin-reorg=True
 

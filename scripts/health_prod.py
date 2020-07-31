@@ -101,7 +101,9 @@ class Health:
         if len(self.thorchain_pools) == 0:
             return
         pool_assets = [p["asset"] for p in self.thorchain_pools]
-        self.midgard_pools = self.midgard_client.get_pool(pool_assets)
+        self.midgard_pools = []
+        for pool in pool_assets:
+            self.midgard_pools.append(self.midgard_client.get_pool([pool])[0])
 
     def get_midgard_pool(self, asset):
         """Get midgard pool from class member.
