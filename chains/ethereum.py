@@ -56,6 +56,7 @@ class MockEthereum:
             self.web3.eth.defaultAccount, self.passphrase
         )
         self.vault = self.deploy_vault()
+        logging.info(f"addr {self.vault.address}")
         token = self.deploy_token()
         symbol = token.functions.symbol().call()
         self.tokens[symbol] = token
