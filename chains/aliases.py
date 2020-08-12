@@ -28,12 +28,12 @@ aliases_eth = {
 aliases_thor = {
     "MASTER": "tthor1nrsk6f4kalwwrqqyrfmxzl96hyjhe96t4gmvp2",
     "CONTRIB": "tthor1m8prd4pvqe5p3cu7tu82pn50a5f9xzxzetc35t",
-    "USER-1": "tthor1gll3y5vr2q05zlyuuuzr0d77gc0qmn2jhjc77w",
-    "STAKER-1": "tthor1n8a9fzxk09pqxgklx4dfrfnj4nlsgw8mamggsy",
-    "STAKER-2": "tthor14p96zkwe4hffj67lq27dprdwlvjzkufpv02yfq",
-    "VAULT": "tthor1v5lj0xlnutn745wtduefx2gnvh0namlpnqv7jp",
-    "RESERVE": "tthor1xuuv8fqrrpt7vlna7p7evsg9fnvlje3x6kdgem",
-    "BOND": "tthor1u2y3229432q0z4ul56k3keu4leleuwwcsp9s0k",
+    "USER-1": "tthor1j08ys4ct2hzzc2hcz6h2hgrvlmsjynawtaa5zs",
+    "STAKER-1": "tthor1zupk5lmc84r2dh738a9g3zscavannjy3nzplwt",
+    "STAKER-2": "tthor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkddurry6",
+    "VAULT": "tthor1g98cy3n9mmjrpn0sxmn63lztelera37nrytwp2",
+    "RESERVE": "tthor1dheycdevq39qlkxs2a6wuuzyn4aqxhve3hhmlw",
+    "BOND": "tthor17gw75axcnr8747pkanye45pnrwk7p9c3uhzgff",
 }
 
 
