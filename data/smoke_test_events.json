@@ -37,7 +37,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "25075000000"
+                "stake_units": "50000000000"
             },
             {
                 "rune_address": "STAKER-1"
@@ -82,7 +82,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "25075000000"
+                "stake_units": "50000000000"
             },
             {
                 "rune_address": "STAKER-1"
@@ -130,7 +130,7 @@
                 "pool": "ETH.ETH"
             },
             {
-                "stake_units": "27000000000"
+                "stake_units": "50000000000"
             },
             {
                 "rune_address": "STAKER-1"
@@ -178,7 +178,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "174783322"
+                "stake_units": "12699404761"
             },
             {
                 "rune_address": "STAKER-2"
@@ -216,7 +216,7 @@
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "stake_units": "45000000000"
+                "stake_units": "50000000000"
             },
             {
                 "rune_address": "STAKER-1"
@@ -695,7 +695,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "2085107956"
+                "stake_units": "4139715485"
             },
             {
                 "rune_address": "STAKER-2"
@@ -730,7 +730,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "2507518783"
+                "stake_units": "4672548326"
             },
             {
                 "rune_address": "STAKER-2"
@@ -765,7 +765,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "15032541230"
+                "stake_units": "29343301312"
             },
             {
                 "rune_address": "STAKER-2"
@@ -1560,7 +1560,7 @@
                 "pool": "ETH.ETH"
             },
             {
-                "stake_units": "2700000000"
+                "stake_units": "5000000000"
             },
             {
                 "basis_points": "1000"
@@ -2033,7 +2033,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "2507500000"
+                "stake_units": "5000000000"
             },
             {
                 "basis_points": "1000"
@@ -2134,7 +2134,7 @@
                 "asset_amt": "1"
             },
             {
-                "rune_amt": "554"
+                "rune_amt": "49783420"
             },
             {
                 "transaction_count": "1"
@@ -2984,7 +2984,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "12537500000"
+                "stake_units": "25000000000"
             },
             {
                 "basis_points": "5000"
@@ -3066,7 +3066,7 @@
                 "asset_amt": "75000"
             },
             {
-                "rune_amt": "13162378"
+                "rune_amt": "32239789"
             },
             {
                 "transaction_count": "2"
@@ -3095,7 +3095,7 @@
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "stake_units": "45000000000"
+                "stake_units": "50000000000"
             },
             {
                 "basis_points": "10000"
@@ -3161,7 +3161,7 @@
                 "asset_amt": "75000"
             },
             {
-                "rune_amt": "13169023"
+                "rune_amt": "32265974"
             },
             {
                 "transaction_count": "2"
@@ -3177,7 +3177,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "12537500000"
+                "stake_units": "25000000000"
             },
             {
                 "basis_points": "10000"
@@ -3259,7 +3259,7 @@
                 "asset_amt": "75000"
             },
             {
-                "rune_amt": "13159327"
+                "rune_amt": "32157983"
             },
             {
                 "transaction_count": "2"
@@ -3275,7 +3275,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "174783322"
+                "stake_units": "12699404761"
             },
             {
                 "basis_points": "10000"
@@ -3357,7 +3357,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "6585108"
+                "rune_amt": "16100585"
             },
             {
                 "transaction_count": "1"
@@ -3376,7 +3376,7 @@
                 "asset_amt": "1"
             },
             {
-                "rune_amt": "554"
+                "rune_amt": "49722060"
             },
             {
                 "transaction_count": "1"
@@ -3405,7 +3405,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "19625167969"
+                "stake_units": "38155565123"
             },
             {
                 "basis_points": "10000"
