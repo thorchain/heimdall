@@ -1171,11 +1171,11 @@ class Pool(Jsonable):
             rune_amt += staker.pending_rune
             staker.pending_rune = 0
 
-        self.add(rune_amt, asset_amt)
         units = self._calc_stake_units(
             self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
 
+        self.add(rune_amt, asset_amt)
         self.total_units += units
         staker.units += units
         self.set_staker(staker)
@@ -1198,22 +1198,26 @@ class Pool(Jsonable):
         self.sub(rune_amt, asset_amt)
         return units, rune_amt, asset_amt
 
-    def _calc_stake_units(self, pool_rune, pool_asset, stake_rune, stake_asset):
+    def _calc_stake_units(self, R, A, r, a):
         """
         Calculate staker units
-        ((R + A) * (r * A + R * a))/(4 * R * A)
+        slipAdjustment = (1 - ABS((R a - r A)/((2 r + R) (a + A))))
+        units = ((P (a R + A r))/(2 A R))*slidAdjustment
         R = pool rune balance after
         A = pool asset balance after
         r = staked rune
         a = staked asset
         """
-        part1 = pool_rune + pool_asset
-        part2 = stake_rune * pool_asset + pool_rune * stake_asset
-        part3 = 4 * pool_rune * pool_asset
-        if part3 == 0:
-            return 0
-        answer = part1 * part2 / part3
-        return int(answer)
+        P = self.total_units
+        R = float(R)
+        A = float(A)
+        r = float(r)
+        a = float(a)
+        if R == 0.0 or A == 0.0:
+            return int(r)
+        slipAdjustment = (1 - abs((R * a - r * A)/((2 * r + R) * (a + A))))
+        units = (P * (a * R + A * r))/(2 * A * R)
+        return int(units * slipAdjustment)
 
     def _calc_unstake_units(self, staker_units, withdraw_basis_points):
         """

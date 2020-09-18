@@ -6,7 +6,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "25075000000"
+                "stake_units": "50000000000"
             },
             {
                 "rune_address": "STAKER-1"
@@ -54,7 +54,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "25075000000"
+                "stake_units": "50000000000"
             },
             {
                 "rune_address": "STAKER-1"
@@ -102,7 +102,7 @@
                 "pool": "ETH.ETH"
             },
             {
-                "stake_units": "27000000000"
+                "stake_units": "50000000000"
             },
             {
                 "rune_address": "STAKER-1"
@@ -150,7 +150,7 @@
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "stake_units": "45000000000"
+                "stake_units": "50000000000"
             },
             {
                 "rune_address": "STAKER-1"
@@ -530,7 +530,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "2070820873"
+                "stake_units": "4148444348"
             },
             {
                 "rune_address": "STAKER-2"
@@ -565,7 +565,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "4155166288"
+                "stake_units": "8998390039"
             },
             {
                 "rune_address": "STAKER-2"
@@ -1251,7 +1251,7 @@
                 "pool": "ETH.ETH"
             },
             {
-                "stake_units": "2700000000"
+                "stake_units": "5000000000"
             },
             {
                 "basis_points": "1000"
@@ -1689,7 +1689,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "2507500000"
+                "stake_units": "5000000000"
             },
             {
                 "basis_points": "1000"
@@ -2484,7 +2484,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "12537500000"
+                "stake_units": "25000000000"
             },
             {
                 "basis_points": "5000"
@@ -2556,7 +2556,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "14090847"
+                "rune_amt": "14091301"
             },
             {
                 "transaction_count": "1"
@@ -2585,7 +2585,7 @@
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "stake_units": "45000000000"
+                "stake_units": "50000000000"
             },
             {
                 "basis_points": "10000"
@@ -2641,7 +2641,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "14099181"
+                "rune_amt": "14099571"
             },
             {
                 "transaction_count": "1"
@@ -2657,7 +2657,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "12537500000"
+                "stake_units": "25000000000"
             },
             {
                 "basis_points": "10000"
@@ -2710,7 +2710,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "265816 BNB.BNB"
+                "coins": "265809 BNB.BNB"
             },
             {
                 "pool_deduct": "100000000"
@@ -2729,7 +2729,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "13930342"
+                "rune_amt": "13938523"
             },
             {
                 "transaction_count": "1"
@@ -2758,7 +2758,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "22567500000"
+                "stake_units": "45000000000"
             },
             {
                 "basis_points": "10000"
@@ -2843,7 +2843,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "6225987161"
+                "stake_units": "13146834387"
             },
             {
                 "basis_points": "10000"
