@@ -1052,8 +1052,8 @@ class TestThorchainState(unittest.TestCase):
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 50000000000)
         self.assertEqual(pool.asset_balance, 150000000)
-        self.assertEqual(pool.get_staker("STAKER-1").units, 25075000000)
-        self.assertEqual(pool.total_units, 25075000000)
+        self.assertEqual(pool.get_staker("STAKER-1").units, 50000000000)
+        self.assertEqual(pool.total_units, 50000000000)
 
         # check event generated for successful stake
         expected_events = [
@@ -1152,8 +1152,8 @@ class TestThorchainState(unittest.TestCase):
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 50000000000)
         self.assertEqual(pool.asset_balance, 150000000)
-        self.assertEqual(pool.get_staker("STAKER-1").units, 25075000000)
-        self.assertEqual(pool.total_units, 25075000000)
+        self.assertEqual(pool.get_staker("STAKER-1").units, 50000000000)
+        self.assertEqual(pool.total_units, 50000000000)
 
         # check event generated for successful stake
         expected_events = [
@@ -1381,8 +1381,8 @@ class TestThorchainState(unittest.TestCase):
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
-        self.assertEqual(pool.get_staker("STAKER-2").units, 2076578330)
-        self.assertEqual(pool.total_units, 27151578330)
+        self.assertEqual(pool.get_staker("STAKER-2").units, 4166666666)
+        self.assertEqual(pool.total_units, 54166666666)
 
         # check event generated for successful stake
         expected_events += [
@@ -1390,7 +1390,7 @@ class TestThorchainState(unittest.TestCase):
                 "stake",
                 [
                     {"pool": pool.asset},
-                    {"stake_units": "2076578330"},
+                    {"stake_units": "4166666666"},
                     {"rune_address": "STAKER-2"},
                     {"rune_amount": "0"},
                     {"asset_amount": "30000000"},
@@ -1415,7 +1415,7 @@ class TestThorchainState(unittest.TestCase):
                 "stake",
                 [
                     {"pool": pool.asset},
-                    {"stake_units": "2507546951"},
+                    {"stake_units": "4642857142"},
                     {"rune_address": "STAKER-1"},
                     {"rune_amount": "10000000000"},
                     {"asset_amount": "0"},
@@ -1436,20 +1436,21 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(len(outbound), 0)
 
         # check event generated for successful stake
-        expected_events += [
-            Event(
-                "stake",
-                [
-                    {"pool": pool.asset},
-                    {"stake_units": "15013955411"},
-                    {"rune_address": "STAKER-1"},
-                    {"rune_amount": "30000000000"},
-                    {"asset_amount": "90000000"},
-                    {"BNB_txid": "TODO"},
-                ],
-            ),
-        ]
-        self.assertEqual(thorchain.events, expected_events)
+        if RUNE.get_chain() == "BNB":
+            expected_events += [
+                Event(
+                    "stake",
+                    [
+                        {"pool": pool.asset},
+                        {"stake_units": "29404761904"},
+                        {"rune_address": "STAKER-1"},
+                        {"rune_amount": "30000000000"},
+                        {"asset_amount": "90000000"},
+                        {"BNB_txid": "TODO"},
+                    ],
+                ),
+            ]
+            self.assertEqual(thorchain.events, expected_events)
 
     def test_stake_native(self):
         if RUNE.get_chain() == "BNB":
@@ -1483,8 +1484,8 @@ class TestThorchainState(unittest.TestCase):
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 50000000000)
         self.assertEqual(pool.asset_balance, 150000000)
-        self.assertEqual(pool.get_staker("STAKER-1").units, 25075000000)
-        self.assertEqual(pool.total_units, 25075000000)
+        self.assertEqual(pool.get_staker("STAKER-1").units, 50000000000)
+        self.assertEqual(pool.total_units, 50000000000)
 
         # check event generated for successful stake
         expected_events = [
@@ -1698,10 +1699,10 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(outbounds[1].coins[0], Coin("BNB.BNB", 5098537500))
 
         pool = thorchain.get_pool("BNB.BNB")
-        self.assertEqual(pool.rune_balance, 0)
-        self.assertEqual(pool.get_staker("STAKER-1").units, 0)
-        self.assertEqual(pool.total_units, 0)
-        self.assertEqual(pool.asset_balance, 75000)
+        self.assertEqual(pool.rune_balance, 49500000000)
+        self.assertEqual(pool.asset_balance, 148500000)
+        self.assertEqual(pool.get_staker("STAKER-1").units, 49500000000)
+        self.assertEqual(pool.total_units, 49500000000)
 
         # check event generated for successful unstake
         expected_events += [
@@ -1788,8 +1789,8 @@ class TestThorchainState(unittest.TestCase):
             Event(
                 "stake",
                 [
-                    {"pool": "BNB.BNB"},
-                    {"stake_units": "14108439982"},
+                    {"pool": pool.asset},
+                    {"stake_units": "50000000000"},
                     {"rune_address": "STAKER-1"},
                     {"rune_amount": "50000000000"},
                     {"asset_amount": "150000000"},
@@ -1824,7 +1825,7 @@ class TestThorchainState(unittest.TestCase):
                 "unstake",
                 [
                     {"pool": "BNB.BNB"},
-                    {"stake_units": "141084400"},
+                    {"stake_units": "500000000"},
                     {"basis_points": "100"},
                     {"asymmetry": "0.000000000000000000"},
                     *tx.get_attributes(),
@@ -1915,7 +1916,7 @@ class TestThorchainState(unittest.TestCase):
                 "unstake",
                 [
                     {"pool": "BNB.BNB"},
-                    {"stake_units": "13967355582"},
+                    {"stake_units": "49500000000"},
                     {"basis_points": "10000"},
                     {"asymmetry": "0.000000000000000000"},
                     *tx.get_attributes(),
@@ -1971,13 +1972,14 @@ class TestThorchainState(unittest.TestCase):
     def test_stake_calc(self):
         pool = Pool("BNB.BNB", 112928660551, 257196272)
         stake_units = pool._calc_stake_units(
-            50000000000, 50000000000, 34500000000, 23400000000
+            0, 0, 34500000000, 23400000000
         )
-        self.assertEqual(stake_units, 28950000000)
+        self.assertEqual(stake_units, 34500000000)
+        pool.total_units = 34500000000
         stake_units = pool._calc_stake_units(
             50000000000, 40000000000, 50000000000, 40000000000
         )
-        self.assertEqual(stake_units, 45000000000)
+        self.assertEqual(stake_units, 34500000000)
 
     def test_calc_liquidity_fee(self):
         thorchain = ThorchainState()
