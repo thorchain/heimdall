@@ -67,8 +67,7 @@ class Health:
         self.check_asgard_vault()
 
     def error(self, err):
-        """Check errors and exit accordingly.
-        """
+        """Check errors and exit accordingly."""
         self.exit = 1
         if self.fast_fail:
             raise Exception(err)
@@ -76,8 +75,7 @@ class Health:
             logging.error(err)
 
     def retrieve_data(self):
-        """Retrieve data from APIs needed to run health checks.
-        """
+        """Retrieve data from APIs needed to run health checks."""
         self.thorchain_asgard_vaults = self.thorchain_client.get_asgard_vaults()
         for vault in self.thorchain_asgard_vaults:
             if vault["coins"]:
@@ -111,8 +109,7 @@ class Health:
                 return pool
 
     def check_pools(self):
-        """Check pools state between Midgard and Thorchain APIs.
-        """
+        """Check pools state between Midgard and Thorchain APIs."""
         for tpool in self.thorchain_pools:
             asset = tpool["asset"]
             mpool = self.get_midgard_pool(asset)

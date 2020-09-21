@@ -26,14 +26,14 @@ aliases_eth = {
 }
 
 aliases_thor = {
-    "MASTER": "thor1era6642crpv04sq0uc778jy2fac8q32qq5h4sf",
-    "CONTRIB": "thor16h4cf6cpq3nzy9k6zfstuwm0svvctlsyu72z8y",
-    "USER-1": "thor1j08ys4ct2hzzc2hcz6h2hgrvlmsjynaw02vym4",
-    "STAKER-1": "thor1zupk5lmc84r2dh738a9g3zscavannjy3h4s0hw",
-    "STAKER-2": "thor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkdftjnal",
-    "VAULT": "thor1g98cy3n9mmjrpn0sxmn63lztelera37n8n67c0",
-    "RESERVE": "thor1dheycdevq39qlkxs2a6wuuzyn4aqxhve4qxtxt",
-    "BOND": "thor17gw75axcnr8747pkanye45pnrwk7p9c3cqncsv",
+    "MASTER": "tthor1nrsk6f4kalwwrqqyrfmxzl96hyjhe96t4gmvp2",
+    "CONTRIB": "tthor1m8prd4pvqe5p3cu7tu82pn50a5f9xzxzetc35t",
+    "USER-1": "tthor1j08ys4ct2hzzc2hcz6h2hgrvlmsjynawtaa5zs",
+    "STAKER-1": "tthor1zupk5lmc84r2dh738a9g3zscavannjy3nzplwt",
+    "STAKER-2": "tthor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkddurry6",
+    "VAULT": "tthor1g98cy3n9mmjrpn0sxmn63lztelera37nrytwp2",
+    "RESERVE": "tthor1dheycdevq39qlkxs2a6wuuzyn4aqxhve3hhmlw",
+    "BOND": "tthor17gw75axcnr8747pkanye45pnrwk7p9c3uhzgff",
 }
 
 

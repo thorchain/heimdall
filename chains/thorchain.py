@@ -186,15 +186,15 @@ class Thorchain(GenericChain):
         super().__init__()
 
         # seeding the users, these seeds are established in build/scripts/genesis.sh
-        acct = Account("thor1j08ys4ct2hzzc2hcz6h2hgrvlmsjynaw02vym4")
+        acct = Account("tthor1j08ys4ct2hzzc2hcz6h2hgrvlmsjynawtaa5zs")
         acct.add(Coin(self.coin, 5000000000000))
         self.set_account(acct)
 
-        acct = Account("thor1zupk5lmc84r2dh738a9g3zscavannjy3h4s0hw")
+        acct = Account("tthor1zupk5lmc84r2dh738a9g3zscavannjy3nzplwt")
         acct.add(Coin(self.coin, 25000000000100))
         self.set_account(acct)
 
-        acct = Account("thor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkdftjnal")
+        acct = Account("tthor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkddurry6")
         acct.add(Coin(self.coin, 5090000000000))
         self.set_account(acct)
 

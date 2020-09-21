@@ -195,7 +195,6 @@ class ThorchainState:
                 if (
                     pool.asset_balance == 0 or pool.rune_balance == 0
                 ) and pool.status == "Enabled":
-
                     pool.status = "Bootstrap"
 
                     # Generate pool event with new status
@@ -483,7 +482,11 @@ class ThorchainState:
 
             out_txs.append(
                 Transaction(
-                    tx.chain, tx.to_address, tx.from_address, [coin], f"REFUND:{tx.id}",
+                    tx.chain,
+                    tx.to_address,
+                    tx.from_address,
+                    [coin],
+                    f"REFUND:{tx.id}",
                 )
             )
 
@@ -491,7 +494,8 @@ class ThorchainState:
 
         # generate event REFUND for the transaction
         event = Event(
-            "refund", [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
+            "refund",
+            [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
         )
 
         if tx.chain == "THOR":
@@ -1204,7 +1208,6 @@ class Pool(Jsonable):
         Stake rune/asset for an address
         """
         staker = self.get_staker(address)
-
         # handle cross chain stake
         if asset.get_chain() != RUNE.get_chain():
             if asset_amt == 0:
@@ -1215,12 +1218,14 @@ class Pool(Jsonable):
 
             rune_amt += staker.pending_rune
             staker.pending_rune = 0
-
-        self.add(rune_amt, asset_amt)
         units = self._calc_stake_units(
-            self.rune_balance, self.asset_balance, rune_amt, asset_amt,
+            self.rune_balance,
+            self.asset_balance,
+            rune_amt,
+            asset_amt,
         )
 
+        self.add(rune_amt, asset_amt)
         self.total_units += units
         staker.units += units
         self.set_staker(staker)
@@ -1243,22 +1248,26 @@ class Pool(Jsonable):
         self.sub(rune_amt, asset_amt)
         return units, rune_amt, asset_amt
 
-    def _calc_stake_units(self, pool_rune, pool_asset, stake_rune, stake_asset):
+    def _calc_stake_units(self, R, A, r, a):
         """
         Calculate staker units
-        ((R + A) * (r * A + R * a))/(4 * R * A)
+        slipAdjustment = (1 - ABS((R a - r A)/((2 r + R) (a + A))))
+        units = ((P (a R + A r))/(2 A R))*slidAdjustment
         R = pool rune balance after
         A = pool asset balance after
         r = staked rune
         a = staked asset
         """
-        part1 = pool_rune + pool_asset
-        part2 = stake_rune * pool_asset + pool_rune * stake_asset
-        part3 = 4 * pool_rune * pool_asset
-        if part3 == 0:
-            return 0
-        answer = part1 * part2 / part3
-        return int(answer)
+        P = self.total_units
+        R = float(R)
+        A = float(A)
+        r = float(r)
+        a = float(a)
+        if R == 0.0 or A == 0.0 or P == 0:
+            return int(r)
+        slipAdjustment = 1 - abs((R * a - r * A) / ((2 * r + R) * (a + A)))
+        units = (P * (a * R + A * r)) / (2 * A * R)
+        return int(units * slipAdjustment)
 
     def _calc_unstake_units(self, staker_units, withdraw_basis_points):
         """
