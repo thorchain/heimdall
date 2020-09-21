@@ -19,9 +19,9 @@ from chains.aliases import aliases_bnb, get_alias
 
 # Init logging
 logging.basicConfig(
-        format = "%(asctime)s | %(levelname).4s | %(message)s",
-        level = os.environ.get("LOGLEVEL", "INFO"),
-        )
+    format="%(asctime)s | %(levelname).4s | %(message)s",
+    level=os.environ.get("LOGLEVEL", "INFO"),
+)
 
 RUNE = get_rune_asset()
 
@@ -29,52 +29,45 @@ RUNE = get_rune_asset()
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-            "--binance", default = "http://localhost:26660",
-            help = "Mock binance server",
-            )
+        "--binance", default="http://localhost:26660", help="Mock binance server",
+    )
     parser.add_argument(
-            "--bitcoin",
-            default = "http://thorchain:password@localhost:18443",
-            help = "Regtest bitcoin server",
-            )
+        "--bitcoin",
+        default="http://thorchain:password@localhost:18443",
+        help="Regtest bitcoin server",
+    )
     parser.add_argument(
-            "--ethereum", default = "http://localhost:8545",
-            help = "Localnet ethereum server",
-            )
+        "--ethereum", default="http://localhost:8545", help="Localnet ethereum server",
+    )
     parser.add_argument(
-            "--thorchain", default = "http://localhost:1317",
-            help = "Thorchain API url"
-            )
+        "--thorchain", default="http://localhost:1317", help="Thorchain API url"
+    )
     parser.add_argument(
-            "--midgard", default = "http://localhost:8080",
-            help = "Midgard API url"
-            )
+        "--midgard", default="http://localhost:8080", help="Midgard API url"
+    )
     parser.add_argument(
-            "--generate-balances", default = False, type = bool,
-            help = "Generate balances (bool)"
-            )
+        "--generate-balances", default=False, type=bool, help="Generate balances (bool)"
+    )
     parser.add_argument(
-            "--fast-fail", default = False, type = bool,
-            help = "Generate balances (bool)"
-            )
+        "--fast-fail", default=False, type=bool, help="Generate balances (bool)"
+    )
     parser.add_argument(
-            "--no-verify", default = False, type = bool,
-            help = "Skip verifying results"
-            )
+        "--no-verify", default=False, type=bool, help="Skip verifying results"
+    )
 
     parser.add_argument(
-            "--bitcoin-reorg",
-            default = False,
-            type = bool,
-            help = "Trigger a Bitcoin chain reorg",
-            )
+        "--bitcoin-reorg",
+        default=False,
+        type=bool,
+        help="Trigger a Bitcoin chain reorg",
+    )
 
     parser.add_argument(
-            "--ethereum-reorg",
-            default = False,
-            type = bool,
-            help = "Trigger an Ethereum chain reorg",
-            )
+        "--ethereum-reorg",
+        default=False,
+        type=bool,
+        help="Trigger an Ethereum chain reorg",
+    )
 
     args = parser.parse_args()
 
@@ -84,22 +77,21 @@ def main():
     with open(txn_list, "r") as f:
         txns = json.load(f)
 
-    health = Health(args.thorchain, args.midgard, args.binance,
-                    args.fast_fail)
+    health = Health(args.thorchain, args.midgard, args.binance, args.fast_fail)
 
     smoker = Smoker(
-            args.binance,
-            args.bitcoin,
-            args.ethereum,
-            args.thorchain,
-            health,
-            txns,
-            args.generate_balances,
-            args.fast_fail,
-            args.no_verify,
-            args.bitcoin_reorg,
-            args.ethereum_reorg,
-            )
+        args.binance,
+        args.bitcoin,
+        args.ethereum,
+        args.thorchain,
+        health,
+        txns,
+        args.generate_balances,
+        args.fast_fail,
+        args.no_verify,
+        args.bitcoin_reorg,
+        args.ethereum_reorg,
+    )
     try:
         smoker.run()
         sys.exit(smoker.exit)
@@ -111,19 +103,19 @@ def main():
 
 class Smoker:
     def __init__(
-            self,
-            bnb,
-            btc,
-            eth,
-            thor,
-            health,
-            txns,
-            gen_balances = False,
-            fast_fail = False,
-            no_verify = False,
-            bitcoin_reorg = False,
-            ethereum_reorg = False,
-            ):
+        self,
+        bnb,
+        btc,
+        eth,
+        thor,
+        health,
+        txns,
+        gen_balances=False,
+        fast_fail=False,
+        no_verify=False,
+        bitcoin_reorg=False,
+        ethereum_reorg=False,
+    ):
         self.binance = Binance()
         self.bitcoin = Bitcoin()
         self.ethereum = Ethereum()
@@ -134,8 +126,7 @@ class Smoker:
 
         self.txns = txns
 
-        self.thorchain_client = ThorchainClient(thor,
-                                                enable_websocket = True)
+        self.thorchain_client = ThorchainClient(thor, enable_websocket=True)
         pubkey = self.thorchain_client.get_vault_pubkey()
 
         self.thorchain_state.set_vault_pubkey(pubkey)
@@ -180,14 +171,14 @@ class Smoker:
             spool = self.thorchain_state.get_pool(Asset(rpool["asset"]))
             if int(spool.rune_balance) != int(rpool["balance_rune"]):
                 self.error(
-                        f"Bad Pool-{rpool['asset']} balance: RUNE "
-                        f"{spool.rune_balance} != {rpool['balance_rune']}"
-                        )
+                    f"Bad Pool-{rpool['asset']} balance: RUNE "
+                    f"{spool.rune_balance} != {rpool['balance_rune']}"
+                )
                 if int(spool.asset_balance) != int(rpool["balance_asset"]):
                     self.error(
-                            f"Bad Pool-{rpool['asset']} balance: ASSET "
-                            f"{spool.asset_balance} != {rpool['balance_asset']}"
-                            )
+                        f"Bad Pool-{rpool['asset']} balance: ASSET "
+                        f"{spool.asset_balance} != {rpool['balance_asset']}"
+                    )
 
     def check_binance(self):
         # compare simulation binance vs mock binance
@@ -200,15 +191,13 @@ class Smoker:
                     sacct = self.binance.get_account(address)
                     for bal in macct["balances"]:
                         sim_coin = Coin(
-                                f"BNB.{bal['denom']}",
-                                sacct.get(f"BNB.{bal['denom']}")
-                                )
-                        bnb_coin = Coin(f"BNB.{bal['denom']}",
-                                        bal["amount"])
+                            f"BNB.{bal['denom']}", sacct.get(f"BNB.{bal['denom']}")
+                        )
+                        bnb_coin = Coin(f"BNB.{bal['denom']}", bal["amount"])
                         if sim_coin != bnb_coin:
                             self.error(
-                                    f"Bad binance balance: {name} {bnb_coin} != {sim_coin}"
-                                    )
+                                f"Bad binance balance: {name} {bnb_coin} != {sim_coin}"
+                            )
 
     def check_chain(self, chain, mock, reorg):
         # compare simulation bitcoin vs mock bitcoin
@@ -226,8 +215,8 @@ class Smoker:
                 return
             if sim_coin != mock_coin:
                 self.error(
-                        f"Bad {chain.name} balance: {name} {mock_coin} != {sim_coin}"
-                        )
+                    f"Bad {chain.name} balance: {name} {mock_coin} != {sim_coin}"
+                )
 
     def check_vaults(self):
         # check vault data
@@ -236,8 +225,7 @@ class Smoker:
             sim = self.thorchain_state.reserve
             real = vdata["total_reserve"]
             self.error(f"Mismatching reserves: {sim} != {real}")
-        if int(vdata[
-                   "bond_reward_rune"]) != self.thorchain_state.bond_reward:
+        if int(vdata["bond_reward_rune"]) != self.thorchain_state.bond_reward:
             sim = self.thorchain_state.bond_reward
             real = vdata["bond_reward_rune"]
             self.error(f"Mismatching bond reward: {sim} != {real}")
@@ -253,8 +241,7 @@ class Smoker:
             logging.error(f"Simulator Events {wrong_sim_events}")
             self.error("Events mismatch")
 
-    @retry(stop = stop_after_delay(30), wait = wait_fixed(1),
-           reraise = True)
+    @retry(stop=stop_after_delay(30), wait=wait_fixed(1), reraise=True)
     def run_health(self):
         self.health.run()
 
@@ -294,7 +281,7 @@ class Smoker:
             "BNB": self.mock_binance.singleton_gas,
             "ETH": self.mock_ethereum.default_gas,
             "BTC": btc["tx_size"] * btc["tx_rate"],
-            }
+        }
         self.thorchain_state.set_network_fees(fees)
 
     def sim_trigger_tx(self, txn):
@@ -321,7 +308,7 @@ class Smoker:
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
-            new_events = events[len(sim_events):]
+            new_events = events[len(sim_events) :]
 
             # we have more real events than sim, fill in the gaps
             if len(new_events) > 0:
@@ -333,17 +320,14 @@ class Smoker:
                         # another later on
                         count = 0
                         for out in outbounds:
-                            logging.info(f"outbound:{out}")
                             # a gas pool matches a txn if their from
                             # the same blockchain
-                            event_chain = Asset(
-                                    evt.get("asset")).get_chain()
+                            event_chain = Asset(evt.get("asset")).get_chain()
                             out_chain = out.coins[0].asset.get_chain()
                             if event_chain == out_chain:
                                 todo.append(out)
                                 count += 1
-                                if count >= int(
-                                        evt.get("transaction_count")):
+                                if count >= int(evt.get("transaction_count")):
                                     break
                         self.thorchain_state.handle_gas(todo)
 
@@ -351,13 +335,12 @@ class Smoker:
                         self.thorchain_state.handle_rewards()
 
                     elif evt.type == "outbound" and processed and pending_txs > 0:
-                        logging.info(f"outbound event:{evt}")
                         # figure out which outbound event is which tx
                         for out in outbounds:
                             if out.coins_str() == evt.get("coin"):
                                 self.thorchain_state.generate_outbound_events(
-                                        txn, [out]
-                                        )
+                                    txn, [out]
+                                )
                                 pending_txs -= 1
 
                     elif not processed:
@@ -374,8 +357,7 @@ class Smoker:
                 time.sleep(6)  # need to wait for thorchain to handle it
                 continue
 
-            if len(events) == len(
-                    sim_events) and pending_txs <= 0 and processed:
+            if len(events) == len(sim_events) and pending_txs <= 0 and processed:
                 break
 
             time.sleep(1)
@@ -405,10 +387,8 @@ class Smoker:
                 # get block hash from bitcoin we are going to invalidate later
                 if i == 14 or i == 24:
                     current_height = self.mock_bitcoin.get_block_height()
-                    block_hash = self.mock_bitcoin.get_block_hash(
-                            current_height)
-                    logging.info(
-                            f"Block to invalidate {current_height} {block_hash}")
+                    block_hash = self.mock_bitcoin.get_block_hash(current_height)
+                    logging.info(f"Block to invalidate {current_height} {block_hash}")
 
                 # now we processed some btc txs and we invalidate an older block
                 # to make those txs not valid anymore and test thornode reaction
@@ -420,10 +400,8 @@ class Smoker:
                 # get block hash from ethereum we are going to invalidate later
                 if i == 14 or i == 24:
                     current_height = self.mock_ethereum.get_block_height()
-                    block_hash = self.mock_ethereum.get_block_hash(
-                            current_height)
-                    logging.info(
-                            f"Block to invalidate {current_height} {block_hash}")
+                    block_hash = self.mock_ethereum.get_block_hash(current_height)
+                    logging.info(f"Block to invalidate {current_height} {block_hash}")
 
                 # now we processed some eth txs and we invalidate an older block
                 # to make those txs not valid anymore and test thornode reaction
@@ -449,10 +427,8 @@ class Smoker:
             self.check_pools()
 
             self.check_binance()
-            self.check_chain(self.bitcoin, self.mock_bitcoin,
-                             self.bitcoin_reorg)
-            self.check_chain(self.ethereum, self.mock_ethereum,
-                             self.ethereum_reorg)
+            self.check_chain(self.bitcoin, self.mock_bitcoin, self.bitcoin_reorg)
+            self.check_chain(self.ethereum, self.mock_ethereum, self.ethereum_reorg)
 
             if RUNE.get_chain() == "THOR":
                 self.check_chain(self.thorchain, self.mock_thorchain, None)
