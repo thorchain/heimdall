@@ -1815,8 +1815,8 @@ class TestThorchainState(unittest.TestCase):
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 55000000000)
         self.assertEqual(pool.asset_balance, 5150000000)
-        self.assertEqual(pool.get_staker("STAKER-1").units, 14108439982)
-        self.assertEqual(pool.total_units, 14108439982)
+        self.assertEqual(pool.get_staker("STAKER-1").units, 50000000000)
+        self.assertEqual(pool.total_units, 50000000000)
 
         expected_events = [
             Event(
@@ -1844,13 +1844,13 @@ class TestThorchainState(unittest.TestCase):
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 2)
         self.assertEqual(outbounds[0].coins[0], Coin("BNB.BNB", 51387500))
-        self.assertEqual(outbounds[1].coins[0], Coin(RUNE, 450000001))
+        self.assertEqual(outbounds[1].coins[0], Coin(RUNE, 450000000))
 
         pool = thorchain.get_pool("BNB.BNB")
-        self.assertEqual(pool.rune_balance, 54448798543)
+        self.assertEqual(pool.rune_balance, 54448798544)
         self.assertEqual(pool.asset_balance, 5098612500)
-        self.assertEqual(pool.get_staker("STAKER-1").units, 13967355582)
-        self.assertEqual(pool.total_units, 13967355582)
+        self.assertEqual(pool.get_staker("STAKER-1").units, 49500000000)
+        self.assertEqual(pool.total_units, 49500000000)
 
         # check event generated for successful unstake
         expected_events += [
@@ -1938,7 +1938,7 @@ class TestThorchainState(unittest.TestCase):
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 2)
         self.assertEqual(outbounds[0].coins[0], Coin("BNB.BNB", 5098575000))
-        self.assertEqual(outbounds[1].coins[0], Coin("THOR.RUNE", 54348798543))
+        self.assertEqual(outbounds[1].coins[0], Coin("THOR.RUNE", 54348798544))
 
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 0)
