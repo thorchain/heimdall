@@ -36,6 +36,7 @@ aliases_thor = {
     "BOND": "tthor17gw75axcnr8747pkanye45pnrwk7p9c3uhzgff",
 }
 
+
 def get_aliases():
     return aliases_btc.keys()
 
