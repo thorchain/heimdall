@@ -206,7 +206,7 @@ class Smoker:
                             )
 
     def check_chain(self, chain, mock, reorg):
-        # compare simulation bitcoin vs mock bitcoin
+        # compare simulation chain vs mock chain
         for addr, sim_acct in chain.accounts.items():
             name = get_alias(chain.chain, addr)
             if name == "MASTER":

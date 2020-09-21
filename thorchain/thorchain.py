@@ -489,6 +489,7 @@ class ThorchainState:
 
         if tx.chain == "THOR":
             self.reserve += 100000000
+        logging.info(f"{tx}")
         if tx.memo.startswith("STAKE:"):
             return self.handle_stake(tx)
         elif tx.memo.startswith("ADD:"):
