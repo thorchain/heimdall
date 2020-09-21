@@ -1,11 +1,10 @@
 import unittest
-import logging
 
 from thorchain.thorchain import (
     ThorchainState,
     Pool,
     Event,
-    )
+)
 from chains.binance import Binance
 from chains.thorchain import Thorchain
 
@@ -56,12 +55,12 @@ class TestThorchainState(unittest.TestCase):
         thorchain.network_fees = {"BNB": 37500}
         thorchain.pools = [Pool("BNB.BNB", 100 * Coin.ONE, 10 * Coin.ONE)]
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin(RUNE, 10 * Coin.ONE)],
-                "SWAP:BNB.BNB",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 10 * Coin.ONE)],
+            "SWAP:BNB.BNB",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound[0].coins[0].amount, 82532128)
@@ -76,12 +75,12 @@ class TestThorchainState(unittest.TestCase):
 
         # no pool, should emit a refund
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 10 * Coin.ONE)],
-                "SWAP:BNB.RUNE-67C",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 10 * Coin.ONE)],
+            "SWAP:BNB.RUNE-67C",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
@@ -94,12 +93,12 @@ class TestThorchainState(unittest.TestCase):
 
         # no pool, should emit a refund
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin(RUNE, 10 * Coin.ONE)],
-                "SWAP:BNB.BNB",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 10 * Coin.ONE)],
+            "SWAP:BNB.BNB",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
@@ -109,22 +108,22 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with no pool
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "100000000 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "refund reason message: pool is zero"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "refund reason message: pool is zero"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # init pool
@@ -139,30 +138,29 @@ class TestThorchainState(unittest.TestCase):
         # check swap event generated for successful swap
         expected_events += [
             Event(
-                    "swap",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"price_target": "0"},
-                        {"trade_slip": "4400"},
-                        {"liquidity_fee": "138888888"},
-                        {"liquidity_fee_in_rune": "138888888"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "swap",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"price_target": "0"},
+                    {"trade_slip": "4400"},
+                    {"liquidity_fee": "138888888"},
+                    {"liquidity_fee_in_rune": "138888888"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "156774"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "156774"},
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # swap with two coins on the inbound tx
-        tx.coins = [Coin("BNB.BNB", 10 * Coin.ONE),
-                    Coin("BNB.LOK-3C0", 10 * Coin.ONE)]
+        tx.coins = [Coin("BNB.BNB", 10 * Coin.ONE), Coin("BNB.LOK-3C0", 10 * Coin.ONE)]
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "REFUND:TODO")
@@ -172,18 +170,18 @@ class TestThorchainState(unittest.TestCase):
         reason = "unknown request: not expecting multiple coins in a swap"
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "156766"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "156766"},
+                ],
+            ),
             Event(
-                    "refund", [{"code": "105"}, {"reason": reason},
-                               *tx.get_attributes()],
-                    ),
-            ]
+                "refund",
+                [{"code": "105"}, {"reason": reason}, *tx.get_attributes()],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # swap with zero return, refunds and doesn't change pools
@@ -195,11 +193,10 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with zero return
         expected_events += [
             Event(
-                    "fee",
-                    [{"tx_id": "TODO"}, {"coins": f"1 {RUNE}"},
-                     {"pool_deduct": "0"}],
-                    ),
-            ]
+                "fee",
+                [{"tx_id": "TODO"}, {"coins": f"1 {RUNE}"}, {"pool_deduct": "0"}],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # swap with zero return, not enough coin to pay fee so no refund
@@ -211,11 +208,10 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with zero return
         expected_events += [
             Event(
-                    "fee",
-                    [{"tx_id": "TODO"}, {"coins": f"1 {RUNE}"},
-                     {"pool_deduct": "0"}],
-                    ),
-            ]
+                "fee",
+                [{"tx_id": "TODO"}, {"coins": f"1 {RUNE}"}, {"pool_deduct": "0"}],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # swap with limit
@@ -231,15 +227,14 @@ class TestThorchainState(unittest.TestCase):
         reason = "emit asset 305749416 less than price limit 999999999999999999999"
         expected_events += [
             Event(
-                    "fee",
-                    [{"tx_id": "TODO"}, {"coins": f"156758 {RUNE}"},
-                     {"pool_deduct": "0"}],
-                    ),
+                "fee",
+                [{"tx_id": "TODO"}, {"coins": f"156758 {RUNE}"}, {"pool_deduct": "0"}],
+            ),
             Event(
-                    "refund", [{"code": "108"}, {"reason": reason},
-                               *tx.get_attributes()],
-                    ),
-            ]
+                "refund",
+                [{"code": "108"}, {"reason": reason}, *tx.get_attributes()],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # swap with custom address
@@ -253,25 +248,25 @@ class TestThorchainState(unittest.TestCase):
         # check swap event generated for successful swap
         expected_events += [
             Event(
-                    "swap",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"price_target": "0"},
-                        {"trade_slip": "1736"},
-                        {"liquidity_fee": "25480449"},
-                        {"liquidity_fee_in_rune": "35504528"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "swap",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"price_target": "0"},
+                    {"trade_slip": "1736"},
+                    {"liquidity_fee": "25480449"},
+                    {"liquidity_fee_in_rune": "35504528"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "182802"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "182802"},
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # refund swap when address is a different network
@@ -284,27 +279,25 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with different network
         expected_events += [
             Event(
-                    "fee",
-                    [{"tx_id": "TODO"}, {"coins": f"182792 {RUNE}"},
-                     {"pool_deduct": "0"}],
-                    ),
+                "fee",
+                [{"tx_id": "TODO"}, {"coins": f"182792 {RUNE}"}, {"pool_deduct": "0"}],
+            ),
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {
-                            "reason": "address format not supported: BNBNOMNOM"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "address format not supported: BNBNOMNOM"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # do a double swap
         thorchain.pools = [
             Pool("BNB.LOK-3C0", 30 * Coin.ONE, 30 * Coin.ONE),
             Pool("BNB.BNB", 50 * Coin.ONE, 50 * Coin.ONE),
-            ]
+        ]
 
         tx.coins = [Coin("BNB.BNB", 10 * Coin.ONE)]
         tx.memo = "SWAP:BNB.LOK-3C0"
@@ -312,59 +305,58 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
-        self.assertEqual(outbound[0].coins[0],
-                         Coin("BNB.LOK-3C0", 457856148))
+        self.assertEqual(outbound[0].coins[0], Coin("BNB.LOK-3C0", 457856148))
 
         # check 2 swap events generated for double swap
         expected_events += [
             Event(
-                    "outbound",
-                    [
-                        {"in_tx_id": tx.id},
-                        {"id": Transaction.empty_id},
-                        {"chain": RUNE.get_chain()},
-                        {"from": "STAKER-1"},
-                        {"to": "VAULT"},
-                        {"coin": f"694444444 {RUNE}"},
-                        {"memo": "SWAP:BNB.LOK-3C0"},
-                        ],
-                    ),
+                "outbound",
+                [
+                    {"in_tx_id": tx.id},
+                    {"id": Transaction.empty_id},
+                    {"chain": RUNE.get_chain()},
+                    {"from": "STAKER-1"},
+                    {"to": "VAULT"},
+                    {"coin": f"694444444 {RUNE}"},
+                    {"memo": "SWAP:BNB.LOK-3C0"},
+                ],
+            ),
             Event(
-                    "swap",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"price_target": "0"},
-                        {"trade_slip": "4400"},
-                        {"liquidity_fee": "138888888"},
-                        {"liquidity_fee_in_rune": "138888888"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "swap",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"price_target": "0"},
+                    {"trade_slip": "4400"},
+                    {"liquidity_fee": "138888888"},
+                    {"liquidity_fee_in_rune": "138888888"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "swap",
-                    [
-                        {"pool": "BNB.LOK-3C0"},
-                        {"price_target": "0"},
-                        {"trade_slip": "5165"},
-                        {"liquidity_fee": "105998077"},
-                        {"liquidity_fee_in_rune": "105998077"},
-                        {"id": "TODO"},
-                        {"chain": RUNE.get_chain()},
-                        {"from": "STAKER-1"},
-                        {"to": "VAULT"},
-                        {"coin": f"694444444 {RUNE}"},
-                        {"memo": "SWAP:BNB.LOK-3C0"},
-                        ],
-                    ),
+                "swap",
+                [
+                    {"pool": "BNB.LOK-3C0"},
+                    {"price_target": "0"},
+                    {"trade_slip": "5165"},
+                    {"liquidity_fee": "105998077"},
+                    {"liquidity_fee_in_rune": "105998077"},
+                    {"id": "TODO"},
+                    {"chain": RUNE.get_chain()},
+                    {"from": "STAKER-1"},
+                    {"to": "VAULT"},
+                    {"coin": f"694444444 {RUNE}"},
+                    {"memo": "SWAP:BNB.LOK-3C0"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "55548 BNB.LOK-3C0"},
-                        {"pool_deduct": "80729"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "55548 BNB.LOK-3C0"},
+                    {"pool_deduct": "80729"},
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
     def test_swap_native(self):
@@ -377,12 +369,12 @@ class TestThorchainState(unittest.TestCase):
 
         # no pool, should emit a refund
         tx = Transaction(
-                Thorchain.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin(RUNE, 10 * Coin.ONE)],
-                "SWAP:BNB.BNB",
-                )
+            Thorchain.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 10 * Coin.ONE)],
+            "SWAP:BNB.BNB",
+        )
 
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 1)
@@ -390,29 +382,29 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with native RUNE
         expected_events = [
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "REFUND REASON MESSAGE: POOL IS ZERO"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "REFUND REASON MESSAGE: POOL IS ZERO"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "100000000 THOR.RUNE"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 THOR.RUNE"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # init pool
         thorchain.pools = [
             Pool("BNB.BNB", 50 * Coin.ONE, 50 * Coin.ONE),
             Pool("BNB.LOK-3C0", 50 * Coin.ONE, 50 * Coin.ONE),
-            ]
+        ]
 
         # do a regular swap
         outbound = thorchain.handle(tx)
@@ -423,61 +415,59 @@ class TestThorchainState(unittest.TestCase):
         # check swap event generated for successful swap
         expected_events += [
             Event(
-                    "swap",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"price_target": "0"},
-                        {"trade_slip": "4400"},
-                        {"liquidity_fee": "138888888"},
-                        {"liquidity_fee_in_rune": "138888888"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "swap",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"price_target": "0"},
+                    {"trade_slip": "4400"},
+                    {"liquidity_fee": "138888888"},
+                    {"liquidity_fee_in_rune": "138888888"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "156774"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "156774"},
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # swap with two coins on the inbound tx
         tx.chain = "BNB"
-        tx.coins = [Coin("BNB.BNB", 1000000000),
-                    Coin("BNB.LOK-3C0", 1000000000)]
+        tx.coins = [Coin("BNB.BNB", 1000000000), Coin("BNB.LOK-3C0", 1000000000)]
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
-        self.assertEqual(outbound[0].coins[0],
-                         Coin("BNB.LOK-3C0", 999843242))
+        self.assertEqual(outbound[0].coins[0], Coin("BNB.LOK-3C0", 999843242))
         self.assertEqual(outbound[1].coins[0], Coin("BNB.BNB", 999887500))
 
         # check refund event generated for swap with two coins
         reason = "unknown request: not expecting multiple coins in a swap"
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "156766"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "156766"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "156758 BNB.LOK-3C0"},
-                        {"pool_deduct": "156758"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "156758 BNB.LOK-3C0"},
+                    {"pool_deduct": "156758"},
+                ],
+            ),
             Event(
-                    "refund", [{"code": "105"}, {"reason": reason},
-                               *tx.get_attributes()],
-                    ),
-            ]
+                "refund",
+                [{"code": "105"}, {"reason": reason}, *tx.get_attributes()],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # swap with zero return, refunds and doesn't change pools
@@ -490,14 +480,14 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with zero return
         expected_events += [
             Event(
-                    "refund",
-                    [
-                        {"code": "108"},
-                        {"reason": "fail swap, not enough fee"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "108"},
+                    {"reason": "fail swap, not enough fee"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # swap with zero return, not enough coin to pay fee so no refund
@@ -509,14 +499,14 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with zero return
         expected_events += [
             Event(
-                    "refund",
-                    [
-                        {"code": "108"},
-                        {"reason": "fail swap, not enough fee"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "108"},
+                    {"reason": "fail swap, not enough fee"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # swap with limit
@@ -532,18 +522,18 @@ class TestThorchainState(unittest.TestCase):
         reason = "emit asset 305749416 less than price limit 999999999999999999999"
         expected_events += [
             Event(
-                    "refund", [{"code": "108"}, {"reason": reason},
-                               *tx.get_attributes()],
-                    ),
+                "refund",
+                [{"code": "108"}, {"reason": reason}, *tx.get_attributes()],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": f"100000000 {RUNE}"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": f"100000000 {RUNE}"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # swap with custom address
@@ -557,25 +547,25 @@ class TestThorchainState(unittest.TestCase):
         # check swap event generated for successful swap
         expected_events += [
             Event(
-                    "swap",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"price_target": "0"},
-                        {"trade_slip": "1736"},
-                        {"liquidity_fee": "25480449"},
-                        {"liquidity_fee_in_rune": "35504528"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "swap",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"price_target": "0"},
+                    {"trade_slip": "1736"},
+                    {"liquidity_fee": "25480449"},
+                    {"liquidity_fee_in_rune": "35504528"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "182802"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "182802"},
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # refund swap when address is a different network
@@ -588,30 +578,29 @@ class TestThorchainState(unittest.TestCase):
         # check refund event generated for swap with different network
         expected_events += [
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {
-                            "reason": "address format not supported: BNBNOMNOM"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "address format not supported: BNBNOMNOM"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": f"100000000 {RUNE}"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": f"100000000 {RUNE}"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
         # do a double swap
         thorchain.pools = [
             Pool("BNB.BNB", 50 * Coin.ONE, 50 * Coin.ONE),
             Pool("BNB.LOK-3C0", 50 * Coin.ONE, 50 * Coin.ONE),
-            ]
+        ]
 
         tx.chain = "BNB"
         tx.coins = [Coin("BNB.BNB", 1000000000)]
@@ -619,59 +608,58 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
         self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
-        self.assertEqual(outbound[0].coins[0],
-                         Coin("BNB.LOK-3C0", 535332303))
+        self.assertEqual(outbound[0].coins[0], Coin("BNB.LOK-3C0", 535332303))
 
         # check 2 swap events generated for double swap
         expected_events += [
             Event(
-                    "outbound",
-                    [
-                        {"in_tx_id": tx.id},
-                        {"id": Transaction.empty_id},
-                        {"chain": RUNE.get_chain()},
-                        {"from": "STAKER-1"},
-                        {"to": "VAULT"},
-                        {"coin": f"694444444 {RUNE}"},
-                        {"memo": "SWAP:BNB.LOK-3C0"},
-                        ],
-                    ),
+                "outbound",
+                [
+                    {"in_tx_id": tx.id},
+                    {"id": Transaction.empty_id},
+                    {"chain": RUNE.get_chain()},
+                    {"from": "STAKER-1"},
+                    {"to": "VAULT"},
+                    {"coin": f"694444444 {RUNE}"},
+                    {"memo": "SWAP:BNB.LOK-3C0"},
+                ],
+            ),
             Event(
-                    "swap",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"price_target": "0"},
-                        {"trade_slip": "4400"},
-                        {"liquidity_fee": "138888888"},
-                        {"liquidity_fee_in_rune": "138888888"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "swap",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"price_target": "0"},
+                    {"trade_slip": "4400"},
+                    {"liquidity_fee": "138888888"},
+                    {"liquidity_fee_in_rune": "138888888"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "swap",
-                    [
-                        {"pool": "BNB.LOK-3C0"},
-                        {"price_target": "0"},
-                        {"trade_slip": "2971"},
-                        {"liquidity_fee": "74360499"},
-                        {"liquidity_fee_in_rune": "74360499"},
-                        {"id": "TODO"},
-                        {"chain": "BNB"},
-                        {"from": "STAKER-1"},
-                        {"to": "VAULT"},
-                        {"coin": f"694444444 {RUNE}"},
-                        {"memo": "SWAP:BNB.LOK-3C0"},
-                        ],
-                    ),
+                "swap",
+                [
+                    {"pool": "BNB.LOK-3C0"},
+                    {"price_target": "0"},
+                    {"trade_slip": "2971"},
+                    {"liquidity_fee": "74360499"},
+                    {"liquidity_fee_in_rune": "74360499"},
+                    {"id": "TODO"},
+                    {"chain": "BNB"},
+                    {"from": "STAKER-1"},
+                    {"to": "VAULT"},
+                    {"coin": f"694444444 {RUNE}"},
+                    {"memo": "SWAP:BNB.LOK-3C0"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "63294 BNB.LOK-3C0"},
-                        {"pool_deduct": "80729"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "63294 BNB.LOK-3C0"},
+                    {"pool_deduct": "80729"},
+                ],
+            ),
+        ]
         self.assertEqual(events, expected_events)
 
     def test_add_bep2(self):
@@ -682,12 +670,12 @@ class TestThorchainState(unittest.TestCase):
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "ADD:BNB.BNB",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "ADD:BNB.BNB",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
@@ -695,162 +683,159 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful add
         expected_events = [
             Event("add", [{"pool": "BNB.BNB"}, *tx.get_attributes()]),
-            ]
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # bad add memo should refund
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "ADD:",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "ADD:",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for add with bad memo
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37500000"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37500000"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37443792 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37443792 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [{"code": "105"}, {"reason": "Invalid symbol"},
-                     *tx.get_attributes()],
-                    ),
-            ]
+                "refund",
+                [{"code": "105"}, {"reason": "Invalid symbol"}, *tx.get_attributes()],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # mismatch asset and memo
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "ADD:BNB.TCAN-014",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "ADD:BNB.TCAN-014",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for add with mismatch asset and memo
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37443792"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37443792"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37387711 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37387711 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [{"code": "105"}, {"reason": "Invalid symbol"},
-                     *tx.get_attributes()],
-                    ),
-            ]
+                "refund",
+                [{"code": "105"}, {"reason": "Invalid symbol"}, *tx.get_attributes()],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # cannot add with rune in memo
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                f"ADD:{RUNE}",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            f"ADD:{RUNE}",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for add with rune in memo
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37387711"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37387711"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37331755 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37331755 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [{"code": "105"}, {"reason": "Invalid symbol"},
-                     *tx.get_attributes()],
-                    ),
-            ]
+                "refund",
+                [{"code": "105"}, {"reason": "Invalid symbol"}, *tx.get_attributes()],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # cannot add with > 2 coins
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [
-                    Coin("BNB.BNB", 150000000),
-                    Coin(RUNE, 50000000000),
-                    Coin("BNB-LOK-3C0", 30000000000),
-                    ],
-                "ADD:BNB.BNB",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [
+                Coin("BNB.BNB", 150000000),
+                Coin(RUNE, 50000000000),
+                Coin("BNB-LOK-3C0", 30000000000),
+            ],
+            "ADD:BNB.BNB",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for add with > 2 coins
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37331755"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37331755"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37275925 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37275925 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "refund reason message"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "refund reason message"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
     def test_add_native(self):
@@ -860,27 +845,27 @@ class TestThorchainState(unittest.TestCase):
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
-                Thorchain.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin(RUNE, 50000000000)],
-                "ADD:BNB.BNB",
-                )
+            Thorchain.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 50000000000)],
+            "ADD:BNB.BNB",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
 
         expected_events = [
             Event("add", [{"pool": "BNB.BNB"}, *tx.get_attributes()]),
-            ]
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000)],
-                "ADD:BNB.BNB",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000)],
+            "ADD:BNB.BNB",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
@@ -888,7 +873,7 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful add
         expected_events += [
             Event("add", [{"pool": "BNB.BNB"}, *tx.get_attributes()]),
-            ]
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
     def test_reserve_bep2(self):
@@ -896,9 +881,12 @@ class TestThorchainState(unittest.TestCase):
             return
         thorchain = ThorchainState()
         tx = Transaction(
-                Binance.chain, "STAKER-1", "VAULT",
-                [Coin(RUNE, 50000000000)], "RESERVE",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 50000000000)],
+            "RESERVE",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
@@ -908,14 +896,14 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful reserve
         expected_events = [
             Event(
-                    "reserve",
-                    [
-                        {"contributor_address": tx.from_address},
-                        {"amount": tx.coins[0].amount},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "reserve",
+                [
+                    {"contributor_address": tx.from_address},
+                    {"amount": tx.coins[0].amount},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
     def test_reserve_native(self):
@@ -923,9 +911,12 @@ class TestThorchainState(unittest.TestCase):
             return
         thorchain = ThorchainState()
         tx = Transaction(
-                Thorchain.chain, "STAKER-1", "VAULT",
-                [Coin(RUNE, 50000000000)], "RESERVE",
-                )
+            Thorchain.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 50000000000)],
+            "RESERVE",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
@@ -934,14 +925,14 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful reserve
         expected_events = [
             Event(
-                    "reserve",
-                    [
-                        {"contributor_address": tx.from_address},
-                        {"amount": tx.coins[0].amount},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "reserve",
+                [
+                    {"contributor_address": tx.from_address},
+                    {"amount": tx.coins[0].amount},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
     def test_gas_bep2(self):
@@ -951,12 +942,12 @@ class TestThorchainState(unittest.TestCase):
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
@@ -970,57 +961,57 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events = [
             Event(
-                    "stake",
-                    [
-                        {"pool": pool.asset},
-                        {"stake_units": pool.total_units},
-                        {"rune_address": tx.from_address},
-                        {"rune_amount": "50000000000"},
-                        {"asset_amount": "150000000"},
-                        {"BNB_txid": "TODO"},
-                        ],
-                    ),
-            ]
+                "stake",
+                [
+                    {"pool": pool.asset},
+                    {"stake_units": pool.total_units},
+                    {"rune_address": tx.from_address},
+                    {"rune_amount": "50000000000"},
+                    {"asset_amount": "150000000"},
+                    {"BNB_txid": "TODO"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # should refund if no memo
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for stake with no memo
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37500000"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37500000"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37443792 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37443792 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "memo can't be empty"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "memo can't be empty"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # check gas event generated after we sent to chain
@@ -1031,15 +1022,15 @@ class TestThorchainState(unittest.TestCase):
         # first new gas event
         expected_events += [
             Event(
-                    "gas",
-                    [
-                        {"asset": "BNB.BNB"},
-                        {"asset_amt": "75000"},
-                        {"rune_amt": "24962528"},
-                        {"transaction_count": "2"},
-                        ],
-                    ),
-            ]
+                "gas",
+                [
+                    {"asset": "BNB.BNB"},
+                    {"asset_amt": "75000"},
+                    {"rune_amt": "24962528"},
+                    {"transaction_count": "2"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
     def test_gas_native(self):
@@ -1049,23 +1040,23 @@ class TestThorchainState(unittest.TestCase):
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
-                Thorchain.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin(RUNE, 50000000000)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Thorchain.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 50000000000)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
 
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
@@ -1079,58 +1070,58 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events = [
             Event(
-                    "stake",
-                    [
-                        {"pool": pool.asset},
-                        {"stake_units": pool.total_units},
-                        {"rune_address": tx.from_address},
-                        {"rune_amount": "50000000000"},
-                        {"asset_amount": "150000000"},
-                        {"BNB_txid": "TODO"},
-                        {"THOR_txid": "TODO"},
-                        ],
-                    ),
-            ]
+                "stake",
+                [
+                    {"pool": pool.asset},
+                    {"stake_units": pool.total_units},
+                    {"rune_address": tx.from_address},
+                    {"rune_amount": "50000000000"},
+                    {"asset_amount": "150000000"},
+                    {"BNB_txid": "TODO"},
+                    {"THOR_txid": "TODO"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # should refund if no memo
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for stake with no memo
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37500000"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37500000"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37443792 THOR.RUNE"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37443792 THOR.RUNE"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "memo can't be empty"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "memo can't be empty"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # check gas event generated after we sent to chain
@@ -1141,15 +1132,15 @@ class TestThorchainState(unittest.TestCase):
         # first new gas event
         expected_events += [
             Event(
-                    "gas",
-                    [
-                        {"asset": "BNB.BNB"},
-                        {"asset_amt": "75000"},
-                        {"rune_amt": "24962528"},
-                        {"transaction_count": "2"},
-                        ],
-                    ),
-            ]
+                "gas",
+                [
+                    {"asset": "BNB.BNB"},
+                    {"asset_amt": "75000"},
+                    {"rune_amt": "24962528"},
+                    {"transaction_count": "2"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
     def test_stake_bep2(self):
@@ -1160,12 +1151,12 @@ class TestThorchainState(unittest.TestCase):
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
@@ -1179,229 +1170,227 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events = [
             Event(
-                    "stake",
-                    [
-                        {"pool": pool.asset},
-                        {"stake_units": pool.total_units},
-                        {"rune_address": tx.from_address},
-                        {"rune_amount": "50000000000"},
-                        {"asset_amount": "150000000"},
-                        {"BNB_txid": "TODO"},
-                        ],
-                    ),
-            ]
+                "stake",
+                [
+                    {"pool": pool.asset},
+                    {"stake_units": pool.total_units},
+                    {"rune_address": tx.from_address},
+                    {"rune_amount": "50000000000"},
+                    {"asset_amount": "150000000"},
+                    {"BNB_txid": "TODO"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # should refund if no memo
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for stake with no memo
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37500000"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37500000"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37443792 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37443792 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "memo can't be empty"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "memo can't be empty"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # bad stake memo should refund
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "STAKE:",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "STAKE:",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for stake with bad memo
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37443792"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37443792"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37387711 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37387711 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [{"code": "105"}, {"reason": "Invalid symbol"},
-                     *tx.get_attributes()],
-                    ),
-            ]
+                "refund",
+                [{"code": "105"}, {"reason": "Invalid symbol"}, *tx.get_attributes()],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # mismatch asset and memo
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "STAKE:BNB.TCAN-014",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "STAKE:BNB.TCAN-014",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for stake with mismatch asset and memo
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37387711"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37387711"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37331755 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37331755 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {
-                            "reason": "unknown request: did not find both coins"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "unknown request: did not find both coins"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # cannot stake with rune in memo
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-                "STAKE:" + RUNE,
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
+            "STAKE:" + RUNE,
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for stake with rune in memo
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37331755"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37331755"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37275925 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37275925 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "unknown request: invalid pool asset"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "unknown request: invalid pool asset"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # cannot stake with > 2 coins
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [
-                    Coin("BNB.BNB", 150000000),
-                    Coin(RUNE, 50000000000),
-                    Coin("BNB-LOK-3C0", 30000000000),
-                    ],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [
+                Coin("BNB.BNB", 150000000),
+                Coin(RUNE, 50000000000),
+                Coin("BNB-LOK-3C0", 30000000000),
+            ],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
 
         # check refund event generated for stake with > 2 coins
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37275925"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37275925"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "37220220 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "37220220 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "refund reason message"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "refund reason message"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # can stake with only asset
         tx = Transaction(
-                Binance.chain,
-                "STAKER-2",
-                "VAULT",
-                [Coin("BNB.BNB", 30000000)],
-                "STAKE:BNB.BNB:STAKER-2",
-                )
+            Binance.chain,
+            "STAKER-2",
+            "VAULT",
+            [Coin("BNB.BNB", 30000000)],
+            "STAKE:BNB.BNB:STAKER-2",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
         self.assertEqual(pool.get_staker("STAKER-2").units, 4153686396)
@@ -1410,52 +1399,52 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events += [
             Event(
-                    "stake",
-                    [
-                        {"pool": pool.asset},
-                        {"stake_units": "4153686396"},
-                        {"rune_address": "STAKER-2"},
-                        {"rune_amount": "0"},
-                        {"asset_amount": "30000000"},
-                        {"BNB_txid": "TODO"},
-                        ],
-                    ),
-            ]
+                "stake",
+                [
+                    {"pool": pool.asset},
+                    {"stake_units": "4153686396"},
+                    {"rune_address": "STAKER-2"},
+                    {"rune_amount": "0"},
+                    {"asset_amount": "30000000"},
+                    {"BNB_txid": "TODO"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin(RUNE, 10000000000)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 10000000000)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
         expected_events += [
             Event(
-                    "stake",
-                    [
-                        {"pool": pool.asset},
-                        {"stake_units": "4657084839"},
-                        {"rune_address": "STAKER-1"},
-                        {"rune_amount": "10000000000"},
-                        {"asset_amount": "0"},
-                        {"BNB_txid": "TODO"},
-                        ],
-                    ),
-            ]
+                "stake",
+                [
+                    {"pool": pool.asset},
+                    {"stake_units": "4657084839"},
+                    {"rune_address": "STAKER-1"},
+                    {"rune_amount": "10000000000"},
+                    {"asset_amount": "0"},
+                    {"BNB_txid": "TODO"},
+                ],
+            ),
+        ]
 
         self.assertEqual(thorchain.events, expected_events)
 
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin(RUNE, 30000000000), Coin("BNB.BNB", 90000000)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 30000000000), Coin("BNB.BNB", 90000000)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
@@ -1463,17 +1452,17 @@ class TestThorchainState(unittest.TestCase):
         if RUNE.get_chain() == "BNB":
             expected_events += [
                 Event(
-                        "stake",
-                        [
-                            {"pool": pool.asset},
-                            {"stake_units": "29374965503"},
-                            {"rune_address": "STAKER-1"},
-                            {"rune_amount": "30000000000"},
-                            {"asset_amount": "90000000"},
-                            {"BNB_txid": "TODO"},
-                            ],
-                        ),
-                ]
+                    "stake",
+                    [
+                        {"pool": pool.asset},
+                        {"stake_units": "29374965503"},
+                        {"rune_address": "STAKER-1"},
+                        {"rune_amount": "30000000000"},
+                        {"asset_amount": "90000000"},
+                        {"BNB_txid": "TODO"},
+                    ],
+                ),
+            ]
             self.assertEqual(thorchain.events, expected_events)
 
     def test_stake_native(self):
@@ -1484,23 +1473,23 @@ class TestThorchainState(unittest.TestCase):
         thorchain.network_fees = {"BNB": 37500}
 
         tx = Transaction(
-                Thorchain.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin(RUNE, 50000000000)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Thorchain.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 50000000000)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
 
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 150000000)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
 
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
@@ -1514,75 +1503,81 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events = [
             Event(
-                    "stake",
-                    [
-                        {"pool": pool.asset},
-                        {"stake_units": pool.total_units},
-                        {"rune_address": tx.from_address},
-                        {"rune_amount": "50000000000"},
-                        {"asset_amount": "150000000"},
-                        {"BNB_txid": "TODO"},
-                        {"THOR_txid": "TODO"},
-                        ],
-                    ),
-            ]
+                "stake",
+                [
+                    {"pool": pool.asset},
+                    {"stake_units": pool.total_units},
+                    {"rune_address": tx.from_address},
+                    {"rune_amount": "50000000000"},
+                    {"asset_amount": "150000000"},
+                    {"BNB_txid": "TODO"},
+                    {"THOR_txid": "TODO"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # should refund if no memo
         tx = Transaction(
-                Thorchain.chain, "STAKER-1", "VAULT",
-                [Coin(RUNE, 50000000000)], "",
-                )
+            Thorchain.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 50000000000)],
+            "",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
 
         # check refund event generated for stake with no memo
         expected_events += [
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "memo can't be empty"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "memo can't be empty"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "100000000 THOR.RUNE"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 THOR.RUNE"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         tx = Transaction(
-                Binance.chain, "STAKER-1", "VAULT",
-                [Coin("BNB.BNB", 150000000)], "",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000)],
+            "",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
 
         # check refund event generated for stake with no memo
         expected_events += [
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "37500000"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "37500000"},
+                ],
+            ),
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "memo can't be empty"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "memo can't be empty"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
     def test_unstake_bep2(self):
@@ -1596,13 +1591,12 @@ class TestThorchainState(unittest.TestCase):
 
         # stake some funds into a pool
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 1.5 * Coin.ONE),
-                 Coin(RUNE, 500 * Coin.ONE)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 1.5 * Coin.ONE), Coin(RUNE, 500 * Coin.ONE)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
         outbounds = thorchain.handle(tx)
         self.assertEqual(outbounds, [])
 
@@ -1614,23 +1608,26 @@ class TestThorchainState(unittest.TestCase):
 
         expected_events = [
             Event(
-                    "stake",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"stake_units": "50000000000"},
-                        {"rune_address": "STAKER-1"},
-                        {"rune_amount": "50000000000"},
-                        {"asset_amount": "150000000"},
-                        {"BNB_txid": "TODO"},
-                        ],
-                    ),
-            ]
+                "stake",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"stake_units": "50000000000"},
+                    {"rune_address": "STAKER-1"},
+                    {"rune_amount": "50000000000"},
+                    {"asset_amount": "150000000"},
+                    {"BNB_txid": "TODO"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         tx = Transaction(
-                Binance.chain, "STAKER-1", "VAULT", [Coin(RUNE, 1)],
-                "WITHDRAW:BNB.BNB:100",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 1)],
+            "WITHDRAW:BNB.BNB:100",
+        )
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 2)
         self.assertEqual(outbounds[0].coins[0], Coin("BNB.BNB", 51387500))
@@ -1645,32 +1642,32 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful unstake
         expected_events += [
             Event(
-                    "unstake",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"stake_units": "500000000"},
-                        {"basis_points": "100"},
-                        {"asymmetry": "0.000000000000000000"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "unstake",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"stake_units": "500000000"},
+                    {"basis_points": "100"},
+                    {"asymmetry": "0.000000000000000000"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "1201456"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "1201456"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "1201403 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "1201403 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # should error without a refund
@@ -1683,11 +1680,10 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with bad memo
         expected_events += [
             Event(
-                    "fee",
-                    [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"},
-                     {"pool_deduct": "0"}],
-                    )
-            ]
+                "fee",
+                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"}, {"pool_deduct": "0"}],
+            )
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # should error without a bad withdraw basis points, should be between 0
@@ -1699,11 +1695,10 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with bad withdraw basis points
         expected_events += [
             Event(
-                    "fee",
-                    [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"},
-                     {"pool_deduct": "0"}],
-                    )
-            ]
+                "fee",
+                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"}, {"pool_deduct": "0"}],
+            )
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         tx.memo = "WITHDRAW::1000000000"
@@ -1713,18 +1708,20 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with bad memo
         expected_events += [
             Event(
-                    "fee",
-                    [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"},
-                     {"pool_deduct": "0"}],
-                    )
-            ]
+                "fee",
+                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"}, {"pool_deduct": "0"}],
+            )
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # check successful withdraw everything
         tx = Transaction(
-                Binance.chain, "STAKER-1", "VAULT", [Coin(RUNE, 1)],
-                "WITHDRAW:BNB.BNB",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 1)],
+            "WITHDRAW:BNB.BNB",
+        )
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 2)
         self.assertEqual(outbounds[0].coins[0], Coin(RUNE, 54348798544))
@@ -1738,34 +1735,36 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful unstake
         expected_events += [
-            Event("pool",
-                  [{"pool": "BNB.BNB"}, {"pool_status": "Bootstrap"}]),
+            Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Bootstrap"}]),
             Event(
-                    "unstake",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"stake_units": "49500000000"},
-                        {"basis_points": "10000"},
-                        {"asymmetry": "0.000000000000000000"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "unstake",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"stake_units": "49500000000"},
+                    {"basis_points": "10000"},
+                    {"asymmetry": "0.000000000000000000"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "100000000 BNB.RUNE-67C"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 BNB.RUNE-67C"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # check withdraw staker has 0 units
         tx = Transaction(
-                Binance.chain, "STAKER-1", "VAULT", [Coin(RUNE, 1)],
-                "WITHDRAW:BNB.BNB",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 1)],
+            "WITHDRAW:BNB.BNB",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
@@ -1778,11 +1777,10 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with 0 units left
         expected_events += [
             Event(
-                    "fee",
-                    [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"},
-                     {"pool_deduct": "0"}],
-                    ),
-            ]
+                "fee",
+                [{"tx_id": "TODO"}, {"coins": "1 BNB.RUNE-67C"}, {"pool_deduct": "0"}],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
     def test_unstake_native(self):
@@ -1796,21 +1794,21 @@ class TestThorchainState(unittest.TestCase):
 
         # stake some funds into a pool
         tx = Transaction(
-                Thorchain.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin(RUNE, 500 * Coin.ONE)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Thorchain.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 500 * Coin.ONE)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
         outbounds = thorchain.handle(tx)
         self.assertEqual(outbounds, [])
         tx = Transaction(
-                Binance.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin("BNB.BNB", 1.5 * Coin.ONE)],
-                "STAKE:BNB.BNB:STAKER-1",
-                )
+            Binance.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 1.5 * Coin.ONE)],
+            "STAKE:BNB.BNB:STAKER-1",
+        )
         outbounds = thorchain.handle(tx)
         self.assertEqual(outbounds, [])
 
@@ -1822,27 +1820,27 @@ class TestThorchainState(unittest.TestCase):
 
         expected_events = [
             Event(
-                    "stake",
-                    [
-                        {"pool": pool.asset},
-                        {"stake_units": "50000000000"},
-                        {"rune_address": "STAKER-1"},
-                        {"rune_amount": "50000000000"},
-                        {"asset_amount": "150000000"},
-                        {"BNB_txid": "TODO"},
-                        {"THOR_txid": "TODO"},
-                        ],
-                    ),
-            ]
+                "stake",
+                [
+                    {"pool": pool.asset},
+                    {"stake_units": "50000000000"},
+                    {"rune_address": "STAKER-1"},
+                    {"rune_amount": "50000000000"},
+                    {"asset_amount": "150000000"},
+                    {"BNB_txid": "TODO"},
+                    {"THOR_txid": "TODO"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         tx = Transaction(
-                Thorchain.chain,
-                "STAKER-1",
-                "VAULT",
-                [Coin(RUNE, 1)],
-                "WITHDRAW:BNB.BNB:100",
-                )
+            Thorchain.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 1)],
+            "WITHDRAW:BNB.BNB:100",
+        )
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 2)
         self.assertEqual(outbounds[0].coins[0], Coin("BNB.BNB", 51387500))
@@ -1857,32 +1855,32 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful unstake
         expected_events += [
             Event(
-                    "unstake",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"stake_units": "500000000"},
-                        {"basis_points": "100"},
-                        {"asymmetry": "0.000000000000000000"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "unstake",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"stake_units": "500000000"},
+                    {"basis_points": "100"},
+                    {"asymmetry": "0.000000000000000000"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "112500 BNB.BNB"},
-                        {"pool_deduct": "1201456"},
-                        ],
-                    ),
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "112500 BNB.BNB"},
+                    {"pool_deduct": "1201456"},
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "100000000 THOR.RUNE"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 THOR.RUNE"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # should error without a refund
@@ -1895,11 +1893,10 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with bad memo
         expected_events += [
             Event(
-                    "refund",
-                    [{"code": "105"}, {"reason": "Invalid symbol"},
-                     *tx.get_attributes()],
-                    ),
-            ]
+                "refund",
+                [{"code": "105"}, {"reason": "Invalid symbol"}, *tx.get_attributes()],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # should error without a bad withdraw basis points, should be between 0
@@ -1911,11 +1908,10 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with bad withdraw basis points
         expected_events += [
             Event(
-                    "refund",
-                    [{"code": "105"}, {"reason": "Invalid symbol"},
-                     *tx.get_attributes()],
-                    ),
-            ]
+                "refund",
+                [{"code": "105"}, {"reason": "Invalid symbol"}, *tx.get_attributes()],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         tx.memo = "WITHDRAW::1000000000"
@@ -1925,23 +1921,24 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with bad memo
         expected_events += [
             Event(
-                    "refund",
-                    [{"code": "105"}, {"reason": "Invalid symbol"},
-                     *tx.get_attributes()],
-                    ),
-            ]
+                "refund",
+                [{"code": "105"}, {"reason": "Invalid symbol"}, *tx.get_attributes()],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # check successful withdraw everything
         tx = Transaction(
-                Thorchain.chain, "STAKER-1", "VAULT", [Coin(RUNE, 1)],
-                "WITHDRAW:BNB.BNB",
-                )
+            Thorchain.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 1)],
+            "WITHDRAW:BNB.BNB",
+        )
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 2)
         self.assertEqual(outbounds[0].coins[0], Coin("BNB.BNB", 5098575000))
-        self.assertEqual(outbounds[1].coins[0],
-                         Coin("THOR.RUNE", 54348798543))
+        self.assertEqual(outbounds[1].coins[0], Coin("THOR.RUNE", 54348798543))
 
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 0)
@@ -1951,34 +1948,36 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful unstake
         expected_events += [
-            Event("pool",
-                  [{"pool": "BNB.BNB"}, {"pool_status": "Bootstrap"}]),
+            Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Bootstrap"}]),
             Event(
-                    "unstake",
-                    [
-                        {"pool": "BNB.BNB"},
-                        {"stake_units": "49500000000"},
-                        {"basis_points": "10000"},
-                        {"asymmetry": "0.000000000000000000"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
+                "unstake",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"stake_units": "49500000000"},
+                    {"basis_points": "10000"},
+                    {"asymmetry": "0.000000000000000000"},
+                    *tx.get_attributes(),
+                ],
+            ),
             Event(
-                    "fee",
-                    [
-                        {"tx_id": "TODO"},
-                        {"coins": "100000000 THOR.RUNE"},
-                        {"pool_deduct": "0"},
-                        ],
-                    ),
-            ]
+                "fee",
+                [
+                    {"tx_id": "TODO"},
+                    {"coins": "100000000 THOR.RUNE"},
+                    {"pool_deduct": "0"},
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
         # check withdraw staker has 0 units
         tx = Transaction(
-                Thorchain.chain, "STAKER-1", "VAULT", [Coin(RUNE, 1)],
-                "WITHDRAW:BNB.BNB",
-                )
+            Thorchain.chain,
+            "STAKER-1",
+            "VAULT",
+            [Coin(RUNE, 1)],
+            "WITHDRAW:BNB.BNB",
+        )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
@@ -1991,45 +1990,41 @@ class TestThorchainState(unittest.TestCase):
         # check refund event not generated for unstake with 0 units left
         expected_events += [
             Event(
-                    "refund",
-                    [
-                        {"code": "105"},
-                        {"reason": "refund reason message"},
-                        *tx.get_attributes(),
-                        ],
-                    ),
-            ]
+                "refund",
+                [
+                    {"code": "105"},
+                    {"reason": "refund reason message"},
+                    *tx.get_attributes(),
+                ],
+            ),
+        ]
         self.assertEqual(thorchain.events, expected_events)
 
     def test_unstake_calc(self):
         pool = Pool("BNB.BNB", 112928660551, 257196272)
         pool.total_units = 44611997190
         after, withdraw_rune, withdraw_asset = pool._calc_unstake_units(
-                25075000000, 5000
-                )
+            25075000000, 5000
+        )
         self.assertEqual(withdraw_rune, 31736823519)
         self.assertEqual(withdraw_asset, 72280966)
         self.assertEqual(after, 12537500000)
 
     def test_stake_calc(self):
         pool = Pool("BNB.BNB", 112928660551, 257196272)
-        stake_units = pool._calc_stake_units(
-                0, 0, 34500000000, 23400000000
-                )
+        stake_units = pool._calc_stake_units(0, 0, 34500000000, 23400000000)
         self.assertEqual(stake_units, 34500000000)
         pool.total_units = 34500000000
         stake_units = pool._calc_stake_units(
-                50000000000, 40000000000, 50000000000, 40000000000
-                )
+            50000000000, 40000000000, 50000000000, 40000000000
+        )
         self.assertEqual(stake_units, 34500000000)
 
     def test_calc_liquidity_fee(self):
         thorchain = ThorchainState()
-        fee = thorchain._calc_liquidity_fee(94382619747, 100001000,
-                                            301902607)
+        fee = thorchain._calc_liquidity_fee(94382619747, 100001000, 301902607)
         self.assertEqual(fee, 338)
-        fee = thorchain._calc_liquidity_fee(10000000000, 1000000000,
-                                            10000000000)
+        fee = thorchain._calc_liquidity_fee(10000000000, 1000000000, 10000000000)
         self.assertEqual(fee, 82644628)
 
     def test_calc_trade_slip(self):
@@ -2075,17 +2070,17 @@ class TestThorchainState(unittest.TestCase):
 class TestEvent(unittest.TestCase):
     def test_get(self):
         swap = Event(
-                "swap",
-                [
-                    {"in_tx_id": "FAAFF"},
-                    {"id": "TODO"},
-                    {"chain": "BNB"},
-                    {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
-                    {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                    {"coin": "149700000 BNB.BNB"},
-                    {"memo": "REFUND:FAAFF"},
-                    ],
-                )
+            "swap",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "TODO"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         txid = swap.get("id")
         self.assertEqual(txid, "TODO")
         memo = swap.get("memo")
@@ -2095,135 +2090,131 @@ class TestEvent(unittest.TestCase):
 
     def test_eq(self):
         outbound_sim = Event(
-                "outbound",
-                [
-                    {"in_tx_id": "FAAFF"},
-                    {"id": "TODO"},
-                    {"chain": "BNB"},
-                    {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
-                    {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                    {"coin": "149700000 BNB.BNB"},
-                    {"memo": "REFUND:FAAFF"},
-                    ],
-                )
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "TODO"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         outbound = Event(
-                "outbound",
-                [
-                    {"in_tx_id": "FAAFF"},
-                    {"id": "67672"},
-                    {"chain": "BNB"},
-                    {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
-                    {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                    {"coin": "149700000 BNB.BNB"},
-                    {"memo": "REFUND:FAAFF"},
-                    ],
-                )
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "67672"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         self.assertEqual(outbound_sim, outbound)
         swap_sim = Event(
-                "swap",
-                [
-                    {"in_tx_id": "FAAFF"},
-                    {"id": "TODO"},
-                    {"chain": "BNB"},
-                    {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
-                    {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                    {"coin": "149700000 BNB.BNB"},
-                    {"memo": "REFUND:FAAFF"},
-                    ],
-                )
+            "swap",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "TODO"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         swap = Event(
-                "swap",
-                [
-                    {"in_tx_id": "FAAFF"},
-                    {"id": "67672"},
-                    {"chain": "BNB"},
-                    {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
-                    {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                    {"coin": "149700000 BNB.BNB"},
-                    {"memo": "REFUND:FAAFF"},
-                    ],
-                )
+            "swap",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "67672"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         self.assertNotEqual(swap_sim, swap)
         swap_sim = Event(
-                "swap",
-                [
-                    {
-                        "pool": "ETH.ETH-0X0000000000000000000000000000000000000000"},
-                    {"stake_units": "27000000000"},
-                    {
-                        "rune_address": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q"},
-                    {"rune_amount": "50000000000"},
-                    {"asset_amount": "4000000000"},
-                    {"BNB_txid": "9573683032CBEE28E1A3C01648F"},
-                    {"ETH_txid": "FBBB33A59B9AA3F787743EC4176"},
-                    ],
-                )
+            "swap",
+            [
+                {"pool": "ETH.ETH-0X0000000000000000000000000000000000000000"},
+                {"stake_units": "27000000000"},
+                {"rune_address": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q"},
+                {"rune_amount": "50000000000"},
+                {"asset_amount": "4000000000"},
+                {"BNB_txid": "9573683032CBEE28E1A3C01648F"},
+                {"ETH_txid": "FBBB33A59B9AA3F787743EC4176"},
+            ],
+        )
         swap = Event(
-                "swap",
-                [
-                    {
-                        "pool": "ETH.ETH-0x0000000000000000000000000000000000000000"},
-                    {"stake_units": "27000000000"},
-                    {
-                        "rune_address": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q"},
-                    {"rune_amount": "50000000000"},
-                    {"asset_amount": "4000000000"},
-                    {"ETH_txid": "FBBB33A59B9AA3F787743EC4176"},
-                    {"BNB_txid": "9573683032CBEE28E1A3C01648F"},
-                    ],
-                )
+            "swap",
+            [
+                {"pool": "ETH.ETH-0x0000000000000000000000000000000000000000"},
+                {"stake_units": "27000000000"},
+                {"rune_address": "tbnb1mkymsmnqenxthlmaa9f60kd6wgr9yjy9h5mz6q"},
+                {"rune_amount": "50000000000"},
+                {"asset_amount": "4000000000"},
+                {"ETH_txid": "FBBB33A59B9AA3F787743EC4176"},
+                {"BNB_txid": "9573683032CBEE28E1A3C01648F"},
+            ],
+        )
         self.assertEqual(swap_sim, swap)
 
     def test_sorted(self):
         outbound_sim_1 = Event(
-                "outbound",
-                [
-                    {"in_tx_id": "FAAFF"},
-                    {"id": "TODO"},
-                    {"chain": "BNB"},
-                    {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
-                    {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                    {"coin": "149700000 BNB.BNB"},
-                    {"memo": "REFUND:FAAFF"},
-                    ],
-                )
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "TODO"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         outbound_sim_2 = Event(
-                "outbound",
-                [
-                    {"in_tx_id": "FAAFF"},
-                    {"id": "TODO"},
-                    {"chain": "BNB"},
-                    {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
-                    {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                    {"coin": "500000000 BNB.RUNE-67C"},
-                    {"memo": "REFUND:FAAFF"},
-                    ],
-                )
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "TODO"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "500000000 BNB.RUNE-67C"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         sim_events = [outbound_sim_1, outbound_sim_2]
         outbound_1 = Event(
-                "outbound",
-                [
-                    {"in_tx_id": "FAAFF"},
-                    {"id": "47AC6"},
-                    {"chain": "BNB"},
-                    {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
-                    {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                    {"coin": "149700000 BNB.BNB"},
-                    {"memo": "REFUND:FAAFF"},
-                    ],
-                )
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "47AC6"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "149700000 BNB.BNB"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         outbound_2 = Event(
-                "outbound",
-                [
-                    {"in_tx_id": "FAAFF"},
-                    {"id": "E415A"},
-                    {"chain": "BNB"},
-                    {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
-                    {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
-                    {"coin": "500000000 BNB.RUNE-67C"},
-                    {"memo": "REFUND:FAAFF"},
-                    ],
-                )
+            "outbound",
+            [
+                {"in_tx_id": "FAAFF"},
+                {"id": "E415A"},
+                {"chain": "BNB"},
+                {"from": "tbnb1zge452mgjg9508edxqfpzfl3sfc7vakf2mprqj"},
+                {"to": "tbnb189az9plcke2c00vns0zfmllfpfdw67dtv25kgx"},
+                {"coin": "500000000 BNB.RUNE-67C"},
+                {"memo": "REFUND:FAAFF"},
+            ],
+        )
         sim_events = [outbound_sim_1, outbound_sim_2]
         events = [outbound_1, outbound_2]
         self.assertEqual(sim_events, events)
