@@ -187,3 +187,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/python,macOs,windows,vim
+
+# PyCharm
+.idea
