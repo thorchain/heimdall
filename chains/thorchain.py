@@ -104,7 +104,7 @@ class MockThorchain(HttpClient):
 
             if txn.to_address != get_alias_address(txn.chain, "VAULT"):
                 msgs = [self.msg_send(txn.from_address, txn.to_address, txn.coins[0])]
-                fee = {'amount': [], 'gas': "180429"}
+                fee = {"amount": [], "gas": "180429"}
             else:
                 payload = self.post("/thorchain/native/tx", payload)
                 msgs = payload["value"]["msg"]
@@ -124,7 +124,12 @@ class MockThorchain(HttpClient):
             "value": {
                 "from_address": from_address,
                 "to_address": to_address,
-                "amount": [{"denom": coin.asset.get_symbol().lower(), "amount": str(coin.amount)}],
+                "amount": [
+                    {
+                        "denom": coin.asset.get_symbol().lower(),
+                        "amount": str(coin.amount),
+                    }
+                ],
             },
         }
 
