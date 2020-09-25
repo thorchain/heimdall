@@ -137,7 +137,7 @@ class Smoker:
 
         self.thorchain_state.set_vault_pubkey(pubkey)
         if RUNE.get_chain() == "THOR":
-            self.thorchain_state.reserve = 22000000000000000
+            self.thorchain_state.reserve = 22000000100000000
 
         self.mock_thorchain = MockThorchain(thor)
 
@@ -206,7 +206,7 @@ class Smoker:
                             )
 
     def check_chain(self, chain, mock, reorg):
-        # compare simulation bitcoin vs mock bitcoin
+        # compare simulation chain vs mock chain
         for addr, sim_acct in chain.accounts.items():
             name = get_alias(chain.chain, addr)
             if name == "MASTER":

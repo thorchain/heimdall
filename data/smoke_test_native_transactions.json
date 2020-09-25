@@ -147,6 +147,19 @@
     },
     {
         "chain": "THOR",
+        "from_address": "USER-1",
+        "to_address": "STAKER-1",
+        "memo": "Transfer example",
+        "coins": [
+            {
+                "asset": "THOR.RUNE",
+                "amount": 2000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.BNB:STAKER-1",

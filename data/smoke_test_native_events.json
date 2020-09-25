@@ -1,5 +1,52 @@
 [
     {
+        "type": "refund",
+        "attributes": [
+            {
+                "code": "105"
+            },
+            {
+                "reason": "invalid tx type: Transfer example"
+            },
+            {
+                "id": "TODO"
+            },
+            {
+                "chain": "THOR"
+            },
+            {
+                "from": "USER-1"
+            },
+            {
+                "to": "STAKER-1"
+            },
+            {
+                "coin": "2000000000 THOR.RUNE"
+            },
+            {
+                "memo": "Transfer example"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "100000000 THOR.RUNE"
+            },
+            {
+                "pool_deduct": "0"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "stake",
         "attributes": [
             {
@@ -31,7 +78,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "3"
+                "bond_reward": "8"
             }
         ],
         "block_height": null,
@@ -41,7 +88,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "5"
+                "bond_reward": "11"
             }
         ],
         "block_height": null,
@@ -79,7 +126,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "5"
+                "bond_reward": "11"
             }
         ],
         "block_height": null,
@@ -89,7 +136,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "8"
+                "bond_reward": "13"
             }
         ],
         "block_height": null,
@@ -127,7 +174,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "8"
+                "bond_reward": "13"
             }
         ],
         "block_height": null,
@@ -137,7 +184,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "11"
+                "bond_reward": "16"
             }
         ],
         "block_height": null,
@@ -175,7 +222,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "11"
+                "bond_reward": "16"
             }
         ],
         "block_height": null,
@@ -232,7 +279,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "13"
+                "bond_reward": "18"
             }
         ],
         "block_height": null,
@@ -308,7 +355,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "16"
+                "bond_reward": "21"
             }
         ],
         "block_height": null,
@@ -384,7 +431,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "18"
+                "bond_reward": "23"
             }
         ],
         "block_height": null,
@@ -460,7 +507,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "23"
+                "bond_reward": "28"
             }
         ],
         "block_height": null,
@@ -517,7 +564,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "28"
+                "bond_reward": "33"
             }
         ],
         "block_height": null,
@@ -552,7 +599,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "28"
+                "bond_reward": "33"
             }
         ],
         "block_height": null,
@@ -587,7 +634,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "28"
+                "bond_reward": "33"
             }
         ],
         "block_height": null,
@@ -625,7 +672,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "31"
+                "bond_reward": "36"
             }
         ],
         "block_height": null,
@@ -663,7 +710,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "31"
+                "bond_reward": "36"
             }
         ],
         "block_height": null,
@@ -720,7 +767,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "36"
+                "bond_reward": "41"
             }
         ],
         "block_height": null,
@@ -777,7 +824,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "41"
+                "bond_reward": "47"
             }
         ],
         "block_height": null,
@@ -834,7 +881,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "44"
+                "bond_reward": "49"
             }
         ],
         "block_height": null,
@@ -919,7 +966,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "4901382"
+                "bond_reward": "4901387"
             },
             {
                 "BTC.BTC": "-4901333"
@@ -1075,7 +1122,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "29431959"
+                "bond_reward": "29431964"
             },
             {
                 "BNB.BNB": "-14560659"
@@ -1166,7 +1213,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "5032683"
+                "bond_reward": "5032688"
             },
             {
                 "BTC.BTC": "-5032631"
@@ -1235,7 +1282,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "730276"
+                "bond_reward": "730281"
             },
             {
                 "ETH.ETH": "-730221"
@@ -1317,7 +1364,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "62"
+                "bond_reward": "68"
             }
         ],
         "block_height": null,
@@ -1393,7 +1440,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "65"
+                "bond_reward": "70"
             }
         ],
         "block_height": null,
@@ -1478,7 +1525,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "185615"
+                "bond_reward": "185620"
             },
             {
                 "BNB.BNB": "-185545"
@@ -1566,7 +1613,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "1324005843"
+                "bond_reward": "1324005849"
             },
             {
                 "BNB.BNB": "-1324005768"
@@ -1654,7 +1701,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "1192518441"
+                "bond_reward": "1192518447"
             },
             {
                 "BNB.BNB": "-1192518396"
@@ -1755,7 +1802,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "22"
+                "bond_reward": "27"
             }
         ],
         "block_height": null,
@@ -1840,7 +1887,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "118175779"
+                "bond_reward": "118175784"
             },
             {
                 "BNB.BNB": "-118175756"
@@ -1906,6 +1953,19 @@
         "category": null
     },
     {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "1116800145"
+            },
+            {
+                "BNB.BNB": "-1116800115"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "gas",
         "attributes": [
             {
@@ -1915,7 +1975,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "13414634"
+                "rune_amt": "13222496"
             },
             {
                 "transaction_count": "1"
@@ -1931,7 +1991,7 @@
                 "code": "108"
             },
             {
-                "reason": "emit asset 21953767 less than price limit 22460886"
+                "reason": "emit asset 22199393 less than price limit 22460886"
             },
             {
                 "id": "TODO"
@@ -1975,10 +2035,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "1116800145"
-            },
-            {
-                "BNB.BNB": "-1116800115"
+                "bond_reward": "6"
             }
         ],
         "block_height": null,
@@ -2022,7 +2079,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "283509 BNB.BNB"
+                "coins": "283510 BNB.BNB"
             },
             {
                 "pool_deduct": "100000000"
@@ -2035,7 +2092,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "3"
+                "bond_reward": "8"
             }
         ],
         "block_height": null,
@@ -2051,7 +2108,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "13192710"
+                "rune_amt": "13192677"
             },
             {
                 "transaction_count": "1"
@@ -2182,7 +2239,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "13197245"
+                "rune_amt": "13197212"
             },
             {
                 "transaction_count": "1"
@@ -2272,10 +2329,10 @@
                 "trade_slip": "1299"
             },
             {
-                "liquidity_fee": "765876"
+                "liquidity_fee": "765880"
             },
             {
-                "liquidity_fee_in_rune": "269624755"
+                "liquidity_fee_in_rune": "269625487"
             },
             {
                 "id": "TODO"
@@ -2306,7 +2363,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "252326 BNB.BNB"
+                "coins": "252327 BNB.BNB"
             },
             {
                 "pool_deduct": "100000000"
@@ -2325,7 +2382,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "14825361"
+                "rune_amt": "14825328"
             },
             {
                 "transaction_count": "1"
@@ -2353,7 +2410,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "1884911371 THOR.RUNE"
+                "coin": "1884907145 THOR.RUNE"
             },
             {
                 "memo": "SWAP:BNB.LOK-3C0"
@@ -2375,10 +2432,10 @@
                 "trade_slip": "491"
             },
             {
-                "liquidity_fee": "45707042"
+                "liquidity_fee": "45706945"
             },
             {
-                "liquidity_fee_in_rune": "45707042"
+                "liquidity_fee_in_rune": "45706945"
             },
             {
                 "id": "TODO"
@@ -2415,10 +2472,10 @@
                 "trade_slip": "853"
             },
             {
-                "liquidity_fee": "74012959"
+                "liquidity_fee": "74012640"
             },
             {
-                "liquidity_fee_in_rune": "72547515"
+                "liquidity_fee_in_rune": "72547202"
             },
             {
                 "id": "TODO"
@@ -2433,7 +2490,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "1884911371 THOR.RUNE"
+                "coin": "1884907145 THOR.RUNE"
             },
             {
                 "memo": "SWAP:BNB.LOK-3C0"
@@ -2449,7 +2506,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "94160199 BNB.LOK-3C0"
+                "coins": "94160215 BNB.LOK-3C0"
             },
             {
                 "pool_deduct": "100000000"
@@ -2468,7 +2525,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "14144951"
+                "rune_amt": "14144919"
             },
             {
                 "transaction_count": "1"
@@ -2537,7 +2594,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "265018 BNB.BNB"
+                "coins": "265019 BNB.BNB"
             },
             {
                 "pool_deduct": "100000000"
@@ -2556,7 +2613,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "14091301"
+                "rune_amt": "14091269"
             },
             {
                 "transaction_count": "1"
@@ -2641,7 +2698,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "14099571"
+                "rune_amt": "14099540"
             },
             {
                 "transaction_count": "1"
@@ -2710,7 +2767,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "265809 BNB.BNB"
+                "coins": "265810 BNB.BNB"
             },
             {
                 "pool_deduct": "100000000"
@@ -2729,7 +2786,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "13938523"
+                "rune_amt": "13938491"
             },
             {
                 "transaction_count": "1"
@@ -2884,6 +2941,22 @@
             },
             {
                 "pool_deduct": "0"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "2044026241"
+            },
+            {
+                "BNB.LOK-3C0": "-1728693750"
+            },
+            {
+                "BNB.BNB": "-315332432"
             }
         ],
         "block_height": null,

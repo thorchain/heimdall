@@ -1215,8 +1215,8 @@ class Pool(Jsonable):
         a = float(a)
         if R == 0.0 or A == 0.0:
             return int(r)
-        slipAdjustment = (1 - abs((R * a - r * A)/((2 * r + R) * (a + A))))
-        units = (P * (a * R + A * r))/(2 * A * R)
+        slipAdjustment = 1 - abs((R * a - r * A) / ((2 * r + R) * (a + A)))
+        units = (P * (a * R + A * r)) / (2 * A * R)
         return int(units * slipAdjustment)
 
     def _calc_unstake_units(self, staker_units, withdraw_basis_points):
