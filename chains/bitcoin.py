@@ -51,11 +51,11 @@ class MockBitcoin(HttpClient):
         while True:
             try:
                 result = self.get_block_stats()
-                if result["medianfee"] != 0 and result["mediantxsize"] != 0:
+                if result["avgfee"] != 0 and result["avgtxsize"] != 0:
                     self.block_stats["tx_rate"] = int(
-                        Decimal(result["medianfee"]) / Decimal(result["mediantxsize"])
+                        Decimal(result["avgfee"]) / Decimal(result["avgtxsize"])
                     )
-                    self.block_stats["tx_size"] = result["mediantxsize"]
+                    self.block_stats["tx_size"] = result["avgtxsize"]
             except Exception:
                 continue
             finally:
