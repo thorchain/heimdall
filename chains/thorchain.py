@@ -102,13 +102,9 @@ class MockThorchain(HttpClient):
                 "base_req": {"chain_id": "thorchain", "from": txn.from_address},
             }
 
-            if txn.to_address != get_alias_address(txn.chain, "VAULT"):
-                msgs = [self.msg_send(txn.from_address, txn.to_address, txn.coins[0])]
-                fee = {"amount": [], "gas": "180429"}
-            else:
-                payload = self.post("/thorchain/native/tx", payload)
-                msgs = payload["value"]["msg"]
-                fee = payload["value"]["fee"]
+            payload = self.post("/thorchain/native/tx", payload)
+            msgs = payload["value"]["msg"]
+            fee = payload["value"]["fee"]
             acct_num = acct["result"]["value"]["account_number"]
             seq = acct["result"]["value"]["sequence"]
             sig = self._sign(
@@ -117,21 +113,6 @@ class MockThorchain(HttpClient):
             pushable = self.get_pushable(name, msgs, sig, fee, acct_num, seq)
             result = self.send(pushable)
             txn.id = result["txhash"]
-
-    def msg_send(self, from_address, to_address, coin):
-        return {
-            "type": "thorchain/MsgSend",
-            "value": {
-                "from_address": from_address,
-                "to_address": to_address,
-                "amount": [
-                    {
-                        "denom": coin.asset.get_symbol().lower(),
-                        "amount": str(coin.amount),
-                    }
-                ],
-            },
-        }
 
     def send(self, payload):
         resp = requests.post(self.get_url("/txs"), data=payload)
