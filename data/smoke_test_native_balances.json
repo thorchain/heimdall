@@ -6,7 +6,7 @@
             "BNB.BNB": 1000000000
         },
         "USER-1": {
-            "BNB.BNB": 300000000,
+            "BNB.BNB": 600000000,
             "BNB.LOK-3C0": 150000000000
         },
         "STAKER-1": {
@@ -1642,7 +1642,7 @@
         },
         "POOL.BNB.BNB": {
             "BNB.BNB": 0,
-            "THOR.RUNE": -315332432
+            "THOR.RUNE": 0
         },
         "POOL.BTC.BTC": {
             "BTC.BTC": 0,
@@ -1654,7 +1654,7 @@
         },
         "POOL.BNB.LOK-3C0": {
             "BNB.LOK-3C0": 0,
-            "THOR.RUNE": -1728693750
+            "THOR.RUNE": 0
         }
     }
 ]
