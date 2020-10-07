@@ -1,5 +1,52 @@
 [
     {
+        "type": "refund",
+        "attributes": [
+            {
+                "code": "105"
+            },
+            {
+                "reason": "invalid tx type: Transfer example"
+            },
+            {
+                "id": "TODO"
+            },
+            {
+                "chain": "THOR"
+            },
+            {
+                "from": "USER-1"
+            },
+            {
+                "to": "STAKER-1"
+            },
+            {
+                "coin": "2000000000 THOR.RUNE"
+            },
+            {
+                "memo": "Transfer example"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "100000000 THOR.RUNE"
+            },
+            {
+                "pool_deduct": "0"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "stake",
         "attributes": [
             {
@@ -31,7 +78,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "3"
+                "bond_reward": "8"
             }
         ],
         "block_height": null,
@@ -41,7 +88,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "5"
+                "bond_reward": "11"
             }
         ],
         "block_height": null,
@@ -79,7 +126,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "5"
+                "bond_reward": "11"
             }
         ],
         "block_height": null,
@@ -89,7 +136,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "8"
+                "bond_reward": "13"
             }
         ],
         "block_height": null,
@@ -127,7 +174,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "8"
+                "bond_reward": "13"
             }
         ],
         "block_height": null,
@@ -137,7 +184,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "11"
+                "bond_reward": "16"
             }
         ],
         "block_height": null,
@@ -175,7 +222,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "11"
+                "bond_reward": "16"
             }
         ],
         "block_height": null,
@@ -1837,6 +1884,19 @@
         "category": null
     },
     {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "1116800145"
+            },
+            {
+                "BNB.BNB": "-1116800115"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "gas",
         "attributes": [
             {
@@ -2820,6 +2880,22 @@
             },
             {
                 "pool_deduct": "0"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "2044026241"
+            },
+            {
+                "BNB.LOK-3C0": "-1728693750"
+            },
+            {
+                "BNB.BNB": "-315332432"
             }
         ],
         "block_height": null,
