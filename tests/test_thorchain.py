@@ -956,7 +956,9 @@ class TestThorchainState(unittest.TestCase):
 
     def test_stake_calc(self):
         pool = Pool("BNB.BNB", 112928660551, 257196272)
-        stake_units = pool._calc_stake_units(0, 0, 34500000000, 23400000000)
+        stake_units = pool._calc_stake_units(
+            0, 0, 34500000000, 23400000000
+        )
         self.assertEqual(stake_units, 34500000000)
         pool.total_units = 34500000000
         stake_units = pool._calc_stake_units(
