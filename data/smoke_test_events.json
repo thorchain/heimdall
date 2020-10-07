@@ -178,7 +178,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "347937293"
+                "stake_units": "12699404761"
             },
             {
                 "rune_address": "STAKER-2"
@@ -324,7 +324,7 @@
                 "asset": "BNB.BNB"
             },
             {
-                "asset_amt": "75000"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "rune_amt": "24962528"
@@ -416,7 +416,7 @@
                 "asset": "BNB.BNB"
             },
             {
-                "asset_amt": "75000"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "rune_amt": "24950041"
@@ -587,7 +587,7 @@
                 "asset_amt": "75000"
             },
             {
-                "rune_amt": "24912659"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "transaction_count": "2"
@@ -660,6 +660,38 @@
         "category": null
     },
     {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "303789 BNB.BNB"
+            },
+            {
+                "pool_deduct": "100000000"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "100000000 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "rewards",
         "attributes": [
             {
@@ -695,7 +727,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "4161464835"
+                "stake_units": "4139715485"
             },
             {
                 "rune_address": "STAKER-2"
@@ -730,7 +762,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "4648560839"
+                "stake_units": "4672548326"
             },
             {
                 "rune_address": "STAKER-2"
@@ -765,7 +797,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "29392822456"
+                "stake_units": "29343301312"
             },
             {
                 "rune_address": "STAKER-2"
@@ -882,7 +914,13 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105629095"
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "100000000 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -958,7 +996,13 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "105629092"
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "100000000 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -1078,7 +1122,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "22252191167 BNB.RUNE-67C"
+                "coin": "156338364 BNB.RUNE-67C"
             },
             {
                 "memo": "SWAP:BTC.BTC:USER-1"
@@ -1158,7 +1202,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "22252191167 BNB.RUNE-67C"
+                "coin": "156338364 BNB.RUNE-67C"
             },
             {
                 "memo": "SWAP:BTC.BTC:USER-1"
@@ -1237,7 +1281,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "22224409 BNB.RUNE-67C"
+                "coin": "155821761 BNB.RUNE-67C"
             },
             {
                 "memo": "SWAP:ETH.ETH:USER-1"
@@ -1317,7 +1361,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "22224409 BNB.RUNE-67C"
+                "coin": "155821761 BNB.RUNE-67C"
             },
             {
                 "memo": "SWAP:ETH.ETH:USER-1"
@@ -1424,7 +1468,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "5000492 BNB.RUNE-67C"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "0"
@@ -1512,7 +1556,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "5000961 BNB.RUNE-67C"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "0"
@@ -1597,7 +1641,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "3 ETH.ETH"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "37"
@@ -1677,7 +1721,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "112500 BNB.BNB"
+                "coin": "30000000 BNB.BNB, 100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "5001898"
@@ -1709,7 +1753,7 @@
                 "code": "105"
             },
             {
-                "reason": "unknown request: not expecting multiple coins in a swap"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "id": "TODO"
@@ -1897,7 +1941,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "112500 BNB.BNB"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "7764967"
@@ -2070,7 +2114,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "3 BTC.BTC"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "1661"
@@ -2134,7 +2178,7 @@
                 "asset_amt": "1"
             },
             {
-                "rune_amt": "554"
+                "rune_amt": "49783420"
             },
             {
                 "transaction_count": "1"
@@ -2190,7 +2234,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "10138321 BNB.RUNE-67C"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "0"
@@ -2278,7 +2322,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "112500 BNB.BNB"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "14009156"
@@ -2455,6 +2499,22 @@
         "category": null
     },
     {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "241627 BNB.BNB"
+            },
+            {
+                "pool_deduct": "100000000"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "rewards",
         "attributes": [
             {
@@ -2530,7 +2590,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "17864842 BNB.RUNE-67C"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "0"
@@ -2678,7 +2738,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "4751317394 BNB.RUNE-67C"
+                "coin": "4737195444 BNB.RUNE-67C"
             },
             {
                 "memo": "SWAP:BNB.BNB"
@@ -2758,7 +2818,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "4751317394 BNB.RUNE-67C"
+                "coin": "4737195444 BNB.RUNE-67C"
             },
             {
                 "memo": "SWAP:BNB.BNB"
@@ -2837,7 +2897,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "877997235 BNB.RUNE-67C"
+                "coin": "2154104374 BNB.RUNE-67C"
             },
             {
                 "memo": "SWAP:BNB.LOK-3C0"
@@ -2917,7 +2977,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "877997235 BNB.RUNE-67C"
+                "coin": "2154104374 BNB.RUNE-67C"
             },
             {
                 "memo": "SWAP:BNB.LOK-3C0"
@@ -3021,7 +3081,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "112500 BNB.BNB"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "19758526"
@@ -3066,7 +3126,7 @@
                 "asset_amt": "75000"
             },
             {
-                "rune_amt": "13162337"
+                "rune_amt": "32239789"
             },
             {
                 "transaction_count": "2"
@@ -3132,7 +3192,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "19753514 BNB.RUNE-67C"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "0"
@@ -3161,7 +3221,7 @@
                 "asset_amt": "75000"
             },
             {
-                "rune_amt": "13169010"
+                "rune_amt": "32265974"
             },
             {
                 "transaction_count": "2"
@@ -3214,7 +3274,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "112500 BNB.BNB"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "19763531"
@@ -3259,7 +3319,7 @@
                 "asset_amt": "75000"
             },
             {
-                "rune_amt": "13159118"
+                "rune_amt": "32157983"
             },
             {
                 "transaction_count": "2"
@@ -3275,7 +3335,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "347937293"
+                "stake_units": "12699404761"
             },
             {
                 "basis_points": "10000"
@@ -3312,7 +3372,7 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "3 BTC.BTC"
+                "coins": "100000000 BNB.RUNE-67C"
             },
             {
                 "pool_deduct": "1661"
@@ -3357,7 +3417,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "6585077"
+                "rune_amt": "16100585"
             },
             {
                 "transaction_count": "1"
@@ -3376,7 +3436,7 @@
                 "asset_amt": "1"
             },
             {
-                "rune_amt": "554"
+                "rune_amt": "49722060"
             },
             {
                 "transaction_count": "1"
@@ -3405,7 +3465,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "38202848130"
+                "stake_units": "38155565123"
             },
             {
                 "basis_points": "10000"

@@ -1218,6 +1218,7 @@ class Pool(Jsonable):
 
             rune_amt += staker.pending_rune
             staker.pending_rune = 0
+
         units = self._calc_stake_units(
             self.rune_balance,
             self.asset_balance,
@@ -1263,7 +1264,7 @@ class Pool(Jsonable):
         A = float(A)
         r = float(r)
         a = float(a)
-        if R == 0.0 or A == 0.0 or P == 0:
+        if R == 0.0 or A == 0.0:
             return int(r)
         slipAdjustment = 1 - abs((R * a - r * A) / ((2 * r + R) * (a + A)))
         units = (P * (a * R + A * r)) / (2 * A * R)
