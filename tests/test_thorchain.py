@@ -419,7 +419,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.BNB"},
                     {"price_target": "0"},
-                    {"trade_slip": "4400"},
+                    {"trade_slip": "1667"},
                     {"liquidity_fee": "138888888"},
                     {"liquidity_fee_in_rune": "138888888"},
                     *tx.get_attributes(),
@@ -551,7 +551,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.BNB"},
                     {"price_target": "0"},
-                    {"trade_slip": "1736"},
+                    {"trade_slip": "769"},
                     {"liquidity_fee": "25480449"},
                     {"liquidity_fee_in_rune": "35504528"},
                     *tx.get_attributes(),
@@ -629,7 +629,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.BNB"},
                     {"price_target": "0"},
-                    {"trade_slip": "4400"},
+                    {"trade_slip": "1667"},
                     {"liquidity_fee": "138888888"},
                     {"liquidity_fee_in_rune": "138888888"},
                     *tx.get_attributes(),
@@ -640,7 +640,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.LOK-3C0"},
                     {"price_target": "0"},
-                    {"trade_slip": "2971"},
+                    {"trade_slip": "1220"},
                     {"liquidity_fee": "74360499"},
                     {"liquidity_fee_in_rune": "74360499"},
                     {"id": "TODO"},
