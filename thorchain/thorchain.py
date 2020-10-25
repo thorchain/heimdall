@@ -1054,14 +1054,14 @@ class ThorchainState:
         """
         Calculate the trade slip from a trade
         expressed in basis points (10,000)
-        x * (2*X + x) / (X * X)
+        x / (X + x)
 
         :param int X: first balance
         :param int x: asset amount
         :returns: (int) trade slip
 
         """
-        trade_slip = 10000 * (x * (2 * X + x) / (X ** 2))
+        trade_slip = 10000 * x / (X + x)
         return int(round(trade_slip))
 
     def _calc_asset_emission(self, X, x, Y):

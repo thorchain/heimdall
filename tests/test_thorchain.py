@@ -142,7 +142,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.BNB"},
                     {"price_target": "0"},
-                    {"trade_slip": "4400"},
+                    {"trade_slip": "1667"},
                     {"liquidity_fee": "138888888"},
                     {"liquidity_fee_in_rune": "138888888"},
                     *tx.get_attributes(),
@@ -252,7 +252,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.BNB"},
                     {"price_target": "0"},
-                    {"trade_slip": "1736"},
+                    {"trade_slip": "769"},
                     {"liquidity_fee": "25480449"},
                     {"liquidity_fee_in_rune": "35504528"},
                     *tx.get_attributes(),
@@ -326,7 +326,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.BNB"},
                     {"price_target": "0"},
-                    {"trade_slip": "4400"},
+                    {"trade_slip": "1667"},
                     {"liquidity_fee": "138888888"},
                     {"liquidity_fee_in_rune": "138888888"},
                     *tx.get_attributes(),
@@ -337,7 +337,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.LOK-3C0"},
                     {"price_target": "0"},
-                    {"trade_slip": "5165"},
+                    {"trade_slip": "1880"},
                     {"liquidity_fee": "105998077"},
                     {"liquidity_fee_in_rune": "105998077"},
                     {"id": "TODO"},
@@ -419,7 +419,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.BNB"},
                     {"price_target": "0"},
-                    {"trade_slip": "4400"},
+                    {"trade_slip": "1667"},
                     {"liquidity_fee": "138888888"},
                     {"liquidity_fee_in_rune": "138888888"},
                     *tx.get_attributes(),
@@ -551,7 +551,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.BNB"},
                     {"price_target": "0"},
-                    {"trade_slip": "1736"},
+                    {"trade_slip": "769"},
                     {"liquidity_fee": "25480449"},
                     {"liquidity_fee_in_rune": "35504528"},
                     *tx.get_attributes(),
@@ -629,7 +629,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.BNB"},
                     {"price_target": "0"},
-                    {"trade_slip": "4400"},
+                    {"trade_slip": "1667"},
                     {"liquidity_fee": "138888888"},
                     {"liquidity_fee_in_rune": "138888888"},
                     *tx.get_attributes(),
@@ -640,7 +640,7 @@ class TestThorchainState(unittest.TestCase):
                 [
                     {"pool": "BNB.LOK-3C0"},
                     {"price_target": "0"},
-                    {"trade_slip": "2971"},
+                    {"trade_slip": "1220"},
                     {"liquidity_fee": "74360499"},
                     {"liquidity_fee_in_rune": "74360499"},
                     {"id": "TODO"},
@@ -2030,9 +2030,9 @@ class TestThorchainState(unittest.TestCase):
     def test_calc_trade_slip(self):
         thorchain = ThorchainState()
         slip = thorchain._calc_trade_slip(10000000000, 1000000000)
-        self.assertEqual(slip, 2100)
+        self.assertEqual(slip, 909)
         slip = thorchain._calc_trade_slip(94405967833, 10000000000)
-        self.assertEqual(slip, 2231)
+        self.assertEqual(slip, 958)
 
     def test_get_asset_in_rune(self):
         pool = Pool("BNB.BNB", 49900000000, 150225000)
