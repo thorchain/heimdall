@@ -675,7 +675,6 @@ class ThorchainState:
         if tx.chain != RUNE.get_chain() and len(parts) > 2:
             address = parts[2]
 
-
         stake_units, rune_amt, pending_txid = pool.stake(
             address, rune_amt, asset_amt, asset, tx.id
         )
