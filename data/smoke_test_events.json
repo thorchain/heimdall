@@ -1106,6 +1106,9 @@
                 "liquidity_fee_in_rune": "37059190885"
             },
             {
+                "emit_asset": "22252191167 BNB.RUNE-67C"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -1144,6 +1147,9 @@
             },
             {
                 "liquidity_fee_in_rune": "4735286144"
+            },
+            {
+                "emit_asset": "32239335 BTC.BTC"
             },
             {
                 "id": "TODO"
@@ -1265,6 +1271,9 @@
                 "liquidity_fee_in_rune": "13886"
             },
             {
+                "emit_asset": "22224409 BNB.RUNE-67C"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -1303,6 +1312,9 @@
             },
             {
                 "liquidity_fee_in_rune": "9862"
+            },
+            {
+                "emit_asset": "1776373 ETH.ETH"
             },
             {
                 "id": "TODO"
@@ -1396,6 +1408,9 @@
                 "liquidity_fee_in_rune": "10447890"
             },
             {
+                "emit_asset": "830681591 BNB.RUNE-67C"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -1484,6 +1499,9 @@
                 "liquidity_fee_in_rune": "698820"
             },
             {
+                "emit_asset": "186268354 BNB.RUNE-67C"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -1567,6 +1585,12 @@
             },
             {
                 "asymmetry": "0.000000000000000000"
+            },
+            {
+                "emit_asset": "401320263"
+            },
+            {
+                "emit_rune": "4983551007"
             },
             {
                 "id": "TODO"
@@ -1781,6 +1805,9 @@
                 "liquidity_fee_in_rune": "279369"
             },
             {
+                "emit_asset": "2236793 BNB.BNB"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -1867,6 +1894,9 @@
             },
             {
                 "liquidity_fee_in_rune": "1709611795"
+            },
+            {
+                "emit_asset": "136510488 BNB.BNB"
             },
             {
                 "id": "TODO"
@@ -1957,6 +1987,9 @@
                 "liquidity_fee_in_rune": "1509432620"
             },
             {
+                "emit_asset": "99932397 BNB.BNB"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -2040,6 +2073,12 @@
             },
             {
                 "asymmetry": "0.000000000000000000"
+            },
+            {
+                "emit_asset": "11992613"
+            },
+            {
+                "emit_rune": "6641361936"
             },
             {
                 "id": "TODO"
@@ -2162,6 +2201,9 @@
                 "liquidity_fee_in_rune": "16025820"
             },
             {
+                "emit_asset": "900904028 BNB.RUNE-67C"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -2250,6 +2292,9 @@
                 "liquidity_fee_in_rune": "1360744163"
             },
             {
+                "emit_asset": "77850941 BNB.BNB"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -2336,6 +2381,9 @@
             },
             {
                 "liquidity_fee_in_rune": "1221883959"
+            },
+            {
+                "emit_asset": "60403152 BNB.BNB"
             },
             {
                 "id": "TODO"
@@ -2502,6 +2550,9 @@
                 "liquidity_fee_in_rune": "617283950"
             },
             {
+                "emit_asset": "4938271604 BNB.RUNE-67C"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -2588,6 +2639,9 @@
             },
             {
                 "liquidity_fee_in_rune": "454488069"
+            },
+            {
+                "emit_asset": "4090392627 BNB.LOK-3C0"
             },
             {
                 "id": "TODO"
@@ -2706,6 +2760,9 @@
                 "liquidity_fee_in_rune": "580499461"
             },
             {
+                "emit_asset": "4751317394 BNB.RUNE-67C"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -2744,6 +2801,9 @@
             },
             {
                 "liquidity_fee_in_rune": "286575656"
+            },
+            {
+                "emit_asset": "26177686 BNB.BNB"
             },
             {
                 "id": "TODO"
@@ -2865,6 +2925,9 @@
                 "liquidity_fee_in_rune": "10762050"
             },
             {
+                "emit_asset": "877997235 BNB.RUNE-67C"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -2903,6 +2966,9 @@
             },
             {
                 "liquidity_fee_in_rune": "16974508"
+            },
+            {
+                "emit_asset": "887866078 BNB.LOK-3C0"
             },
             {
                 "id": "TODO"
@@ -2991,6 +3057,12 @@
             },
             {
                 "asymmetry": "0.000000000000000000"
+            },
+            {
+                "emit_asset": "117024578"
+            },
+            {
+                "emit_rune": "20553184033"
             },
             {
                 "id": "TODO"
@@ -3104,6 +3176,12 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
+                "emit_asset": "45056512837"
+            },
+            {
+                "emit_rune": "44481536450"
+            },
+            {
                 "id": "TODO"
             },
             {
@@ -3184,6 +3262,12 @@
             },
             {
                 "asymmetry": "0.000000000000000000"
+            },
+            {
+                "emit_asset": "117009745"
+            },
+            {
+                "emit_rune": "20555783924"
             },
             {
                 "id": "TODO"
@@ -3282,6 +3366,12 @@
             },
             {
                 "asymmetry": "0.000000000000000000"
+            },
+            {
+                "emit_asset": "834535"
+            },
+            {
+                "emit_rune": "462155490"
             },
             {
                 "id": "TODO"
@@ -3412,6 +3502,12 @@
             },
             {
                 "asymmetry": "0.000000000000000000"
+            },
+            {
+                "emit_asset": "178729220"
+            },
+            {
+                "emit_rune": "31411560322"
             },
             {
                 "id": "TODO"

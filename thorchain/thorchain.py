@@ -801,6 +801,8 @@ class ThorchainState:
                     {"stake_units": unstake_units},
                     {"basis_points": withdraw_basis_points},
                     {"asymmetry": "0.000000000000000000"},
+                    {"emit_asset": asset_amt},
+                    {"emit_rune": rune_amt},
                     *tx.get_attributes(),
                 ],
             )
@@ -905,6 +907,7 @@ class ThorchainState:
                         {"trade_slip": trade_slip},
                         {"liquidity_fee": liquidity_fee},
                         {"liquidity_fee_in_rune": liquidity_fee_in_rune},
+                        {"emit_asset": f"{emit.amount} {emit.asset}"},
                         *in_tx.get_attributes(),
                     ],
                 )
@@ -978,6 +981,7 @@ class ThorchainState:
                     {"trade_slip": trade_slip},
                     {"liquidity_fee": liquidity_fee},
                     {"liquidity_fee_in_rune": liquidity_fee_in_rune},
+                    {"emit_asset": f"{emit.amount} {emit.asset}"},
                     *in_tx.get_attributes(),
                 ],
             )
