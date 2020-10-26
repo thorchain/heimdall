@@ -43,6 +43,9 @@
                 "rune_address": "STAKER-1"
             },
             {
+                "asset_address": "STAKER-1"
+            },
+            {
                 "rune_amount": "50000000000"
             },
             {
@@ -94,6 +97,9 @@
                 "asset_amount": "150000000"
             },
             {
+                "asset_address": "STAKER-1"
+            },
+            {
                 "BTC_txid": "TODO"
             },
             {
@@ -140,6 +146,9 @@
             },
             {
                 "asset_amount": "4000000000"
+            },
+            {
+                "asset_address": "STAKER-1"
             },
             {
                 "ETH_txid": "TODO"
@@ -190,6 +199,9 @@
                 "asset_amount": "1500000"
             },
             {
+                "asset_address": "STAKER-2"
+            },
+            {
                 "BTC_txid": "TODO"
             },
             {
@@ -226,6 +238,9 @@
             },
             {
                 "asset_amount": "40000000000"
+            },
+            {
+                "asset_address": "STAKER-1"
             },
             {
                 "BNB_txid": "TODO"
@@ -707,6 +722,9 @@
                 "asset_amount": "30000000"
             },
             {
+                "asset_address": "STAKER-2"
+            },
+            {
                 "BNB_txid": "TODO"
             }
         ],
@@ -742,6 +760,9 @@
                 "asset_amount": "0"
             },
             {
+                "asset_address": "STAKER-2"
+            },
+            {
                 "BNB_txid": "TODO"
             }
         ],
@@ -775,6 +796,9 @@
             },
             {
                 "asset_amount": "90000000"
+            },
+            {
+                "asset_address": "STAKER-2"
             },
             {
                 "BNB_txid": "TODO"
