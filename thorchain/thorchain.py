@@ -671,6 +671,7 @@ class ThorchainState:
 
         # check address to stake to from memo
         address = tx.from_address
+        asset_address = tx.from_address
         if tx.chain != RUNE.get_chain() and len(parts) > 2:
             address = parts[2]
 
@@ -692,6 +693,7 @@ class ThorchainState:
                 {"rune_address": address},
                 {"rune_amount": rune_amt},
                 {"asset_amount": asset_amt},
+                {"asset_address": asset_address},
                 {f"{tx.chain}_txid": tx.id},
             ],
         )
