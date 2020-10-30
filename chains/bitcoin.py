@@ -58,10 +58,8 @@ class MockBitcoin(HttpClient):
                     # min relay fee for BTC is 1000
                     if median_fee < 1000:
                         median_fee = 1000
-                    rate = int(
-                        Decimal(median_fee) / Decimal(median_tx_size)
-                    )
-                    if rate*Decimal(median_tx_size) < median_fee:
+                    rate = int(Decimal(median_fee) / Decimal(median_tx_size))
+                    if rate * Decimal(median_tx_size) < median_fee:
                         rate += 1
                     self.block_stats["tx_rate"] = rate
                     self.block_stats["tx_size"] = median_tx_size

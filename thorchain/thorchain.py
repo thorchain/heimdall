@@ -795,21 +795,22 @@ class ThorchainState:
         ]
 
         # generate event for UNSTAKE transaction
-        self.events.append(
-            Event(
-                "unstake",
-                [
-                    {"pool": pool.asset},
-                    {"stake_units": unstake_units},
-                    {"basis_points": withdraw_basis_points},
-                    {"asymmetry": "0.000000000000000000"},
-                    {"emit_asset": asset_amt},
-                    {"emit_rune": rune_amt},
-                    *tx.get_attributes(),
-                ],
-            )
+        unstake_event = Event(
+            "unstake",
+            [
+                {"pool": pool.asset},
+                {"stake_units": unstake_units},
+                {"basis_points": withdraw_basis_points},
+                {"asymmetry": "0.000000000000000000"},
+                {"emit_asset": asset_amt},
+                {"emit_rune": rune_amt},
+                *tx.get_attributes(),
+            ],
         )
-        return self.handle_fee(tx, out_txs)
+
+        outbound = self.handle_fee(tx, out_txs)
+        self.events.append(unstake_event)
+        return outbound
 
     def handle_swap(self, tx):
         """
@@ -861,7 +862,7 @@ class ThorchainState:
         in_coin = in_tx.coins[0]
         if in_coin.is_rune() and in_coin.amount <= rune_fee:
             return self.refund(tx, 108, "fail swap, not enough fee")
-
+        swap_events = []
         if not tx.coins[0].is_rune() and not asset.is_rune():
             # its a double swap
             pool = self.get_pool(source)
@@ -894,13 +895,12 @@ class ThorchainState:
                 tx.memo,
                 id=Transaction.empty_id,
             )
-
-            self.events.append(
+            swap_events.append(
                 Event("outbound", [{"in_tx_id": in_tx.id}, *out_tx.get_attributes()])
             )
 
             # generate event for SWAP transaction
-            self.events.append(
+            swap_events.append(
                 Event(
                     "swap",
                     [
@@ -972,9 +972,7 @@ class ThorchainState:
                 f"OUTBOUND:{tx.id.upper()}",
             )
         ]
-
-        # generate event for SWAP transaction
-        self.events.append(
+        swap_events.append(
             Event(
                 "swap",
                 [
@@ -988,7 +986,13 @@ class ThorchainState:
                 ],
             )
         )
-        return self.handle_fee(tx, out_txs)
+        outbound = self.handle_fee(tx, out_txs)
+        # emit the events
+        for e in swap_events:
+            self.events.append(e)
+        # generate event for SWAP transaction
+
+        return outbound
 
     def swap(self, coin, asset):
         """
