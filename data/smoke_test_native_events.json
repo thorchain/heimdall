@@ -1,5 +1,16 @@
 [
     {
+        "type": "pool",
+        "attributes": [
+            {
+                "pool": "BNB.BNB"
+            },
+            {
+            "pool_status": "Enabled"
+            }
+        ]
+    },
+    {
         "type": "stake",
         "attributes": [
             {
@@ -39,6 +50,17 @@
         ],
         "block_height": null,
         "category": null
+    },
+    {
+        "type": "pool",
+        "attributes": [
+            {
+                "pool": "BTC.BTC"
+            },
+            {
+            "pool_status": "Enabled"
+            }
+        ]
     },
     {
         "type": "rewards",
@@ -92,6 +114,17 @@
         "category": null
     },
     {
+        "type": "pool",
+        "attributes": [
+            {
+                "pool": "ETH.ETH"
+            },
+            {
+            "pool_status": "Enabled"
+            }
+        ]
+    },
+    {
         "type": "rewards",
         "attributes": [
             {
@@ -141,6 +174,17 @@
         ],
         "block_height": null,
         "category": null
+    },
+    {
+        "type": "pool",
+        "attributes": [
+            {
+                "pool": "BNB.LOK-3C0"
+            },
+            {
+            "pool_status": "Enabled"
+            }
+        ]
     },
     {
         "type": "rewards",

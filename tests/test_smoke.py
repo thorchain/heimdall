@@ -160,6 +160,7 @@ class TestSmoke(unittest.TestCase):
                     f"Event Thorchain {event} \n   !="
                     f"  \nEvent Expected {expected_event}"
                 )
+
                 if not export_events:
                     raise Exception("Events mismatch")
 

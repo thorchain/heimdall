@@ -969,6 +969,13 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events = [
             Event(
+                "pool",
+                [
+                    {"pool": pool.asset},
+                    {"pool_status": "Enabled"},
+                ],
+            ),
+            Event(
                 "stake",
                 [
                     {"pool": pool.asset},
@@ -1079,6 +1086,13 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events = [
             Event(
+                    "pool",
+                    [
+                        {"pool": pool.asset},
+                        {"pool_status": "Enabled"},
+                        ],
+                    ),
+            Event(
                 "stake",
                 [
                     {"pool": pool.asset},
@@ -1179,6 +1193,13 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful stake
         expected_events = [
+            Event(
+                "pool",
+                [
+                    {"pool": pool.asset},
+                    {"pool_status": "Enabled"},
+                ],
+            ),
             Event(
                 "stake",
                 [
@@ -1517,6 +1538,13 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events = [
             Event(
+                    "pool",
+                    [
+                        {"pool": pool.asset},
+                        {"pool_status": "Enabled"},
+                        ],
+                    ),
+            Event(
                 "stake",
                 [
                     {"pool": pool.asset},
@@ -1622,6 +1650,13 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.total_units, 50000000000)
 
         expected_events = [
+            Event(
+                "pool",
+                [
+                    {"pool": "BNB.BNB"},
+                    {"pool_status": "Enabled"},
+                ],
+            ),
             Event(
                 "stake",
                 [
@@ -1839,6 +1874,13 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.total_units, 50000000000)
 
         expected_events = [
+            Event(
+                    "pool",
+                    [
+                        {"pool": pool.asset},
+                        {"pool_status": "Enabled"},
+                        ],
+                    ),
             Event(
                 "stake",
                 [
