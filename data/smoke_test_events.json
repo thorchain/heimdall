@@ -80,6 +80,16 @@
         "category": null
     },
     {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "105629132"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "pool",
         "attributes": [
             {
@@ -89,16 +99,6 @@
             "pool_status": "Enabled"
             }
         ]
-    },
-    {
-        "type": "rewards",
-        "attributes": [
-            {
-                "bond_reward": "105629132"
-            }
-        ],
-        "block_height": null,
-        "category": null
     },
     {
         "type": "stake",
@@ -143,6 +143,16 @@
         "category": null
     },
     {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "105629127"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "pool",
         "attributes": [
             {
@@ -152,16 +162,6 @@
             "pool_status": "Enabled"
             }
         ]
-    },
-    {
-        "type": "rewards",
-        "attributes": [
-            {
-                "bond_reward": "105629127"
-            }
-        ],
-        "block_height": null,
-        "category": null
     },
     {
         "type": "stake",

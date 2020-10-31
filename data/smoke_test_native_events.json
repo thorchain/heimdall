@@ -52,6 +52,16 @@
         "category": null
     },
     {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "5"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "pool",
         "attributes": [
             {
@@ -61,16 +71,6 @@
             "pool_status": "Enabled"
             }
         ]
-    },
-    {
-        "type": "rewards",
-        "attributes": [
-            {
-                "bond_reward": "5"
-            }
-        ],
-        "block_height": null,
-        "category": null
     },
     {
         "type": "stake",
@@ -114,6 +114,16 @@
         "category": null
     },
     {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "8"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "pool",
         "attributes": [
             {
@@ -123,16 +133,6 @@
             "pool_status": "Enabled"
             }
         ]
-    },
-    {
-        "type": "rewards",
-        "attributes": [
-            {
-                "bond_reward": "8"
-            }
-        ],
-        "block_height": null,
-        "category": null
     },
     {
         "type": "stake",
@@ -176,6 +176,16 @@
         "category": null
     },
     {
+        "type": "rewards",
+        "attributes": [
+            {
+                "bond_reward": "11"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "pool",
         "attributes": [
             {
@@ -185,16 +195,6 @@
             "pool_status": "Enabled"
             }
         ]
-    },
-    {
-        "type": "rewards",
-        "attributes": [
-            {
-                "bond_reward": "11"
-            }
-        ],
-        "block_height": null,
-        "category": null
     },
     {
         "type": "stake",

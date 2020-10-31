@@ -1086,12 +1086,12 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events = [
             Event(
-                    "pool",
-                    [
-                        {"pool": pool.asset},
-                        {"pool_status": "Enabled"},
-                        ],
-                    ),
+                "pool",
+                [
+                    {"pool": pool.asset},
+                    {"pool_status": "Enabled"},
+                ],
+            ),
             Event(
                 "stake",
                 [
@@ -1538,12 +1538,12 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events = [
             Event(
-                    "pool",
-                    [
-                        {"pool": pool.asset},
-                        {"pool_status": "Enabled"},
-                        ],
-                    ),
+                "pool",
+                [
+                    {"pool": pool.asset},
+                    {"pool_status": "Enabled"},
+                ],
+            ),
             Event(
                 "stake",
                 [
@@ -1875,12 +1875,12 @@ class TestThorchainState(unittest.TestCase):
 
         expected_events = [
             Event(
-                    "pool",
-                    [
-                        {"pool": pool.asset},
-                        {"pool_status": "Enabled"},
-                        ],
-                    ),
+                "pool",
+                [
+                    {"pool": pool.asset},
+                    {"pool_status": "Enabled"},
+                ],
+            ),
             Event(
                 "stake",
                 [

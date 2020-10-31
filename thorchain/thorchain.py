@@ -661,16 +661,7 @@ class ThorchainState:
             return self.refund(tx, 105, reason)
 
         pool = self.get_pool(asset)
-        if len(pool.stakers) == 0:
-            self.events.append(
-                Event(
-                    "pool",
-                    [
-                        {"pool": pool.asset},
-                        {"pool_status": "Enabled"},
-                    ],
-                )
-            )
+
         rune_amt = 0
         asset_amt = 0
         for coin in tx.coins:
@@ -694,7 +685,20 @@ class ThorchainState:
         # stake cross chain so event will be dispatched on asset stake
         if stake_units == 0:
             return []
-
+        if (
+            pool.rune_balance != 0
+            and pool.asset_balance != 0
+            and len(pool.stakers) == 1
+        ):
+            self.events.append(
+                Event(
+                    "pool",
+                    [
+                        {"pool": pool.asset},
+                        {"pool_status": "Enabled"},
+                    ],
+                )
+            )
         # generate event for STAKE transaction
         event = Event(
             "stake",
