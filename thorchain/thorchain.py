@@ -491,11 +491,7 @@ class ThorchainState:
 
             out_txs.append(
                 Transaction(
-                    tx.chain,
-                    tx.to_address,
-                    tx.from_address,
-                    [coin],
-                    f"REFUND:{tx.id}",
+                    tx.chain, tx.to_address, tx.from_address, [coin], f"REFUND:{tx.id}",
                 )
             )
 
@@ -503,8 +499,7 @@ class ThorchainState:
 
         # generate event REFUND for the transaction
         event = Event(
-            "refund",
-            [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
+            "refund", [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
         )
 
         if tx.chain == "THOR":
@@ -634,6 +629,7 @@ class ThorchainState:
         handles a staking transaction
         MEMO: ADD:<asset(req)>
         """
+        logging.info(f"TXID: {tx.id}")
         # parse memo
         parts = tx.memo.split(":")
         if len(parts) < 2:
@@ -641,7 +637,7 @@ class ThorchainState:
                 return self.refund(tx, 105, "memo can't be empty")
             return self.refund(tx, 105, f"invalid tx type: {tx.memo}")
 
-            # empty asset
+        # empty asset
         if parts[1] == "":
             return self.refund(tx, 105, "Invalid symbol")
 
@@ -682,14 +678,18 @@ class ThorchainState:
         # check address to stake to from memo
         address = tx.from_address
         asset_address = tx.from_address
-        if tx.chain != RUNE.get_chain() and len(parts) > 2:
-            address = parts[2]
+        if len(parts) > 2:
+            if tx.chain != RUNE.get_chain():
+                address = parts[2]
+            else:
+                asset_address = parts[2]
 
-        stake_units, rune_amt, pending_txid = pool.stake(
+        stake_units, rune_amt, asset_amt, pending_txid = pool.stake(
             address, rune_amt, asset_amt, asset, tx.id
         )
 
         self.set_pool(pool)
+        logging.info(f"Stake units: {stake_units}/{pool.total_units}")
 
         # stake cross chain so event will be dispatched on asset stake
         if stake_units == 0:
@@ -716,7 +716,12 @@ class ThorchainState:
             ],
         )
         if pending_txid:
-            event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid})
+            if tx.chain == RUNE.get_chain():
+                event.attributes.append(
+                    {f"{pool.asset.get_chain()}_txid": pending_txid}
+                )
+            else:
+                event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid})
         self.events.append(event)
 
         return []
@@ -1232,28 +1237,37 @@ class Pool(Jsonable):
         Stake rune/asset for an address
         """
         staker = self.get_staker(address)
-        # handle cross chain stake
-        if asset.get_chain() != RUNE.get_chain():
-            if asset_amt == 0:
-                staker.pending_rune += rune_amt
-                staker.pending_tx = txid
-                self.set_staker(staker)
-                return 0, 0, None
 
-            rune_amt += staker.pending_rune
+        asset_amt += staker.pending_asset
+        rune_amt += staker.pending_rune
+        logging.info(f"Staker {address}: {rune_amt} {asset_amt}")
+
+        # handle cross chain stake
+        if asset_amt == 0:
+            staker.pending_rune += rune_amt
+            staker.pending_tx = txid
+            self.set_staker(staker)
+            logging.info("Asset Early exit")
+            return 0, 0, 0, None
+        if rune_amt == 0:
+            staker.pending_asset += asset_amt
+            staker.pending_tx = txid
+            self.set_staker(staker)
+            logging.info("Rune Early exit")
+            return 0, 0, 0, None
+
             staker.pending_rune = 0
+            staker.pending_asset = 0
         units = self._calc_stake_units(
-            self.rune_balance,
-            self.asset_balance,
-            rune_amt,
-            asset_amt,
+            self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
 
         self.add(rune_amt, asset_amt)
         self.total_units += units
         staker.units += units
         self.set_staker(staker)
-        return units, rune_amt, staker.pending_tx
+        logging.info("stake done.")
+        return units, rune_amt, asset_amt, staker.pending_tx
 
     def unstake(self, address, withdraw_basis_points):
         """
@@ -1327,6 +1341,7 @@ class Staker(Jsonable):
         self.address = address
         self.units = 0
         self.pending_rune = 0
+        self.pending_asset = 0
         self.pending_tx = None
 
     def add(self, units):

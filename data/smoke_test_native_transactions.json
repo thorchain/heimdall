@@ -188,7 +188,7 @@
         "chain": "BTC",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "ADD:BTC.BTC:STAKER-1",
+        "memo": "ADD:BTC.BTC",
         "coins": [
             {
                 "asset": "BTC.BTC",
@@ -224,19 +224,6 @@
         "gas": null
     },
     {
-        "chain": "THOR",
-        "from_address": "STAKER-1",
-        "to_address": "VAULT",
-        "memo": "ADD:BNB.LOK-3C0:STAKER-1",
-        "coins": [
-            {
-                "asset": "THOR.RUNE",
-                "amount": 50000000000
-            }
-        ],
-        "gas": null
-    },
-    {
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
@@ -245,6 +232,19 @@
             {
                 "asset": "BNB.LOK-3C0",
                 "amount": 40000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "THOR",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "ADD:BNB.LOK-3C0:STAKER-1",
+        "coins": [
+            {
+                "asset": "THOR.RUNE",
+                "amount": 50000000000
             }
         ],
         "gas": null

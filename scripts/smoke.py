@@ -29,9 +29,7 @@ RUNE = get_rune_asset()
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--binance",
-        default="http://localhost:26660",
-        help="Mock binance server",
+        "--binance", default="http://localhost:26660", help="Mock binance server",
     )
     parser.add_argument(
         "--bitcoin",
@@ -39,9 +37,7 @@ def main():
         help="Regtest bitcoin server",
     )
     parser.add_argument(
-        "--ethereum",
-        default="http://localhost:8545",
-        help="Localnet ethereum server",
+        "--ethereum", default="http://localhost:8545", help="Localnet ethereum server",
     )
     parser.add_argument(
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
@@ -241,6 +237,8 @@ class Smoker:
         if events != sim_events:
             wrong_events = [e for e in events if e not in sim_events]
             wrong_sim_events = [e for e in sim_events if e not in events]
+            if len(wrong_events) == 0 and len(wrong_sim_events) == 0:
+                return
             logging.error(f"THORChain Events {wrong_events}")
             logging.error(f"Simulator Events {wrong_sim_events}")
             self.error("Events mismatch")
