@@ -237,10 +237,10 @@ class Smoker:
         if events != sim_events:
             wrong_events = [e for e in events if e not in sim_events]
             wrong_sim_events = [e for e in sim_events if e not in events]
-            if len(wrong_events) == 0 and len(wrong_sim_events) == 0:
-                return
             logging.error(f"THORChain Events {wrong_events}")
             logging.error(f"Simulator Events {wrong_sim_events}")
+            if len(wrong_events) == 0 and len(wrong_sim_events) == 0:
+                return
             self.error("Events mismatch")
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1), reraise=True)
