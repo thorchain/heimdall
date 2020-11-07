@@ -639,6 +639,7 @@ class ThorchainState:
         handles a liquidity provision transaction
         MEMO: ADD:<asset(req)>
         """
+        logging.info(f"TXID: {tx.id}")
         # parse memo
         parts = tx.memo.split(":")
         if len(parts) < 2:
@@ -646,7 +647,7 @@ class ThorchainState:
                 return self.refund(tx, 105, "memo can't be empty")
             return self.refund(tx, 105, f"invalid tx type: {tx.memo}")
 
-            # empty asset
+        # empty asset
         if parts[1] == "":
             return self.refund(tx, 105, "Invalid symbol")
 
@@ -688,14 +689,18 @@ class ThorchainState:
         # check address to provider to from memo
         address = tx.from_address
         asset_address = tx.from_address
-        if tx.chain != RUNE.get_chain() and len(parts) > 2:
-            address = parts[2]
+        if len(parts) > 2:
+            if tx.chain != RUNE.get_chain():
+                address = parts[2]
+            else:
+                asset_address = parts[2]
 
         liquidity_units, rune_amt, pending_txid = pool.add_liquidity(
             address, rune_amt, asset_amt, asset, tx.id
         )
 
         self.set_pool(pool)
+        logging.info(f"Stake units: {stake_units}/{pool.total_units}")
 
         # liquidity provision cross chain so event will be dispatched on asset
         # liquidity provision
@@ -723,7 +728,12 @@ class ThorchainState:
             ],
         )
         if pending_txid:
-            event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid})
+            if tx.chain == RUNE.get_chain():
+                event.attributes.append(
+                    {f"{pool.asset.get_chain()}_txid": pending_txid}
+                )
+            else:
+                event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid})
         self.events.append(event)
 
         return []
@@ -1262,16 +1272,27 @@ class Pool(Jsonable):
         add liquidity rune/asset for an address
         """
         lp = self.get_liquidity_provider(address)
-        # handle cross chain liquidity provision
-        if asset.get_chain() != RUNE.get_chain():
-            if asset_amt == 0:
-                lp.pending_rune += rune_amt
-                lp.pending_tx = txid
-                self.set_liquidity_provider(lp)
-                return 0, 0, None
 
-            rune_amt += lp.pending_rune
+        asset_amt += lp.pending_asset
+        rune_amt += lp.pending_rune
+        logging.info(f"Liquidity Provider {address}: {rune_amt} {asset_amt}")
+
+        # handle cross chain stake
+        if asset_amt == 0:
+            lp.pending_rune += rune_amt
+            lp.pending_tx = txid
+            self.set_liquidity_provider(lp)
+            logging.info("Asset Early exit")
+            return 0, 0, 0, None
+        if rune_amt == 0:
+            lp.pending_asset += asset_amt
+            lp.pending_tx = txid
+            self.set_liquidity_provider(lp)
+            logging.info("Rune Early exit")
+            return 0, 0, 0, None
+
             lp.pending_rune = 0
+            lp.pending_asset = 0
         units = self._calc_liquidity_units(
             self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
@@ -1280,7 +1301,7 @@ class Pool(Jsonable):
         self.total_units += units
         lp.units += units
         self.set_liquidity_provider(lp)
-        return units, rune_amt, lp.pending_tx
+        return units, rune_amt, asset_amt, lp.pending_tx
 
     def withdraw(self, address, withdraw_basis_points):
         """
@@ -1356,6 +1377,7 @@ class LiquidityProvider(Jsonable):
         self.address = address
         self.units = 0
         self.pending_rune = 0
+        self.pending_asset = 0
         self.pending_tx = None
 
     def add(self, units):
