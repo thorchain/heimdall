@@ -639,7 +639,6 @@ class ThorchainState:
         handles a liquidity provision transaction
         MEMO: ADD:<asset(req)>
         """
-        logging.info(f"TXID: {tx.id}")
         # parse memo
         parts = tx.memo.split(":")
         if len(parts) < 2:
@@ -700,7 +699,6 @@ class ThorchainState:
         )
 
         self.set_pool(pool)
-        logging.info(f"Stake units: {stake_units}/{pool.total_units}")
 
         # liquidity provision cross chain so event will be dispatched on asset
         # liquidity provision
@@ -1275,20 +1273,17 @@ class Pool(Jsonable):
 
         asset_amt += lp.pending_asset
         rune_amt += lp.pending_rune
-        logging.info(f"Liquidity Provider {address}: {rune_amt} {asset_amt}")
 
         # handle cross chain stake
         if asset_amt == 0:
             lp.pending_rune += rune_amt
             lp.pending_tx = txid
             self.set_liquidity_provider(lp)
-            logging.info("Asset Early exit")
             return 0, 0, 0, None
         if rune_amt == 0:
             lp.pending_asset += asset_amt
             lp.pending_tx = txid
             self.set_liquidity_provider(lp)
-            logging.info("Rune Early exit")
             return 0, 0, 0, None
 
             lp.pending_rune = 0
