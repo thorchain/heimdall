@@ -629,7 +629,6 @@ class ThorchainState:
         handles a staking transaction
         MEMO: ADD:<asset(req)>
         """
-        logging.info(f"TXID: {tx.id}")
         # parse memo
         parts = tx.memo.split(":")
         if len(parts) < 2:
@@ -689,7 +688,6 @@ class ThorchainState:
         )
 
         self.set_pool(pool)
-        logging.info(f"Stake units: {stake_units}/{pool.total_units}")
 
         # stake cross chain so event will be dispatched on asset stake
         if stake_units == 0:
@@ -1240,20 +1238,17 @@ class Pool(Jsonable):
 
         asset_amt += staker.pending_asset
         rune_amt += staker.pending_rune
-        logging.info(f"Staker {address}: {rune_amt} {asset_amt}")
 
         # handle cross chain stake
         if asset_amt == 0:
             staker.pending_rune += rune_amt
             staker.pending_tx = txid
             self.set_staker(staker)
-            logging.info("Asset Early exit")
             return 0, 0, 0, None
         if rune_amt == 0:
             staker.pending_asset += asset_amt
             staker.pending_tx = txid
             self.set_staker(staker)
-            logging.info("Rune Early exit")
             return 0, 0, 0, None
 
             staker.pending_rune = 0
@@ -1266,7 +1261,6 @@ class Pool(Jsonable):
         self.total_units += units
         staker.units += units
         self.set_staker(staker)
-        logging.info("stake done.")
         return units, rune_amt, asset_amt, staker.pending_tx
 
     def unstake(self, address, withdraw_basis_points):
