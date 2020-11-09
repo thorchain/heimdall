@@ -237,11 +237,11 @@ class Smoker:
 
         for (evt_t, evt_s) in zip(events, sim_events):
             if evt_t != evt_s:
-                # for (evt_t, evt_s) in zip(events, sim_events):
-                    # logging.info(f"THORChain Evt: {evt_t}")
-                    # logging.info(f"Simulator Evt: {evt_s}")
-                logging.error(f"THORChain Events {evt_t}")
-                logging.error(f"Simulator Events {evt_s}")
+                for (evt_t2, evt_s2) in zip(events, sim_events):
+                    logging.info(f"\tTHORChain Evt: {evt_t2}")
+                    logging.info(f"\tSimulator Evt: {evt_s2}")
+                logging.error(f"THORChain Event {evt_t}")
+                logging.error(f"Simulator Event {evt_s}")
                 self.error("Events mismatch")
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1), reraise=True)

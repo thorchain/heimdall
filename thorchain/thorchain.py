@@ -670,8 +670,13 @@ class ThorchainState:
                 asset_amt = coin.amount
 
         # check address to stake to from memo
-        address = tx.from_address
-        asset_address = tx.from_address
+        if tx.chain == RUNE.get_chain():
+            address = tx.from_address
+            asset_address = None
+        else:
+            address = None
+            asset_address = tx.from_address
+
         if len(parts) > 2:
             if tx.chain != RUNE.get_chain():
                 address = parts[2]
@@ -679,7 +684,7 @@ class ThorchainState:
                 asset_address = parts[2]
 
         stake_units, rune_amt, asset_amt, pending_txid = pool.stake(
-            address, rune_amt, asset_amt, asset, tx.id
+            address, asset_address, rune_amt, asset_amt, asset, tx.id
         )
 
         self.set_pool(pool)
@@ -697,20 +702,20 @@ class ThorchainState:
             [
                 {"pool": pool.asset},
                 {"stake_units": stake_units},
-                {"rune_address": address},
+                {"rune_address": address or ""},
                 {"rune_amount": rune_amt},
                 {"asset_amount": asset_amt},
-                {"asset_address": asset_address},
+                {"asset_address": asset_address or ""},
                 {f"{tx.chain}_txid": tx.id},
             ],
         )
         if pending_txid:
             if tx.chain == RUNE.get_chain():
                 event.attributes.append(
-                    {f"{pool.asset.get_chain()}_txid": pending_txid}
+                    {f"{pool.asset.get_chain()}_txid": pending_txid or ""}
                 )
             else:
-                event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid})
+                event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid or ""})
         self.events.append(event)
 
         return []
@@ -1117,7 +1122,8 @@ class Event(Jsonable):
         attrs = deepcopy(sorted(self.attributes, key=lambda x: sorted(x.items())))
         for attr in attrs:
             for key, value in attr.items():
-                attr[key] = value.upper()
+                if value is not None:
+                    attr[key] = value.upper()
         if self.type == "outbound":
             attrs = [a for a in attrs if list(a.keys())[0] != "id"]
         return hash(str(attrs))
@@ -1221,29 +1227,32 @@ class Pool(Jsonable):
 
         self.stakers.append(staker)
 
-    def stake(self, address, rune_amt, asset_amt, asset, txid):
+    def stake(self, rune_address, asset_address, rune_amt, asset_amt, asset, txid):
         """
         Stake rune/asset for an address
         """
-        staker = self.get_staker(address)
+        fetch_address = asset_address
+        if rune_address != "":
+            fetch_address = rune_address
+        staker = self.get_staker(fetch_address)
 
         asset_amt += staker.pending_asset
         rune_amt += staker.pending_rune
 
         # handle cross chain stake
-        if asset_amt == 0:
+        if asset_amt == 0 and asset_address is not None:
             staker.pending_rune += rune_amt
             staker.pending_tx = txid
             self.set_staker(staker)
             return 0, 0, 0, None
-        if rune_amt == 0:
+        if rune_amt == 0 and rune_address is not None:
             staker.pending_asset += asset_amt
             staker.pending_tx = txid
             self.set_staker(staker)
             return 0, 0, 0, None
 
-            staker.pending_rune = 0
-            staker.pending_asset = 0
+        staker.pending_rune = 0
+        staker.pending_asset = 0
         units = self._calc_stake_units(
             self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
