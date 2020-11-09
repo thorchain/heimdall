@@ -689,7 +689,7 @@ class ThorchainState:
                 asset_address = parts[2]
 
         liquidity_units, rune_amt, pending_txid = pool.add_liquidity(
-            address, rune_amt, asset_amt, asset, tx.id
+            address, asset_address, rune_amt, asset_amt, asset, tx.id
         )
 
         self.set_pool(pool)
@@ -708,20 +708,20 @@ class ThorchainState:
             [
                 {"pool": pool.asset},
                 {"liquidity_provider_units": liquidity_units},
-                {"rune_address": address},
+                {"rune_address": address or ""},
                 {"rune_amount": rune_amt},
                 {"asset_amount": asset_amt},
-                {"asset_address": asset_address},
+                {"asset_address": asset_address or ""},
                 {f"{tx.chain}_txid": tx.id},
             ],
         )
         if pending_txid:
             if tx.chain == RUNE.get_chain():
                 event.attributes.append(
-                    {f"{pool.asset.get_chain()}_txid": pending_txid}
+                    {f"{pool.asset.get_chain()}_txid": pending_txid or ""}
                 )
             else:
-                event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid})
+                event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid or ""})
         self.events.append(event)
 
         return []
@@ -1151,7 +1151,8 @@ class Event(Jsonable):
         attrs = deepcopy(sorted(self.attributes, key=lambda x: sorted(x.items())))
         for attr in attrs:
             for key, value in attr.items():
-                attr[key] = value.upper()
+                if value is not None:
+                    attr[key] = value.upper()
         if self.type == "outbound":
             attrs = [a for a in attrs if list(a.keys())[0] != "id"]
         return hash(str(attrs))
@@ -1255,29 +1256,32 @@ class Pool(Jsonable):
 
         self.liquidity_providers.append(lp)
 
-    def add_liquidity(self, address, rune_amt, asset_amt, asset, txid):
+    def add_liquidity(self, rune_address, asset_address, rune_amt, asset_amt, asset, txid):
         """
         add liquidity rune/asset for an address
         """
-        lp = self.get_liquidity_provider(address)
+        fetch_address = asset_address
+        if rune_address != "":
+            fetch_address = rune_address
+        lp = self.get_liquidity_provider(fetch_address)
 
         asset_amt += lp.pending_asset
         rune_amt += lp.pending_rune
 
         # handle cross chain stake
-        if asset_amt == 0:
+        if asset_amt == 0 and asset_address is not None:
             lp.pending_rune += rune_amt
             lp.pending_tx = txid
             self.set_liquidity_provider(lp)
             return 0, 0, 0, None
-        if rune_amt == 0:
+        if rune_amt == 0 and rune_address is not None:
             lp.pending_asset += asset_amt
             lp.pending_tx = txid
             self.set_liquidity_provider(lp)
             return 0, 0, 0, None
 
-            lp.pending_rune = 0
-            lp.pending_asset = 0
+        lp.pending_rune = 0
+        lp.pending_asset = 0
         units = self._calc_liquidity_units(
             self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
