@@ -659,11 +659,6 @@ class ThorchainState:
                         tx, 105, "unknown request: did not find both coins"
                     )
 
-        if len(parts) < 3 and asset.get_chain() != RUNE.get_chain():
-            reason = f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based"
-            reason += " pool without providing an associated address"
-            return self.refund(tx, 105, reason)
-
         pool = self.get_pool(asset)
 
         rune_amt = 0
@@ -692,11 +687,7 @@ class ThorchainState:
         # stake cross chain so event will be dispatched on asset stake
         if stake_units == 0:
             return []
-        if (
-            pool.rune_balance != 0
-            and pool.asset_balance != 0
-            and len(pool.stakers) == 1
-        ):
+        if pool.total_units > 0 and len(pool.stakers) == 1:
             self.events.append(
                 Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}])
             )

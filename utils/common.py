@@ -306,7 +306,9 @@ class Transaction(Jsonable):
     def is_cross_chain_stake(self):
         if not self.memo.startswith("ADD:"):
             return False
-        return True
+        if len(self.memo.split(':')) == 3:
+            return True
+        return False
 
     def custom_hash(self, pubkey):
         coins = (

@@ -188,7 +188,7 @@
         "chain": "BTC",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "ADD:BTC.BTC",
+        "memo": "ADD:BTC.BTC:STAKER-1",
         "coins": [
             {
                 "asset": "BTC.BTC",
