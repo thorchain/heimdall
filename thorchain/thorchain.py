@@ -162,6 +162,14 @@ class ThorchainState:
         self.bond_reward = 0
         self.vault_pubkey = None
         self.network_fees = {}
+        self.estimateSize = 220
+        self.tx_rate = 0
+
+    def set_tx_rate(self, tx_rate):
+        """
+        Set median tx rate , used to calculate gas
+        """
+        self.tx_rate = tx_rate
 
     def set_vault_pubkey(self, pubkey):
         """
@@ -269,7 +277,8 @@ class ThorchainState:
         rune_fee = self.get_rune_fee(chain)
         gas_asset = self.get_gas_asset(chain)
         pool = self.get_pool(gas_asset)
-        amount = pool.get_rune_in_asset(int(round(rune_fee / 2)))
+        if chain == "BTC":
+            amount = int(self.tx_rate * 3 / 2) * self.estimateSize
         if chain == "BNB":
             amount = pool.get_rune_in_asset(int(round(rune_fee / 3)))
         if chain == "ETH":
@@ -758,12 +767,15 @@ class ThorchainState:
         # calculate gas prior to update pool in case we empty the pool
         # and need to subtract
         gas = self.get_gas(asset.get_chain())
+        # get the fee that are supposed to be charged, this will only be
+        # used if it is the last unstake
+        dynamicFee = pool.get_rune_in_asset(self.get_rune_fee(asset.get_chain())) / 2
         tx_rune_gas = self.get_gas(RUNE.get_chain())
 
         unstake_units, rune_amt, asset_amt = pool.unstake(
             tx.from_address, withdraw_basis_points
         )
-
+        self.estimateSize = 220
         # if this is our last staker of bnb, subtract a little BNB for gas.
         if pool.total_units == 0:
             if pool.asset.is_bnb():
@@ -773,8 +785,12 @@ class ThorchainState:
                 asset_amt -= gas_amt
                 pool.asset_balance += gas_amt
             elif pool.asset.is_btc() or pool.asset.is_eth():
-                asset_amt -= gas.amount
-                pool.asset_balance += gas.amount
+                # the last withdraw tx , it need to spend everything
+                # so it will use about 2 UTXO , estimate size is 288
+                self.estimateSize = 288
+                gas = self.get_gas(asset.get_chain())
+                asset_amt -= int(dynamicFee)
+                pool.asset_balance += dynamicFee
 
         self.set_pool(pool)
 

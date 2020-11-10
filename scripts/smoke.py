@@ -287,6 +287,7 @@ class Smoker:
             "BTC": btc["tx_size"] * btc["tx_rate"],
         }
         self.thorchain_state.set_network_fees(fees)
+        self.thorchain_state.set_tx_rate(btc["tx_rate"])
 
     def sim_trigger_tx(self, txn):
         # process transaction in thorchain
@@ -323,6 +324,7 @@ class Smoker:
                         # which outbound txns are for this gas pool, vs
                         # another later on
                         count = 0
+                        logging.info(f"evt:{evt}")
                         for out in outbounds:
                             # a gas pool matches a txn if their from
                             # the same blockchain
@@ -333,6 +335,7 @@ class Smoker:
                                 count += 1
                                 if count >= int(evt.get("transaction_count")):
                                     break
+                        logging.info(f"********{outbounds}")
                         self.thorchain_state.handle_gas(todo)
 
                     elif evt.type == "rewards":

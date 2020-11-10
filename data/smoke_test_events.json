@@ -1281,10 +1281,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "2"
+                "asset_amt": "0"
             },
             {
-                "rune_amt": "1136"
+                "rune_amt": "0"
             },
             {
                 "transaction_count": "1"
@@ -1477,7 +1477,7 @@
                 "liquidity_fee_in_rune": "10447890"
             },
             {
-                "emit_asset": "830681591 BNB.RUNE-67C"
+                "emit_asset": "830681564 BNB.RUNE-67C"
             },
             {
                 "id": "TODO"
@@ -2147,7 +2147,7 @@
                 "emit_asset": "11992613"
             },
             {
-                "emit_rune": "6641361936"
+                "emit_rune": "6641361825"
             },
             {
                 "id": "TODO"
@@ -2239,10 +2239,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "1"
+                "asset_amt": "0"
             },
             {
-                "rune_amt": "554"
+                "rune_amt": "0"
             },
             {
                 "transaction_count": "1"
@@ -3437,10 +3437,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "834535"
+                "emit_asset": "834536"
             },
             {
-                "emit_rune": "462155490"
+                "emit_rune": "462155478"
             },
             {
                 "id": "TODO"
@@ -3532,10 +3532,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "1"
+                "asset_amt": "0"
             },
             {
-                "rune_amt": "554"
+                "rune_amt": "0"
             },
             {
                 "transaction_count": "1"
