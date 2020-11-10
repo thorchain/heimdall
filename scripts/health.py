@@ -119,7 +119,7 @@ class Health:
             if vault["coins"]:
                 vault["coins"] = [Coin.from_dict(c) for c in vault["coins"]]
 
-        if not self.binance_api:
+        if not self.binance_api.base_url:
             self.binance_accounts = []
             accounts = self.binance_client.accounts()
             for acct in accounts:
