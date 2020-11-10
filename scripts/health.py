@@ -66,9 +66,9 @@ class Health:
         thor,
         midgard,
         binance,
-        check_balance,
-        margin_err,
-        binance_api,
+        check_balance=True,
+        margin_err=0,
+        binance_api=None,
         fast_fail=False,
     ):
         self.thorchain_client = ThorchainClient(thor)
