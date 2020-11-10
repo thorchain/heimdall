@@ -195,7 +195,7 @@ class Health:
         # we need to get rid of the 5 first bytes used in amino encoding
         pub_key = decode_address(vault["pub_key"])[5:]
 
-        if self.binance_api:
+        if self.binance_api.base_url:
             if "testnet" in self.binance_api.base_url:
                 prefix = "tbnb"
             else:
