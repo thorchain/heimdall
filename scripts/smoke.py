@@ -335,7 +335,6 @@ class Smoker:
                                 count += 1
                                 if count >= int(evt.get("transaction_count")):
                                     break
-                        logging.info(f"********{outbounds}")
                         self.thorchain_state.handle_gas(todo)
 
                     elif evt.type == "rewards":
