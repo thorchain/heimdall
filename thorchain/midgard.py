@@ -13,6 +13,7 @@ class MidgardClient(HttpClient):
         :returns: Pool data
 
         """
-
+        if not isinstance(assets, list):
+            assets = [assets]
         assets = ",".join(assets)
-        return self.fetch(f"/v1/pools/detail?asset={assets}")
+        return self.fetch(f"/v1/pools/detail?view=simple&asset={assets}")

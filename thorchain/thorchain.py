@@ -139,8 +139,17 @@ class ThorchainClient(HttpClient):
     def get_asgard_vaults(self):
         return self.fetch("/thorchain/vaults/asgard")
 
+    def get_yggdrasil_vaults(self):
+        return self.fetch("/thorchain/vaults/yggdrasil")
+
     def get_pools(self):
         return self.fetch("/thorchain/pools")
+
+    def get_pool(self, asset):
+        for p in self.get_pools():
+            if p["asset"] == asset:
+                return p
+        return None
 
     def get_events(self, block_height):
         return self.rpc.fetch(f"/block_results?height={block_height}")
@@ -691,13 +700,7 @@ class ThorchainState:
             and len(pool.stakers) == 1
         ):
             self.events.append(
-                Event(
-                    "pool",
-                    [
-                        {"pool": pool.asset},
-                        {"pool_status": "Enabled"},
-                    ],
-                )
+                Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}])
             )
         # generate event for STAKE transaction
         event = Event(
