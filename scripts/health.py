@@ -197,6 +197,7 @@ class Health:
         pub_key = decode_address(vault["pub_key"])[5:]
 
         if self.binance_api.base_url:
+            # TESTNET and CHAOSNET scenarios, check real balance
             if "testnet" in self.binance_api.base_url:
                 prefix = "tbnb"
             else:
@@ -210,28 +211,36 @@ class Health:
                     symbol = f"BNB.{b['symbol']}"
                     amount = Decimal(b["free"]) * Coin.ONE
                     account.balances.append(Coin(symbol, amount))
+            for bcoin in account.balances:
+                for vcoin in vault["coins"]:
+                    if vcoin.asset != bcoin.asset:
+                        continue
+                    diff = get_diff(vcoin, bcoin)
+                    if diff > self.margin_err:
+                        sub = abs(vcoin - bcoin)
+                        self.error(
+                            f"{vault_type} [{vcoin.asset:15}]"
+                            f" [T]{vcoin.str_amt()} != [B]{bcoin.str_amt()}"
+                            f" [DIFF] {str(round(diff, 5))}% ({sub:0,.0f})"
+                        )
         else:
+            # MOCKNET scenario check accounts from mock-binance
             vault_addr = MockBinance.get_address_from_pubkey(pub_key)
-            logging.info("VAULT ADDRESS: " + vault_addr)
-            logging.info("accounts: " + self.binance_accounts)
-            logging.info("accounts: " + self.binance_client.accounts())
-            for a in self.binance_accounts:
-                logging.info("ACCOUNT ADDRESS: " + a.address)
-                if a.address == vault_addr:
-                    account = a
-
-        for bcoin in account.balances:
-            for vcoin in vault["coins"]:
-                if vcoin.asset != bcoin.asset:
+            for acct in self.binance_accounts:
+                if acct.address != vault_addr:
                     continue
-                diff = get_diff(vcoin, bcoin)
-                if diff > self.margin_err:
-                    sub = abs(vcoin - bcoin)
-                    self.error(
-                        f"{vault_type} [{vcoin.asset:15}]"
-                        f" [T]{vcoin.str_amt()} != [B]{bcoin.str_amt()}"
-                        f" [DIFF] {str(round(diff, 5))}% ({sub:0,.0f})"
-                    )
+                for bcoin in acct.balances:
+                    for vcoin in vault["coins"]:
+                        if vcoin.asset != bcoin.asset:
+                            continue
+                        diff = get_diff(vcoin, bcoin)
+                        if diff > self.margin_err:
+                            sub = abs(vcoin - bcoin)
+                            self.error(
+                                f"{vault_type} [{vcoin.asset:15}]"
+                                f" [T]{vcoin.str_amt()} != [B]{bcoin.str_amt()}"
+                                f" [DIFF] {str(round(diff, 5))}% ({sub:0,.0f})"
+                            )
 
     def check_asgard_vaults(self):
         """Check Asgard vaults balances against Binance balances."""
