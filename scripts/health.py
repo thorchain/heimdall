@@ -211,7 +211,9 @@ class Health:
                     account.balances.append(Coin(symbol, amount))
         else:
             vault_addr = MockBinance.get_address_from_pubkey(pub_key)
+            logging.info("VAULT ADDRESS: " + vault_addr)
             for a in self.binance_accounts:
+                logging.info("ACCOUNT ADDRESS: " + a.address)
                 if a.address == vault_addr:
                     account = a
 
