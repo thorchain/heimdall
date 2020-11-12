@@ -812,7 +812,7 @@ class ThorchainState:
                 from_address,
                 to_address,
                 [Coin(asset, asset_amt)],
-                f"OUTBOUND:{tx.id.upper()}",
+                f"OUT:{tx.id.upper()}",
                 gas=[gas],
             ),
             Transaction(
@@ -820,7 +820,7 @@ class ThorchainState:
                 tx.to_address,
                 tx.from_address,
                 [Coin(RUNE, rune_amt)],
-                f"OUTBOUND:{tx.id.upper()}",
+                f"OUT:{tx.id.upper()}",
                 gas=[tx_rune_gas],
             ),
         ]
@@ -1000,7 +1000,7 @@ class ThorchainState:
                 from_address,
                 address,
                 [emit],
-                f"OUTBOUND:{tx.id.upper()}",
+                f"OUT:{tx.id.upper()}",
             )
         ]
 

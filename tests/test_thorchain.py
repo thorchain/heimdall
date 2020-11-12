@@ -132,7 +132,7 @@ class TestThorchainState(unittest.TestCase):
         # do a regular swap
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].memo, "OUT:TODO")
         self.assertEqual(outbound[0].coins[0], Coin("BNB.BNB", 694331944))
 
         # check swap event generated for successful swap
@@ -243,7 +243,7 @@ class TestThorchainState(unittest.TestCase):
         tx.memo = "SWAP:BNB.BNB:NOMNOM:"
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].memo, "OUT:TODO")
         self.assertEqual(outbound[0].to_address, "NOMNOM")
 
         # check swap event generated for successful swap
@@ -306,7 +306,7 @@ class TestThorchainState(unittest.TestCase):
 
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].memo, "OUT:TODO")
         self.assertEqual(outbound[0].coins[0], Coin("BNB.LOK-3C0", 457856148))
 
         # check 2 swap events generated for double swap
@@ -413,7 +413,7 @@ class TestThorchainState(unittest.TestCase):
         # do a regular swap
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].memo, "OUT:TODO")
         self.assertEqual(outbound[0].coins[0], Coin("BNB.BNB", 694331944))
 
         # check swap event generated for successful swap
@@ -546,7 +546,7 @@ class TestThorchainState(unittest.TestCase):
         tx.memo = "SWAP:BNB.BNB:NOMNOM:"
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].memo, "OUT:TODO")
         self.assertEqual(outbound[0].to_address, "NOMNOM")
 
         # check swap event generated for successful swap
@@ -613,7 +613,7 @@ class TestThorchainState(unittest.TestCase):
         tx.memo = "SWAP:BNB.LOK-3C0"
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
-        self.assertEqual(outbound[0].memo, "OUTBOUND:TODO")
+        self.assertEqual(outbound[0].memo, "OUT:TODO")
         self.assertEqual(outbound[0].coins[0], Coin("BNB.LOK-3C0", 535332303))
 
         # check 2 swap events generated for double swap
