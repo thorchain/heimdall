@@ -120,6 +120,7 @@ class Health:
                 vault["coins"] = [Coin.from_dict(c) for c in vault["coins"]]
 
         if not self.binance_api.base_url:
+            logging.info("get binance accounts")
             self.binance_accounts = []
             accounts = self.binance_client.accounts()
             for acct in accounts:
@@ -212,6 +213,8 @@ class Health:
         else:
             vault_addr = MockBinance.get_address_from_pubkey(pub_key)
             logging.info("VAULT ADDRESS: " + vault_addr)
+            logging.info("accounts: " + self.binance_accounts)
+            logging.info("accounts: " + self.binance_client.accounts())
             for a in self.binance_accounts:
                 logging.info("ACCOUNT ADDRESS: " + a.address)
                 if a.address == vault_addr:
