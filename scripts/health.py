@@ -135,7 +135,7 @@ class Health:
         self.thorchain_pools = self.thorchain_client.get_pools()
         for p in self.thorchain_pools:
             asset = p["asset"]
-            mpool = self.midgard_client.get_pool(asset)[0]
+            mpool = self.midgard_client.get_pool(asset)
             tpool = self.thorchain_client.get_pool(asset)
 
             # Thorchain Coins

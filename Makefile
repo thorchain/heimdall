@@ -50,7 +50,7 @@ health:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py
 
 health-chaosnet:
-	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py --binance-api=https://dex.binance.org --thorchain=http://18.159.165.210:1317 --midgard=https://chaosnet-midgard.bepswap.com --margin-err=0.1
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py --binance-api=https://dex.binance.org --thorchain=http://18.159.165.210:1317 --midgard=http://18.159.165.210:8080 --margin-err=0.1
 
 bitcoin-reorg:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True --bitcoin-reorg=True
