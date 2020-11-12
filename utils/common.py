@@ -50,6 +50,15 @@ def get_share(part, total, alloc):
     return int(round(Decimal(alloc) / (Decimal(total) / Decimal(part))))
 
 
+def get_diff(current, previous):
+    if current == previous:
+        return 0
+    try:
+        return (abs(current - previous) / ((current + previous) / 2)) * 100.0
+    except ZeroDivisionError:
+        return float("inf")
+
+
 class HttpClient:
     """
     An generic http client
@@ -182,6 +191,12 @@ class Coin(Jsonable):
     def __lt__(self, other):
         return self.amount < other.amount
 
+    def __sub__(self, other):
+        return self.amount - other.amount
+
+    def __add__(self, other):
+        return self.amount + other.amount
+
     def __hash__(self):
         return hash(str(self))
 
@@ -194,6 +209,9 @@ class Coin(Jsonable):
 
     def __str__(self):
         return f"{self.amount:0,.0f}_{self.asset}"
+
+    def str_amt(self):
+        return f"{self.amount:0,.0f}"
 
 
 class Transaction(Jsonable):
