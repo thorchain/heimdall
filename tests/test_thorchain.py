@@ -954,7 +954,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
 
         outbound = thorchain.handle(tx)
@@ -976,7 +976,7 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "stake",
+                "add_liquidity",
                 [
                     {"pool": pool.asset},
                     {"stake_units": pool.total_units},
@@ -1060,7 +1060,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin(RUNE, 50000000000)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
 
         outbound = thorchain.handle(tx)
@@ -1071,7 +1071,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
 
         outbound = thorchain.handle(tx)
@@ -1093,7 +1093,7 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "stake",
+                "add_liquidity",
                 [
                     {"pool": pool.asset},
                     {"stake_units": pool.total_units},
@@ -1179,7 +1179,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
 
         outbound = thorchain.handle(tx)
@@ -1201,7 +1201,7 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "stake",
+                "add_liquidity",
                 [
                     {"pool": pool.asset},
                     {"stake_units": pool.total_units},
@@ -1261,7 +1261,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-            "STAKE:",
+            "ADD:",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
@@ -1297,7 +1297,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-            "STAKE:BNB.TCAN-014",
+            "ADD:BNB.TCAN-014",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
@@ -1337,7 +1337,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-            "STAKE:" + RUNE,
+            "ADD:" + RUNE,
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
@@ -1381,7 +1381,7 @@ class TestThorchainState(unittest.TestCase):
                 Coin(RUNE, 50000000000),
                 Coin("BNB-LOK-3C0", 30000000000),
             ],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
@@ -1421,7 +1421,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-2",
             "VAULT",
             [Coin("BNB.BNB", 30000000)],
-            "STAKE:BNB.BNB:STAKER-2",
+            "ADD:BNB.BNB:STAKER-2",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
@@ -1431,7 +1431,7 @@ class TestThorchainState(unittest.TestCase):
         # check event generated for successful stake
         expected_events += [
             Event(
-                "stake",
+                "add_liquidity",
                 [
                     {"pool": pool.asset},
                     {"stake_units": "4153686396"},
@@ -1450,14 +1450,14 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin(RUNE, 10000000000)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
         expected_events += [
             Event(
-                "stake",
+                "add_liquidity",
                 [
                     {"pool": pool.asset},
                     {"stake_units": "4657084839"},
@@ -1477,7 +1477,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin(RUNE, 30000000000), Coin("BNB.BNB", 90000000)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
@@ -1486,7 +1486,7 @@ class TestThorchainState(unittest.TestCase):
         if RUNE.get_chain() == "BNB":
             expected_events += [
                 Event(
-                    "stake",
+                    "add_liquidity",
                     [
                         {"pool": pool.asset},
                         {"stake_units": "29374965503"},
@@ -1512,7 +1512,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin(RUNE, 50000000000)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
 
         outbound = thorchain.handle(tx)
@@ -1523,7 +1523,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
 
         outbound = thorchain.handle(tx)
@@ -1545,7 +1545,7 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "stake",
+                "add_liquidity",
                 [
                     {"pool": pool.asset},
                     {"stake_units": pool.total_units},
@@ -1638,7 +1638,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 1.5 * Coin.ONE), Coin(RUNE, 500 * Coin.ONE)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
         outbounds = thorchain.handle(tx)
         self.assertEqual(outbounds, [])
@@ -1658,7 +1658,7 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "stake",
+                "add_liquidity",
                 [
                     {"pool": "BNB.BNB"},
                     {"stake_units": "50000000000"},
@@ -1853,7 +1853,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin(RUNE, 500 * Coin.ONE)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
         outbounds = thorchain.handle(tx)
         self.assertEqual(outbounds, [])
@@ -1862,7 +1862,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 1.5 * Coin.ONE)],
-            "STAKE:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:STAKER-1",
         )
         outbounds = thorchain.handle(tx)
         self.assertEqual(outbounds, [])
@@ -1882,7 +1882,7 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "stake",
+                "add_liquidity",
                 [
                     {"pool": pool.asset},
                     {"stake_units": "50000000000"},

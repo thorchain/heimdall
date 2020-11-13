@@ -547,8 +547,8 @@ class ThorchainState:
 
         if tx.chain == "THOR":
             self.reserve += 100000000
-        if tx.memo.startswith("STAKE:"):
-            out_txs = self.handle_stake(tx)
+        if tx.memo.startswith("ADD:"):
+            out_txs = self.handle_add_liquidity(tx)
         elif tx.memo.startswith("DONATE:"):
             out_txs = self.handle_donate(tx)
         elif tx.memo.startswith("WITHDRAW:"):
@@ -629,10 +629,10 @@ class ThorchainState:
 
         return []
 
-    def handle_stake(self, tx):
+    def handle_add_liquidity(self, tx):
         """
         handles a staking transaction
-        MEMO: STAKE:<asset(req)>
+        MEMO: ADD:<asset(req)>
         """
         # parse memo
         parts = tx.memo.split(":")
@@ -704,7 +704,7 @@ class ThorchainState:
             )
         # generate event for STAKE transaction
         event = Event(
-            "stake",
+            "add_liquidity",
             [
                 {"pool": pool.asset},
                 {"stake_units": stake_units},
