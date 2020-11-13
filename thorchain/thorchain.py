@@ -624,7 +624,7 @@ class ThorchainState:
         self.set_pool(pool)
 
         # generate event for ADD transaction
-        event = Event("add", [{"pool": pool.asset}, *tx.get_attributes()])
+        event = Event("donate", [{"pool": pool.asset}, *tx.get_attributes()])
         self.events.append(event)
 
         return []
