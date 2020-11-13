@@ -670,7 +670,7 @@ class TestThorchainState(unittest.TestCase):
         ]
         self.assertEqual(events, expected_events)
 
-    def test_add_bep2(self):
+    def test_donate_bep2(self):
         if RUNE.get_chain() == "THOR":
             return
 
@@ -682,7 +682,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-            "ADD:BNB.BNB",
+            "DONATE:BNB.BNB",
         )
 
         outbound = thorchain.handle(tx)
@@ -690,7 +690,7 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful add
         expected_events = [
-            Event("add", [{"pool": "BNB.BNB"}, *tx.get_attributes()]),
+            Event("donate", [{"pool": "BNB.BNB"}, *tx.get_attributes()]),
         ]
         self.assertEqual(thorchain.events, expected_events)
 
@@ -700,7 +700,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-            "ADD:",
+            "DONATE:",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
@@ -736,7 +736,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-            "ADD:BNB.TCAN-014",
+            "DONATE:BNB.TCAN-014",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
@@ -772,7 +772,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000), Coin(RUNE, 50000000000)],
-            f"ADD:{RUNE}",
+            f"DONATE:{RUNE}",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
@@ -812,7 +812,7 @@ class TestThorchainState(unittest.TestCase):
                 Coin(RUNE, 50000000000),
                 Coin("BNB-LOK-3C0", 30000000000),
             ],
-            "ADD:BNB.BNB",
+            "DONATE:BNB.BNB",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
@@ -846,7 +846,7 @@ class TestThorchainState(unittest.TestCase):
         ]
         self.assertEqual(thorchain.events, expected_events)
 
-    def test_add_native(self):
+    def test_donate_native(self):
         if RUNE.get_chain() == "BNB":
             return
         thorchain = ThorchainState()
@@ -857,7 +857,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin(RUNE, 50000000000)],
-            "ADD:BNB.BNB",
+            "DONATE:BNB.BNB",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(outbound, [])
@@ -872,7 +872,7 @@ class TestThorchainState(unittest.TestCase):
             "STAKER-1",
             "VAULT",
             [Coin("BNB.BNB", 150000000)],
-            "ADD:BNB.BNB",
+            "DONATE:BNB.BNB",
         )
 
         outbound = thorchain.handle(tx)
