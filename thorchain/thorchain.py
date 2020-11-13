@@ -769,12 +769,14 @@ class ThorchainState:
         gas = self.get_gas(asset.get_chain())
         # get the fee that are supposed to be charged, this will only be
         # used if it is the last unstake
-        dynamicFee = pool.get_rune_in_asset(self.get_rune_fee(asset.get_chain())) / 2
+        dynamic_fee = pool.get_rune_in_asset(self.get_rune_fee(asset.get_chain())) / 2
         tx_rune_gas = self.get_gas(RUNE.get_chain())
 
         unstake_units, rune_amt, asset_amt = pool.unstake(
             tx.from_address, withdraw_basis_points
         )
+        emit_asset = asset_amt
+        outbound_asset_amt = asset_amt
         self.estimateSize = 220
         # if this is our last staker of bnb, subtract a little BNB for gas.
         if pool.total_units == 0:
@@ -782,16 +784,29 @@ class ThorchainState:
                 gas_amt = gas.amount
                 if RUNE.get_chain() == "BNB":
                     gas_amt *= 2
-                asset_amt -= gas_amt
+                outbound_asset_amt -= gas_amt
+                emit_asset -= gas_amt
                 pool.asset_balance += gas_amt
-            elif pool.asset.is_btc() or pool.asset.is_eth():
+            elif pool.asset.is_eth():
+                gas = self.get_gas(asset.get_chain())
+                outbound_asset_amt -= int(dynamic_fee)
+                pool.asset_balance += dynamic_fee
+            elif pool.asset.is_btc():
                 # the last withdraw tx , it need to spend everything
                 # so it will use about 2 UTXO , estimate size is 288
                 self.estimateSize = 288
+                # left enough gas asset otherwise it will get into negative
                 gas = self.get_gas(asset.get_chain())
-                asset_amt -= int(dynamicFee)
-                pool.asset_balance += dynamicFee
-
+                emit_asset -= int(dynamic_fee)
+                estimate_gas_sset = int(self.tx_rate * 3 / 2) * self.estimateSize
+                if estimate_gas_sset > dynamic_fee:
+                    logging.info(
+                        f"adjust fee from {dynamic_fee} to {estimate_gas_sset}"
+                    )
+                    dynamic_fee = estimate_gas_sset
+                    gas = Coin(gas.asset, estimate_gas_sset)
+                outbound_asset_amt -= int(dynamic_fee)
+                pool.asset_balance += dynamic_fee
         self.set_pool(pool)
 
         # get from address VAULT cross chain
@@ -811,7 +826,7 @@ class ThorchainState:
                 asset.get_chain(),
                 from_address,
                 to_address,
-                [Coin(asset, asset_amt)],
+                [Coin(asset, outbound_asset_amt)],
                 f"OUT:{tx.id.upper()}",
                 gas=[gas],
             ),
@@ -834,7 +849,7 @@ class ThorchainState:
                     {"stake_units": unstake_units},
                     {"basis_points": withdraw_basis_points},
                     {"asymmetry": "0.000000000000000000"},
-                    {"emit_asset": asset_amt},
+                    {"emit_asset": emit_asset},
                     {"emit_rune": rune_amt},
                     *tx.get_attributes(),
                 ],

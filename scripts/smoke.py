@@ -310,7 +310,7 @@ class Smoker:
         processed = False
         pending_txs = 0
 
-        for x in range(0, 30):  # 30 attempts
+        for x in range(0, 60):  # 30 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
             new_events = events[len(sim_events) :]
@@ -324,7 +324,6 @@ class Smoker:
                         # which outbound txns are for this gas pool, vs
                         # another later on
                         count = 0
-                        logging.info(f"evt:{evt}")
                         for out in outbounds:
                             # a gas pool matches a txn if their from
                             # the same blockchain
