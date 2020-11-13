@@ -863,7 +863,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(outbound, [])
 
         expected_events = [
-            Event("add", [{"pool": "BNB.BNB"}, *tx.get_attributes()]),
+            Event("donate", [{"pool": "BNB.BNB"}, *tx.get_attributes()]),
         ]
         self.assertEqual(thorchain.events, expected_events)
 
@@ -880,7 +880,7 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful add
         expected_events += [
-            Event("add", [{"pool": "BNB.BNB"}, *tx.get_attributes()]),
+            Event("donate", [{"pool": "BNB.BNB"}, *tx.get_attributes()]),
         ]
         self.assertEqual(thorchain.events, expected_events)
 
