@@ -863,7 +863,7 @@
         "category": null
     },
     {
-        "type": "add",
+        "type": "donate",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -884,7 +884,7 @@
                 "coin": "30000000 BNB.BNB, 5000000000 BNB.RUNE-67C"
             },
             {
-                "memo": "ADD:BNB.BNB"
+                "memo": "DONATE:BNB.BNB"
             }
         ],
         "block_height": null,

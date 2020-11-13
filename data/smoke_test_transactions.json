@@ -418,7 +418,7 @@
         "chain": "BNB",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "ADD:BNB.BNB",
+        "memo": "DONATE:BNB.BNB",
         "coins": [
             {
                 "asset": "BNB.BNB",

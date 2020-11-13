@@ -549,8 +549,8 @@ class ThorchainState:
             self.reserve += 100000000
         if tx.memo.startswith("STAKE:"):
             out_txs = self.handle_stake(tx)
-        elif tx.memo.startswith("ADD:"):
-            out_txs = self.handle_add(tx)
+        elif tx.memo.startswith("DONATE:"):
+            out_txs = self.handle_donate(tx)
         elif tx.memo.startswith("WITHDRAW:"):
             out_txs = self.handle_unstake(tx)
         elif tx.memo.startswith("SWAP:"):
@@ -589,10 +589,10 @@ class ThorchainState:
 
         return []
 
-    def handle_add(self, tx):
+    def handle_donate(self, tx):
         """
         Add assets to a pool
-        MEMO: ADD:<asset(req)>
+        MEMO: DONATE:<asset(req)>
         """
         # parse memo
         parts = tx.memo.split(":")
@@ -624,7 +624,7 @@ class ThorchainState:
         self.set_pool(pool)
 
         # generate event for ADD transaction
-        event = Event("add", [{"pool": pool.asset}, *tx.get_attributes()])
+        event = Event("donate", [{"pool": pool.asset}, *tx.get_attributes()])
         self.events.append(event)
 
         return []
