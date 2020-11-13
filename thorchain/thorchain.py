@@ -139,8 +139,17 @@ class ThorchainClient(HttpClient):
     def get_asgard_vaults(self):
         return self.fetch("/thorchain/vaults/asgard")
 
+    def get_yggdrasil_vaults(self):
+        return self.fetch("/thorchain/vaults/yggdrasil")
+
     def get_pools(self):
         return self.fetch("/thorchain/pools")
+
+    def get_pool(self, asset):
+        for p in self.get_pools():
+            if p["asset"] == asset:
+                return p
+        return None
 
     def get_events(self, block_height):
         return self.rpc.fetch(f"/block_results?height={block_height}")
@@ -549,8 +558,8 @@ class ThorchainState:
             self.reserve += 100000000
         if tx.memo.startswith("STAKE:"):
             out_txs = self.handle_stake(tx)
-        elif tx.memo.startswith("ADD:"):
-            out_txs = self.handle_add(tx)
+        elif tx.memo.startswith("DONATE:"):
+            out_txs = self.handle_donate(tx)
         elif tx.memo.startswith("WITHDRAW:"):
             out_txs = self.handle_unstake(tx)
         elif tx.memo.startswith("SWAP:"):
@@ -589,10 +598,10 @@ class ThorchainState:
 
         return []
 
-    def handle_add(self, tx):
+    def handle_donate(self, tx):
         """
         Add assets to a pool
-        MEMO: ADD:<asset(req)>
+        MEMO: DONATE:<asset(req)>
         """
         # parse memo
         parts = tx.memo.split(":")
@@ -624,7 +633,7 @@ class ThorchainState:
         self.set_pool(pool)
 
         # generate event for ADD transaction
-        event = Event("add", [{"pool": pool.asset}, *tx.get_attributes()])
+        event = Event("donate", [{"pool": pool.asset}, *tx.get_attributes()])
         self.events.append(event)
 
         return []
@@ -700,13 +709,7 @@ class ThorchainState:
             and len(pool.stakers) == 1
         ):
             self.events.append(
-                Event(
-                    "pool",
-                    [
-                        {"pool": pool.asset},
-                        {"pool_status": "Enabled"},
-                    ],
-                )
+                Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}])
             )
         # generate event for STAKE transaction
         event = Event(

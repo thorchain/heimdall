@@ -6,7 +6,7 @@
                 "pool": "BNB.BNB"
             },
             {
-            "pool_status": "Enabled"
+                "pool_status": "Enabled"
             }
         ]
     },
@@ -37,9 +37,7 @@
             {
                 "THOR_txid": "TODO"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -47,9 +45,7 @@
             {
                 "bond_reward": "3"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -57,9 +53,7 @@
             {
                 "bond_reward": "5"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "pool",
@@ -68,7 +62,7 @@
                 "pool": "BTC.BTC"
             },
             {
-            "pool_status": "Enabled"
+                "pool_status": "Enabled"
             }
         ]
     },
@@ -99,9 +93,7 @@
             {
                 "THOR_txid": "TODO"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -109,9 +101,7 @@
             {
                 "bond_reward": "5"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -119,9 +109,7 @@
             {
                 "bond_reward": "8"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "pool",
@@ -130,7 +118,7 @@
                 "pool": "ETH.ETH"
             },
             {
-            "pool_status": "Enabled"
+                "pool_status": "Enabled"
             }
         ]
     },
@@ -161,9 +149,7 @@
             {
                 "THOR_txid": "TODO"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -171,9 +157,7 @@
             {
                 "bond_reward": "8"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -181,9 +165,7 @@
             {
                 "bond_reward": "11"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "pool",
@@ -192,7 +174,7 @@
                 "pool": "BNB.LOK-3C0"
             },
             {
-            "pool_status": "Enabled"
+                "pool_status": "Enabled"
             }
         ]
     },
@@ -223,9 +205,7 @@
             {
                 "THOR_txid": "TODO"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -233,9 +213,7 @@
             {
                 "bond_reward": "11"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -249,9 +227,7 @@
             {
                 "pool_deduct": "37500000"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "refund",
@@ -280,9 +256,7 @@
             {
                 "memo": ""
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -290,9 +264,7 @@
             {
                 "bond_reward": "12"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -309,9 +281,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -325,9 +295,7 @@
             {
                 "pool_deduct": "37462505"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "refund",
@@ -356,9 +324,7 @@
             {
                 "memo": "ABDG?"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -366,9 +332,7 @@
             {
                 "bond_reward": "12"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -385,9 +349,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -401,9 +363,7 @@
             {
                 "pool_deduct": "37425066"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "refund",
@@ -432,9 +392,7 @@
             {
                 "memo": "STAKE:"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -442,9 +400,7 @@
             {
                 "bond_reward": "13"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -461,9 +417,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "refund",
@@ -492,9 +446,7 @@
             {
                 "memo": "STAKE:THOR.RUNE"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -508,9 +460,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -518,9 +468,7 @@
             {
                 "bond_reward": "18"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "refund",
@@ -549,9 +497,7 @@
             {
                 "memo": "STAKE:BNB.BNB"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -565,9 +511,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -575,9 +519,7 @@
             {
                 "bond_reward": "23"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "stake",
@@ -603,9 +545,7 @@
             {
                 "BNB_txid": "TODO"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -613,9 +553,7 @@
             {
                 "bond_reward": "23"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "stake",
@@ -641,9 +579,7 @@
             {
                 "BNB_txid": "TODO"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -651,12 +587,10 @@
             {
                 "bond_reward": "23"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
-        "type": "add",
+        "type": "donate",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -677,11 +611,9 @@
                 "coin": "5000000000 THOR.RUNE"
             },
             {
-                "memo": "ADD:BNB.BNB"
+                "memo": "DONATE:BNB.BNB"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -689,12 +621,10 @@
             {
                 "bond_reward": "26"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
-        "type": "add",
+        "type": "donate",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -715,11 +645,9 @@
                 "coin": "30000000 BNB.BNB"
             },
             {
-                "memo": "ADD:BNB.BNB"
+                "memo": "DONATE:BNB.BNB"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -727,9 +655,7 @@
             {
                 "bond_reward": "26"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "refund",
@@ -758,9 +684,7 @@
             {
                 "memo": " "
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -774,9 +698,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -784,9 +706,7 @@
             {
                 "bond_reward": "31"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "refund",
@@ -815,9 +735,7 @@
             {
                 "memo": "ABDG?"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -831,9 +749,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -841,9 +757,7 @@
             {
                 "bond_reward": "36"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -857,9 +771,7 @@
             {
                 "pool_deduct": "20581446"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "refund",
@@ -888,9 +800,7 @@
             {
                 "memo": "SWAP:BNB.BNB"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "rewards",
@@ -898,9 +808,7 @@
             {
                 "bond_reward": "37"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -917,9 +825,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "outbound",
@@ -945,9 +851,7 @@
             {
                 "memo": "SWAP:BTC.BTC:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -988,9 +892,7 @@
             {
                 "memo": "SWAP:BTC.BTC:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -1031,9 +933,7 @@
             {
                 "memo": "SWAP:BTC.BTC:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1047,9 +947,7 @@
             {
                 "pool_deduct": "1502"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -1066,9 +964,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "outbound",
@@ -1094,9 +990,7 @@
             {
                 "memo": "SWAP:ETH.ETH:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -1137,9 +1031,7 @@
             {
                 "memo": "SWAP:ETH.ETH:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -1180,9 +1072,7 @@
             {
                 "memo": "SWAP:ETH.ETH:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1196,9 +1086,7 @@
             {
                 "pool_deduct": "38"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -1215,9 +1103,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -1258,9 +1144,7 @@
             {
                 "memo": "SWAP:THOR.RUNE:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1274,9 +1158,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -1317,9 +1199,7 @@
             {
                 "memo": "SWAP:THOR.RUNE:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1333,9 +1213,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "unstake",
@@ -1376,9 +1254,7 @@
             {
                 "memo": "WITHDRAW:ETH.ETH:1000"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1392,9 +1268,7 @@
             {
                 "pool_deduct": "38"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1408,9 +1282,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -1427,9 +1299,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1443,9 +1313,7 @@
             {
                 "pool_deduct": "5836485"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "refund",
@@ -1474,9 +1342,7 @@
             {
                 "memo": "SWAP:BNB.BNB"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -1493,9 +1359,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -1536,9 +1400,7 @@
             {
                 "memo": "SWAP:BNB.BNB:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1552,9 +1414,7 @@
             {
                 "pool_deduct": "5863335"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -1571,9 +1431,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -1614,9 +1472,7 @@
             {
                 "memo": "SWAP:BNB.BNB:USER-1:26572599"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1630,9 +1486,7 @@
             {
                 "pool_deduct": "8600755"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -1649,9 +1503,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -1692,9 +1544,7 @@
             {
                 "memo": "SWAP:BNB.BNB:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1708,9 +1558,7 @@
             {
                 "pool_deduct": "11864584"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -1727,9 +1575,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "unstake",
@@ -1770,9 +1616,7 @@
             {
                 "memo": "WITHDRAW:BTC.BTC:1000"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1786,9 +1630,7 @@
             {
                 "pool_deduct": "1467"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1802,9 +1644,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -1821,9 +1661,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -1864,9 +1702,7 @@
             {
                 "memo": "SWAP:THOR.RUNE:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1880,9 +1716,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -1923,9 +1757,7 @@
             {
                 "memo": "SWAP:BNB.BNB:STAKER-1:23853375"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -1939,9 +1771,7 @@
             {
                 "pool_deduct": "15198670"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -1958,9 +1788,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -2001,9 +1829,7 @@
             {
                 "memo": "SWAP:BNB.BNB:STAKER-1:22460886"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2017,9 +1843,7 @@
             {
                 "pool_deduct": "19447981"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -2036,9 +1860,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2052,9 +1874,7 @@
             {
                 "pool_deduct": "19441742"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "refund",
@@ -2083,9 +1903,7 @@
             {
                 "memo": "SWAP:THOR.RUNE:bnbSTAKER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -2102,9 +1920,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -2145,9 +1961,7 @@
             {
                 "memo": "SWAP:THOR.RUNE:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2161,9 +1975,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -2204,9 +2016,7 @@
             {
                 "memo": "SWAP:BNB.LOK-3C0:USER-1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2220,9 +2030,7 @@
             {
                 "pool_deduct": "19435506"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -2239,9 +2047,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "outbound",
@@ -2267,9 +2073,7 @@
             {
                 "memo": "SWAP:BNB.BNB"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -2310,9 +2114,7 @@
             {
                 "memo": "SWAP:BNB.BNB"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -2353,9 +2155,7 @@
             {
                 "memo": "SWAP:BNB.BNB"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2369,9 +2169,7 @@
             {
                 "pool_deduct": "21768448"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -2388,9 +2186,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "outbound",
@@ -2416,9 +2212,7 @@
             {
                 "memo": "SWAP:BNB.LOK-3C0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -2459,9 +2253,7 @@
             {
                 "memo": "SWAP:BNB.LOK-3C0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "swap",
@@ -2502,9 +2294,7 @@
             {
                 "memo": "SWAP:BNB.LOK-3C0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2518,9 +2308,7 @@
             {
                 "pool_deduct": "21280476"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -2537,9 +2325,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "unstake",
@@ -2580,9 +2366,7 @@
             {
                 "memo": "WITHDRAW:BNB.BNB:5000"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2596,9 +2380,7 @@
             {
                 "pool_deduct": "21284041"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2612,9 +2394,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -2631,9 +2411,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "pool",
@@ -2644,9 +2422,7 @@
             {
                 "pool_status": "Bootstrap"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "unstake",
@@ -2687,9 +2463,7 @@
             {
                 "memo": "WITHDRAW:BNB.LOK-3C0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2703,9 +2477,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -2722,9 +2494,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "unstake",
@@ -2765,9 +2535,7 @@
             {
                 "memo": "WITHDRAW:BNB.BNB:10000"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2781,9 +2549,7 @@
             {
                 "pool_deduct": "21278138"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2797,9 +2563,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -2816,9 +2580,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "pool",
@@ -2829,9 +2591,7 @@
             {
                 "pool_status": "Bootstrap"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "unstake",
@@ -2872,9 +2632,7 @@
             {
                 "memo": "WITHDRAW:BTC.BTC"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2888,9 +2646,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -2907,9 +2663,7 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "pool",
@@ -2920,9 +2674,7 @@
             {
                 "pool_status": "Bootstrap"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "unstake",
@@ -2963,9 +2715,7 @@
             {
                 "memo": "WITHDRAW:BNB.BNB"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "fee",
@@ -2979,9 +2729,7 @@
             {
                 "pool_deduct": "0"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     },
     {
         "type": "gas",
@@ -2998,8 +2746,6 @@
             {
                 "transaction_count": "1"
             }
-        ],
-        "block_height": null,
-        "category": null
+        ]
     }
 ]
