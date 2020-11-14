@@ -42,7 +42,7 @@
         ]
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -101,7 +101,7 @@
         ]
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BTC.BTC"
@@ -164,7 +164,7 @@
         ]
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "ETH.ETH"
@@ -215,7 +215,7 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BTC.BTC"
@@ -267,7 +267,7 @@
         ]
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.LOK-3C0"
@@ -749,7 +749,7 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -787,7 +787,7 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -825,7 +825,7 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.BNB"
