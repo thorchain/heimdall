@@ -11,7 +11,7 @@
         ]
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -67,7 +67,7 @@
         ]
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BTC.BTC"
@@ -123,7 +123,7 @@
         ]
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "ETH.ETH"
@@ -179,7 +179,7 @@
         ]
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.LOK-3C0"
@@ -390,7 +390,7 @@
                 "coin": "10000000 BNB.BNB"
             },
             {
-                "memo": "STAKE:"
+                "memo": "ADD:"
             }
         ]
     },
@@ -444,7 +444,7 @@
                 "coin": "50000000000 THOR.RUNE"
             },
             {
-                "memo": "STAKE:THOR.RUNE"
+                "memo": "ADD:THOR.RUNE"
             }
         ]
     },
@@ -495,7 +495,7 @@
                 "coin": "30000000000 THOR.RUNE"
             },
             {
-                "memo": "STAKE:BNB.BNB"
+                "memo": "ADD:BNB.BNB"
             }
         ]
     },
@@ -522,7 +522,7 @@
         ]
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -556,7 +556,7 @@
         ]
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.BNB"

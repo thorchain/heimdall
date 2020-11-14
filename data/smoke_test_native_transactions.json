@@ -149,7 +149,7 @@
         "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB:STAKER-1",
+        "memo": "ADD:BNB.BNB:STAKER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -162,7 +162,7 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB:STAKER-1",
+        "memo": "ADD:BNB.BNB:STAKER-1",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -175,7 +175,7 @@
         "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BTC.BTC:STAKER-1",
+        "memo": "ADD:BTC.BTC:STAKER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -188,7 +188,7 @@
         "chain": "BTC",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BTC.BTC:STAKER-1",
+        "memo": "ADD:BTC.BTC:STAKER-1",
         "coins": [
             {
                 "asset": "BTC.BTC",
@@ -201,7 +201,7 @@
         "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:ETH.ETH:STAKER-1",
+        "memo": "ADD:ETH.ETH:STAKER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -214,7 +214,7 @@
         "chain": "ETH",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:ETH.ETH:STAKER-1",
+        "memo": "ADD:ETH.ETH:STAKER-1",
         "coins": [
             {
                 "asset": "ETH.ETH",
@@ -227,7 +227,7 @@
         "chain": "THOR",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.LOK-3C0:STAKER-1",
+        "memo": "ADD:BNB.LOK-3C0:STAKER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -240,7 +240,7 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.LOK-3C0:STAKER-1",
+        "memo": "ADD:BNB.LOK-3C0:STAKER-1",
         "coins": [
             {
                 "asset": "BNB.LOK-3C0",
@@ -279,7 +279,7 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:",
+        "memo": "ADD:",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -292,7 +292,7 @@
         "chain": "THOR",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:THOR.RUNE",
+        "memo": "ADD:THOR.RUNE",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -305,7 +305,7 @@
         "chain": "THOR",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB",
+        "memo": "ADD:BNB.BNB",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -318,7 +318,7 @@
         "chain": "BNB",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB:STAKER-2",
+        "memo": "ADD:BNB.BNB:STAKER-2",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -331,7 +331,7 @@
         "chain": "BNB",
         "from_address": "STAKER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BNB.BNB:STAKER-2",
+        "memo": "ADD:BNB.BNB:STAKER-2",
         "coins": [
             {
                 "asset": "BNB.BNB",

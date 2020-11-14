@@ -307,7 +307,7 @@ class Transaction(Jsonable):
         return None
 
     def is_cross_chain_stake(self):
-        if not self.memo.startswith("STAKE:"):
+        if not self.memo.startswith("ADD:"):
             return False
         asset = self.get_asset_from_memo()
         if asset and asset.get_chain() != self.chain:
