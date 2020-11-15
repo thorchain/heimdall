@@ -421,7 +421,7 @@ class Smoker:
             if txn.memo == "SEED":
                 continue
 
-            if txn.is_cross_chain_stake(): 
+            if txn.is_cross_chain_stake():
                 first_cross_chain_stake = not first_cross_chain_stake
             outbounds = self.sim_catch_up(txn, first_cross_chain_stake)
 
