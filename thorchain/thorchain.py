@@ -715,7 +715,9 @@ class ThorchainState:
                     {f"{pool.asset.get_chain()}_txid": pending_txid or ""}
                 )
             else:
-                event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid or ""})
+                event.attributes.append(
+                    {f"{RUNE.get_chain()}_txid": pending_txid or ""}
+                )
         self.events.append(event)
 
         return []
