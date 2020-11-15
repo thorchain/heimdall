@@ -1,4 +1,5 @@
 import unittest
+import logging
 
 from thorchain.thorchain import (
     ThorchainState,
@@ -444,8 +445,8 @@ class TestThorchainState(unittest.TestCase):
         tx.coins = [Coin("BNB.BNB", 1000000000), Coin("BNB.LOK-3C0", 1000000000)]
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 2)
-        self.assertEqual(outbound[0].coins[0], Coin("BNB.LOK-3C0", 999843242))
-        self.assertEqual(outbound[1].coins[0], Coin("BNB.BNB", 999887500))
+        self.assertEqual(outbound[0].coins[0], Coin("BNB.BNB", 999887500))
+        self.assertEqual(outbound[1].coins[0], Coin("BNB.LOK-3C0", 999843242))
 
         # check refund event generated for swap with two coins
         reason = "unknown request: not expecting multiple coins in a swap"
@@ -1844,10 +1845,11 @@ class TestThorchainState(unittest.TestCase):
             [Coin(RUNE, 1)],
             "WITHDRAW:BNB.BNB:100",
         )
+        logging.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 2)
-        self.assertEqual(outbounds[0].coins[0], Coin("BNB.BNB", 51387500))
-        self.assertEqual(outbounds[1].coins[0], Coin(RUNE, 450000000))
+        self.assertEqual(outbounds[0].coins[0], Coin(RUNE, 450000000))
+        self.assertEqual(outbounds[1].coins[0], Coin("BNB.BNB", 51387500))
 
         pool = thorchain.get_pool("BNB.BNB")
         self.assertEqual(pool.rune_balance, 54448798544)

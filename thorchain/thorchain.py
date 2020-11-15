@@ -1251,6 +1251,7 @@ class Pool(Jsonable):
         """
         Withdraw from an address with given withdraw basis points
         """
+        logging.info(f"WithDrawng: {address}, {withdraw_basis_points}")
         if withdraw_basis_points > 10000 or withdraw_basis_points < 0:
             raise Exception("withdraw basis points should be between 0 - 10,000")
 
@@ -1262,6 +1263,7 @@ class Pool(Jsonable):
         self.set_liquidity_provider(lp)
         self.total_units -= units
         self.sub(rune_amt, asset_amt)
+        logging.info(f"WithDraw: {units}, {rune_amt}, {asset_amt}")
         return units, rune_amt, asset_amt
 
     def _calc_stake_units(self, R, A, r, a):
