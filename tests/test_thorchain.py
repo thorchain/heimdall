@@ -1623,7 +1623,7 @@ class TestThorchainState(unittest.TestCase):
         ]
         self.assertEqual(thorchain.events, expected_events)
 
-    def test_unstake_bep2(self):
+    def test_withdraw_bep2(self):
 
         if RUNE.get_chain() == "THOR":
             return
@@ -1690,10 +1690,10 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.get_staker("STAKER-1").units, 49500000000)
         self.assertEqual(pool.total_units, 49500000000)
 
-        # check event generated for successful unstake
+        # check event generated for successful withdraw
         expected_events += [
             Event(
-                "unstake",
+                "withdraw",
                 [
                     {"pool": "BNB.BNB"},
                     {"stake_units": "500000000"},
@@ -1730,7 +1730,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
-        # check refund event not generated for unstake with bad memo
+        # check refund event not generated for withdraw with bad memo
         expected_events += [
             Event(
                 "fee",
@@ -1745,7 +1745,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
-        # check refund event not generated for unstake with bad withdraw basis points
+        # check refund event not generated for withdraw with bad withdraw basis points
         expected_events += [
             Event(
                 "fee",
@@ -1758,7 +1758,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
-        # check refund event not generated for unstake with bad memo
+        # check refund event not generated for withdraw with bad memo
         expected_events += [
             Event(
                 "fee",
@@ -1786,11 +1786,11 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.get_staker("STAKER-1").units, 0)
         self.assertEqual(pool.total_units, 0)
 
-        # check event generated for successful unstake
+        # check event generated for successful withdraw
         expected_events += [
             Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Bootstrap"}]),
             Event(
-                "unstake",
+                "withdraw",
                 [
                     {"pool": "BNB.BNB"},
                     {"stake_units": "49500000000"},
@@ -1829,7 +1829,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.total_units, 0)
         self.assertEqual(pool.asset_balance, 75000)
 
-        # check refund event not generated for unstake with 0 units left
+        # check refund event not generated for withdraw with 0 units left
         expected_events += [
             Event(
                 "fee",
@@ -1838,7 +1838,7 @@ class TestThorchainState(unittest.TestCase):
         ]
         self.assertEqual(thorchain.events, expected_events)
 
-    def test_unstake_native(self):
+    def test_withdraw_native(self):
 
         if RUNE.get_chain() == "BNB":
             return
@@ -1915,10 +1915,10 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.get_staker("STAKER-1").units, 49500000000)
         self.assertEqual(pool.total_units, 49500000000)
 
-        # check event generated for successful unstake
+        # check event generated for successful withdraw
         expected_events += [
             Event(
-                "unstake",
+                "withdraw",
                 [
                     {"pool": "BNB.BNB"},
                     {"stake_units": "500000000"},
@@ -1955,7 +1955,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
-        # check refund event not generated for unstake with bad memo
+        # check refund event not generated for withdraw with bad memo
         expected_events += [
             Event(
                 "refund",
@@ -1970,7 +1970,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
-        # check refund event not generated for unstake with bad withdraw basis points
+        # check refund event not generated for withdraw with bad withdraw basis points
         expected_events += [
             Event(
                 "refund",
@@ -1983,7 +1983,7 @@ class TestThorchainState(unittest.TestCase):
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
 
-        # check refund event not generated for unstake with bad memo
+        # check refund event not generated for withdraw with bad memo
         expected_events += [
             Event(
                 "refund",
@@ -2011,11 +2011,11 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.total_units, 0)
         self.assertEqual(pool.asset_balance, 37500)
 
-        # check event generated for successful unstake
+        # check event generated for successful withdraw
         expected_events += [
             Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Bootstrap"}]),
             Event(
-                "unstake",
+                "withdraw",
                 [
                     {"pool": "BNB.BNB"},
                     {"stake_units": "49500000000"},
@@ -2054,7 +2054,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.total_units, 0)
         self.assertEqual(pool.asset_balance, 37500)
 
-        # check refund event not generated for unstake with 0 units left
+        # check refund event not generated for withdraw with 0 units left
         expected_events += [
             Event(
                 "refund",
@@ -2067,10 +2067,10 @@ class TestThorchainState(unittest.TestCase):
         ]
         self.assertEqual(thorchain.events, expected_events)
 
-    def test_unstake_calc(self):
+    def test_withdraw_calc(self):
         pool = Pool("BNB.BNB", 112928660551, 257196272)
         pool.total_units = 44611997190
-        after, withdraw_rune, withdraw_asset = pool._calc_unstake_units(
+        after, withdraw_rune, withdraw_asset = pool._calc_withdraw_units(
             25075000000, 5000
         )
         self.assertEqual(withdraw_rune, 31736823519)

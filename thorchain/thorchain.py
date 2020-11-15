@@ -552,7 +552,7 @@ class ThorchainState:
         elif tx.memo.startswith("DONATE:"):
             out_txs = self.handle_donate(tx)
         elif tx.memo.startswith("WITHDRAW:"):
-            out_txs = self.handle_unstake(tx)
+            out_txs = self.handle_withdraw(tx)
         elif tx.memo.startswith("SWAP:"):
             out_txs = self.handle_swap(tx)
         elif tx.memo.startswith("RESERVE"):
@@ -721,9 +721,9 @@ class ThorchainState:
 
         return []
 
-    def handle_unstake(self, tx):
+    def handle_withdraw(self, tx):
         """
-        handles a unstaking transaction
+        handles a withdrawing transaction
         MEMO: WITHDRAW:<asset(req)>:<address(op)>:<basis_points(op)>
         """
         withdraw_basis_points = 10000
@@ -763,7 +763,7 @@ class ThorchainState:
         gas = self.get_gas(asset.get_chain())
         tx_rune_gas = self.get_gas(RUNE.get_chain())
 
-        unstake_units, rune_amt, asset_amt = pool.unstake(
+        withdraw_units, rune_amt, asset_amt = pool.withdraw(
             tx.from_address, withdraw_basis_points
         )
 
@@ -812,13 +812,13 @@ class ThorchainState:
             ),
         ]
 
-        # generate event for UNSTAKE transaction
+        # generate event for WITHDRAW transaction
         self.events.append(
             Event(
-                "unstake",
+                "withdraw",
                 [
                     {"pool": pool.asset},
-                    {"stake_units": unstake_units},
+                    {"stake_units": withdraw_units},
                     {"basis_points": withdraw_basis_points},
                     {"asymmetry": "0.000000000000000000"},
                     {"emit_asset": asset_amt},
@@ -1255,15 +1255,15 @@ class Pool(Jsonable):
         self.set_staker(staker)
         return units, rune_amt, staker.pending_tx
 
-    def unstake(self, address, withdraw_basis_points):
+    def withdraw(self, address, withdraw_basis_points):
         """
-        Unstake from an address with given withdraw basis points
+        Withdraw from an address with given withdraw basis points
         """
         if withdraw_basis_points > 10000 or withdraw_basis_points < 0:
             raise Exception("withdraw basis points should be between 0 - 10,000")
 
         staker = self.get_staker(address)
-        units, rune_amt, asset_amt = self._calc_unstake_units(
+        units, rune_amt, asset_amt = self._calc_withdraw_units(
             staker.units, withdraw_basis_points
         )
         staker.units -= units
@@ -1293,9 +1293,9 @@ class Pool(Jsonable):
         units = (P * (a * R + A * r)) / (2 * A * R)
         return int(units * slipAdjustment)
 
-    def _calc_unstake_units(self, staker_units, withdraw_basis_points):
+    def _calc_withdraw_units(self, staker_units, withdraw_basis_points):
         """
-        Calculate amount of rune/asset to unstake
+        Calculate amount of rune/asset to withdraw
         Returns staker units, rune amount, asset amount
         """
         units_to_claim = get_share(withdraw_basis_points, 10000, staker_units)
