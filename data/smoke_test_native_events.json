@@ -1216,7 +1216,7 @@
         ]
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "ETH.ETH"
@@ -1578,7 +1578,7 @@
         ]
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BTC.BTC"
@@ -2328,7 +2328,7 @@
         ]
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -2425,7 +2425,7 @@
         ]
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BNB.LOK-3C0"
@@ -2497,7 +2497,7 @@
         ]
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -2594,7 +2594,7 @@
         ]
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BTC.BTC"
@@ -2677,7 +2677,7 @@
         ]
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BNB.BNB"
