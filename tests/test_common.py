@@ -272,7 +272,7 @@ class TestTransaction(unittest.TestCase):
             "USER",
             "VAULT",
             Coin("BNB.BNB", 100),
-            "ADD:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:PROVIDER-1",
         )
         self.assertEqual(tx.is_cross_chain_stake(), False)
         tx = Transaction(
@@ -280,7 +280,7 @@ class TestTransaction(unittest.TestCase):
             "USER",
             "VAULT",
             Coin("THOR.RUNE", 100),
-            "ADD:BNB.BNB:STAKER-1",
+            "ADD:BNB.BNB:PROVIDER-1",
         )
         self.assertEqual(tx.is_cross_chain_stake(), True)
         tx = Transaction(

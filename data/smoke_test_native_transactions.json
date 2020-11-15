@@ -32,7 +32,7 @@
     {
         "chain": "BNB",
         "from_address": "MASTER",
-        "to_address": "STAKER-1",
+        "to_address": "PROVIDER-1",
         "memo": "SEED",
         "coins": [
             {
@@ -49,7 +49,7 @@
     {
         "chain": "BNB",
         "from_address": "MASTER",
-        "to_address": "STAKER-1",
+        "to_address": "PROVIDER-1",
         "memo": "SEED",
         "coins": [
             {
@@ -66,7 +66,7 @@
     {
         "chain": "BNB",
         "from_address": "MASTER",
-        "to_address": "STAKER-2",
+        "to_address": "PROVIDER-2",
         "memo": "SEED",
         "coins": [
             {
@@ -96,7 +96,7 @@
     {
         "chain": "BTC",
         "from_address": "MASTER",
-        "to_address": "STAKER-1",
+        "to_address": "PROVIDER-1",
         "memo": "SEED",
         "coins": [
             {
@@ -109,7 +109,7 @@
     {
         "chain": "BTC",
         "from_address": "MASTER",
-        "to_address": "STAKER-2",
+        "to_address": "PROVIDER-2",
         "memo": "SEED",
         "coins": [
             {
@@ -135,7 +135,7 @@
     {
         "chain": "ETH",
         "from_address": "MASTER",
-        "to_address": "STAKER-1",
+        "to_address": "PROVIDER-1",
         "memo": "SEED",
         "coins": [
             {
@@ -147,9 +147,9 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
-        "memo": "ADD:BNB.BNB:STAKER-1",
+        "memo": "ADD:BNB.BNB:PROVIDER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -160,9 +160,9 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
-        "memo": "ADD:BNB.BNB:STAKER-1",
+        "memo": "ADD:BNB.BNB:PROVIDER-1",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -173,9 +173,9 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
-        "memo": "ADD:BTC.BTC:STAKER-1",
+        "memo": "ADD:BTC.BTC:PROVIDER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -186,9 +186,9 @@
     },
     {
         "chain": "BTC",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
-        "memo": "ADD:BTC.BTC:STAKER-1",
+        "memo": "ADD:BTC.BTC:PROVIDER-1",
         "coins": [
             {
                 "asset": "BTC.BTC",
@@ -199,9 +199,9 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
-        "memo": "ADD:ETH.ETH:STAKER-1",
+        "memo": "ADD:ETH.ETH:PROVIDER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -212,9 +212,9 @@
     },
     {
         "chain": "ETH",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
-        "memo": "ADD:ETH.ETH:STAKER-1",
+        "memo": "ADD:ETH.ETH:PROVIDER-1",
         "coins": [
             {
                 "asset": "ETH.ETH",
@@ -225,9 +225,9 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
-        "memo": "ADD:BNB.LOK-3C0:STAKER-1",
+        "memo": "ADD:BNB.LOK-3C0:PROVIDER-1",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -238,9 +238,9 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
-        "memo": "ADD:BNB.LOK-3C0:STAKER-1",
+        "memo": "ADD:BNB.LOK-3C0:PROVIDER-1",
         "coins": [
             {
                 "asset": "BNB.LOK-3C0",
@@ -251,7 +251,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "",
         "coins": [
@@ -264,7 +264,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "ABDG?",
         "coins": [
@@ -277,7 +277,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "ADD:",
         "coins": [
@@ -290,7 +290,7 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "ADD:THOR.RUNE",
         "coins": [
@@ -303,7 +303,7 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "ADD:BNB.BNB",
         "coins": [
@@ -316,9 +316,9 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
-        "memo": "ADD:BNB.BNB:STAKER-2",
+        "memo": "ADD:BNB.BNB:PROVIDER-2",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -329,9 +329,9 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
-        "memo": "ADD:BNB.BNB:STAKER-2",
+        "memo": "ADD:BNB.BNB:PROVIDER-2",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -342,7 +342,7 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "DONATE:BNB.BNB",
         "coins": [
@@ -355,7 +355,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "DONATE:BNB.BNB",
         "coins": [
@@ -459,7 +459,7 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:ETH.ETH:1000",
         "coins": [
@@ -528,7 +528,7 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BTC.BTC:1000",
         "coins": [
@@ -556,7 +556,7 @@
         "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.BNB:STAKER-1:23853375",
+        "memo": "SWAP:BNB.BNB:PROVIDER-1:23853375",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -569,7 +569,7 @@
         "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.BNB:STAKER-1:22460886",
+        "memo": "SWAP:BNB.BNB:PROVIDER-1:22460886",
         "coins": [
             {
                 "asset": "THOR.RUNE",
@@ -582,7 +582,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:THOR.RUNE:bnbSTAKER-1",
+        "memo": "SWAP:THOR.RUNE:bnbPROVIDER-1",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -645,7 +645,7 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB:5000",
         "coins": [
@@ -658,7 +658,7 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.LOK-3C0",
         "coins": [
@@ -671,7 +671,7 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB:10000",
         "coins": [
@@ -684,7 +684,7 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BTC.BTC",
         "coins": [
@@ -697,7 +697,7 @@
     },
     {
         "chain": "THOR",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB",
         "coins": [
