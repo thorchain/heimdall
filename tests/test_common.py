@@ -278,10 +278,10 @@ class TestTransaction(unittest.TestCase):
             Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "ADD:BNB",
         )
         self.assertEqual(tx1, tx2)
-        tx1.memo = "ADD:BNB"
+        tx1.memo = "STAKE:BNB"
         tx2.memo = "ADD:BNB"
         self.assertNotEqual(tx1, tx2)
-        tx1.memo = "ADD"
+        tx1.memo = "STAKE"
         tx2.memo = "ADD"
         self.assertNotEqual(tx1, tx2)
         tx1.memo = ""
