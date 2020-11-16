@@ -283,6 +283,7 @@ class Smoker:
             "BTC": btc["tx_size"] * btc["tx_rate"],
         }
         self.thorchain_state.set_network_fees(fees)
+        self.thorchain_state.set_tx_rate(btc["tx_rate"])
 
     def sim_trigger_tx(self, txn):
         # process transaction in thorchain

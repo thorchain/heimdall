@@ -49,7 +49,7 @@ class TestThorchainState(unittest.TestCase):
         thorchain.network_fees = {"BTC": 99813}
         thorchain.pools = [Pool("BTC.BTC", 59983570781, 127225819)]
         gas = thorchain.get_gas("BTC")
-        self.assertEqual(gas, Coin("BTC.BTC", 149720))
+        self.assertEqual(gas, Coin("BTC.BTC", 0))
 
     def test_handle_fee(self):
         thorchain = ThorchainState()
