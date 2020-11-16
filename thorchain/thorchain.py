@@ -123,18 +123,18 @@ class ThorchainClient(HttpClient):
         return int(data[0]["thorchain"])
 
     def get_vault_address(self, chain):
-        data = self.fetch("/thorchain/vault_addresses")
+        data = self.fetch("/thorchain/inbound_addresses")
         for d in data["current"]:
             if chain == d["chain"]:
                 return d["address"]
         return "address not found"
 
     def get_vault_pubkey(self):
-        data = self.fetch("/thorchain/vault_addresses")
+        data = self.fetch("/thorchain/inbound_addresses")
         return data["current"][0]["pub_key"]
 
     def get_vault_data(self):
-        return self.fetch("/thorchain/vault")
+        return self.fetch("/thorchain/network")
 
     def get_asgard_vaults(self):
         return self.fetch("/thorchain/vaults/asgard")
