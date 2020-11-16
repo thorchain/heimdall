@@ -670,7 +670,7 @@ class ThorchainState:
                     )
 
         if len(parts) < 3 and asset.get_chain() != RUNE.get_chain():
-            reason = "invalid liquidity provision."
+            reason = "invalid liquidity provider."
             reason += f" Cannot provide liquidity to a non {RUNE.get_chain()}-based"
             reason += " pool without providing an associated address"
             return self.refund(tx, 105, reason)

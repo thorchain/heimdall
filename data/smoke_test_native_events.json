@@ -477,7 +477,7 @@
                 "code": "105"
             },
             {
-                "reason": "invalid liquidity provision. Cannot provide liquidity to a non THOR-based pool without providing an associated address"
+                "reason": "invalid liquidity provider. Cannot provide liquidity to a non THOR-based pool without providing an associated address"
             },
             {
                 "id": "TODO"
