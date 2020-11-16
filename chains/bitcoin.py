@@ -51,18 +51,11 @@ class MockBitcoin(HttpClient):
         while True:
             try:
                 result = self.get_block_stats()
-                median_fee = result["medianfee"]
-                median_tx_size = result["mediantxsize"]
-                if median_fee != 0 and median_tx_size != 0:
-
-                    # min relay fee for BTC is 1000
-                    if median_fee < 1000:
-                        median_fee = 1000
-                    rate = int(Decimal(median_fee) / Decimal(median_tx_size))
-                    if rate * Decimal(median_tx_size) < median_fee:
-                        rate += 1
-                    self.block_stats["tx_rate"] = rate
-                    self.block_stats["tx_size"] = median_tx_size
+                avg_fee_rate = result["avgfeerate"]
+                avg_tx_size = 250  # result["mediantxsize"]
+                if avg_fee_rate != 0:
+                    self.block_stats["tx_rate"] = avg_fee_rate
+                    self.block_stats["tx_size"] = avg_tx_size
             except Exception:
                 continue
             finally:
