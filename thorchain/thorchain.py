@@ -413,7 +413,8 @@ class ThorchainState:
         # total income made on the network
         system_income = block_rewards + self._total_liquidity()
 
-        # Targets a linear change in rewards from 0% provided liquidity, 33% provided liquidity, 100% provided liquidity.
+        # Targets a linear change in rewards from 0% provided liquidity, 33%
+        # provided liquidity, 100% provided liquidity.
         # 0% provided liquidity: All rewards to liquidity providers, 0 to bonders
         # 33% provided liquidity: 33% to liquidity providers
         # 100% provided liquidity: All rewards to Bonders, 0 to liquidity providers
@@ -669,7 +670,8 @@ class ThorchainState:
                     )
 
         if len(parts) < 3 and asset.get_chain() != RUNE.get_chain():
-            reason = f"invalid liquidity provision. Cannot provide liquidity to a non {RUNE.get_chain()}-based"
+            reason = "invalid liquidity provision."
+            reason += f" Cannot provide liquidity to a non {RUNE.get_chain()}-based"
             reason += " pool without providing an associated address"
             return self.refund(tx, 105, reason)
 
@@ -695,7 +697,8 @@ class ThorchainState:
 
         self.set_pool(pool)
 
-        # liquidity provision cross chain so event will be dispatched on asset liquidity provision
+        # liquidity provision cross chain so event will be dispatched on asset
+        # liquidity provision
         if liquidity_units == 0:
             return []
         if (
