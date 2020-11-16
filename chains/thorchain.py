@@ -49,9 +49,9 @@ class MockThorchain(HttpClient):
 
     chain = "THOR"
     private_keys = {
-        "USER-1": "ef235aacf90d9f4aadd8c92e4b2562e1d9eb97f0df9ba3b508258739cb013db2",
-        "STAKER-1": "289c2857d4598e37fb9647507e47a309d6133539bf21a8b9cb6df88fd5232032",
-        "STAKER-2": "e810f1d7d6691b4a7a73476f3543bd87d601f9a53e7faf670eac2c5b517d83bf",
+      "USER-1": "ef235aacf90d9f4aadd8c92e4b2562e1d9eb97f0df9ba3b508258739cb013db2",
+      "PROVIDER-1": "289c2857d4598e37fb9647507e47a309d6133539bf21a8b9cb6df88fd5232032",
+      "PROVIDER-2": "e810f1d7d6691b4a7a73476f3543bd87d601f9a53e7faf670eac2c5b517d83bf",
     }
 
     def get_balance(self, address, asset=Asset("THOR.RUNE")):

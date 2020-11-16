@@ -81,12 +81,12 @@ class Benchie:
     def run(self):
         logging.info(f">>> Starting benchmark... ({self.tx_type}: {self.num})")
         logging.info(">>> setting up...")
-        # seed staker
+        # seed liquidity provider
         self.mock_binance.transfer(
             Transaction(
                 "BNB",
                 get_alias("BNB", "MASTER"),
-                get_alias("BNB", "STAKER-1"),
+                get_alias("BNB", "PROVIDER-1"),
                 [
                     Coin("BNB.BNB", self.num * 100 * Coin.ONE),
                     Coin(RUNE, self.num * 100 * Coin.ONE),
@@ -112,7 +112,7 @@ class Benchie:
             self.mock_binance.transfer(
                 Transaction(
                     "BNB",
-                    get_alias("BNB", "STAKER-1"),
+                    get_alias("BNB", "PROVIDER-1"),
                     get_alias("BNB", "VAULT"),
                     [
                         Coin("BNB.BNB", self.num * 100 * Coin.ONE),
