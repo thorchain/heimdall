@@ -393,13 +393,13 @@ class ThorchainState:
         if self.reserve == 0:
             return
 
-        # get the total staked
+        # get the total provided liquidity
         # TODO: skip non-enabled pools
-        total_staked = 0
+        total_provided_liquidity = 0
         for pool in self.pools:
-            total_staked += pool.rune_balance
+            total_provided_liquidity += pool.rune_balance
 
-        if total_staked == 0:  # nothing staked, no rewards
+        if total_provided_liquidity == 0:  # nothing provided liquidity, no rewards
             return
 
         # calculate the block rewards based on the reserve, emission curve, and
@@ -413,17 +413,17 @@ class ThorchainState:
         # total income made on the network
         system_income = block_rewards + self._total_liquidity()
 
-        # Targets a linear change in rewards from 0% staked, 33% staked, 100% staked.
-        # 0% staked: All rewards to liquidity providers, 0 to bonders
-        # 33% staked: 33% to liquidity providers
-        # 100% staked: All rewards to Bonders, 0 to liquidity providers
+        # Targets a linear change in rewards from 0% provided liquidity, 33% provided liquidity, 100% provided liquidity.
+        # 0% provided liquidity: All rewards to liquidity providers, 0 to bonders
+        # 33% provided liquidity: 33% to liquidity providers
+        # 100% provided liquidity: All rewards to Bonders, 0 to liquidity providers
 
         lp_split = 0
-        # Zero payments to liquidity providers when staked == bonded
-        if total_staked < self.total_bonded:
+        # Zero payments to liquidity providers when provided liquidity == bonded
+        if total_provided_liquidity < self.total_bonded:
             # (y + x) / (y - x)
-            factor = float(self.total_bonded + total_staked) / float(
-                self.total_bonded - total_staked
+            factor = float(self.total_bonded + total_provided_liquidity) / float(
+                self.total_bonded - total_provided_liquidity
             )
             lp_split = int(round(system_income / factor))
 
@@ -635,7 +635,7 @@ class ThorchainState:
 
     def handle_add_liquidity(self, tx):
         """
-        handles a staking transaction
+        handles a liquidity provision transaction
         MEMO: ADD:<asset(req)>
         """
         # parse memo
@@ -669,7 +669,7 @@ class ThorchainState:
                     )
 
         if len(parts) < 3 and asset.get_chain() != RUNE.get_chain():
-            reason = f"invalid stake. Cannot stake to a non {RUNE.get_chain()}-based"
+            reason = f"invalid liquidity provision. Cannot provide liquidity to a non {RUNE.get_chain()}-based"
             reason += " pool without providing an associated address"
             return self.refund(tx, 105, reason)
 
@@ -683,20 +683,20 @@ class ThorchainState:
             else:
                 asset_amt = coin.amount
 
-        # check address to stake to from memo
+        # check address to provider to from memo
         address = tx.from_address
         asset_address = tx.from_address
         if tx.chain != RUNE.get_chain() and len(parts) > 2:
             address = parts[2]
 
-        stake_units, rune_amt, pending_txid = pool.add_liquidity(
+        liquidity_units, rune_amt, pending_txid = pool.add_liquidity(
             address, rune_amt, asset_amt, asset, tx.id
         )
 
         self.set_pool(pool)
 
-        # stake cross chain so event will be dispatched on asset stake
-        if stake_units == 0:
+        # liquidity provision cross chain so event will be dispatched on asset liquidity provision
+        if liquidity_units == 0:
             return []
         if (
             pool.rune_balance != 0
@@ -706,12 +706,12 @@ class ThorchainState:
             self.events.append(
                 Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}])
             )
-        # generate event for STAKE transaction
+        # generate event for liquidity provision transaction
         event = Event(
             "add_liquidity",
             [
                 {"pool": pool.asset},
-                {"stake_units": stake_units},
+                {"liquidity_provider_units": liquidity_units},
                 {"rune_address": address},
                 {"rune_amount": rune_amt},
                 {"asset_amount": asset_amt},
@@ -766,7 +766,7 @@ class ThorchainState:
         # and need to subtract
         gas = self.get_gas(asset.get_chain())
         # get the fee that are supposed to be charged, this will only be
-        # used if it is the last unstake
+        # used if it is the last withdraw
         dynamic_fee = pool.get_rune_in_asset(self.get_rune_fee(asset.get_chain())) / 2
         tx_rune_gas = self.get_gas(RUNE.get_chain())
 
@@ -845,7 +845,7 @@ class ThorchainState:
                 "withdraw",
                 [
                     {"pool": pool.asset},
-                    {"stake_units": withdraw_units},
+                    {"liquidity_provider_units": withdraw_units},
                     {"basis_points": withdraw_basis_points},
                     {"asymmetry": "0.000000000000000000"},
                     {"emit_asset": emit_asset},
@@ -1259,7 +1259,7 @@ class Pool(Jsonable):
         add liquidity rune/asset for an address
         """
         lp = self.get_liquidity_provider(address)
-        # handle cross chain stake
+        # handle cross chain liquidity provision
         if asset.get_chain() != RUNE.get_chain():
             if asset_amt == 0:
                 lp.pending_rune += rune_amt
@@ -1269,7 +1269,7 @@ class Pool(Jsonable):
 
             rune_amt += lp.pending_rune
             lp.pending_rune = 0
-        units = self._calc_stake_units(
+        units = self._calc_liquidity_units(
             self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
 
@@ -1298,15 +1298,15 @@ class Pool(Jsonable):
         logging.info(f"WithDraw: {units}, {rune_amt}, {asset_amt}")
         return units, rune_amt, asset_amt
 
-    def _calc_stake_units(self, R, A, r, a):
+    def _calc_liquidity_units(self, R, A, r, a):
         """
         Calculate liquidity provider units
         slipAdjustment = (1 - ABS((R a - r A)/((2 r + R) (a + A))))
         units = ((P (a R + A r))/(2 A R))*slidAdjustment
         R = pool rune balance after
         A = pool asset balance after
-        r = staked rune
-        a = staked asset
+        r = provided rune
+        a = provided asset
         """
         P = self.total_units
         R = float(R)
