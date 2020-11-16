@@ -414,29 +414,29 @@ class ThorchainState:
         system_income = block_rewards + self._total_liquidity()
 
         # Targets a linear change in rewards from 0% staked, 33% staked, 100% staked.
-        # 0% staked: All rewards to stakers, 0 to bonders
-        # 33% staked: 33% to stakers
-        # 100% staked: All rewards to Bonders, 0 to stakers
+        # 0% staked: All rewards to liquidity providers, 0 to bonders
+        # 33% staked: 33% to liquidity providers
+        # 100% staked: All rewards to Bonders, 0 to liquidity providers
 
-        staker_split = 0
-        # Zero payments to stakers when staked == bonded
+        lp_split = 0
+        # Zero payments to liquidity providers when staked == bonded
         if total_staked < self.total_bonded:
             # (y + x) / (y - x)
             factor = float(self.total_bonded + total_staked) / float(
                 self.total_bonded - total_staked
             )
-            staker_split = int(round(system_income / factor))
+            lp_split = int(round(system_income / factor))
 
-        bond_reward = system_income - staker_split
+        bond_reward = system_income - lp_split
 
         # calculate if we need to move liquidity from the pools to the bonders,
         # or move bond rewards to the pools
         pool_reward = 0
-        staker_deficit = 0
-        if staker_split >= self._total_liquidity():
-            pool_reward = staker_split - self._total_liquidity()
+        lp_deficit = 0
+        if lp_split >= self._total_liquidity():
+            pool_reward = lp_split - self._total_liquidity()
         else:
-            staker_deficit = self._total_liquidity() - staker_split
+            lp_deficit = self._total_liquidity() - lp_split
 
         if self.reserve < bond_reward + pool_reward:
             return
@@ -463,7 +463,7 @@ class ThorchainState:
                 pass  # TODO: Pool Rewards are based on Depth Share
         else:
             for key, value in self.liquidity.items():
-                share = get_share(staker_deficit, self._total_liquidity(), value)
+                share = get_share(lp_deficit, self._total_liquidity(), value)
                 pool = self.get_pool(key)
                 pool.rune_balance -= share
                 self.bond_reward += share
@@ -500,11 +500,7 @@ class ThorchainState:
 
             out_txs.append(
                 Transaction(
-                    tx.chain,
-                    tx.to_address,
-                    tx.from_address,
-                    [coin],
-                    f"REFUND:{tx.id}",
+                    tx.chain, tx.to_address, tx.from_address, [coin], f"REFUND:{tx.id}",
                 )
             )
 
@@ -512,8 +508,7 @@ class ThorchainState:
 
         # generate event REFUND for the transaction
         event = Event(
-            "refund",
-            [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
+            "refund", [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
         )
 
         if tx.chain == "THOR":
@@ -556,12 +551,12 @@ class ThorchainState:
 
         if tx.chain == "THOR":
             self.reserve += 100000000
-        if tx.memo.startswith("STAKE:"):
-            out_txs = self.handle_stake(tx)
+        if tx.memo.startswith("ADD:"):
+            out_txs = self.handle_add_liquidity(tx)
         elif tx.memo.startswith("DONATE:"):
             out_txs = self.handle_donate(tx)
         elif tx.memo.startswith("WITHDRAW:"):
-            out_txs = self.handle_unstake(tx)
+            out_txs = self.handle_withdraw(tx)
         elif tx.memo.startswith("SWAP:"):
             out_txs = self.handle_swap(tx)
         elif tx.memo.startswith("RESERVE"):
@@ -638,10 +633,10 @@ class ThorchainState:
 
         return []
 
-    def handle_stake(self, tx):
+    def handle_add_liquidity(self, tx):
         """
         handles a staking transaction
-        MEMO: STAKE:<asset(req)>
+        MEMO: ADD:<asset(req)>
         """
         # parse memo
         parts = tx.memo.split(":")
@@ -694,7 +689,7 @@ class ThorchainState:
         if tx.chain != RUNE.get_chain() and len(parts) > 2:
             address = parts[2]
 
-        stake_units, rune_amt, pending_txid = pool.stake(
+        stake_units, rune_amt, pending_txid = pool.add_liquidity(
             address, rune_amt, asset_amt, asset, tx.id
         )
 
@@ -706,14 +701,14 @@ class ThorchainState:
         if (
             pool.rune_balance != 0
             and pool.asset_balance != 0
-            and len(pool.stakers) == 1
+            and len(pool.liquidity_providers) == 1
         ):
             self.events.append(
                 Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}])
             )
         # generate event for STAKE transaction
         event = Event(
-            "stake",
+            "add_liquidity",
             [
                 {"pool": pool.asset},
                 {"stake_units": stake_units},
@@ -730,9 +725,9 @@ class ThorchainState:
 
         return []
 
-    def handle_unstake(self, tx):
+    def handle_withdraw(self, tx):
         """
-        handles a unstaking transaction
+        handles a withdrawing transaction
         MEMO: WITHDRAW:<asset(req)>:<address(op)>:<basis_points(op)>
         """
         withdraw_basis_points = 10000
@@ -762,8 +757,8 @@ class ThorchainState:
                 coin.amount = 0
 
         pool = self.get_pool(asset)
-        staker = pool.get_staker(tx.from_address)
-        if staker.is_zero():
+        lp = pool.get_liquidity_provider(tx.from_address)
+        if lp.is_zero():
             # FIXME real world message
             return self.refund(tx, 105, "refund reason message")
 
@@ -775,13 +770,14 @@ class ThorchainState:
         dynamic_fee = pool.get_rune_in_asset(self.get_rune_fee(asset.get_chain())) / 2
         tx_rune_gas = self.get_gas(RUNE.get_chain())
 
-        unstake_units, rune_amt, asset_amt = pool.unstake(
+        withdraw_units, rune_amt, asset_amt = pool.withdraw(
             tx.from_address, withdraw_basis_points
         )
+
+        # if this is our last liquidity provider of bnb, subtract a little BNB for gas.
         emit_asset = asset_amt
         outbound_asset_amt = asset_amt
         self.estimateSize = 220
-        # if this is our last staker of bnb, subtract a little BNB for gas.
         if pool.total_units == 0:
             if pool.asset.is_bnb():
                 gas_amt = gas.amount
@@ -843,13 +839,13 @@ class ThorchainState:
             ),
         ]
 
-        # generate event for UNSTAKE transaction
+        # generate event for WITHDRAW transaction
         self.events.append(
             Event(
-                "unstake",
+                "withdraw",
                 [
                     {"pool": pool.asset},
-                    {"stake_units": unstake_units},
+                    {"stake_units": withdraw_units},
                     {"basis_points": withdraw_basis_points},
                     {"asymmetry": "0.000000000000000000"},
                     {"emit_asset": emit_asset},
@@ -1183,7 +1179,7 @@ class Pool(Jsonable):
         self.rune_balance = rune_amt
         self.asset_balance = asset_amt
         self.total_units = 0
-        self.stakers = []
+        self.liquidity_providers = []
         self.status = status
 
     def get_asset_in_rune(self, val):
@@ -1237,75 +1233,74 @@ class Pool(Jsonable):
         """
         return self.rune_balance == 0 and self.asset_balance == 0
 
-    def get_staker(self, address):
+    def get_liquidity_provider(self, address):
         """
-        Fetch a specific staker by address
+        Fetch a specific liquidity provider by address
         """
-        for staker in self.stakers:
-            if staker.address == address:
-                return staker
+        for lp in self.liquidity_providers:
+            if lp.address == address:
+                return lp
 
-        return Staker(address)
+        return LiquidityProvider(address)
 
-    def set_staker(self, staker):
+    def set_liquidity_provider(self, lp):
         """
-        Set a staker
+        Set a liquidity provider
         """
-        for i, s in enumerate(self.stakers):
-            if s.address == staker.address:
-                self.stakers[i] = staker
+        for i, s in enumerate(self.liquidity_providers):
+            if s.address == lp.address:
+                self.liquidity_providers[i] = lp
                 return
 
-        self.stakers.append(staker)
+        self.liquidity_providers.append(lp)
 
-    def stake(self, address, rune_amt, asset_amt, asset, txid):
+    def add_liquidity(self, address, rune_amt, asset_amt, asset, txid):
         """
-        Stake rune/asset for an address
+        add liquidity rune/asset for an address
         """
-        staker = self.get_staker(address)
+        lp = self.get_liquidity_provider(address)
         # handle cross chain stake
         if asset.get_chain() != RUNE.get_chain():
             if asset_amt == 0:
-                staker.pending_rune += rune_amt
-                staker.pending_tx = txid
-                self.set_staker(staker)
+                lp.pending_rune += rune_amt
+                lp.pending_tx = txid
+                self.set_liquidity_provider(lp)
                 return 0, 0, None
 
-            rune_amt += staker.pending_rune
-            staker.pending_rune = 0
+            rune_amt += lp.pending_rune
+            lp.pending_rune = 0
         units = self._calc_stake_units(
-            self.rune_balance,
-            self.asset_balance,
-            rune_amt,
-            asset_amt,
+            self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
 
         self.add(rune_amt, asset_amt)
         self.total_units += units
-        staker.units += units
-        self.set_staker(staker)
-        return units, rune_amt, staker.pending_tx
+        lp.units += units
+        self.set_liquidity_provider(lp)
+        return units, rune_amt, lp.pending_tx
 
-    def unstake(self, address, withdraw_basis_points):
+    def withdraw(self, address, withdraw_basis_points):
         """
-        Unstake from an address with given withdraw basis points
+        Withdraw from an address with given withdraw basis points
         """
+        logging.info(f"WithDrawng: {address}, {withdraw_basis_points}")
         if withdraw_basis_points > 10000 or withdraw_basis_points < 0:
             raise Exception("withdraw basis points should be between 0 - 10,000")
 
-        staker = self.get_staker(address)
-        units, rune_amt, asset_amt = self._calc_unstake_units(
-            staker.units, withdraw_basis_points
+        lp = self.get_liquidity_provider(address)
+        units, rune_amt, asset_amt = self._calc_withdraw_units(
+            lp.units, withdraw_basis_points
         )
-        staker.units -= units
-        self.set_staker(staker)
+        lp.units -= units
+        self.set_liquidity_provider(lp)
         self.total_units -= units
         self.sub(rune_amt, asset_amt)
+        logging.info(f"WithDraw: {units}, {rune_amt}, {asset_amt}")
         return units, rune_amt, asset_amt
 
     def _calc_stake_units(self, R, A, r, a):
         """
-        Calculate staker units
+        Calculate liquidity provider units
         slipAdjustment = (1 - ABS((R a - r A)/((2 r + R) (a + A))))
         units = ((P (a R + A r))/(2 A R))*slidAdjustment
         R = pool rune balance after
@@ -1324,18 +1319,18 @@ class Pool(Jsonable):
         units = (P * (a * R + A * r)) / (2 * A * R)
         return int(units * slipAdjustment)
 
-    def _calc_unstake_units(self, staker_units, withdraw_basis_points):
+    def _calc_withdraw_units(self, lp_units, withdraw_basis_points):
         """
-        Calculate amount of rune/asset to unstake
-        Returns staker units, rune amount, asset amount
+        Calculate amount of rune/asset to withdraw
+        Returns liquidity provider units, rune amount, asset amount
         """
-        units_to_claim = get_share(withdraw_basis_points, 10000, staker_units)
+        units_to_claim = get_share(withdraw_basis_points, 10000, lp_units)
         withdraw_rune = get_share(units_to_claim, self.total_units, self.rune_balance)
         withdraw_asset = get_share(units_to_claim, self.total_units, self.asset_balance)
-        units_after = staker_units - units_to_claim
+        units_after = lp_units - units_to_claim
         if units_after < 0:
-            logging.error(f"Overdrawn staker units: {self}")
-            raise Exception("Overdrawn staker units")
+            logging.error(f"Overdrawn liquidity provider units: {self}")
+            raise Exception("Overdrawn liquidity provider units")
         return units_to_claim, withdraw_rune, withdraw_asset
 
     def __repr__(self):
@@ -1353,7 +1348,7 @@ class Pool(Jsonable):
         )
 
 
-class Staker(Jsonable):
+class LiquidityProvider(Jsonable):
     def __init__(self, address, units=0):
         self.address = address
         self.units = 0
@@ -1362,24 +1357,24 @@ class Staker(Jsonable):
 
     def add(self, units):
         """
-        Add staker units
+        Add liquidity provider units
         """
         self.units += units
 
     def sub(self, units):
         """
-        Subtract staker units
+        Subtract liquidity provider units
         """
         self.units -= units
         if self.units < 0:
-            logging.error(f"Overdrawn staker: {self}")
-            raise Exception("insufficient staker units")
+            logging.error(f"Overdrawn liquidity provider: {self}")
+            raise Exception("insufficient liquidity provider units")
 
     def is_zero(self):
         return self.units <= 0
 
     def __repr__(self):
-        return "<Staker %s Units: %d>" % (self.address, self.units)
+        return "<Liquidity Provider %s Units: %d>" % (self.address, self.units)
 
     def __str__(self):
-        return "Staker %s Units: %d" % (self.address, self.units)
+        return "Liquidity Provider %s Units: %d" % (self.address, self.units)

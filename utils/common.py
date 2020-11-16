@@ -17,10 +17,7 @@ def get_rune_asset():
 
 
 def requests_retry_session(
-    retries=6,
-    backoff_factor=1,
-    status_forcelist=(500, 502, 504),
-    session=None,
+    retries=6, backoff_factor=1, status_forcelist=(500, 502, 504), session=None,
 ):
     """
     Creates a request session that has auto retry
@@ -307,7 +304,7 @@ class Transaction(Jsonable):
         return None
 
     def is_cross_chain_stake(self):
-        if not self.memo.startswith("STAKE:"):
+        if not self.memo.startswith("ADD:"):
             return False
         asset = self.get_asset_from_memo()
         if asset and asset.get_chain() != self.chain:

@@ -22,8 +22,8 @@ class Breakpoint:
             "OUT": out,
             "CONTRIB": {},
             "USER-1": {},
-            "STAKER-1": {},
-            "STAKER-2": {},
+            "PROVIDER-1": {},
+            "PROVIDER-2": {},
             "VAULT": {},
         }
 

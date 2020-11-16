@@ -115,7 +115,7 @@ class MockBinance(HttpClient):
                 asset = txn.get_asset_from_memo()
                 if asset:
                     chain = asset.get_chain()
-                if txn.memo.startswith("STAKE"):
+                if txn.memo.startswith("ADD"):
                     if asset and txn.chain == asset.get_chain():
                         chain = RUNE.get_chain()
                 addr = get_alias_address(chain, alias)
