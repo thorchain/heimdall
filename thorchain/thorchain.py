@@ -120,21 +120,21 @@ class ThorchainClient(HttpClient):
         Get the current block height of mock binance
         """
         data = self.fetch("/thorchain/lastblock")
-        return int(data["thorchain"])
+        return int(data[0]["thorchain"])
 
     def get_vault_address(self, chain):
-        data = self.fetch("/thorchain/pool_addresses")
+        data = self.fetch("/thorchain/inbound_addresses")
         for d in data["current"]:
             if chain == d["chain"]:
                 return d["address"]
         return "address not found"
 
     def get_vault_pubkey(self):
-        data = self.fetch("/thorchain/pool_addresses")
+        data = self.fetch("/thorchain/inbound_addresses")
         return data["current"][0]["pub_key"]
 
     def get_vault_data(self):
-        return self.fetch("/thorchain/vault")
+        return self.fetch("/thorchain/network")
 
     def get_asgard_vaults(self):
         return self.fetch("/thorchain/vaults/asgard")
