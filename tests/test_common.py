@@ -245,7 +245,7 @@ class TestTransaction(unittest.TestCase):
             " Gas [<Coin 37,500_BNB.BNB>]>",
         )
 
-    def test_is_cross_chain_stake(self):
+    def test_is_cross_chain_provision(self):
         tx = Transaction(
             Binance.chain,
             "USER",
@@ -253,29 +253,29 @@ class TestTransaction(unittest.TestCase):
             Coin("BNB.BNB", 100),
             "ADD:BNB.BNB:PROVIDER-1",
         )
-        self.assertEqual(tx.is_cross_chain_stake(), False)
+        self.assertEqual(tx.is_cross_chain_provision(), False)
         tx = Transaction(
             "THOR", "USER", "VAULT", Coin("THOR.RUNE", 100), "ADD:BNB.BNB:PROVIDER-1",
         )
-        self.assertEqual(tx.is_cross_chain_stake(), True)
+        self.assertEqual(tx.is_cross_chain_provision(), True)
         tx = Transaction("THOR", "USER", "VAULT", Coin("THOR.RUNE", 100), "ADD:",)
-        self.assertEqual(tx.is_cross_chain_stake(), False)
+        self.assertEqual(tx.is_cross_chain_provision(), False)
 
     def test_eq(self):
         tx1 = Transaction(
-            Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "STAKE:BNB",
+            Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "ADD:BNB",
         )
         tx2 = Transaction(
-            Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "STAKE:BNB",
+            Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "ADD:BNB",
         )
         self.assertEqual(tx1, tx2)
         tx2.chain = "BTC"
         self.assertNotEqual(tx1, tx2)
         tx1 = Transaction(
-            Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "STAKE:BNB",
+            Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "ADD:BNB",
         )
         tx2 = Transaction(
-            Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "STAKE:BNB",
+            Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "ADD:BNB",
         )
         self.assertEqual(tx1, tx2)
         tx1.memo = "STAKE:BNB"
@@ -295,10 +295,10 @@ class TestTransaction(unittest.TestCase):
         tx2.memo = "REFUND:TODO"
         self.assertNotEqual(tx1, tx2)
         # we dont ignore different assets though
-        tx1.memo = "STAKE:BNB"
-        tx2.memo = "STAKE:RUNE"
+        tx1.memo = "ADD:BNB"
+        tx2.memo = "ADD:RUNE"
         self.assertNotEqual(tx1, tx2)
-        tx2.memo = "STAKE:BNB"
+        tx2.memo = "ADD:BNB"
         self.assertEqual(tx1, tx2)
         tx2.coins = [Coin("BNB.BNB", 100)]
         self.assertEqual(tx1, tx2)
@@ -320,7 +320,7 @@ class TestTransaction(unittest.TestCase):
         self.assertNotEqual(tx1, tx2)
         # check list of transactions equality
         tx1 = Transaction(
-            Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "STAKE:BNB",
+            Binance.chain, "USER", "VAULT", [Coin("BNB.BNB", 100)], "ADD:BNB",
         )
         tx2 = deepcopy(tx1)
         tx3 = deepcopy(tx1)
@@ -386,19 +386,19 @@ class TestTransaction(unittest.TestCase):
 
     def test_to_json(self):
         txn = Transaction(
-            Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "STAKE:BNB",
+            Binance.chain, "USER", "VAULT", Coin("BNB.BNB", 100), "ADD:BNB",
         )
         self.assertEqual(
             txn.to_json(),
             '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
-            '"to_address": "VAULT", "memo": "STAKE:BNB", "coins": '
+            '"to_address": "VAULT", "memo": "ADD:BNB", "coins": '
             '[{"asset": "BNB.BNB", "amount": 100}], "gas": null, "fee": null}',
         )
         txn.coins = [Coin("BNB.BNB", 1000000000), Coin(RUNE, 1000000000)]
         self.assertEqual(
             txn.to_json(),
             '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
-            '"to_address": "VAULT", "memo": "STAKE:BNB", "coins": ['
+            '"to_address": "VAULT", "memo": "ADD:BNB", "coins": ['
             '{"asset": "BNB.BNB", "amount": 1000000000}, '
             '{"asset": "'
             + RUNE
@@ -408,14 +408,14 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(
             txn.to_json(),
             '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
-            '"to_address": "VAULT", "memo": "STAKE:BNB", "coins": null, '
+            '"to_address": "VAULT", "memo": "ADD:BNB", "coins": null, '
             '"gas": null, "fee": null}',
         )
         txn.gas = [Coin("BNB.BNB", 37500)]
         self.assertEqual(
             txn.to_json(),
             '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
-            '"to_address": "VAULT", "memo": "STAKE:BNB", "coins": null,'
+            '"to_address": "VAULT", "memo": "ADD:BNB", "coins": null,'
             ' "gas": [{"asset": "BNB.BNB", "amount": 37500}], "fee": null}',
         )
 
@@ -428,13 +428,13 @@ class TestTransaction(unittest.TestCase):
                 {"asset": "BNB.BNB", "amount": 1000},
                 {"asset": RUNE, "amount": "1000"},
             ],
-            "memo": "STAKE:BNB.BNB",
+            "memo": "ADD:BNB.BNB",
         }
         txn = Transaction.from_dict(value)
         self.assertEqual(txn.chain, "BNB")
         self.assertEqual(txn.from_address, "USER")
         self.assertEqual(txn.to_address, "VAULT")
-        self.assertEqual(txn.memo, "STAKE:BNB.BNB")
+        self.assertEqual(txn.memo, "ADD:BNB.BNB")
         self.assertEqual(txn.coins[0].asset, "BNB.BNB")
         self.assertEqual(txn.coins[0].amount, 1000)
         self.assertEqual(txn.coins[1].asset, RUNE)
@@ -446,7 +446,7 @@ class TestTransaction(unittest.TestCase):
         self.assertEqual(txn.chain, "BNB")
         self.assertEqual(txn.from_address, "USER")
         self.assertEqual(txn.to_address, "VAULT")
-        self.assertEqual(txn.memo, "STAKE:BNB.BNB")
+        self.assertEqual(txn.memo, "ADD:BNB.BNB")
         self.assertEqual(txn.coins, None)
         self.assertEqual(txn.gas[0].asset, "BNB.BNB")
         self.assertEqual(txn.gas[0].amount, 37500)

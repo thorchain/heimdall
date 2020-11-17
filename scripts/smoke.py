@@ -350,8 +350,8 @@ class Smoker:
                         processed = True
                 continue
 
-            # we have same count of events but its a cross chain stake
-            elif txn.is_cross_chain_stake() and not processed:
+            # we have same count of events but its a cross chain liquidity provision
+            elif txn.is_cross_chain_provision() and not processed:
                 outbounds = self.sim_trigger_tx(txn)
                 pending_txs = len(outbounds)
                 processed = True

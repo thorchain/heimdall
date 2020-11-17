@@ -28,8 +28,8 @@ test-coverage-report:
 test-watch:
 	@PYTHONPATH=${PWD} ptw tests/test_*
 
-benchmark-stake:
-	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/benchmark.py --tx-type=stake --num=${NUM}
+benchmark-provision:
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/benchmark.py --tx-type=add --num=${NUM}
 
 benchmark-swap:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/benchmark.py --tx-type=swap --num=${NUM}
@@ -40,8 +40,8 @@ smoke:
 kube-smoke:
 	@kubectl replace --force -f kube/smoke.yml
 
-kube-benchmark-stake:
-	@sed -e 's|NUM|${NUM}|g' kube/benchmark-stake.yml | kubectl replace --force -f -
+kube-benchmark-provision:
+	@sed -e 's|NUM|${NUM}|g' kube/benchmark-provision.yml | kubectl replace --force -f -
 
 kube-benchmark-swap:
 	@sed -e 's|NUM|${NUM}|g' kube/benchmark-swap.yml | kubectl replace --force -f -
