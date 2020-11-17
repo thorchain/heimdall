@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: benchmark-stake
+  name: benchmark-provision
 spec:
   backoffLimit: 0
   template:
@@ -16,7 +16,7 @@ spec:
         command:
           - python
           - scripts/benchmark.py
-          - --tx-type=stake
+          - --tx-type=add
           - --thorchain=http://thor-api:1317
           - --thorchain-websocket=ws://thor-daemon:26657/websocket
           - --binance=http://binance-daemon:26657

@@ -303,7 +303,7 @@ class Transaction(Jsonable):
             return Asset(parts[1])
         return None
 
-    def is_cross_chain_stake(self):
+    def is_cross_chain_provision(self):
         if not self.memo.startswith("ADD:"):
             return False
         asset = self.get_asset_from_memo()

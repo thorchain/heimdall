@@ -48,7 +48,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "50000000000"
+                "liquidity_provider_units": "50000000000"
             },
             {
                 "rune_address": "PROVIDER-1"
@@ -107,7 +107,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "50000000000"
+                "liquidity_provider_units": "50000000000"
             },
             {
                 "rune_address": "PROVIDER-1"
@@ -170,7 +170,7 @@
                 "pool": "ETH.ETH"
             },
             {
-                "stake_units": "50000000000"
+                "liquidity_provider_units": "50000000000"
             },
             {
                 "rune_address": "PROVIDER-1"
@@ -221,7 +221,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "347937293"
+                "liquidity_provider_units": "347937293"
             },
             {
                 "rune_address": "PROVIDER-2"
@@ -273,7 +273,7 @@
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "stake_units": "50000000000"
+                "liquidity_provider_units": "50000000000"
             },
             {
                 "rune_address": "PROVIDER-1"
@@ -755,7 +755,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "4161464835"
+                "liquidity_provider_units": "4161464835"
             },
             {
                 "rune_address": "PROVIDER-2"
@@ -793,7 +793,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "4648560839"
+                "liquidity_provider_units": "4648560839"
             },
             {
                 "rune_address": "PROVIDER-2"
@@ -831,7 +831,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "29392822456"
+                "liquidity_provider_units": "29392822456"
             },
             {
                 "rune_address": "PROVIDER-2"
@@ -1647,7 +1647,7 @@
                 "pool": "ETH.ETH"
             },
             {
-                "stake_units": "5000000000"
+                "liquidity_provider_units": "5000000000"
             },
             {
                 "basis_points": "1000"
@@ -2135,7 +2135,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "5000000000"
+                "liquidity_provider_units": "5000000000"
             },
             {
                 "basis_points": "1000"
@@ -3119,7 +3119,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "25000000000"
+                "liquidity_provider_units": "25000000000"
             },
             {
                 "basis_points": "5000"
@@ -3236,7 +3236,7 @@
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "stake_units": "50000000000"
+                "liquidity_provider_units": "50000000000"
             },
             {
                 "basis_points": "10000"
@@ -3324,7 +3324,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "25000000000"
+                "liquidity_provider_units": "25000000000"
             },
             {
                 "basis_points": "10000"
@@ -3428,7 +3428,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "347937293"
+                "liquidity_provider_units": "347937293"
             },
             {
                 "basis_points": "10000"
@@ -3564,7 +3564,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "38202848130"
+                "liquidity_provider_units": "38202848130"
             },
             {
                 "basis_points": "10000"

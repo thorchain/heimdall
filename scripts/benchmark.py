@@ -33,7 +33,9 @@ def main():
         help="Thorchain Websocket url",
     )
     parser.add_argument(
-        "--tx-type", default="swap", help="Transactions type to perform (swap or stake)"
+        "--tx-type",
+        default="swap",
+        help="Transactions type to perform (swap or provide liquidity)",
     )
     parser.add_argument(
         "--num", type=int, default=100, help="Number of transactions to perform"
@@ -65,7 +67,7 @@ class Benchie:
 
         self.num = num
         self.tx_type = tx_type
-        if self.tx_type != "swap" and self.tx_type != "stake":
+        if self.tx_type != "swap" and self.tx_type != "add":
             logging.error("invalid tx type: " + self.tx_type)
             os.exit(1)
 
@@ -108,7 +110,7 @@ class Benchie:
         )
 
         if self.tx_type == "swap":
-            # stake BNB
+            # provide BNB
             self.mock_binance.transfer(
                 Transaction(
                     "BNB",
@@ -118,7 +120,7 @@ class Benchie:
                         Coin("BNB.BNB", self.num * 100 * Coin.ONE),
                         Coin(RUNE, self.num * 100 * Coin.ONE),
                     ],
-                    memo="STAKE:BNB.BNB",
+                    memo="ADD:BNB.BNB",
                 )
             )
 
@@ -129,7 +131,7 @@ class Benchie:
         txns = []
         memo = f"{self.tx_type}:BNB.BNB"
         for x in range(0, self.num):
-            if self.tx_type == "stake":
+            if self.tx_type == "add":
                 coins = [
                     Coin(RUNE, 10 * Coin.ONE),
                     Coin("BNB.BNB", 10 * Coin.ONE),
