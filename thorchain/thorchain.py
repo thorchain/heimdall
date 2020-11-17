@@ -688,7 +688,7 @@ class ThorchainState:
             else:
                 asset_address = parts[2]
 
-        liquidity_units, rune_amt, pending_txid = pool.add_liquidity(
+        liquidity_units, rune_amt, asset_amt, pending_txid = pool.add_liquidity(
             address, asset_address, rune_amt, asset_amt, asset, tx.id
         )
 
@@ -698,7 +698,7 @@ class ThorchainState:
         # liquidity provision
         if liquidity_units == 0:
             return []
-        if pool.total_units > 0 and len(pool.stakers) == 1:
+        if pool.total_units > 0 and len(pool.liquidity_providers) == 1:
             self.events.append(
                 Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}])
             )
