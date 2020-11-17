@@ -1258,7 +1258,9 @@ class Pool(Jsonable):
 
         self.liquidity_providers.append(lp)
 
-    def add_liquidity(self, rune_address, asset_address, rune_amt, asset_amt, asset, txid):
+    def add_liquidity(
+        self, rune_address, asset_address, rune_amt, asset_amt, asset, txid
+    ):
         """
         add liquidity rune/asset for an address
         """
