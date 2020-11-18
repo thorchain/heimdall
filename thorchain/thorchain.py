@@ -1272,7 +1272,7 @@ class Pool(Jsonable):
         asset_amt += lp.pending_asset
         rune_amt += lp.pending_rune
 
-        # handle cross chain stake
+        # handle cross chain liquidity provision
         if asset_amt == 0 and asset_address is not None:
             lp.pending_rune += rune_amt
             lp.pending_tx = txid

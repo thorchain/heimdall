@@ -353,7 +353,7 @@ class Smoker:
                 continue
 
             # we have same count of events but its a cross chain liquidity provision
-            if txn.is_cross_chain_stake() and no_evt and not processed:
+            if txn.is_cross_chain_provision() and no_evt and not processed:
                 outbounds = self.sim_trigger_tx(txn)
                 pending_txs = len(outbounds)
                 processed = True
@@ -383,7 +383,7 @@ class Smoker:
             logging.info(f"{result} {outbound.short()}")
 
     def run(self):
-        first_cross_chain_stake = False
+        first_cross_chain_provision = False
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
 
@@ -421,9 +421,9 @@ class Smoker:
             if txn.memo == "SEED":
                 continue
 
-            if txn.is_cross_chain_stake():
-                first_cross_chain_stake = not first_cross_chain_stake
-            outbounds = self.sim_catch_up(txn, first_cross_chain_stake)
+            if txn.is_cross_chain_provision():
+                first_cross_chain_provision = not first_cross_chain_provision
+            outbounds = self.sim_catch_up(txn, first_cross_chain_provision)
 
             # check if we are verifying the results
             if self.no_verify:
