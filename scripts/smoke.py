@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 import json
+import itertools
 
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -234,12 +235,14 @@ class Smoker:
         events = self.thorchain_client.events
         sim_events = self.thorchain_state.events
 
-        if events != sim_events:
-            wrong_events = [e for e in events if e not in sim_events]
-            wrong_sim_events = [e for e in sim_events if e not in events]
-            logging.error(f"THORChain Events {wrong_events}")
-            logging.error(f"Simulator Events {wrong_sim_events}")
-            self.error("Events mismatch")
+        for (evt_t, evt_s) in zip(events, sim_events):
+            if evt_t != evt_s:
+                for (evt_t2, evt_s2) in zip(events, sim_events):
+                    logging.info(f"\tTHORChain Evt: {evt_t2}")
+                    logging.info(f"\tSimulator Evt: {evt_s2}")
+                logging.error(f"THORChain Event {evt_t}")
+                logging.error(f"Simulator Event {evt_s}")
+                self.error("Events mismatch")
 
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1), reraise=True)
     def run_health(self):
@@ -296,7 +299,7 @@ class Smoker:
 
         return outbounds
 
-    def sim_catch_up(self, txn):
+    def sim_catch_up(self, txn, no_evt=False):
         # At this point, we can assume that the transaction on real thorchain
         # has already occurred, and we can now play "catch up" in our simulated
         # thorchain state
@@ -309,12 +312,11 @@ class Smoker:
         for x in range(0, 30):  # 30 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
-            new_events = events[len(sim_events) :]
 
-            # we have more real events than sim, fill in the gaps
-            if len(new_events) > 0:
-                for evt in new_events:
-                    if evt.type == "gas":
+            for (evt_t, evt_s) in itertools.zip_longest(events, sim_events):
+                if evt_s is None:
+                    # we have more real events than sim, fill in the gaps
+                    if evt_t.type == "gas":
                         todo = []
                         # with the given gas pool event data, figure out
                         # which outbound txns are for this gas pool, vs
@@ -323,22 +325,22 @@ class Smoker:
                         for out in outbounds:
                             # a gas pool matches a txn if their from
                             # the same blockchain
-                            event_chain = Asset(evt.get("asset")).get_chain()
+                            event_chain = Asset(evt_t.get("asset")).get_chain()
                             out_chain = out.coins[0].asset.get_chain()
                             if event_chain == out_chain:
                                 todo.append(out)
                                 count += 1
-                                if count >= int(evt.get("transaction_count")):
+                                if count >= int(evt_t.get("transaction_count")):
                                     break
                         self.thorchain_state.handle_gas(todo)
 
-                    elif evt.type == "rewards":
+                    elif evt_t.type == "rewards":
                         self.thorchain_state.handle_rewards()
 
-                    elif evt.type == "outbound" and processed and pending_txs > 0:
+                    elif evt_t.type == "outbound" and processed and pending_txs > 0:
                         # figure out which outbound event is which tx
                         for out in outbounds:
-                            if out.coins_str() == evt.get("coin"):
+                            if out.coins_str() == evt_t.get("coin"):
                                 self.thorchain_state.generate_outbound_events(
                                     txn, [out]
                                 )
@@ -351,7 +353,7 @@ class Smoker:
                 continue
 
             # we have same count of events but its a cross chain liquidity provision
-            elif txn.is_cross_chain_provision() and not processed:
+            if txn.is_cross_chain_provision() and no_evt and not processed:
                 outbounds = self.sim_trigger_tx(txn)
                 pending_txs = len(outbounds)
                 processed = True
@@ -381,6 +383,7 @@ class Smoker:
             logging.info(f"{result} {outbound.short()}")
 
     def run(self):
+        first_cross_chain_provision = False
         for i, txn in enumerate(self.txns):
             txn = Transaction.from_dict(txn)
 
@@ -418,7 +421,9 @@ class Smoker:
             if txn.memo == "SEED":
                 continue
 
-            outbounds = self.sim_catch_up(txn)
+            if txn.is_cross_chain_provision():
+                first_cross_chain_provision = not first_cross_chain_provision
+            outbounds = self.sim_catch_up(txn, first_cross_chain_provision)
 
             # check if we are verifying the results
             if self.no_verify:

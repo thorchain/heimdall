@@ -253,7 +253,7 @@ class TestTransaction(unittest.TestCase):
             Coin("BNB.BNB", 100),
             "ADD:BNB.BNB:PROVIDER-1",
         )
-        self.assertEqual(tx.is_cross_chain_provision(), False)
+        self.assertEqual(tx.is_cross_chain_provision(), True)
         tx = Transaction(
             "THOR", "USER", "VAULT", Coin("THOR.RUNE", 100), "ADD:BNB.BNB:PROVIDER-1",
         )
