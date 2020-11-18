@@ -424,7 +424,7 @@ class ThorchainState:
         if total_provided_liquidity < self.total_bonded:
             # (y + x) / (y - x)
             factor = float(self.total_bonded + total_provided_liquidity) / float(
-                self.total_bonded - total_provided_liquidity
+                self.total_bonded
             )
             lp_split = int(round(system_income / factor))
 
