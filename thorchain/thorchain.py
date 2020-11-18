@@ -646,7 +646,7 @@ class ThorchainState:
                 return self.refund(tx, 105, "memo can't be empty")
             return self.refund(tx, 105, f"invalid tx type: {tx.memo}")
 
-            # empty asset
+        # empty asset
         if parts[1] == "":
             return self.refund(tx, 105, "Invalid symbol")
 
@@ -669,12 +669,6 @@ class ThorchainState:
                         tx, 105, "unknown request: did not find both coins"
                     )
 
-        if len(parts) < 3 and asset.get_chain() != RUNE.get_chain():
-            reason = "invalid liquidity provider."
-            reason += f" Cannot provide liquidity to a non {RUNE.get_chain()}-based"
-            reason += " pool without providing an associated address"
-            return self.refund(tx, 105, reason)
-
         pool = self.get_pool(asset)
 
         rune_amt = 0
@@ -686,13 +680,20 @@ class ThorchainState:
                 asset_amt = coin.amount
 
         # check address to provider to from memo
-        address = tx.from_address
-        asset_address = tx.from_address
-        if tx.chain != RUNE.get_chain() and len(parts) > 2:
-            address = parts[2]
+        if tx.chain == RUNE.get_chain():
+            rune_address = tx.from_address
+            asset_address = None
+        else:
+            rune_address = None
+            asset_address = tx.from_address
+        if len(parts) > 2:
+            if tx.chain != RUNE.get_chain():
+                rune_address = parts[2]
+            else:
+                asset_address = parts[2]
 
-        liquidity_units, rune_amt, pending_txid = pool.add_liquidity(
-            address, rune_amt, asset_amt, asset, tx.id
+        liquidity_units, rune_amt, asset_amt, pending_txid = pool.add_liquidity(
+            rune_address, asset_address, rune_amt, asset_amt, asset, tx.id
         )
 
         self.set_pool(pool)
@@ -701,11 +702,7 @@ class ThorchainState:
         # liquidity provision
         if liquidity_units == 0:
             return []
-        if (
-            pool.rune_balance != 0
-            and pool.asset_balance != 0
-            and len(pool.liquidity_providers) == 1
-        ):
+        if pool.total_units > 0 and len(pool.liquidity_providers) == 1:
             self.events.append(
                 Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}])
             )
@@ -715,15 +712,22 @@ class ThorchainState:
             [
                 {"pool": pool.asset},
                 {"liquidity_provider_units": liquidity_units},
-                {"rune_address": address},
+                {"rune_address": rune_address or ""},
                 {"rune_amount": rune_amt},
                 {"asset_amount": asset_amt},
-                {"asset_address": asset_address},
+                {"asset_address": asset_address or ""},
                 {f"{tx.chain}_txid": tx.id},
             ],
         )
         if pending_txid:
-            event.attributes.append({f"{RUNE.get_chain()}_txid": pending_txid})
+            if tx.chain == RUNE.get_chain():
+                event.attributes.append(
+                    {f"{pool.asset.get_chain()}_txid": pending_txid or ""}
+                )
+            else:
+                event.attributes.append(
+                    {f"{RUNE.get_chain()}_txid": pending_txid or ""}
+                )
         self.events.append(event)
 
         return []
@@ -1153,7 +1157,8 @@ class Event(Jsonable):
         attrs = deepcopy(sorted(self.attributes, key=lambda x: sorted(x.items())))
         for attr in attrs:
             for key, value in attr.items():
-                attr[key] = value.upper()
+                if value is not None:
+                    attr[key] = value.upper()
         if self.type == "outbound":
             attrs = [a for a in attrs if list(a.keys())[0] != "id"]
         return hash(str(attrs))
@@ -1257,21 +1262,34 @@ class Pool(Jsonable):
 
         self.liquidity_providers.append(lp)
 
-    def add_liquidity(self, address, rune_amt, asset_amt, asset, txid):
+    def add_liquidity(
+        self, rune_address, asset_address, rune_amt, asset_amt, asset, txid
+    ):
         """
         add liquidity rune/asset for an address
         """
-        lp = self.get_liquidity_provider(address)
-        # handle cross chain liquidity provision
-        if asset.get_chain() != RUNE.get_chain():
-            if asset_amt == 0:
-                lp.pending_rune += rune_amt
-                lp.pending_tx = txid
-                self.set_liquidity_provider(lp)
-                return 0, 0, None
+        fetch_address = asset_address
+        if rune_address != "":
+            fetch_address = rune_address
+        lp = self.get_liquidity_provider(fetch_address)
 
-            rune_amt += lp.pending_rune
-            lp.pending_rune = 0
+        asset_amt += lp.pending_asset
+        rune_amt += lp.pending_rune
+
+        # handle cross chain liquidity provision
+        if asset_amt == 0 and asset_address is not None:
+            lp.pending_rune += rune_amt
+            lp.pending_tx = txid
+            self.set_liquidity_provider(lp)
+            return 0, 0, 0, None
+        if rune_amt == 0 and rune_address is not None:
+            lp.pending_asset += asset_amt
+            lp.pending_tx = txid
+            self.set_liquidity_provider(lp)
+            return 0, 0, 0, None
+
+        lp.pending_rune = 0
+        lp.pending_asset = 0
         units = self._calc_liquidity_units(
             self.rune_balance, self.asset_balance, rune_amt, asset_amt,
         )
@@ -1280,13 +1298,12 @@ class Pool(Jsonable):
         self.total_units += units
         lp.units += units
         self.set_liquidity_provider(lp)
-        return units, rune_amt, lp.pending_tx
+        return units, rune_amt, asset_amt, lp.pending_tx
 
     def withdraw(self, address, withdraw_basis_points):
         """
         Withdraw from an address with given withdraw basis points
         """
-        logging.info(f"WithDrawng: {address}, {withdraw_basis_points}")
         if withdraw_basis_points > 10000 or withdraw_basis_points < 0:
             raise Exception("withdraw basis points should be between 0 - 10,000")
 
@@ -1298,13 +1315,12 @@ class Pool(Jsonable):
         self.set_liquidity_provider(lp)
         self.total_units -= units
         self.sub(rune_amt, asset_amt)
-        logging.info(f"WithDraw: {units}, {rune_amt}, {asset_amt}")
         return units, rune_amt, asset_amt
 
     def _calc_liquidity_units(self, R, A, r, a):
         """
         Calculate liquidity provider units
-        slipAdjustment = (1 - ABS((R a - r A)/((2 r + R) (a + A))))
+        slipAdjustment = (1 - ABS((R a - r A)/((r + R) (a + A))))
         units = ((P (a R + A r))/(2 A R))*slidAdjustment
         R = pool rune balance after
         A = pool asset balance after
@@ -1318,7 +1334,7 @@ class Pool(Jsonable):
         a = float(a)
         if R == 0.0 or A == 0.0 or P == 0:
             return int(r)
-        slipAdjustment = 1 - abs((R * a - r * A) / ((2 * r + R) * (a + A)))
+        slipAdjustment = 1 - abs((R * a - r * A) / ((r + R) * (a + A)))
         units = (P * (a * R + A * r)) / (2 * A * R)
         return int(units * slipAdjustment)
 
@@ -1356,6 +1372,7 @@ class LiquidityProvider(Jsonable):
         self.address = address
         self.units = 0
         self.pending_rune = 0
+        self.pending_asset = 0
         self.pending_tx = None
 
     def add(self, units):

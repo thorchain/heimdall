@@ -1396,7 +1396,7 @@ class TestThorchainState(unittest.TestCase):
             "PROVIDER-2",
             "VAULT",
             [Coin("BNB.BNB", 30000000)],
-            "ADD:BNB.BNB:PROVIDER-2",
+            "ADD:BNB.BNB",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
