@@ -485,7 +485,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "liquidity_provider_units": "16975085648"
+                "liquidity_provider_units": "15834033535"
             },
             {
                 "rune_address": "PROVIDER-2"
@@ -2277,10 +2277,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "173432324"
+                "emit_asset": "176438297"
             },
             {
-                "emit_rune": "40670969811"
+                "emit_rune": "41375889342"
             },
             {
                 "id": "TODO"
@@ -2340,7 +2340,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "8787193"
+                "rune_amt": "8787123"
             },
             {
                 "transaction_count": "1"
@@ -2423,7 +2423,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "8789456"
+                "rune_amt": "8789409"
             },
             {
                 "transaction_count": "1"
@@ -2446,10 +2446,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "173454659"
+                "emit_asset": "176461256"
             },
             {
-                "emit_rune": "40665725446"
+                "emit_rune": "41370498358"
             },
             {
                 "id": "TODO"
@@ -2481,7 +2481,7 @@
                 "coins": "112500 BNB.BNB"
             },
             {
-                "pool_deduct": "26375159"
+                "pool_deduct": "26375088"
             }
         ]
     },
@@ -2509,7 +2509,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "8774940"
+                "rune_amt": "8774014"
             },
             {
                 "transaction_count": "1"
@@ -2617,7 +2617,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "liquidity_provider_units": "16975085648"
+                "liquidity_provider_units": "15834033535"
             },
             {
                 "basis_points": "10000"
@@ -2626,10 +2626,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "117813807"
+                "emit_asset": "111801237"
             },
             {
-                "emit_rune": "27594566676"
+                "emit_rune": "26184873261"
             },
             {
                 "id": "TODO"
