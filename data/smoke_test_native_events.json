@@ -6,7 +6,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "pool_status": "Enabled"
+                "pool_status": "Available"
             }
         ]
     },
@@ -62,7 +62,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "pool_status": "Enabled"
+                "pool_status": "Available"
             }
         ]
     },
@@ -118,7 +118,7 @@
                 "pool": "ETH.ETH"
             },
             {
-                "pool_status": "Enabled"
+                "pool_status": "Available"
             }
         ]
     },
@@ -174,7 +174,7 @@
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "pool_status": "Enabled"
+                "pool_status": "Available"
             }
         ]
     },
@@ -2351,7 +2351,7 @@
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "pool_status": "Bootstrap"
+                "pool_status": "Staged"
             }
         ]
     },
@@ -2520,7 +2520,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "pool_status": "Bootstrap"
+                "pool_status": "Staged"
             }
         ]
     },
@@ -2603,7 +2603,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "pool_status": "Bootstrap"
+                "pool_status": "Staged"
             }
         ]
     },

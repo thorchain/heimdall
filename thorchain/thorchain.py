@@ -211,8 +211,8 @@ class ThorchainState:
             if p.asset == pool.asset:
                 if (
                     pool.asset_balance == 0 or pool.rune_balance == 0
-                ) and pool.status == "Enabled":
-                    pool.status = "Bootstrap"
+                ) and pool.status == "Available":
+                    pool.status = "Staged"
 
                     # Generate pool event with new status
                     event = Event(
@@ -394,7 +394,7 @@ class ThorchainState:
             return
 
         # get the total provided liquidity
-        # TODO: skip non-enabled pools
+        # TODO: skip non-available pools
         total_provided_liquidity = 0
         for pool in self.pools:
             total_provided_liquidity += pool.rune_balance
@@ -704,7 +704,7 @@ class ThorchainState:
             return []
         if pool.total_units > 0 and len(pool.liquidity_providers) == 1:
             self.events.append(
-                Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}])
+                Event("pool", [{"pool": pool.asset}, {"pool_status": "Available"}])
             )
         # generate event for liquidity provision transaction
         event = Event(
@@ -1180,7 +1180,7 @@ class Event(Jsonable):
 
 
 class Pool(Jsonable):
-    def __init__(self, asset, rune_amt=0, asset_amt=0, status="Enabled"):
+    def __init__(self, asset, rune_amt=0, asset_amt=0, status="Available"):
         self.asset = asset
         if isinstance(asset, str):
             self.asset = Asset(asset)
