@@ -171,7 +171,7 @@ class ThorchainState:
         self.bond_reward = 0
         self.vault_pubkey = None
         self.network_fees = {}
-        self.estimateSize = 220
+        self.estimateSize = 192
         self.tx_rate = 0
 
     def set_tx_rate(self, tx_rate):
@@ -784,7 +784,7 @@ class ThorchainState:
         # if this is our last liquidity provider of bnb, subtract a little BNB for gas.
         emit_asset = asset_amt
         outbound_asset_amt = asset_amt
-        self.estimateSize = 220
+        self.estimateSize = 192
         if pool.total_units == 0:
             if pool.asset.is_bnb():
                 gas_amt = gas.amount
@@ -800,7 +800,7 @@ class ThorchainState:
             elif pool.asset.is_btc():
                 # the last withdraw tx , it need to spend everything
                 # so it will use about 2 UTXO , estimate size is 288
-                self.estimateSize = 289
+                self.estimateSize = 233
                 # left enough gas asset otherwise it will get into negative
                 gas = self.get_gas(asset.get_chain())
                 emit_asset -= int(dynamic_fee)
