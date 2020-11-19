@@ -800,7 +800,7 @@ class ThorchainState:
             elif pool.asset.is_btc():
                 # the last withdraw tx , it need to spend everything
                 # so it will use about 2 UTXO , estimate size is 288
-                self.estimateSize = 288
+                self.estimateSize = 289
                 # left enough gas asset otherwise it will get into negative
                 gas = self.get_gas(asset.get_chain())
                 emit_asset -= int(dynamic_fee)
