@@ -28,9 +28,9 @@ aliases_eth = {
 aliases_thor = {
     "MASTER": "tthor1nrsk6f4kalwwrqqyrfmxzl96hyjhe96t4gmvp2",
     "CONTRIB": "tthor1m8prd4pvqe5p3cu7tu82pn50a5f9xzxzetc35t",
-    "USER-1": "tthor1j08ys4ct2hzzc2hcz6h2hgrvlmsjynawtaa5zs",
-    "PROVIDER-1": "tthor1zupk5lmc84r2dh738a9g3zscavannjy3nzplwt",
-    "PROVIDER-2": "tthor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkddurry6",
+    "USER-1": "tthor1z63f3mzwv3g75az80xwmhrawdqcjpaekk0kd54",
+    "PROVIDER-1": "tthor1wz78qmrkplrdhy37tw0tnvn0tkm5pqd6zdp257",
+    "PROVIDER-2": "tthor1xwusttz86hqfuk5z7amcgqsg7vp6g8zhsp5lu2",
     "VAULT": "tthor1g98cy3n9mmjrpn0sxmn63lztelera37nrytwp2",
     "RESERVE": "tthor1dheycdevq39qlkxs2a6wuuzyn4aqxhve3hhmlw",
     "BOND": "tthor17gw75axcnr8747pkanye45pnrwk7p9c3uhzgff",

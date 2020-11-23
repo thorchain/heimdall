@@ -49,9 +49,12 @@ class MockThorchain(HttpClient):
 
     chain = "THOR"
     private_keys = {
-        "USER-1": "ef235aacf90d9f4aadd8c92e4b2562e1d9eb97f0df9ba3b508258739cb013db2",
-        "PROVIDER-1": "289c2857d4598e37fb9647507e47a309d6133539bf21a8b9cb6df88fd5232032",
-        "PROVIDER-2": "e810f1d7d6691b4a7a73476f3543bd87d601f9a53e7faf670eac2c5b517d83bf",
+        # vintage announce rapid clip spare stomach matter camp noble habit beef amateur chimney time fuel machine culture end toe oval isolate laptop solar gift
+        "USER-1": "8c9ae14956daa9854fea2e33c0a50e039d5943de142d1153ceb9ea8c671b04dc",
+        # discover blue crunch cart club fish airport crazy roast hybrid scheme picnic veteran mango beach narrow luxury glory dynamic crawl symbol win sell dress
+        "PROVIDER-1": "f65ebc1bdb78067923bb9e839360e2925478780779c8caf69c0b45f80e9c1501",
+        # sock true leave evil budget lonely foster danger reopen anxiety dash naive list advance unhappy trust inmate culture bounce museum light more pear story
+        "PROVIDER-2": "e00609419daa4a0e9e9668921bf0b746e1c72090a6a0ce2206f3abcb56b8c1d1",
     }
 
     def get_balance(self, address, asset=Asset("THOR.RUNE")):
