@@ -49,11 +49,17 @@ class MockThorchain(HttpClient):
 
     chain = "THOR"
     private_keys = {
-        # vintage announce rapid clip spare stomach matter camp noble habit beef amateur chimney time fuel machine culture end toe oval isolate laptop solar gift
+        # vintage announce rapid clip spare stomach matter camp noble habit
+        # beef amateur chimney time fuel machine culture end toe oval isolate
+        # laptop solar gift
         "USER-1": "8c9ae14956daa9854fea2e33c0a50e039d5943de142d1153ceb9ea8c671b04dc",
-        # discover blue crunch cart club fish airport crazy roast hybrid scheme picnic veteran mango beach narrow luxury glory dynamic crawl symbol win sell dress
+        # discover blue crunch cart club fish airport crazy roast hybrid scheme
+        # picnic veteran mango beach narrow luxury glory dynamic crawl symbol
+        # win sell dress
         "PROVIDER-1": "f65ebc1bdb78067923bb9e839360e2925478780779c8caf69c0b45f80e9c1501",
-        # sock true leave evil budget lonely foster danger reopen anxiety dash naive list advance unhappy trust inmate culture bounce museum light more pear story
+        # sock true leave evil budget lonely foster danger reopen anxiety dash
+        # naive list advance unhappy trust inmate culture bounce museum light
+        # more pear story
         "PROVIDER-2": "e00609419daa4a0e9e9668921bf0b746e1c72090a6a0ce2206f3abcb56b8c1d1",
     }
 
