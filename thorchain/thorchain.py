@@ -891,6 +891,8 @@ class ThorchainState:
 
         asset = Asset(parts[1])
 
+        events = []
+
         # check that we have one coin
         if len(tx.coins) != 1:
             reason = "unknown request: not expecting multiple coins in a swap"
@@ -947,12 +949,12 @@ class ThorchainState:
                 id=Transaction.empty_id,
             )
 
-            self.events.append(
+            events.append(
                 Event("outbound", [{"in_tx_id": in_tx.id}, *out_tx.get_attributes()])
             )
 
             # generate event for SWAP transaction
-            self.events.append(
+            events.append(
                 Event(
                     "swap",
                     [
@@ -1026,7 +1028,7 @@ class ThorchainState:
         ]
 
         # generate event for SWAP transaction
-        self.events.append(
+        events.append(
             Event(
                 "swap",
                 [
@@ -1040,6 +1042,7 @@ class ThorchainState:
                 ],
             )
         )
+        self.events += events
         return self.handle_fee(tx, out_txs)
 
     def swap(self, coin, asset):
