@@ -768,7 +768,7 @@
                 "coins": "3 BTC.BTC"
             },
             {
-                "pool_deduct": "1502"
+                "pool_deduct": "1636"
             }
         ],
         "block_height": null,
@@ -1314,7 +1314,7 @@
                 "coins": "112500 BNB.BNB"
             },
             {
-                "pool_deduct": "5863335"
+                "pool_deduct": "11170237"
             }
         ],
         "block_height": null,
@@ -1390,7 +1390,7 @@
                 "coins": "112500 BNB.BNB"
             },
             {
-                "pool_deduct": "8600755"
+                "pool_deduct": "14424672"
             }
         ],
         "block_height": null,
@@ -1466,7 +1466,7 @@
                 "coins": "112500 BNB.BNB"
             },
             {
-                "pool_deduct": "11864584"
+                "pool_deduct": "18095330"
             }
         ],
         "block_height": null,
@@ -1523,7 +1523,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "3953345"
+                "rune_amt": "6029295"
             },
             {
                 "transaction_count": "1"
@@ -1542,7 +1542,7 @@
                 "coins": "3 BTC.BTC"
             },
             {
-                "pool_deduct": "1467"
+                "pool_deduct": "1597"
             }
         ]
     },
