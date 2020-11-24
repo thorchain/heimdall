@@ -1608,10 +1608,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "2"
+                "asset_amt": "0"
             },
             {
-                "rune_amt": "978"
+                "rune_amt": "0"
             },
             {
                 "transaction_count": "1"
@@ -1683,7 +1683,7 @@
                 "coins": "112500 BNB.BNB"
             },
             {
-                "pool_deduct": "15198670"
+                "pool_deduct": "21469276"
             }
         ]
     },
@@ -1757,7 +1757,7 @@
                 "coins": "112500 BNB.BNB"
             },
             {
-                "pool_deduct": "19447981"
+                "pool_deduct": "25896231"
             }
         ],
         "block_height": null,
@@ -1947,10 +1947,10 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "15899776 BNB.LOK-3C0"
+                "coins": "21171406 BNB.LOK-3C0"
             },
             {
-                "pool_deduct": "19435506"
+                "pool_deduct": "25879421"
             }
         ]
     },
@@ -2024,7 +2024,7 @@
                 "coins": "112500 BNB.BNB"
             },
             {
-                "pool_deduct": "21768448"
+                "pool_deduct": "28242381"
             }
         ],
         "block_height": null,
@@ -2162,10 +2162,10 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "20777861 BNB.LOK-3C0"
+                "coins": "26645480 BNB.LOK-3C0"
             },
             {
-                "pool_deduct": "21280476"
+                "pool_deduct": "27609546"
             }
         ],
         "block_height": null,
@@ -2289,7 +2289,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "7093492"
+                "rune_amt": "9203182"
             },
             {
                 "transaction_count": "1"
@@ -2308,7 +2308,7 @@
                 "coins": "112500 BNB.BNB"
             },
             {
-                "pool_deduct": "21284041"
+                "pool_deduct": "27614169"
             }
         ]
     },
@@ -2462,7 +2462,7 @@
                 "asset_amt": "37500"
             },
             {
-                "rune_amt": "7090747"
+                "rune_amt": "9199400"
             },
             {
                 "transaction_count": "1"
@@ -2481,7 +2481,7 @@
                 "coins": "112500 BNB.BNB"
             },
             {
-                "pool_deduct": "21278138"
+                "pool_deduct": "27606179"
             }
         ]
     },
@@ -2602,7 +2602,7 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "111137536"
+                "emit_asset": "111137537"
             },
             {
                 "emit_rune": "59163465413"
@@ -2689,7 +2689,7 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "70826852"
+                "emit_asset": "70864352"
             },
             {
                 "emit_rune": "17352442535"

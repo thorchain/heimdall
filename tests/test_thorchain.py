@@ -1995,7 +1995,7 @@ class TestThorchainState(unittest.TestCase):
                     {"liquidity_provider_units": "49500000000"},
                     {"basis_points": "10000"},
                     {"asymmetry": "0.000000000000000000"},
-                    {"emit_asset": "5098575000"},
+                    {"emit_asset": "5098612500"},
                     {"emit_rune": "54448798544"},
                     *tx.get_attributes(),
                 ],
