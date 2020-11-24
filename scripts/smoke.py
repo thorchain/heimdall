@@ -30,7 +30,9 @@ RUNE = get_rune_asset()
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--binance", default="http://localhost:26660", help="Mock binance server",
+        "--binance",
+        default="http://localhost:26660",
+        help="Mock binance server",
     )
     parser.add_argument(
         "--bitcoin",
@@ -38,7 +40,9 @@ def main():
         help="Regtest bitcoin server",
     )
     parser.add_argument(
-        "--ethereum", default="http://localhost:8545", help="Localnet ethereum server",
+        "--ethereum",
+        default="http://localhost:8545",
+        help="Localnet ethereum server",
     )
     parser.add_argument(
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
@@ -341,6 +345,7 @@ class Smoker:
                         # figure out which outbound event is which tx
                         for out in outbounds:
                             if out.coins_str() == evt_t.get("coin"):
+                                self.thorchain_state.adjust_btc_gas([out])
                                 self.thorchain_state.generate_outbound_events(
                                     txn, [out]
                                 )
