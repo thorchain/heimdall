@@ -596,13 +596,11 @@ class ThorchainState:
                 if max_gas > gas.amount:
                     gap = max_gas - gas.amount
                     pool = self.get_pool(gas.asset)
-                    logging.info(f"adjust gas before : {pool}")
                     rune_amt = pool.get_asset_in_rune(gap)
                     pool.add(rune_amt, 0)
                     pool.sub(0, gap)
                     self.reserve -= rune_amt
                     self.set_pool(pool)
-                    logging.info(f"adjust gas after : {pool}")
 
     def handle_reserve(self, tx):
         """
