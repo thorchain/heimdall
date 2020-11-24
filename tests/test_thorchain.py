@@ -969,7 +969,7 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful liquidity provision
         expected_events = [
-            Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}]),
+            Event("pool", [{"pool": pool.asset}, {"pool_status": "Available"}]),
             Event(
                 "add_liquidity",
                 [
@@ -1080,7 +1080,7 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful liquidity provision
         expected_events = [
-            Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}]),
+            Event("pool", [{"pool": pool.asset}, {"pool_status": "Available"}]),
             Event(
                 "add_liquidity",
                 [
@@ -1182,7 +1182,7 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful liquidity provision
         expected_events = [
-            Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}]),
+            Event("pool", [{"pool": pool.asset}, {"pool_status": "Available"}]),
             Event(
                 "add_liquidity",
                 [
@@ -1520,7 +1520,7 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful provide liquidity
         expected_events = [
-            Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}]),
+            Event("pool", [{"pool": pool.asset}, {"pool_status": "Available"}]),
             Event(
                 "add_liquidity",
                 [
@@ -1627,7 +1627,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.total_units, 50000000000)
 
         expected_events = [
-            Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Enabled"}]),
+            Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Available"}]),
             Event(
                 "add_liquidity",
                 [
@@ -1759,7 +1759,7 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful withdraw
         expected_events += [
-            Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Bootstrap"}]),
+            Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Staged"}]),
             Event(
                 "withdraw",
                 [
@@ -1845,7 +1845,7 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(pool.total_units, 50000000000)
 
         expected_events = [
-            Event("pool", [{"pool": pool.asset}, {"pool_status": "Enabled"}]),
+            Event("pool", [{"pool": pool.asset}, {"pool_status": "Available"}]),
             Event(
                 "add_liquidity",
                 [
@@ -1979,7 +1979,7 @@ class TestThorchainState(unittest.TestCase):
 
         # check event generated for successful withdraw
         expected_events += [
-            Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Bootstrap"}]),
+            Event("pool", [{"pool": "BNB.BNB"}, {"pool_status": "Staged"}]),
             Event(
                 "withdraw",
                 [
@@ -2099,7 +2099,7 @@ class TestThorchainState(unittest.TestCase):
         thorchain.liquidity["BNB.LOKI"] = 103
         thorchain.total_bonded = 5000000000000
         thorchain.handle_rewards()
-        self.assertEqual(thorchain.pools[1].rune_balance, 50000997031)
+        self.assertEqual(thorchain.pools[1].rune_balance, 50001026681)
 
 
 class TestEvent(unittest.TestCase):
