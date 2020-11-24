@@ -17,10 +17,7 @@ def get_rune_asset():
 
 
 def requests_retry_session(
-    retries=6,
-    backoff_factor=1,
-    status_forcelist=(500, 502, 504),
-    session=None,
+    retries=6, backoff_factor=1, status_forcelist=(500, 502, 504), session=None,
 ):
     """
     Creates a request session that has auto retry
@@ -48,6 +45,15 @@ def get_share(part, total, alloc):
         return 0
     getcontext().prec = 18
     return int(round(Decimal(alloc) / (Decimal(total) / Decimal(part))))
+
+
+def get_diff(current, previous):
+    if current == previous:
+        return 0
+    try:
+        return (abs(current - previous) / ((current + previous) / 2)) * 100.0
+    except ZeroDivisionError:
+        return float("inf")
 
 
 class HttpClient:
@@ -182,6 +188,12 @@ class Coin(Jsonable):
     def __lt__(self, other):
         return self.amount < other.amount
 
+    def __sub__(self, other):
+        return self.amount - other.amount
+
+    def __add__(self, other):
+        return self.amount + other.amount
+
     def __hash__(self):
         return hash(str(self))
 
@@ -194,6 +206,9 @@ class Coin(Jsonable):
 
     def __str__(self):
         return f"{self.amount:0,.0f}_{self.asset}"
+
+    def str_amt(self):
+        return f"{self.amount:0,.0f}"
 
 
 class Transaction(Jsonable):
@@ -288,11 +303,10 @@ class Transaction(Jsonable):
             return Asset(parts[1])
         return None
 
-    def is_cross_chain_stake(self):
-        if not self.memo.startswith("STAKE:"):
+    def is_cross_chain_provision(self):
+        if not self.memo.startswith("ADD:"):
             return False
-        asset = self.get_asset_from_memo()
-        if asset and asset.get_chain() != self.chain:
+        if len(self.memo.split(":")) == 3:
             return True
         return False
 

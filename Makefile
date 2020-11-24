@@ -1,7 +1,7 @@
 include Makefile.cicd
 IMAGE_NAME = registry.gitlab.com/thorchain/heimdall
 LOGLEVEL?=INFO
-RUNE?=BNB.RUNE-67C
+RUNE?=THOR.RUNE
 DOCKER_OPTS = --network=host --rm -e RUNE=${RUNE} -e LOGLEVEL=${LOGLEVEL} -e PYTHONPATH=/app -v ${PWD}:/app -w /app
 
 clean:
@@ -28,8 +28,8 @@ test-coverage-report:
 test-watch:
 	@PYTHONPATH=${PWD} ptw tests/test_*
 
-benchmark-stake:
-	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/benchmark.py --tx-type=stake --num=${NUM}
+benchmark-provision:
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/benchmark.py --tx-type=add --num=${NUM}
 
 benchmark-swap:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/benchmark.py --tx-type=swap --num=${NUM}
@@ -40,14 +40,17 @@ smoke:
 kube-smoke:
 	@kubectl replace --force -f kube/smoke.yml
 
-kube-benchmark-stake:
-	@sed -e 's|NUM|${NUM}|g' kube/benchmark-stake.yml | kubectl replace --force -f -
+kube-benchmark-provision:
+	@sed -e 's|NUM|${NUM}|g' kube/benchmark-provision.yml | kubectl replace --force -f -
 
 kube-benchmark-swap:
 	@sed -e 's|NUM|${NUM}|g' kube/benchmark-swap.yml | kubectl replace --force -f -
 
 health:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py
+
+health-chaosnet:
+	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/health.py --binance-api=https://dex.binance.org --thorchain=http://18.159.165.210:1317 --midgard=http://18.159.165.210:8080 --margin-err=0.1
 
 bitcoin-reorg:
 	@docker run ${DOCKER_OPTS} ${IMAGE_NAME} python scripts/smoke.py --fast-fail=True --bitcoin-reorg=True

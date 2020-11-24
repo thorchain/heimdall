@@ -147,8 +147,8 @@ class MockEthereum:
             asset = txn.get_asset_from_memo()
             if asset:
                 chain = asset.get_chain()
-            # we use RUNE BNB address to identify a cross chain stake
-            if txn.memo.startswith("STAKE"):
+            # we use RUNE BNB address to identify a cross chain liqudity provision
+            if txn.memo.startswith("ADD"):
                 chain = RUNE.get_chain()
             addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)

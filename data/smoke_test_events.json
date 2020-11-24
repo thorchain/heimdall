@@ -31,19 +31,30 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "pool",
         "attributes": [
             {
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "50000000000"
+            "pool_status": "Available"
+            }
+        ]
+    },
+    {
+        "type": "add_liquidity",
+        "attributes": [
+            {
+                "pool": "BNB.BNB"
             },
             {
-                "rune_address": "STAKER-1"
+                "liquidity_provider_units": "50000000000"
             },
             {
-                "asset_address": "STAKER-1"
+                "rune_address": "PROVIDER-1"
+            },
+            {
+                "asset_address": "PROVIDER-1"
             },
             {
                 "rune_amount": "50000000000"
@@ -79,16 +90,27 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "pool",
         "attributes": [
             {
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "50000000000"
+            "pool_status": "Available"
+            }
+        ]
+    },
+    {
+        "type": "add_liquidity",
+        "attributes": [
+            {
+                "pool": "BTC.BTC"
             },
             {
-                "rune_address": "STAKER-1"
+                "liquidity_provider_units": "50000000000"
+            },
+            {
+                "rune_address": "PROVIDER-1"
             },
             {
                 "rune_amount": "50000000000"
@@ -97,7 +119,7 @@
                 "asset_amount": "150000000"
             },
             {
-                "asset_address": "STAKER-1"
+                "asset_address": "PROVIDER-1"
             },
             {
                 "BTC_txid": "TODO"
@@ -109,6 +131,7 @@
         "block_height": null,
         "category": null
     },
+
     {
         "type": "rewards",
         "attributes": [
@@ -130,16 +153,27 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "pool",
         "attributes": [
             {
                 "pool": "ETH.ETH"
             },
             {
-                "stake_units": "50000000000"
+            "pool_status": "Available"
+            }
+        ]
+    },
+    {
+        "type": "add_liquidity",
+        "attributes": [
+            {
+                "pool": "ETH.ETH"
             },
             {
-                "rune_address": "STAKER-1"
+                "liquidity_provider_units": "50000000000"
+            },
+            {
+                "rune_address": "PROVIDER-1"
             },
             {
                 "rune_amount": "50000000000"
@@ -148,7 +182,7 @@
                 "asset_amount": "4000000000"
             },
             {
-                "asset_address": "STAKER-1"
+                "asset_address": "PROVIDER-1"
             },
             {
                 "ETH_txid": "TODO"
@@ -181,16 +215,16 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "347937293"
+                "liquidity_provider_units": "347937293"
             },
             {
-                "rune_address": "STAKER-2"
+                "rune_address": "PROVIDER-2"
             },
             {
                 "rune_amount": "200000000"
@@ -199,7 +233,7 @@
                 "asset_amount": "1500000"
             },
             {
-                "asset_address": "STAKER-2"
+                "asset_address": "PROVIDER-2"
             },
             {
                 "BTC_txid": "TODO"
@@ -222,16 +256,27 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "pool",
         "attributes": [
             {
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "stake_units": "50000000000"
+            "pool_status": "Available"
+            }
+        ]
+    },
+    {
+        "type": "add_liquidity",
+        "attributes": [
+            {
+                "pool": "BNB.LOK-3C0"
             },
             {
-                "rune_address": "STAKER-1"
+                "liquidity_provider_units": "50000000000"
+            },
+            {
+                "rune_address": "PROVIDER-1"
             },
             {
                 "rune_amount": "50000000000"
@@ -240,7 +285,7 @@
                 "asset_amount": "40000000000"
             },
             {
-                "asset_address": "STAKER-1"
+                "asset_address": "PROVIDER-1"
             },
             {
                 "BNB_txid": "TODO"
@@ -307,7 +352,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-2"
+                "from": "PROVIDER-2"
             },
             {
                 "to": "VAULT"
@@ -399,7 +444,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-2"
+                "from": "PROVIDER-2"
             },
             {
                 "to": "VAULT"
@@ -475,7 +520,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-1"
+                "from": "PROVIDER-1"
             },
             {
                 "to": "VAULT"
@@ -567,7 +612,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-2"
+                "from": "PROVIDER-2"
             },
             {
                 "to": "VAULT"
@@ -659,7 +704,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-2"
+                "from": "PROVIDER-2"
             },
             {
                 "to": "VAULT"
@@ -704,16 +749,16 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "4161464835"
+                "liquidity_provider_units": "4161464835"
             },
             {
-                "rune_address": "STAKER-2"
+                "rune_address": "PROVIDER-2"
             },
             {
                 "rune_amount": "0"
@@ -722,7 +767,7 @@
                 "asset_amount": "30000000"
             },
             {
-                "asset_address": "STAKER-2"
+                "asset_address": "PROVIDER-2"
             },
             {
                 "BNB_txid": "TODO"
@@ -742,16 +787,16 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "4648560839"
+                "liquidity_provider_units": "4648560839"
             },
             {
-                "rune_address": "STAKER-2"
+                "rune_address": "PROVIDER-2"
             },
             {
                 "rune_amount": "10000000000"
@@ -760,7 +805,7 @@
                 "asset_amount": "0"
             },
             {
-                "asset_address": "STAKER-2"
+                "asset_address": "PROVIDER-2"
             },
             {
                 "BNB_txid": "TODO"
@@ -780,16 +825,16 @@
         "category": null
     },
     {
-        "type": "stake",
+        "type": "add_liquidity",
         "attributes": [
             {
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "29392822456"
+                "liquidity_provider_units": "29392822456"
             },
             {
-                "rune_address": "STAKER-2"
+                "rune_address": "PROVIDER-2"
             },
             {
                 "rune_amount": "30000000000"
@@ -798,7 +843,7 @@
                 "asset_amount": "90000000"
             },
             {
-                "asset_address": "STAKER-2"
+                "asset_address": "PROVIDER-2"
             },
             {
                 "BNB_txid": "TODO"
@@ -818,7 +863,7 @@
         "category": null
     },
     {
-        "type": "add",
+        "type": "donate",
         "attributes": [
             {
                 "pool": "BNB.BNB"
@@ -830,7 +875,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-2"
+                "from": "PROVIDER-2"
             },
             {
                 "to": "VAULT"
@@ -839,7 +884,7 @@
                 "coin": "30000000 BNB.BNB, 5000000000 BNB.RUNE-67C"
             },
             {
-                "memo": "ADD:BNB.BNB"
+                "memo": "DONATE:BNB.BNB"
             }
         ],
         "block_height": null,
@@ -1237,10 +1282,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "2"
+                "asset_amt": "0"
             },
             {
-                "rune_amt": "1136"
+                "rune_amt": "0"
             },
             {
                 "transaction_count": "1"
@@ -1450,7 +1495,7 @@
                 "liquidity_fee_in_rune": "10447890"
             },
             {
-                "emit_asset": "830681591 BNB.RUNE-67C"
+                "emit_asset": "830681564 BNB.RUNE-67C"
             },
             {
                 "id": "TODO"
@@ -1630,13 +1675,13 @@
         "category": null
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "ETH.ETH"
             },
             {
-                "stake_units": "5000000000"
+                "liquidity_provider_units": "5000000000"
             },
             {
                 "basis_points": "1000"
@@ -1657,7 +1702,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-1"
+                "from": "PROVIDER-1"
             },
             {
                 "to": "VAULT"
@@ -2118,13 +2163,13 @@
         "category": null
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "5000000000"
+                "liquidity_provider_units": "5000000000"
             },
             {
                 "basis_points": "1000"
@@ -2136,7 +2181,7 @@
                 "emit_asset": "11992613"
             },
             {
-                "emit_rune": "6641361936"
+                "emit_rune": "6641361825"
             },
             {
                 "id": "TODO"
@@ -2145,7 +2190,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-1"
+                "from": "PROVIDER-1"
             },
             {
                 "to": "VAULT"
@@ -2196,10 +2241,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "1"
+                "asset_amt": "0"
             },
             {
-                "rune_amt": "554"
+                "rune_amt": "0"
             },
             {
                 "transaction_count": "1"
@@ -2352,7 +2397,7 @@
                 "coin": "10000000000 BNB.RUNE-67C"
             },
             {
-                "memo": "SWAP:BNB.BNB:STAKER-1:23853375"
+                "memo": "SWAP:BNB.BNB:PROVIDER-1:23853375"
             }
         ],
         "block_height": null,
@@ -2443,7 +2488,7 @@
                 "coin": "10000000000 BNB.RUNE-67C"
             },
             {
-                "memo": "SWAP:BNB.BNB:STAKER-1:22460886"
+                "memo": "SWAP:BNB.BNB:PROVIDER-1:22460886"
             }
         ],
         "block_height": null,
@@ -2504,7 +2549,7 @@
                 "code": "105"
             },
             {
-                "reason": "address format not supported: bnbSTAKER-1"
+                "reason": "address format not supported: bnbPROVIDER-1"
             },
             {
                 "id": "TODO"
@@ -2522,7 +2567,7 @@
                 "coin": "10000000 BNB.BNB"
             },
             {
-                "memo": "SWAP:BNB.RUNE-67C:bnbSTAKER-1"
+                "memo": "SWAP:BNB.RUNE-67C:bnbPROVIDER-1"
             }
         ],
         "block_height": null,
@@ -3102,13 +3147,13 @@
         "category": null
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "25000000000"
+                "liquidity_provider_units": "25000000000"
             },
             {
                 "basis_points": "5000"
@@ -3129,7 +3174,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-1"
+                "from": "PROVIDER-1"
             },
             {
                 "to": "VAULT"
@@ -3180,7 +3225,7 @@
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "pool_status": "Bootstrap"
+                "pool_status": "Staged"
             }
         ],
         "block_height": null,
@@ -3203,13 +3248,13 @@
         "category": null
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BNB.LOK-3C0"
             },
             {
-                "stake_units": "50000000000"
+                "liquidity_provider_units": "50000000000"
             },
             {
                 "basis_points": "10000"
@@ -3230,7 +3275,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-1"
+                "from": "PROVIDER-1"
             },
             {
                 "to": "VAULT"
@@ -3307,13 +3352,13 @@
         "category": null
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "25000000000"
+                "liquidity_provider_units": "25000000000"
             },
             {
                 "basis_points": "10000"
@@ -3334,7 +3379,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-1"
+                "from": "PROVIDER-1"
             },
             {
                 "to": "VAULT"
@@ -3411,13 +3456,13 @@
         "category": null
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BTC.BTC"
             },
             {
-                "stake_units": "347937293"
+                "liquidity_provider_units": "347937293"
             },
             {
                 "basis_points": "10000"
@@ -3426,10 +3471,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "834535"
+                "emit_asset": "834536"
             },
             {
-                "emit_rune": "462155490"
+                "emit_rune": "462155478"
             },
             {
                 "id": "TODO"
@@ -3438,7 +3483,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-2"
+                "from": "PROVIDER-2"
             },
             {
                 "to": "VAULT"
@@ -3489,10 +3534,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "1"
+                "asset_amt": "0"
             },
             {
-                "rune_amt": "554"
+                "rune_amt": "0"
             },
             {
                 "transaction_count": "1"
@@ -3508,7 +3553,7 @@
                 "pool": "BNB.BNB"
             },
             {
-                "pool_status": "Bootstrap"
+                "pool_status": "Staged"
             }
         ],
         "block_height": null,
@@ -3531,13 +3576,13 @@
         "category": null
     },
     {
-        "type": "unstake",
+        "type": "withdraw",
         "attributes": [
             {
                 "pool": "BNB.BNB"
             },
             {
-                "stake_units": "38202848130"
+                "liquidity_provider_units": "38202848130"
             },
             {
                 "basis_points": "10000"
@@ -3558,7 +3603,7 @@
                 "chain": "BNB"
             },
             {
-                "from": "STAKER-2"
+                "from": "PROVIDER-2"
             },
             {
                 "to": "VAULT"
