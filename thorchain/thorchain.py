@@ -134,6 +134,8 @@ class ThorchainClient(HttpClient):
         Get the current block height of mock binance
         """
         data = self.fetch("/thorchain/lastblock")
+        if isinstance(data, list):
+            data = data[0]
         return int(data["thorchain"])
 
     def get_vault_address(self, chain):
