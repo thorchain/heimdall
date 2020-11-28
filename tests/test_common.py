@@ -447,7 +447,7 @@ class TestTransaction(unittest.TestCase):
             txn.to_json(),
             '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
             '"to_address": "VAULT", "memo": "ADD:BNB", "coins": '
-            '[{"asset": "BNB.BNB", "amount": 100}], "gas": null, "fee": null}',
+            '[{"asset": "BNB.BNB", "amount": 100}], "gas": null, "max_gas": null, "fee": null}',
         )
         txn.coins = [Coin("BNB.BNB", 1000000000), Coin(RUNE, 1000000000)]
         self.assertEqual(
@@ -457,21 +457,21 @@ class TestTransaction(unittest.TestCase):
             '{"asset": "BNB.BNB", "amount": 1000000000}, '
             '{"asset": "'
             + RUNE
-            + '", "amount": 1000000000}], "gas": null, "fee": null}',
+            + '", "amount": 1000000000}], "gas": null, "max_gas": null, "fee": null}',
         )
         txn.coins = None
         self.assertEqual(
             txn.to_json(),
             '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
             '"to_address": "VAULT", "memo": "ADD:BNB", "coins": null, '
-            '"gas": null, "fee": null}',
+            '"gas": null, "max_gas": null, "fee": null}',
         )
         txn.gas = [Coin("BNB.BNB", 37500)]
         self.assertEqual(
             txn.to_json(),
             '{"id": "TODO", "chain": "BNB", "from_address": "USER", '
             '"to_address": "VAULT", "memo": "ADD:BNB", "coins": null,'
-            ' "gas": [{"asset": "BNB.BNB", "amount": 37500}], "fee": null}',
+            ' "gas": [{"asset": "BNB.BNB", "amount": 37500}], "max_gas": null, "fee": null}',
         )
 
     def test_from_dict(self):

@@ -10,7 +10,8 @@
                 "amount": 1000000000
             }
         ],
-        "gas": null
+        "gas": null,
+        "max_gas": null
     },
     {
         "chain": "BNB",
@@ -27,7 +28,8 @@
                 "amount": 150000000000
             }
         ],
-        "gas": null
+        "gas": null,
+        "max_gas": null
     },
     {
         "chain": "BNB",
@@ -44,7 +46,8 @@
                 "amount": 40000000000
             }
         ],
-        "gas": null
+        "gas": null,
+        "max_gas": null
     },
     {
         "chain": "BNB",
