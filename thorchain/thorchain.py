@@ -237,7 +237,10 @@ class ThorchainState:
         for tx in txs:
             if not tx.gas:
                 continue
-            for gas in tx.gas:
+            gases = tx.gas
+            if tx.gas[0].asset.is_btc():
+                gases = tx.max_gas
+            for gas in gases:
                 if gas.asset not in gas_coins:
                     gas_coins[gas.asset] = Coin(gas.asset)
                     gas_coin_count[gas.asset] = 0
@@ -352,6 +355,7 @@ class ThorchainState:
 
                     coin.amount -= asset_fee
                     if coin.asset.is_btc() and not asset_fee == 0:
+                        tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
                         gap = int(asset_fee / 2) - self.estimate_size * int(
                             self.tx_rate * 3 / 2
                         )
@@ -859,6 +863,7 @@ class ThorchainState:
                 [Coin(asset, outbound_asset_amt)],
                 f"OUT:{tx.id.upper()}",
                 gas=[gas],
+                max_gas=[Coin(gas.asset, dynamic_fee)],
             ),
             Transaction(
                 RUNE.get_chain(),
