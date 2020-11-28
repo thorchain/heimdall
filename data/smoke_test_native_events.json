@@ -887,10 +887,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "0"
+                "asset_amt": "1"
             },
             {
-                "rune_amt": "0"
+                "rune_amt": "545"
             },
             {
                 "transaction_count": "1"
@@ -1055,7 +1055,7 @@
                 "liquidity_fee_in_rune": "9817479"
             },
             {
-                "emit_asset": "798397657 THOR.RUNE"
+                "emit_asset": "798397670 THOR.RUNE"
             },
             {
                 "id": "TODO"
@@ -1527,7 +1527,7 @@
                 "emit_asset": "12348615"
             },
             {
-                "emit_rune": "6573718557"
+                "emit_rune": "6573718610"
             },
             {
                 "id": "TODO"
@@ -1584,10 +1584,10 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "0"
+                "asset_amt": "1"
             },
             {
-                "rune_amt": "0"
+                "rune_amt": "532"
             },
             {
                 "transaction_count": "1"
@@ -2540,10 +2540,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "111137536"
+                "emit_asset": "111137534"
             },
             {
-                "emit_rune": "59163465413"
+                "emit_rune": "59163466424"
             },
             {
                 "id": "TODO"
@@ -2586,7 +2586,7 @@
                 "asset": "BTC.BTC"
             },
             {
-                "asset_amt": "0"
+                "asset_amt": "1"
             },
             {
                 "rune_amt": "0"

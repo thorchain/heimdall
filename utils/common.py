@@ -222,7 +222,15 @@ class Transaction(Jsonable):
     empty_id = "0000000000000000000000000000000000000000000000000000000000000000"
 
     def __init__(
-        self, chain, from_address, to_address, coins, memo="", gas=None, id="TODO"
+        self,
+        chain,
+        from_address,
+        to_address,
+        coins,
+        memo="",
+        gas=None,
+        id="TODO",
+        max_gas=None,
     ):
         self.id = id.upper()
         self.chain = chain
@@ -239,6 +247,9 @@ class Transaction(Jsonable):
         if gas and not isinstance(gas, list):
             gas = [gas]
         self.gas = gas
+        if max_gas and not isinstance(max_gas, list):
+            max_gas = [max_gas]
+        self.max_gas = max_gas
         self.fee = None
 
     def __repr__(self):
