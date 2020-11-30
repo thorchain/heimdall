@@ -1129,6 +1129,22 @@
         "category": null
     },
     {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "3 BTC.BTC"
+            },
+            {
+                "pool_deduct": "1823"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "outbound",
         "attributes": [
             {
@@ -1242,22 +1258,7 @@
         "block_height": null,
         "category": null
     },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "3 BTC.BTC"
-            },
-            {
-                "pool_deduct": "1823"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
+
     {
         "type": "rewards",
         "attributes": [
@@ -1288,6 +1289,22 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "3 ETH.ETH"
+            },
+            {
+                "pool_deduct": "38"
             }
         ],
         "block_height": null,
@@ -1407,22 +1424,7 @@
         "block_height": null,
         "category": null
     },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "3 ETH.ETH"
-            },
-            {
-                "pool_deduct": "38"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
+
     {
         "type": "rewards",
         "attributes": [
@@ -1453,6 +1455,22 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "5000492 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -1502,22 +1520,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "5000492 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -1544,6 +1546,22 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "5000961 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -1593,22 +1611,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "5000961 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -1635,6 +1637,38 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "3 ETH.ETH"
+            },
+            {
+                "pool_deduct": "37"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "5001429 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -1678,38 +1712,6 @@
             },
             {
                 "memo": "WITHDRAW:ETH.ETH:1000"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "3 ETH.ETH"
-            },
-            {
-                "pool_deduct": "37"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "5001429 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -1856,6 +1858,22 @@
         "category": null
     },
     {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "112500 BNB.BNB"
+            },
+            {
+                "pool_deduct": "5029531"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "swap",
         "attributes": [
             {
@@ -1899,22 +1917,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "112500 BNB.BNB"
-            },
-            {
-                "pool_deduct": "5029531"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -1941,6 +1943,22 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "112500 BNB.BNB"
+            },
+            {
+                "pool_deduct": "7764967"
             }
         ],
         "block_height": null,
@@ -1990,22 +2008,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "112500 BNB.BNB"
-            },
-            {
-                "pool_deduct": "7764967"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -2032,6 +2034,22 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "112500 BNB.BNB"
+            },
+            {
+                "pool_deduct": "10802511"
             }
         ],
         "block_height": null,
@@ -2081,22 +2099,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "112500 BNB.BNB"
-            },
-            {
-                "pool_deduct": "10802511"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -2123,6 +2125,38 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "3 BTC.BTC"
+            },
+            {
+                "pool_deduct": "1661"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "10497558 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -2166,38 +2200,6 @@
             },
             {
                 "memo": "WITHDRAW:BTC.BTC:1000"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "3 BTC.BTC"
-            },
-            {
-                "pool_deduct": "1661"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "10497558 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -2252,6 +2254,22 @@
         "category": null
     },
     {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "10138321 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "swap",
         "attributes": [
             {
@@ -2295,22 +2313,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "10138321 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -2337,6 +2339,22 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "112500 BNB.BNB"
+            },
+            {
+                "pool_deduct": "14009156"
             }
         ],
         "block_height": null,
@@ -2386,22 +2404,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "112500 BNB.BNB"
-            },
-            {
-                "pool_deduct": "14009156"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -2428,6 +2430,22 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "112500 BNB.BNB"
+            },
+            {
+                "pool_deduct": "18194055"
             }
         ],
         "block_height": null,
@@ -2471,22 +2489,6 @@
             },
             {
                 "memo": "SWAP:BNB.BNB:PROVIDER-1:22460886"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "112500 BNB.BNB"
-            },
-            {
-                "pool_deduct": "18194055"
             }
         ],
         "block_height": null,
@@ -2601,6 +2603,22 @@
         "category": null
     },
     {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "17864842 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "swap",
         "attributes": [
             {
@@ -2644,22 +2662,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "17864842 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -2686,6 +2688,22 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "14783662 BNB.LOK-3C0"
+            },
+            {
+                "pool_deduct": "17867929"
             }
         ],
         "block_height": null,
@@ -2735,22 +2753,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "14783662 BNB.LOK-3C0"
-            },
-            {
-                "pool_deduct": "17867929"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -2777,6 +2779,22 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "112500 BNB.BNB"
+            },
+            {
+                "pool_deduct": "20328718"
             }
         ],
         "block_height": null,
@@ -2897,22 +2915,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "112500 BNB.BNB"
-            },
-            {
-                "pool_deduct": "20328718"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -2942,6 +2944,22 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "19987880 BNB.LOK-3C0"
+            },
+            {
+                "pool_deduct": "19757870"
             }
         ],
         "block_height": null,
@@ -3062,22 +3080,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "19987880 BNB.LOK-3C0"
-            },
-            {
-                "pool_deduct": "19757870"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -3107,6 +3109,38 @@
             },
             {
                 "transaction_count": "1"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "112500 BNB.BNB"
+            },
+            {
+                "pool_deduct": "19758526"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "19743505 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -3156,38 +3190,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "112500 BNB.BNB"
-            },
-            {
-                "pool_deduct": "19758526"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "19743505 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -3224,6 +3226,22 @@
             },
             {
                 "pool_status": "Staged"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "19753514 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -3273,22 +3291,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "19753514 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -3312,6 +3314,38 @@
             },
             {
                 "transaction_count": "2"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "112500 BNB.BNB"
+            },
+            {
+                "pool_deduct": "19763531"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "19738677 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -3361,38 +3395,6 @@
         "category": null
     },
     {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "112500 BNB.BNB"
-            },
-            {
-                "pool_deduct": "19763531"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "19738677 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
         "type": "rewards",
         "attributes": [
             {
@@ -3416,6 +3418,38 @@
             },
             {
                 "transaction_count": "2"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "3 BTC.BTC"
+            },
+            {
+                "pool_deduct": "1661"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "19755232 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -3459,38 +3493,6 @@
             },
             {
                 "memo": "WITHDRAW:BTC.BTC"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "3 BTC.BTC"
-            },
-            {
-                "pool_deduct": "1661"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "19755232 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
             }
         ],
         "block_height": null,
@@ -3558,6 +3560,22 @@
         "category": null
     },
     {
+        "type": "fee",
+        "attributes": [
+            {
+                "tx_id": "TODO"
+            },
+            {
+                "coins": "100000000 BNB.RUNE-67C"
+            },
+            {
+                "pool_deduct": "0"
+            }
+        ],
+        "block_height": null,
+        "category": null
+    },
+    {
         "type": "withdraw",
         "attributes": [
             {
@@ -3595,22 +3613,6 @@
             },
             {
                 "memo": "WITHDRAW:BNB.BNB"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "100000000 BNB.RUNE-67C"
-            },
-            {
-                "pool_deduct": "0"
             }
         ],
         "block_height": null,
