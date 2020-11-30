@@ -343,39 +343,43 @@ class ThorchainState:
 
                 else:
                     pool = self.get_pool(coin.asset)
-                    asset_fee = pool.get_rune_in_asset(rune_fee)
-                    if coin.amount <= asset_fee:
-                        asset_fee = coin.amount
-                        rune_fee = pool.get_asset_in_rune(asset_fee)
+                    asset_fee = 0
+                    if pool.status == "Staged":
+                        rune_fee = 0
+                    else:
+                        asset_fee = pool.get_rune_in_asset(rune_fee)
+                        if coin.amount <= asset_fee:
+                            asset_fee = coin.amount
+                            rune_fee = pool.get_asset_in_rune(asset_fee)
 
-                    if pool.rune_balance >= rune_fee:
-                        pool.sub(rune_fee, 0)
-                    pool.add(0, asset_fee)
-                    self.set_pool(pool)
+                        if pool.rune_balance >= rune_fee:
+                            pool.sub(rune_fee, 0)
+                        pool.add(0, asset_fee)
+                        self.set_pool(pool)
 
-                    coin.amount -= asset_fee
-                    if coin.asset.is_btc() and not asset_fee == 0:
-                        tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
-                        gap = int(asset_fee / 2) - self.estimate_size * int(
-                            self.tx_rate * 3 / 2
-                        )
-                        coin.amount += gap
+                        coin.amount -= asset_fee
+                        if coin.asset.is_btc() and not asset_fee == 0:
+                            tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
+                            gap = int(asset_fee / 2) - self.estimate_size * int(
+                                self.tx_rate * 3 / 2
+                            )
+                            coin.amount += gap
 
-                    pool_deduct = rune_fee
-                    if rune_fee > pool.rune_balance:
-                        pool_deduct = pool.rune_balance
+                        pool_deduct = rune_fee
+                        if rune_fee > pool.rune_balance:
+                            pool_deduct = pool.rune_balance
 
-                    if pool_deduct > 0 or asset_fee > 0:
-                        # add fee event
-                        event = Event(
-                            "fee",
-                            [
-                                {"tx_id": in_tx.id},
-                                {"coins": f"{asset_fee} {coin.asset}"},
-                                {"pool_deduct": pool_deduct},
-                            ],
-                        )
-                        self.events.append(event)
+                        if pool_deduct > 0 or asset_fee > 0:
+                            # add fee event
+                            event = Event(
+                                "fee",
+                                [
+                                    {"tx_id": in_tx.id},
+                                    {"coins": f"{asset_fee} {coin.asset}"},
+                                    {"pool_deduct": pool_deduct},
+                                ],
+                            )
+                            self.events.append(event)
                     if coin.amount > 0:
                         tx.fee = Coin(coin.asset, asset_fee)
                         outbounds.append(tx)
