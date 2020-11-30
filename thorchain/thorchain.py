@@ -827,6 +827,7 @@ class ThorchainState:
                 outbound_asset_amt -= gas_amt
                 emit_asset -= gas_amt
                 pool.asset_balance += gas_amt
+                asset_amt -= gas_amt
             elif pool.asset.is_eth():
                 gas = self.get_gas(asset.get_chain())
                 outbound_asset_amt -= int(dynamic_fee)
@@ -841,6 +842,7 @@ class ThorchainState:
                 gas = Coin(gas.asset, estimate_gas_asset)
                 outbound_asset_amt -= int(estimate_gas_asset)
                 pool.asset_balance += dynamic_fee
+                asset_amt -= int(dynamic_fee)
         self.set_pool(pool)
 
         # get from address VAULT cross chain
@@ -876,21 +878,22 @@ class ThorchainState:
         ]
 
         # generate event for WITHDRAW transaction
-        self.events.append(
-            Event(
-                "withdraw",
-                [
-                    {"pool": pool.asset},
-                    {"liquidity_provider_units": withdraw_units},
-                    {"basis_points": withdraw_basis_points},
-                    {"asymmetry": "0.000000000000000000"},
-                    {"emit_asset": emit_asset},
-                    {"emit_rune": rune_amt},
-                    *tx.get_attributes(),
-                ],
-            )
+        withdraw_event = Event(
+            "withdraw",
+            [
+                {"pool": pool.asset},
+                {"liquidity_provider_units": withdraw_units},
+                {"basis_points": withdraw_basis_points},
+                {"asymmetry": "0.000000000000000000"},
+                {"emit_asset": asset_amt},
+                {"emit_rune": rune_amt},
+                *tx.get_attributes(),
+            ],
         )
-        return self.handle_fee(tx, out_txs)
+
+        outbound = self.handle_fee(tx, out_txs)
+        self.events.append(withdraw_event)
+        return outbound
 
     def handle_swap(self, tx):
         """
@@ -942,7 +945,7 @@ class ThorchainState:
         in_coin = in_tx.coins[0]
         if in_coin.is_rune() and in_coin.amount <= rune_fee:
             return self.refund(tx, 108, "fail swap, not enough fee")
-
+        swap_events = []
         if not tx.coins[0].is_rune() and not asset.is_rune():
             # its a double swap
             pool = self.get_pool(source)
@@ -975,13 +978,12 @@ class ThorchainState:
                 tx.memo,
                 id=Transaction.empty_id,
             )
-
-            self.events.append(
+            swap_events.append(
                 Event("outbound", [{"in_tx_id": in_tx.id}, *out_tx.get_attributes()])
             )
 
             # generate event for SWAP transaction
-            self.events.append(
+            swap_events.append(
                 Event(
                     "swap",
                     [
@@ -1053,9 +1055,7 @@ class ThorchainState:
                 f"OUT:{tx.id.upper()}",
             )
         ]
-
-        # generate event for SWAP transaction
-        self.events.append(
+        swap_events.append(
             Event(
                 "swap",
                 [
@@ -1069,7 +1069,13 @@ class ThorchainState:
                 ],
             )
         )
-        return self.handle_fee(tx, out_txs)
+        outbound = self.handle_fee(tx, out_txs)
+        # emit the events
+        for e in swap_events:
+            self.events.append(e)
+        # generate event for SWAP transaction
+
+        return outbound
 
     def swap(self, coin, asset):
         """

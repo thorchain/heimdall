@@ -238,7 +238,8 @@ class Smoker:
     def check_events(self):
         events = self.thorchain_client.events
         sim_events = self.thorchain_state.events
-
+        events.sort()
+        sim_events.sort()
         for (evt_t, evt_s) in zip(events, sim_events):
             if evt_t != evt_s:
                 for (evt_t2, evt_s2) in zip(events, sim_events):
