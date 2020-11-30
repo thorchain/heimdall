@@ -238,12 +238,10 @@ class Smoker:
     def check_events(self):
         events = self.thorchain_client.events
         sim_events = self.thorchain_state.events
-
-        for (evt_t, evt_s) in zip(events.sort(), sim_events.sort()):
+        events.sort()
+        sim_events.sort()
+        for (evt_t, evt_s) in zip(events, sim_events):
             if evt_t != evt_s:
-                for (evt_t2, evt_s2) in zip(events, sim_events):
-                    logging.info(f"\tTHORChain Evt: {evt_t2}")
-                    logging.info(f"\tSimulator Evt: {evt_s2}")
                 logging.error(f"THORChain Event {evt_t}")
                 logging.error(f"Simulator Event {evt_s}")
                 self.error("Events mismatch")
