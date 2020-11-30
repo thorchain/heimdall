@@ -239,7 +239,7 @@ class Smoker:
         events = self.thorchain_client.events
         sim_events = self.thorchain_state.events
 
-        for (evt_t, evt_s) in zip(events, sim_events):
+        for (evt_t, evt_s) in zip(events.sort(), sim_events.sort()):
             if evt_t != evt_s:
                 for (evt_t2, evt_s2) in zip(events, sim_events):
                     logging.info(f"\tTHORChain Evt: {evt_t2}")
@@ -345,6 +345,7 @@ class Smoker:
                         # figure out which outbound event is which tx
                         for out in outbounds:
                             if out.coins_str() == evt_t.get("coin"):
+                                # self.thorchain_state.adjust_btc_gas([out])
                                 self.thorchain_state.generate_outbound_events(
                                     txn, [out]
                                 )

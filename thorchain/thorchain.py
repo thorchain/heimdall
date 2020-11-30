@@ -171,7 +171,7 @@ class ThorchainState:
         self.bond_reward = 0
         self.vault_pubkey = None
         self.network_fees = {}
-        self.estimateSize = 220
+        self.estimate_size = 192
         self.tx_rate = 0
 
     def set_tx_rate(self, tx_rate):
@@ -234,11 +234,13 @@ class ThorchainState:
         """
         gas_coins = {}
         gas_coin_count = {}
-
         for tx in txs:
             if not tx.gas:
                 continue
-            for gas in tx.gas:
+            gases = tx.gas
+            if tx.gas[0].asset.is_btc():
+                gases = tx.max_gas
+            for gas in gases:
                 if gas.asset not in gas_coins:
                     gas_coins[gas.asset] = Coin(gas.asset)
                     gas_coin_count[gas.asset] = 0
@@ -256,9 +258,7 @@ class ThorchainState:
 
             pool.add(rune_amt, 0)  # replenish gas costs with rune
             pool.sub(0, gas.amount)  # subtract gas from pool
-
             self.set_pool(pool)
-
             # add gas event
             event = Event(
                 "gas",
@@ -287,7 +287,7 @@ class ThorchainState:
         gas_asset = self.get_gas_asset(chain)
         pool = self.get_pool(gas_asset)
         if chain == "BTC":
-            amount = int(self.tx_rate * 3 / 2) * self.estimateSize
+            amount = int(self.tx_rate * 3 / 2) * self.estimate_size
         if chain == "BNB":
             amount = pool.get_rune_in_asset(int(round(rune_fee / 3)))
         if chain == "ETH":
@@ -354,6 +354,13 @@ class ThorchainState:
                     self.set_pool(pool)
 
                     coin.amount -= asset_fee
+                    if coin.asset.is_btc() and not asset_fee == 0:
+                        tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
+                        gap = int(asset_fee / 2) - self.estimate_size * int(
+                            self.tx_rate * 3 / 2
+                        )
+                        coin.amount += gap
+
                     pool_deduct = rune_fee
                     if rune_fee > pool.rune_balance:
                         pool_deduct = pool.rune_balance
@@ -575,6 +582,30 @@ class ThorchainState:
         self.order_outbound_txs(out_txs)
         return out_txs
 
+    def adjust_btc_gas(self, txs):
+        """
+        Adjust the gas used in BTC , in BTC , often we  spend less gas than MaxGas
+        and the extra gas get paid to customer , after that , pool need to be adjusted
+        """
+        # adjust the pool
+        for tx in txs:
+            if not tx.gas:
+                continue
+            for gas in tx.gas:
+                if not gas.asset.is_btc():
+                    continue
+                if gas.asset != tx.fee.asset:
+                    continue
+                max_gas = int(tx.fee.amount / 2)
+                if max_gas > gas.amount:
+                    gap = max_gas - gas.amount
+                    pool = self.get_pool(gas.asset)
+                    rune_amt = pool.get_asset_in_rune(gap)
+                    pool.add(rune_amt, 0)
+                    pool.sub(0, gap)
+                    self.reserve -= rune_amt
+                    self.set_pool(pool)
+
     def handle_reserve(self, tx):
         """
         Add rune to the reserve
@@ -630,7 +661,6 @@ class ThorchainState:
                 pool.add(coin.amount, 0)
             else:
                 pool.add(0, coin.amount)
-
         self.set_pool(pool)
 
         # generate event for ADD transaction
@@ -700,7 +730,6 @@ class ThorchainState:
         liquidity_units, rune_amt, asset_amt, pending_txid = pool.add_liquidity(
             rune_address, asset_address, rune_amt, asset_amt, asset, tx.id
         )
-
         self.set_pool(pool)
 
         # liquidity provision cross chain so event will be dispatched on asset
@@ -789,7 +818,7 @@ class ThorchainState:
         # if this is our last liquidity provider of bnb, subtract a little BNB for gas.
         emit_asset = asset_amt
         outbound_asset_amt = asset_amt
-        self.estimateSize = 220
+        self.estimate_size = 192
         if pool.total_units == 0:
             if pool.asset.is_bnb():
                 gas_amt = gas.amount
@@ -805,18 +834,12 @@ class ThorchainState:
             elif pool.asset.is_btc():
                 # the last withdraw tx , it need to spend everything
                 # so it will use about 2 UTXO , estimate size is 288
-                self.estimateSize = 288
+                self.estimate_size = 233
                 # left enough gas asset otherwise it will get into negative
-                gas = self.get_gas(asset.get_chain())
                 emit_asset -= int(dynamic_fee)
-                estimate_gas_sset = int(self.tx_rate * 3 / 2) * self.estimateSize
-                if estimate_gas_sset > dynamic_fee:
-                    logging.info(
-                        f"adjust fee from {dynamic_fee} to {estimate_gas_sset}"
-                    )
-                    dynamic_fee = estimate_gas_sset
-                    gas = Coin(gas.asset, estimate_gas_sset)
-                outbound_asset_amt -= int(dynamic_fee)
+                estimate_gas_asset = int(self.tx_rate * 3 / 2) * self.estimate_size
+                gas = Coin(gas.asset, estimate_gas_asset)
+                outbound_asset_amt -= int(estimate_gas_asset)
                 pool.asset_balance += dynamic_fee
         self.set_pool(pool)
 
@@ -840,6 +863,7 @@ class ThorchainState:
                 [Coin(asset, outbound_asset_amt)],
                 f"OUT:{tx.id.upper()}",
                 gas=[gas],
+                max_gas=[Coin(gas.asset, dynamic_fee)],
             ),
             Transaction(
                 RUNE.get_chain(),
