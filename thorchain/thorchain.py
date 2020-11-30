@@ -841,6 +841,7 @@ class ThorchainState:
                 gas = Coin(gas.asset, estimate_gas_asset)
                 outbound_asset_amt -= int(estimate_gas_asset)
                 pool.asset_balance += dynamic_fee
+                asset_amt -= int(dynamic_fee)
         self.set_pool(pool)
 
         # get from address VAULT cross chain
