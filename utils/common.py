@@ -17,10 +17,7 @@ def get_rune_asset():
 
 
 def requests_retry_session(
-    retries=6,
-    backoff_factor=1,
-    status_forcelist=(500, 502, 504),
-    session=None,
+    retries=6, backoff_factor=1, status_forcelist=(500, 502, 504), session=None,
 ):
     """
     Creates a request session that has auto retry
