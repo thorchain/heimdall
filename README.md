@@ -90,7 +90,7 @@ make bitcoin-reorg
 Expect an environment variable NUM to specify the number of txs to generate.
 
 ```bash
-NUM=100 make benchmark-stake
+NUM=100 make benchmark-provision
 NUM=100 make benchmark-swap
 ```
 

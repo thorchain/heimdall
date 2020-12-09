@@ -75,9 +75,7 @@ class TestSmoke(unittest.TestCase):
             "ETH": 65000,
         }
 
-        file = "data/smoke_test_transactions.json"
-        if RUNE.get_chain() == "THOR":
-            file = "data/smoke_test_native_transactions.json"
+        file = "data/smoke_test_native_transactions.json"
 
         with open(file, "r") as f:
             contents = f.read()
@@ -169,6 +167,7 @@ class TestSmoke(unittest.TestCase):
                     f"Event Thorchain {event} \n   !="
                     f"  \nEvent Expected {expected_event}"
                 )
+
                 if not export_events:
                     raise Exception("Events mismatch")
 

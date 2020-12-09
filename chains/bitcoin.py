@@ -51,11 +51,11 @@ class MockBitcoin(HttpClient):
         while True:
             try:
                 result = self.get_block_stats()
-                if result["medianfee"] != 0 and result["mediantxsize"] != 0:
-                    self.block_stats["tx_rate"] = int(
-                        Decimal(result["medianfee"]) / Decimal(result["mediantxsize"])
-                    )
-                    self.block_stats["tx_size"] = result["mediantxsize"]
+                avg_fee_rate = result["avgfeerate"]
+                avg_tx_size = 250  # result["mediantxsize"]
+                if avg_fee_rate != 0:
+                    self.block_stats["tx_rate"] = avg_fee_rate
+                    self.block_stats["tx_size"] = avg_tx_size
             except Exception:
                 continue
             finally:
@@ -168,8 +168,8 @@ class MockBitcoin(HttpClient):
             asset = txn.get_asset_from_memo()
             if asset:
                 chain = asset.get_chain()
-            # we use RUNE BNB address to identify a cross chain stake
-            if txn.memo.startswith("STAKE"):
+            # we use RUNE BNB address to identify a cross chain liqudity provision
+            if txn.memo.startswith("ADD"):
                 chain = RUNE.get_chain()
             addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)

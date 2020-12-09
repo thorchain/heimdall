@@ -25,7 +25,7 @@ class MockEthereum:
     gas_price = 1
     passphrase = "the-passphrase"
     seed = "SEED"
-    stake = "STAKE"
+    stake = "ADD"
     tokens = dict()
     zero_address = "0x0000000000000000000000000000000000000000"
 
@@ -178,7 +178,7 @@ class MockEthereum:
             asset = txn.get_asset_from_memo()
             if asset:
                 chain = asset.get_chain()
-            # we use RUNE BNB address to identify a cross chain stake
+            # we use RUNE BNB address to identify a cross chain liqudity provision
             if txn.memo.startswith(self.stake):
                 chain = RUNE.get_chain()
             addr = get_alias_address(chain, alias)
@@ -247,7 +247,10 @@ class MockEthereum:
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
         txn.id = receipt.transactionHash.hex()[2:].upper()
         txn.gas = [
-            Coin("ETH.ETH", (receipt.cumulativeGasUsed + spent_gas) * self.gas_price,)
+            Coin(
+                "ETH.ETH",
+                (receipt.cumulativeGasUsed + spent_gas) * self.gas_price,
+            )
         ]
 
 
