@@ -2028,8 +2028,8 @@ class TestThorchainState(unittest.TestCase):
             Event(
                 "refund",
                 [
-                    {"code": "108"},
-                    {"reason": "fail swap, invalid balance"},
+                    {"code": "105"},
+                    {"reason": "refund reason message"},
                     *tx.get_attributes(),
                 ],
             ),
