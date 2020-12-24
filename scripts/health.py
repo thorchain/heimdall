@@ -166,7 +166,7 @@ class Health:
                 )
 
             # Check pool units
-            mpool_units = int(mpool["poolUnits"])
+            mpool_units = int(mpool["units"])
             tpool_units = int(tpool["pool_units"])
             diff = get_diff(mpool_units, tpool_units)
             if diff > self.margin_err:
@@ -178,7 +178,7 @@ class Health:
                 )
 
             # Check price
-            mpool_price = float(mpool["price"])
+            mpool_price = float(mpool["assetPrice"])
             tpool_price = int(tpool["balance_rune"]) / int(tpool["balance_asset"])
             diff = get_diff(mpool_price, tpool_price)
             if diff > self.margin_err:

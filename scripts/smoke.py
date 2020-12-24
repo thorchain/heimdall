@@ -11,6 +11,7 @@ from tenacity import retry, stop_after_delay, wait_fixed
 from utils.segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
 from chains.bitcoin import Bitcoin, MockBitcoin
+from chains.bitcoin_cash import BitcoinCash, MockBitcoinCash
 from chains.ethereum import Ethereum, MockEthereum
 from chains.thorchain import Thorchain, MockThorchain
 from thorchain.thorchain import ThorchainState, ThorchainClient
@@ -36,6 +37,11 @@ def main():
         "--bitcoin",
         default="http://thorchain:password@localhost:18443",
         help="Regtest bitcoin server",
+    )
+    parser.add_argument(
+        "--bitcoin-cash",
+        default="http://thorchain:password@localhost:28443",
+        help="Regtest bitcoin cash server",
     )
     parser.add_argument(
         "--ethereum", default="http://localhost:8545", help="Localnet ethereum server",
@@ -83,6 +89,7 @@ def main():
     smoker = Smoker(
         args.binance,
         args.bitcoin,
+        args.bitcoin_cash,
         args.ethereum,
         args.thorchain,
         health,
@@ -107,6 +114,7 @@ class Smoker:
         self,
         bnb,
         btc,
+        bch,
         eth,
         thor,
         health,
@@ -119,6 +127,7 @@ class Smoker:
     ):
         self.binance = Binance()
         self.bitcoin = Bitcoin()
+        self.bitcoin_cash = BitcoinCash()
         self.ethereum = Ethereum()
         self.thorchain = Thorchain()
         self.thorchain_state = ThorchainState()
@@ -129,6 +138,9 @@ class Smoker:
 
         self.thorchain_client = ThorchainClient(thor, enable_websocket=True)
         pubkey = self.thorchain_client.get_vault_pubkey()
+        # extract pubkey from bech32 encoded pubkey
+        # removing first 5 bytes used by amino encoding
+        raw_pubkey = decode_address(pubkey)[5:]
 
         self.thorchain_state.set_vault_pubkey(pubkey)
         if RUNE.get_chain() == "THOR":
@@ -136,17 +148,22 @@ class Smoker:
 
         self.mock_thorchain = MockThorchain(thor)
 
+        # setup bitcoin
         self.mock_bitcoin = MockBitcoin(btc)
-        # extract pubkey from bech32 encoded pubkey
-        # removing first 5 bytes used by amino encoding
-        raw_pubkey = decode_address(pubkey)[5:]
         bitcoin_address = MockBitcoin.get_address_from_pubkey(raw_pubkey)
         self.mock_bitcoin.set_vault_address(bitcoin_address)
 
+        # setup bitcoin cash
+        self.mock_bitcoin_cash = MockBitcoinCash(bch)
+        bitcoin_cash_address = MockBitcoinCash.get_address_from_pubkey(raw_pubkey)
+        self.mock_bitcoin_cash.set_vault_address(bitcoin_cash_address)
+
+        # setup ethereum
         self.mock_ethereum = MockEthereum(eth)
         ethereum_address = MockEthereum.get_address_from_pubkey(raw_pubkey)
         self.mock_ethereum.set_vault_address(ethereum_address)
 
+        # setup binance
         self.mock_binance = MockBinance(bnb)
         self.mock_binance.set_vault_address_by_pubkey(raw_pubkey)
 

@@ -1,3 +1,12 @@
+aliases_bch = {
+    "MASTER": "bchreg:qzfuujzhpd2ugtp2lqt2a2aqdnlwzgj04cwqq36m3u",
+    "CONTRIB": "bchreg:qqtsx6nl0q75dfkl6yl54zy2rr4nkwwgjyuxu04wwa",
+    "USER-1": "bchreg:qqqzdh86crxjpyh2tgfy7gyfcwk4k74ze55ympqehp",
+    "STAKER-1": "bchreg:qp7zhdp230nf0y0vwcl9radyn0x5r6pzxu7z9q4g5t",
+    "STAKER-2": "bchreg:qzfc77h794v2scmrmsj7sjreuzmy2q9p8sc74ea43r",
+    "VAULT": "",
+}
+
 aliases_btc = {
     "MASTER": "bcrt1qj08ys4ct2hzzc2hcz6h2hgrvlmsjynawhcf2xa",
     "CONTRIB": "bcrt1qzupk5lmc84r2dh738a9g3zscavannjy3084p2x",
