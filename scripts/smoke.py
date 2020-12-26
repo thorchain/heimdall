@@ -21,7 +21,7 @@ from chains.aliases import aliases_bnb, get_alias
 
 # Init logging
 logging.basicConfig(
-    format="%(asctime)s | %(levelname).4s | %(message)s",
+    format="%(levelname).1s[%(asctime)s] %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
@@ -84,7 +84,7 @@ def main():
     with open(txn_list, "r") as f:
         txns = json.load(f)
 
-    health = Health(args.thorchain, args.midgard, args.binance, args.fast_fail)
+    health = Health(args.thorchain, args.midgard, args.binance, fast_fail=args.fast_fail)
 
     smoker = Smoker(
         args.binance,

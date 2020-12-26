@@ -95,6 +95,7 @@ class ThorchainClient(HttpClient):
                 continue
             self.decode_event(event)
             event = Event(event["type"], event["attributes"])
+            # logging.info(event)
             self.events.append(event)
 
     def decode_event(self, event):

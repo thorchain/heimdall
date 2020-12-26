@@ -251,26 +251,26 @@ class Transaction(Jsonable):
 
     def __repr__(self):
         coins = self.coins if self.coins else "No Coins"
-        gas = f" | Gas {self.gas}" if self.gas else ""
-        fee = f" | Fee {self.fee}" if self.fee else ""
-        id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
+        gas = f" Gas {self.gas}" if self.gas else ""
+        fee = f" Fee {self.fee}" if self.fee else ""
+        id = f" ID {self.id.upper()}" if self.id != "TODO" else ""
         return (
-            f"<Tx {self.from_address:>8} => {self.to_address:8} | "
-            f"{self.memo} | {coins}{gas}{fee}{id}>"
+            f"<Tx {self.from_address:>10} => {self.to_address:10} "
+            f"[{self.memo}] {coins}{gas}{fee}{id}>"
         )
 
     def __str__(self):
         coins = ", ".join([str(c) for c in self.coins]) if self.coins else "No Coins"
-        gas = " | Gas " + ", ".join([str(g) for g in self.gas]) if self.gas else ""
-        fee = f" | Fee {str(self.fee)}" if self.fee else ""
+        gas = " Gas " + ", ".join([str(g) for g in self.gas]) if self.gas else ""
+        fee = f" Fee {str(self.fee)}" if self.fee else ""
         id = (
-            f" | ID {self.id.upper()}"
+            f" ID {self.id.upper()}"
             if self.id != "TODO" and self.id != self.empty_id
             else ""
         )
         return (
-            f"Tx {self.from_address:>8} => {self.to_address:8} | "
-            f"{self.memo} | {coins}{gas}{fee}{id}"
+            f"Tx {self.from_address:>10} => {self.to_address:10} "
+            f"[{self.memo}] {coins}{gas}{fee}{id}"
         )
 
     def short(self):

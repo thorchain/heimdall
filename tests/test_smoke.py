@@ -15,7 +15,7 @@ from utils.common import Transaction, get_rune_asset, DEFAULT_RUNE_ASSET
 RUNE = get_rune_asset()
 # Init logging
 logging.basicConfig(
-    format="%(asctime)s | %(levelname).4s | %(message)s",
+    format="%(levelname).1s[%(asctime)s] %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
