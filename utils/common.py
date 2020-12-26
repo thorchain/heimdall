@@ -277,7 +277,7 @@ class Transaction(Jsonable):
         coins = ", ".join([str(c) for c in self.coins]) if self.coins else "No Coins"
         gas = ", ".join([str(g) for g in self.gas]) if self.gas else ""
         fee = str(self.fee) if self.fee else ""
-        return f"{coins} | Fee {fee} | Gas {gas}"
+        return f"{coins} Fee {fee} Gas {gas}"
 
     def __eq__(self, other):
         """
