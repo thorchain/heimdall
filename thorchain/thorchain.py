@@ -513,7 +513,11 @@ class ThorchainState:
 
             out_txs.append(
                 Transaction(
-                    tx.chain, tx.to_address, tx.from_address, [coin], f"REFUND:{tx.id}",
+                    tx.chain,
+                    tx.to_address,
+                    tx.from_address,
+                    [coin],
+                    f"REFUND:{tx.id}",
                 )
             )
 
@@ -521,7 +525,8 @@ class ThorchainState:
 
         # generate event REFUND for the transaction
         event = Event(
-            "refund", [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
+            "refund",
+            [{"code": code}, {"reason": reason}, *in_tx.get_attributes()],
         )
 
         if tx.chain == "THOR":
@@ -1326,7 +1331,10 @@ class Pool(Jsonable):
         lp.pending_rune = 0
         lp.pending_asset = 0
         units = self._calc_liquidity_units(
-            self.rune_balance, self.asset_balance, rune_amt, asset_amt,
+            self.rune_balance,
+            self.asset_balance,
+            rune_amt,
+            asset_amt,
         )
 
         self.add(rune_amt, asset_amt)

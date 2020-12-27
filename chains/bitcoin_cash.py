@@ -6,7 +6,13 @@ import threading
 from bitcoincash import SelectParams
 from bitcoincash.wallet import CBitcoinSecret, P2PKHBitcoinAddress
 from bitcoincash.core import Hash160
-from bitcoincash.core.script import CScript, OP_DUP, OP_HASH160, OP_CHECKSIG, OP_EQUALVERIFY
+from bitcoincash.core.script import (
+    CScript,
+    OP_DUP,
+    OP_HASH160,
+    OP_CHECKSIG,
+    OP_EQUALVERIFY,
+)
 from utils.common import Coin, HttpClient, get_rune_asset, Asset
 from decimal import Decimal, getcontext
 from chains.aliases import aliases_bch, get_aliases, get_alias_address
@@ -70,7 +76,9 @@ class MockBitcoinCash(HttpClient):
         :param string pubkey: public key
         :returns: string bech32 encoded address
         """
-        script_pubkey = CScript([OP_DUP, OP_HASH160, Hash160(pubkey), OP_EQUALVERIFY, OP_CHECKSIG])
+        script_pubkey = CScript(
+            [OP_DUP, OP_HASH160, Hash160(pubkey), OP_EQUALVERIFY, OP_CHECKSIG]
+        )
         return str(P2PKHBitcoinAddress.from_scriptPubKey(script_pubkey)).split(":")[1]
 
     def call(self, service, *args):
@@ -226,7 +234,7 @@ class BitcoinCash(GenericChain):
         1 RUNE / 2 in BCH value
         """
         if pool is None:
-            return Coin(cls.coin, MockBitcoin.default_gas)
+            return Coin(cls.coin, MockBitcoinCash.default_gas)
 
         bch_amount = pool.get_rune_in_asset(int(cls.rune_fee / 2))
         return Coin(cls.coin, bch_amount)

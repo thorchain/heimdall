@@ -180,7 +180,8 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "refund", [{"code": "105"}, {"reason": reason}, *tx.get_attributes()],
+                "refund",
+                [{"code": "105"}, {"reason": reason}, *tx.get_attributes()],
             ),
         ]
         self.assertEqual(events, expected_events)
@@ -232,7 +233,8 @@ class TestThorchainState(unittest.TestCase):
                 [{"tx_id": "TODO"}, {"coins": f"156758 {RUNE}"}, {"pool_deduct": "0"}],
             ),
             Event(
-                "refund", [{"code": "108"}, {"reason": reason}, *tx.get_attributes()],
+                "refund",
+                [{"code": "108"}, {"reason": reason}, *tx.get_attributes()],
             ),
         ]
         self.assertEqual(events, expected_events)
@@ -468,7 +470,8 @@ class TestThorchainState(unittest.TestCase):
                 ],
             ),
             Event(
-                "refund", [{"code": "105"}, {"reason": reason}, *tx.get_attributes()],
+                "refund",
+                [{"code": "105"}, {"reason": reason}, *tx.get_attributes()],
             ),
         ]
         self.assertEqual(events, expected_events)
@@ -525,7 +528,8 @@ class TestThorchainState(unittest.TestCase):
         reason = "emit asset 305749416 less than price limit 999999999999999999999"
         expected_events += [
             Event(
-                "refund", [{"code": "108"}, {"reason": reason}, *tx.get_attributes()],
+                "refund",
+                [{"code": "108"}, {"reason": reason}, *tx.get_attributes()],
             ),
             Event(
                 "fee",
@@ -886,7 +890,11 @@ class TestThorchainState(unittest.TestCase):
             return
         thorchain = ThorchainState()
         tx = Transaction(
-            Binance.chain, "PROVIDER-1", "VAULT", [Coin(RUNE, 50000000000)], "RESERVE",
+            Binance.chain,
+            "PROVIDER-1",
+            "VAULT",
+            [Coin(RUNE, 50000000000)],
+            "RESERVE",
         )
 
         outbound = thorchain.handle(tx)
@@ -1531,7 +1539,11 @@ class TestThorchainState(unittest.TestCase):
 
         # should refund if no memo
         tx = Transaction(
-            Thorchain.chain, "PROVIDER-1", "VAULT", [Coin(RUNE, 50000000000)], "",
+            Thorchain.chain,
+            "PROVIDER-1",
+            "VAULT",
+            [Coin(RUNE, 50000000000)],
+            "",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
@@ -1558,7 +1570,11 @@ class TestThorchainState(unittest.TestCase):
         self.assertEqual(thorchain.events, expected_events)
 
         tx = Transaction(
-            Binance.chain, "PROVIDER-1", "VAULT", [Coin("BNB.BNB", 150000000)], "",
+            Binance.chain,
+            "PROVIDER-1",
+            "VAULT",
+            [Coin("BNB.BNB", 150000000)],
+            "",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 1)
@@ -1724,7 +1740,11 @@ class TestThorchainState(unittest.TestCase):
 
         # check successful withdraw everything
         tx = Transaction(
-            Binance.chain, "PROVIDER-1", "VAULT", [Coin(RUNE, 1)], "WITHDRAW:BNB.BNB",
+            Binance.chain,
+            "PROVIDER-1",
+            "VAULT",
+            [Coin(RUNE, 1)],
+            "WITHDRAW:BNB.BNB",
         )
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 2)
@@ -1765,7 +1785,11 @@ class TestThorchainState(unittest.TestCase):
 
         # check withdraw liquidity provider has 0 units
         tx = Transaction(
-            Binance.chain, "PROVIDER-1", "VAULT", [Coin(RUNE, 1)], "WITHDRAW:BNB.BNB",
+            Binance.chain,
+            "PROVIDER-1",
+            "VAULT",
+            [Coin(RUNE, 1)],
+            "WITHDRAW:BNB.BNB",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)
@@ -1936,7 +1960,11 @@ class TestThorchainState(unittest.TestCase):
 
         # check successful withdraw everything
         tx = Transaction(
-            Thorchain.chain, "PROVIDER-1", "VAULT", [Coin(RUNE, 1)], "WITHDRAW:BNB.BNB",
+            Thorchain.chain,
+            "PROVIDER-1",
+            "VAULT",
+            [Coin(RUNE, 1)],
+            "WITHDRAW:BNB.BNB",
         )
         outbounds = thorchain.handle(tx)
         self.assertEqual(len(outbounds), 2)
@@ -1977,7 +2005,11 @@ class TestThorchainState(unittest.TestCase):
 
         # check withdraw liquidity provider has 0 units
         tx = Transaction(
-            Thorchain.chain, "PROVIDER-1", "VAULT", [Coin(RUNE, 1)], "WITHDRAW:BNB.BNB",
+            Thorchain.chain,
+            "PROVIDER-1",
+            "VAULT",
+            [Coin(RUNE, 1)],
+            "WITHDRAW:BNB.BNB",
         )
         outbound = thorchain.handle(tx)
         self.assertEqual(len(outbound), 0)

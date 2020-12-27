@@ -31,7 +31,9 @@ RUNE = get_rune_asset()
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--binance", default="http://localhost:26660", help="Mock binance server",
+        "--binance",
+        default="http://localhost:26660",
+        help="Mock binance server",
     )
     parser.add_argument(
         "--bitcoin",
@@ -44,7 +46,9 @@ def main():
         help="Regtest bitcoin cash server",
     )
     parser.add_argument(
-        "--ethereum", default="http://localhost:8545", help="Localnet ethereum server",
+        "--ethereum",
+        default="http://localhost:8545",
+        help="Localnet ethereum server",
     )
     parser.add_argument(
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
@@ -459,7 +463,9 @@ class Smoker:
 
             self.check_binance()
             self.check_chain(self.bitcoin, self.mock_bitcoin, self.bitcoin_reorg)
-            self.check_chain(self.bitcoin_cash, self.mock_bitcoin_cash, self.bitcoin_reorg)
+            self.check_chain(
+                self.bitcoin_cash, self.mock_bitcoin_cash, self.bitcoin_reorg
+            )
             self.check_chain(self.ethereum, self.mock_ethereum, self.ethereum_reorg)
 
             if RUNE.get_chain() == "THOR":
