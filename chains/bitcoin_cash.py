@@ -71,7 +71,7 @@ class MockBitcoinCash(HttpClient):
         :returns: string bech32 encoded address
         """
         script_pubkey = CScript([OP_DUP, OP_HASH160, Hash160(pubkey), OP_EQUALVERIFY, OP_CHECKSIG])
-        return str(P2PKHBitcoinAddress.from_scriptPubKey(script_pubkey))
+        return str(P2PKHBitcoinAddress.from_scriptPubKey(script_pubkey)).split(":")[1]
 
     def call(self, service, *args):
         payload = {

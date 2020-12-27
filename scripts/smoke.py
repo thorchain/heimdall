@@ -84,7 +84,7 @@ def main():
     with open(txn_list, "r") as f:
         txns = json.load(f)
 
-    health = Health(args.thorchain, args.midgard, args.binance, fast_fail=args.fast_fail)
+    health = Health(args.thorchain, args.midgard, args.binance, args.fast_fail)
 
     smoker = Smoker(
         args.binance,
@@ -255,9 +255,9 @@ class Smoker:
         sim_events.sort()
         for (evt_t, evt_s) in zip(events, sim_events):
             if evt_t != evt_s:
-                for (evt_t2, evt_s2) in zip(events, sim_events):
-                    logging.info(f"\tTHORChain Evt: {evt_t2}")
-                    logging.info(f"\tSimulator Evt: {evt_s2}")
+                # for (evt_t2, evt_s2) in zip(events, sim_events):
+                #     logging.info(f"\tTHORChain Evt: {evt_t2}")
+                #     logging.info(f"\tSimulator Evt: {evt_s2}")
                 logging.error(f"THORChain Event {evt_t}")
                 logging.error(f"Simulator Event {evt_s}")
                 self.error("Events mismatch")
@@ -274,6 +274,8 @@ class Smoker:
             return self.mock_binance.transfer(txn)
         if txn.chain == Bitcoin.chain:
             return self.mock_bitcoin.transfer(txn)
+        if txn.chain == BitcoinCash.chain:
+            return self.mock_bitcoin_cash.transfer(txn)
         if txn.chain == Ethereum.chain:
             return self.mock_ethereum.transfer(txn)
         if txn.chain == MockThorchain.chain:
@@ -287,6 +289,8 @@ class Smoker:
             return self.binance.transfer(txn)
         if txn.chain == Bitcoin.chain:
             return self.bitcoin.transfer(txn)
+        if txn.chain == BitcoinCash.chain:
+            return self.bitcoin_cash.transfer(txn)
         if txn.chain == Ethereum.chain:
             return self.ethereum.transfer(txn)
         if txn.chain == Thorchain.chain:
@@ -298,10 +302,12 @@ class Smoker:
         and update thorchain state
         """
         btc = self.mock_bitcoin.block_stats
+        bch = self.mock_bitcoin_cash.block_stats
         fees = {
             "BNB": self.mock_binance.singleton_gas,
             "ETH": self.mock_ethereum.default_gas,
             "BTC": btc["tx_size"] * btc["tx_rate"],
+            "BCH": bch["tx_size"] * bch["tx_rate"],
         }
         self.thorchain_state.set_network_fees(fees)
         self.thorchain_state.set_tx_rate(btc["tx_rate"])
@@ -453,6 +459,7 @@ class Smoker:
 
             self.check_binance()
             self.check_chain(self.bitcoin, self.mock_bitcoin, self.bitcoin_reorg)
+            self.check_chain(self.bitcoin_cash, self.mock_bitcoin_cash, self.bitcoin_reorg)
             self.check_chain(self.ethereum, self.mock_ethereum, self.ethereum_reorg)
 
             if RUNE.get_chain() == "THOR":
