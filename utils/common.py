@@ -117,6 +117,12 @@ class Asset(str, Jsonable):
         """
         return self.get_symbol().startswith("BTC")
 
+    def is_bch(self):
+        """
+        Is this asset bch?
+        """
+        return self.get_symbol().startswith("BCH")
+
     def is_eth(self):
         """
         Is this asset eth?

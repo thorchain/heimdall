@@ -57,7 +57,7 @@ class MockBitcoinCash(HttpClient):
         while True:
             try:
                 result = self.get_block_stats()
-                avg_fee_rate = result["avgfeerate"]
+                avg_fee_rate = int(result["avgfeerate"] * Coin.ONE)
                 avg_tx_size = 250  # result["mediantxsize"]
                 if avg_fee_rate != 0:
                     self.block_stats["tx_rate"] = avg_fee_rate

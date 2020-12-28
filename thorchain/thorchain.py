@@ -17,6 +17,7 @@ from utils.common import (
 
 from chains.aliases import get_alias, get_alias_address, get_aliases
 from chains.bitcoin import Bitcoin
+from chains.bitcoin_cash import BitcoinCash
 from chains.ethereum import Ethereum
 from chains.binance import Binance
 from tenacity import retry, stop_after_delay, wait_fixed
@@ -95,7 +96,6 @@ class ThorchainClient(HttpClient):
                 continue
             self.decode_event(event)
             event = Event(event["type"], event["attributes"])
-            # logging.info(event)
             self.events.append(event)
 
     def decode_event(self, event):
@@ -172,14 +172,22 @@ class ThorchainState:
         self.bond_reward = 0
         self.vault_pubkey = None
         self.network_fees = {}
-        self.estimate_size = 192
-        self.tx_rate = 0
+        self.btc_estimate_size = 192
+        self.bch_estimate_size = 198
+        self.btc_tx_rate = 0
+        self.bch_tx_rate = 0
 
-    def set_tx_rate(self, tx_rate):
+    def set_btc_tx_rate(self, tx_rate):
         """
-        Set median tx rate , used to calculate gas
+        Set median BTC tx rate , used to calculate gas
         """
-        self.tx_rate = tx_rate
+        self.btc_tx_rate = tx_rate
+
+    def set_bch_tx_rate(self, tx_rate):
+        """
+        Set median BCH tx rate , used to calculate gas
+        """
+        self.bch_tx_rate = tx_rate
 
     def set_vault_pubkey(self, pubkey):
         """
@@ -239,7 +247,7 @@ class ThorchainState:
             if not tx.gas:
                 continue
             gases = tx.gas
-            if tx.gas[0].asset.is_btc():
+            if tx.gas[0].asset.is_btc() or tx.gas[0].asset.is_bch():
                 gases = tx.max_gas
             for gas in gases:
                 if gas.asset not in gas_coins:
@@ -277,6 +285,8 @@ class ThorchainState:
             return Binance.coin
         if chain == "BTC":
             return Bitcoin.coin
+        if chain == "BCH":
+            return BitcoinCash.coin
         if chain == "ETH":
             return Ethereum.coin
         return None
@@ -288,7 +298,9 @@ class ThorchainState:
         gas_asset = self.get_gas_asset(chain)
         pool = self.get_pool(gas_asset)
         if chain == "BTC":
-            amount = int(self.tx_rate * 3 / 2) * self.estimate_size
+            amount = int(self.btc_tx_rate * 3 / 2) * self.btc_estimate_size
+        if chain == "BCH":
+            amount = int(self.bch_tx_rate * 3 / 2) * self.bch_estimate_size
         if chain == "BNB":
             amount = pool.get_rune_in_asset(int(round(rune_fee / 3)))
         if chain == "ETH":
@@ -361,8 +373,15 @@ class ThorchainState:
                         coin.amount -= asset_fee
                         if coin.asset.is_btc() and not asset_fee == 0:
                             tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
-                            gap = int(asset_fee / 2) - self.estimate_size * int(
-                                self.tx_rate * 3 / 2
+                            gap = int(asset_fee / 2) - self.btc_estimate_size * int(
+                                self.btc_tx_rate * 3 / 2
+                            )
+                            coin.amount += gap
+
+                        if coin.asset.is_bch() and not asset_fee == 0:
+                            tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
+                            gap = int(asset_fee / 2) - self.bch_estimate_size * int(
+                                self.bch_tx_rate * 3 / 2
                             )
                             coin.amount += gap
 
@@ -823,7 +842,8 @@ class ThorchainState:
         # if this is our last liquidity provider of bnb, subtract a little BNB for gas.
         emit_asset = asset_amt
         outbound_asset_amt = asset_amt
-        self.estimate_size = 192
+        self.btc_estimate_size = 192
+        self.bch_estimate_size = 198
         if pool.total_units == 0:
             if pool.asset.is_bnb():
                 gas_amt = gas.amount
@@ -840,10 +860,25 @@ class ThorchainState:
             elif pool.asset.is_btc():
                 # the last withdraw tx , it need to spend everything
                 # so it will use about 2 UTXO , estimate size is 288
-                self.estimate_size = 233
+                self.btc_estimate_size = 233
                 # left enough gas asset otherwise it will get into negative
                 emit_asset -= int(dynamic_fee)
-                estimate_gas_asset = int(self.tx_rate * 3 / 2) * self.estimate_size
+                estimate_gas_asset = (
+                    int(self.btc_tx_rate * 3 / 2) * self.btc_estimate_size
+                )
+                gas = Coin(gas.asset, estimate_gas_asset)
+                outbound_asset_amt -= int(estimate_gas_asset)
+                pool.asset_balance += dynamic_fee
+                asset_amt -= int(dynamic_fee)
+            elif pool.asset.is_bch():
+                # the last withdraw tx , it need to spend everything
+                # so it will use about 2 UTXO , estimate size is 288
+                self.bch_estimate_size = 239
+                # left enough gas asset otherwise it will get into negative
+                emit_asset -= int(dynamic_fee)
+                estimate_gas_asset = (
+                    int(self.bch_tx_rate * 3 / 2) * self.bch_estimate_size
+                )
                 gas = Coin(gas.asset, estimate_gas_asset)
                 outbound_asset_amt -= int(estimate_gas_asset)
                 pool.asset_balance += dynamic_fee
