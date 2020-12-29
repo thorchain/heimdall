@@ -111,7 +111,7 @@ class MockThorchain(HttpClient):
                 "base_req": {"chain_id": "thorchain", "from": txn.from_address},
             }
 
-            payload = self.post("/thorchain/native/tx", payload)
+            payload = self.post("/thorchain/deposit", payload)
             msgs = payload["value"]["msg"]
             fee = payload["value"]["fee"]
             acct_num = acct["result"]["value"]["account_number"]
