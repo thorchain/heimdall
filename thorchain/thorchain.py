@@ -95,6 +95,7 @@ class ThorchainClient(HttpClient):
                 continue
             self.decode_event(event)
             event = Event(event["type"], event["attributes"])
+            logging.info(f"====> thorchain event:{event}")
             self.events.append(event)
 
     def decode_event(self, event):
@@ -238,7 +239,9 @@ class ThorchainState:
             if not tx.gas:
                 continue
             gases = tx.gas
-            if tx.gas[0].asset.is_btc():
+            if tx.gas[0].asset.is_btc() or (
+                tx.gas[0].asset.is_eth() and tx.coins[0].asset.is_eth()
+            ):
                 gases = tx.max_gas
             for gas in gases:
                 if gas.asset not in gas_coins:
@@ -367,6 +370,23 @@ class ThorchainState:
                                 self.tx_rate * 3 / 2
                             )
                             coin.amount += gap
+                        if coin.asset.get_chain() == "ETH" and not asset_fee == 0:
+                            if coin.asset.is_eth():
+                                logging.info(f"tx:{tx}")
+                                tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
+                                gap = (
+                                    int(asset_fee / 2)
+                                    - Ethereum._calculate_gas(pool, tx).amount
+                                )
+                                coin.amount += gap
+                            elif coin.asset.is_erc():
+                                gas_asset = self.get_gas_asset("ETH")
+                                pool_gas = self.get_pool(gas_asset)
+                                fee_in_gas_asset = pool_gas.get_rune_in_asset(rune_fee)
+                                tx.max_gas = [
+                                    Coin(gas_asset, int(fee_in_gas_asset / 2))
+                                ]
+                                logging.info("convert erc20 token to ETH.ETH gas")
 
                         pool_deduct = rune_fee
                         if rune_fee > pool.rune_balance:

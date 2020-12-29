@@ -349,6 +349,8 @@ class Smoker:
                         # which outbound txns are for this gas pool, vs
                         # another later on
                         count = 0
+                        logging.info(f"gas event:{evt_t}")
+                        logging.info(f"outbounds: {outbounds}")
                         for out in outbounds:
                             # a gas pool matches a txn if their from
                             # the same blockchain
@@ -359,12 +361,14 @@ class Smoker:
                                 count += 1
                                 if count >= int(evt_t.get("transaction_count")):
                                     break
+                        logging.info(f"todo:{todo}")
                         self.thorchain_state.handle_gas(todo)
 
                     elif evt_t.type == "rewards":
                         self.thorchain_state.handle_rewards()
 
                     elif evt_t.type == "outbound" and processed and pending_txs > 0:
+                        logging.info(f"event:{evt_t}")
                         # figure out which outbound event is which tx
                         for out in outbounds:
                             if out.coins_str() == evt_t.get("coin"):
@@ -376,6 +380,7 @@ class Smoker:
 
                     elif not processed:
                         outbounds = self.sim_trigger_tx(txn)
+                        logging.info(f"{outbounds}")
                         pending_txs = len(outbounds)
                         processed = True
                 continue
@@ -383,6 +388,7 @@ class Smoker:
             # we have same count of events but its a cross chain liquidity provision
             if txn.is_cross_chain_provision() and no_evt and not processed:
                 outbounds = self.sim_trigger_tx(txn)
+                logging.info(f"{outbounds}")
                 pending_txs = len(outbounds)
                 processed = True
                 time.sleep(6)  # need to wait for thorchain to handle it
