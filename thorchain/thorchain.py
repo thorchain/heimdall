@@ -95,7 +95,6 @@ class ThorchainClient(HttpClient):
                 continue
             self.decode_event(event)
             event = Event(event["type"], event["attributes"])
-            logging.info(f"====> thorchain event:{event}")
             self.events.append(event)
 
     def decode_event(self, event):
@@ -372,7 +371,6 @@ class ThorchainState:
                             coin.amount += gap
                         if coin.asset.get_chain() == "ETH" and not asset_fee == 0:
                             if coin.asset.is_eth():
-                                logging.info(f"tx:{tx}")
                                 tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
                                 gap = (
                                     int(asset_fee / 2)
@@ -386,7 +384,6 @@ class ThorchainState:
                                 tx.max_gas = [
                                     Coin(gas_asset, int(fee_in_gas_asset / 2))
                                 ]
-                                logging.info("convert erc20 token to ETH.ETH gas")
 
                         pool_deduct = rune_fee
                         if rune_fee > pool.rune_balance:
@@ -609,30 +606,6 @@ class ThorchainState:
         self.order_outbound_txs(out_txs)
         return out_txs
 
-    def adjust_btc_gas(self, txs):
-        """
-        Adjust the gas used in BTC , in BTC , often we  spend less gas than MaxGas
-        and the extra gas get paid to customer , after that , pool need to be adjusted
-        """
-        # adjust the pool
-        for tx in txs:
-            if not tx.gas:
-                continue
-            for gas in tx.gas:
-                if not gas.asset.is_btc():
-                    continue
-                if gas.asset != tx.fee.asset:
-                    continue
-                max_gas = int(tx.fee.amount / 2)
-                if max_gas > gas.amount:
-                    gap = max_gas - gas.amount
-                    pool = self.get_pool(gas.asset)
-                    rune_amt = pool.get_asset_in_rune(gap)
-                    pool.add(rune_amt, 0)
-                    pool.sub(0, gap)
-                    self.reserve -= rune_amt
-                    self.set_pool(pool)
-
     def handle_reserve(self, tx):
         """
         Add rune to the reserve
@@ -837,10 +810,10 @@ class ThorchainState:
         # used if it is the last withdraw
         dynamic_fee = pool.get_rune_in_asset(self.get_rune_fee(asset.get_chain())) / 2
         tx_rune_gas = self.get_gas(RUNE.get_chain(), tx)
-
         withdraw_units, rune_amt, asset_amt = pool.withdraw(
             tx.from_address, withdraw_basis_points
         )
+        rune_amt += lp.pending_rune
 
         # if this is our last liquidity provider of bnb, subtract a little BNB for gas.
         emit_asset = asset_amt
@@ -857,7 +830,8 @@ class ThorchainState:
                 asset_amt -= gas_amt
             elif pool.asset.is_eth():
                 gas = self.get_gas(asset.get_chain(), tx)
-                outbound_asset_amt -= int(dynamic_fee)
+                asset_amt -= int(dynamic_fee)
+                outbound_asset_amt -= gas.amount
                 pool.asset_balance += dynamic_fee
             elif pool.asset.is_btc():
                 # the last withdraw tx , it need to spend everything

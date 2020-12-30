@@ -219,52 +219,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "13"
-            }
-        ]
-    },
-    {
-        "type": "add_liquidity",
-        "attributes": [
-            {
-                "pool": "BTC.BTC"
-            },
-            {
-                "liquidity_provider_units": "347929075"
-            },
-            {
-                "rune_address": "PROVIDER-2"
-            },
-            {
-                "rune_amount": "200000000"
-            },
-            {
-                "asset_amount": "1500000"
-            },
-            {
-                "asset_address": "PROVIDER-2"
-            },
-            {
-                "BTC_txid": "TODO"
-            },
-            {
-                "THOR_txid": "TODO"
-            }
-        ]
-    },
-    {
-        "type": "rewards",
-        "attributes": [
-            {
-                "bond_reward": "13"
-            }
-        ]
-    },
-    {
-        "type": "rewards",
-        "attributes": [
-            {
-                "bond_reward": "16"
+                "bond_reward": "11"
             }
         ]
     },
@@ -312,15 +267,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "16"
-            }
-        ]
-    },
-    {
-        "type": "rewards",
-        "attributes": [
-            {
-                "bond_reward": "18"
+                "bond_reward": "13"
             }
         ]
     },
@@ -371,7 +318,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "19"
+                "bond_reward": "14"
             }
         ]
     },
@@ -439,7 +386,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "20"
+                "bond_reward": "15"
             }
         ]
     },
@@ -507,7 +454,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "21"
+                "bond_reward": "16"
             }
         ]
     },
@@ -575,7 +522,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "26"
+                "bond_reward": "20"
             }
         ]
     },
@@ -609,7 +556,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "28"
+                "bond_reward": "23"
             }
         ]
     },
@@ -617,7 +564,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "28"
+                "bond_reward": "23"
             }
         ]
     },
@@ -625,7 +572,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "28"
+                "bond_reward": "23"
             }
         ]
     },
@@ -659,7 +606,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "31"
+                "bond_reward": "26"
             }
         ]
     },
@@ -693,7 +640,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "31"
+                "bond_reward": "26"
             }
         ]
     },
@@ -744,7 +691,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "36"
+                "bond_reward": "31"
             }
         ]
     },
@@ -795,7 +742,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "42"
+                "bond_reward": "36"
             }
         ]
     },
@@ -846,7 +793,7 @@
         "type": "rewards",
         "attributes": [
             {
-                "bond_reward": "43"
+                "bond_reward": "38"
             }
         ]
     },
@@ -877,7 +824,7 @@
                 "coins": "30000 BTC.BTC"
             },
             {
-                "pool_deduct": "16242263"
+                "pool_deduct": "16363068"
             }
         ],
         "block_height": null,
@@ -960,16 +907,16 @@
                 "price_target": "0"
             },
             {
-                "trade_slip": "2478"
+                "trade_slip": "2485"
             },
             {
-                "liquidity_fee": "9301153"
+                "liquidity_fee": "9264509"
             },
             {
-                "liquidity_fee_in_rune": "3081966209"
+                "liquidity_fee_in_rune": "3088169667"
             },
             {
-                "emit_asset": "28237157 BTC.BTC"
+                "emit_asset": "28013854 BTC.BTC"
             },
             {
                 "id": "TODO"
@@ -1001,7 +948,7 @@
                 "asset_amt": "15000"
             },
             {
-                "rune_amt": "8117180"
+                "rune_amt": "8177511"
             },
             {
                 "transaction_count": "1"
@@ -1036,16 +983,16 @@
                 "price_target": "0"
             },
             {
-                "trade_slip": "120"
+                "trade_slip": "121"
             },
             {
-                "liquidity_fee": "9642999"
+                "liquidity_fee": "9813887"
             },
             {
-                "liquidity_fee_in_rune": "9642999"
+                "liquidity_fee_in_rune": "9813887"
             },
             {
-                "emit_asset": "792512152 THOR.RUNE"
+                "emit_asset": "798203707 THOR.RUNE"
             },
             {
                 "id": "TODO"
@@ -1131,10 +1078,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "25964"
+                "asset_amt": "97500"
             },
             {
-                "rune_amt": "865354"
+                "rune_amt": "3249578"
             },
             {
                 "transaction_count": "1"
@@ -1170,13 +1117,13 @@
                 "trade_slip": "476"
             },
             {
-                "liquidity_fee": "226720259"
+                "liquidity_fee": "226735962"
             },
             {
-                "liquidity_fee_in_rune": "226720259"
+                "liquidity_fee_in_rune": "226735962"
             },
             {
-                "emit_asset": "4534660679 THOR.RUNE"
+                "emit_asset": "4534866634 THOR.RUNE"
             },
             {
                 "id": "TODO"
@@ -1205,10 +1152,10 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "177273 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
+                "coins": "177281 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
             },
             {
-                "pool_deduct": "5909093"
+                "pool_deduct": "5909362"
             }
         ]
     },
@@ -1260,10 +1207,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "61015"
+                "asset_amt": "59645"
             },
             {
-                "rune_amt": "1848940"
+                "rune_amt": "1807507"
             },
             {
                 "transaction_count": "1"
@@ -1299,13 +1246,13 @@
                 "trade_slip": "476"
             },
             {
-                "liquidity_fee": "226718451"
+                "liquidity_fee": "226718449"
             },
             {
-                "liquidity_fee_in_rune": "226718451"
+                "liquidity_fee_in_rune": "226718449"
             },
             {
-                "emit_asset": "4534636969 THOR.RUNE"
+                "emit_asset": "4534636946 THOR.RUNE"
             },
             {
                 "id": "TODO"
@@ -1337,7 +1284,7 @@
                 "coins": "195000 ETH.ETH"
             },
             {
-                "pool_deduct": "5909322"
+                "pool_deduct": "5909586"
             }
         ]
     },
@@ -1373,10 +1320,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "315010802"
+                "emit_asset": "315003786"
             },
             {
-                "emit_rune": "9546155362"
+                "emit_rune": "9546369045"
             },
             {
                 "id": "TODO"
@@ -1405,10 +1352,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "25964"
+                "asset_amt": "97500"
             },
             {
-                "rune_amt": "786710"
+                "rune_amt": "2954387"
             },
             {
                 "transaction_count": "1"
@@ -1422,10 +1369,10 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "194985 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
+                "coins": "195004 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
             },
             {
-                "pool_deduct": "5908617"
+                "pool_deduct": "5909180"
             }
         ]
     },
@@ -1461,10 +1408,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "315017727"
+                "emit_asset": "315017728"
             },
             {
-                "emit_rune": "9545945394"
+                "emit_rune": "9545945369"
             },
             {
                 "id": "TODO"
@@ -1493,10 +1440,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "61079"
+                "asset_amt": "59709"
             },
             {
-                "rune_amt": "1850730"
+                "rune_amt": "1809391"
             },
             {
                 "transaction_count": "1"
@@ -1801,7 +1748,7 @@
                 "coins": "30000 BTC.BTC"
             },
             {
-                "pool_deduct": "15852562"
+                "pool_deduct": "15966458"
             }
         ]
     },
@@ -1835,10 +1782,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "12391557"
+                "emit_asset": "12350115"
             },
             {
-                "emit_rune": "6547930455"
+                "emit_rune": "6572919560"
             },
             {
                 "id": "TODO"
@@ -1870,7 +1817,7 @@
                 "asset_amt": "15000"
             },
             {
-                "rune_amt": "7922050"
+                "rune_amt": "7978921"
             },
             {
                 "transaction_count": "1"
@@ -2861,10 +2808,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "2835354531"
+                "emit_asset": "2835354557"
             },
             {
-                "emit_rune": "85907599927"
+                "emit_rune": "85907599143"
             },
             {
                 "id": "TODO"
@@ -2893,10 +2840,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "31079"
+                "asset_amt": "29823"
             },
             {
-                "rune_amt": "941753"
+                "rune_amt": "903779"
             },
             {
                 "transaction_count": "1"
@@ -2948,10 +2895,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "2835174097"
+                "emit_asset": "2834944537"
             },
             {
-                "emit_rune": "85913068124"
+                "emit_rune": "85917079377"
             },
             {
                 "id": "TODO"
@@ -2980,100 +2927,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "25964"
+                "asset_amt": "97500"
             },
             {
                 "rune_amt": "0"
-            },
-            {
-                "transaction_count": "1"
-            }
-        ]
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "30000 BTC.BTC"
-            },
-            {
-                "pool_deduct": "15848323"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "fee",
-        "attributes": [
-            {
-                "tx_id": "TODO"
-            },
-            {
-                "coins": "100000000 THOR.RUNE"
-            },
-            {
-                "pool_deduct": "0"
-            }
-        ],
-        "block_height": null,
-        "category": null
-    },
-    {
-        "type": "withdraw",
-        "attributes": [
-            {
-                "pool": "BTC.BTC"
-            },
-            {
-                "liquidity_provider_units": "45000000000"
-            },
-            {
-                "basis_points": "10000"
-            },
-            {
-                "asymmetry": "0.000000000000000000"
-            },
-            {
-                "emit_asset": "111538894"
-            },
-            {
-                "emit_rune": "58923504427"
-            },
-            {
-                "id": "TODO"
-            },
-            {
-                "chain": "THOR"
-            },
-            {
-                "from": "PROVIDER-1"
-            },
-            {
-                "to": "VAULT"
-            },
-            {
-                "coin": "1 THOR.RUNE"
-            },
-            {
-                "memo": "WITHDRAW:BTC.BTC"
-            }
-        ]
-    },
-    {
-        "type": "gas",
-        "attributes": [
-            {
-                "asset": "BTC.BTC"
-            },
-            {
-                "asset_amt": "15000"
-            },
-            {
-                "rune_amt": "7391380"
             },
             {
                 "transaction_count": "1"
@@ -3116,7 +2973,7 @@
                 "pool": "BTC.BTC"
             },
             {
-                "liquidity_provider_units": "347929075"
+                "liquidity_provider_units": "45000000000"
             },
             {
                 "basis_points": "10000"
@@ -3125,10 +2982,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "862392"
+                "emit_asset": "111151031"
             },
             {
-                "emit_rune": "447125288"
+                "emit_rune": "59148288499"
             },
             {
                 "id": "TODO"
@@ -3137,7 +2994,7 @@
                 "chain": "THOR"
             },
             {
-                "from": "PROVIDER-2"
+                "from": "PROVIDER-1"
             },
             {
                 "to": "VAULT"

@@ -279,45 +279,6 @@
         "gas": null
     },
     {
-        "chain": "THOR",
-        "from_address": "PROVIDER-2",
-        "to_address": "VAULT",
-        "memo": "ADD:BTC.BTC:PROVIDER-2",
-        "coins": [
-            {
-                "asset": "THOR.RUNE",
-                "amount": 200000000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "BTC",
-        "from_address": "PROVIDER-2",
-        "to_address": "VAULT",
-        "memo": "ADD:BTC.BTC:PROVIDER-2",
-        "coins": [
-            {
-                "asset": "BTC.BTC",
-                "amount": 1500000
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "THOR",
-        "from_address": "PROVIDER-1",
-        "to_address": "VAULT",
-        "memo": "ADD:BNB.LOK-3C0:PROVIDER-1",
-        "coins": [
-            {
-                "asset": "THOR.RUNE",
-                "amount": 50000000000
-            }
-        ],
-        "gas": null
-    },
-    {
         "chain": "BNB",
         "from_address": "PROVIDER-1",
         "to_address": "VAULT",
@@ -844,19 +805,6 @@
     {
         "chain": "THOR",
         "from_address": "PROVIDER-1",
-        "to_address": "VAULT",
-        "memo": "WITHDRAW:BTC.BTC",
-        "coins": [
-            {
-                "asset": "THOR.RUNE",
-                "amount": 1
-            }
-        ],
-        "gas": null
-    },
-    {
-        "chain": "THOR",
-        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BTC.BTC",
         "coins": [

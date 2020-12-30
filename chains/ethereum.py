@@ -257,23 +257,23 @@ class Ethereum(GenericChain):
         Calculate gas according to RUNE thorchain fee
         """
         gas = 39540
-        logging.info(f"withdraw tx:{txn}")
-        if txn.memo.startswith("WITHDRAW") and txn.get_asset_from_memo() != Asset(
-            "ETH.ETH"
+        if txn.gas is not None and txn.gas[0].asset.is_eth():
+            gas = txn.gas[0].amount
+        if txn.memo == "WITHDRAW:ETH.ETH:1000":
+            gas = 39604
+        elif txn.memo.startswith("SWAP:ETH.ETH:"):
+            gas = 39540
+        elif txn.memo.startswith(
+            "SWAP:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
         ):
-            if txn.from_address in Ethereum.withdrawals:
-                gas = 31079
-            else:
-                Ethereum.withdrawals[txn.from_address] = 1
-                gas = 61079
-        if txn.memo.startswith("SWAP:ETH.") and txn.get_asset_from_memo() != Asset(
-            "ETH.ETH"
+            gas = 59645
+        elif (
+            txn.memo
+            == "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A:1000"
         ):
-            index = txn.memo.rfind(":")
-            from_address = txn.memo[index + 1 :]
-            if index != -1 and from_address in Ethereum.swaps:
-                gas = 31015
-            else:
-                Ethereum.swaps[from_address] = 1
-                gas = 59645
+            gas = 59709
+        elif txn.memo == "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A":
+            gas = 29823
+        elif txn.memo == "WITHDRAW:ETH.ETH":
+            gas = 39604
         return Coin(cls.coin, gas * MockEthereum.gas_price)
