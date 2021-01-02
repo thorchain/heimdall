@@ -25,4 +25,4 @@ class MidgardClient(HttpClient):
         :returns: Pool data
 
         """
-        return self.fetch(f"/v1/pools/detail?view=simple&asset={asset}")[0]
+        return self.fetch(f"/v2/pool/{asset}")
