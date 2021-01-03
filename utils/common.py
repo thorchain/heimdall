@@ -264,7 +264,7 @@ class Transaction(Jsonable):
         fee = f" | Fee {self.fee}" if self.fee else ""
         id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
         return (
-            f"<{self.from_address:>10} => {self.to_address:10} "
+            f"<Tx {self.from_address:>10} => {self.to_address:10} "
             f"[{self.memo}] {coins}{gas}{fee}{id}>"
         )
 
