@@ -47,8 +47,15 @@ integration:
   before_script:
     - apk update
     - apk add git make
-    - (git clone --single-branch -b $CI_COMMIT_BRANCH https://gitlab.com/thorchain/midgard.git && cd midgard && make docker-gitlab-build && cd ..) || true
-    - git clone --single-branch -b $CI_COMMIT_BRANCH https://gitlab.com/thorchain/thornode.git || git clone --single-branch -b master https://gitlab.com/thorchain/thornode.git
+    - |-
+      if [[ $CI_MERGE_REQUEST_TARGET_BRANCH_NAME != "" ]]; then
+        THORNODE_BRANCH=$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+      else
+        THORNODE_BRANCH=master
+      fi
+    - echo $THORNODE_BRANCH
+    - (git clone --single-branch -b $CI_COMMIT_BRANCH https://gitlab.com/thorchain/midgard-v2.git && cd midgard-v2 && docker build -t registry.gitlab.com/thorchain/midgard:develop . && cd ..) || true
+    - git clone --single-branch -b $CI_COMMIT_BRANCH https://gitlab.com/thorchain/thornode.git || git clone --single-branch -b $THORNODE_BRANCH https://gitlab.com/thorchain/thornode.git
     - cd thornode
     - test master = $(git rev-parse --abbrev-ref HEAD) && docker pull registry.gitlab.com/thorchain/thornode:mocknet
     - NATIVE=true make -C build/docker reset-mocknet-standalone

@@ -88,7 +88,7 @@ def main():
     with open(txn_list, "r") as f:
         txns = json.load(f)
 
-    health = Health(args.thorchain, args.midgard, args.binance, args.fast_fail)
+    health = Health(args.thorchain, args.midgard, args.binance, fast_fail=args.fast_fail)
 
     smoker = Smoker(
         args.binance,
