@@ -30,7 +30,9 @@ RUNE = get_rune_asset()
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--binance", default="http://localhost:26660", help="Mock binance server",
+        "--binance",
+        default="http://localhost:26660",
+        help="Mock binance server",
     )
     parser.add_argument(
         "--bitcoin",
@@ -38,7 +40,9 @@ def main():
         help="Regtest bitcoin server",
     )
     parser.add_argument(
-        "--ethereum", default="http://localhost:8545", help="Localnet ethereum server",
+        "--ethereum",
+        default="http://localhost:8545",
+        help="Localnet ethereum server",
     )
     parser.add_argument(
         "--thorchain", default="http://localhost:1317", help="Thorchain API url"
@@ -219,6 +223,28 @@ class Smoker:
                     f"Bad {chain.name} balance: {name} {mock_coin} != {sim_coin}"
                 )
 
+    def check_ethereum(self):
+        # compare simulation ethereum vs mock ethereum
+        for addr, sim_acct in self.ethereum.accounts.items():
+            name = get_alias(self.ethereum.chain, addr)
+            if name == "MASTER":
+                continue  # don't care to compare MASTER account
+            for sim_coin in sim_acct.balances:
+                if not sim_coin.asset.is_eth():
+                    continue
+                mock_coin = Coin(
+                    "ETH." + sim_coin.asset.get_symbol(),
+                    self.mock_ethereum.get_balance(
+                        addr, sim_coin.asset.get_symbol().split("-")[0]
+                    ),
+                )
+                # dont raise error on reorg balance being invalidated
+                # sim is not smart enough to subtract funds on reorg
+                if mock_coin.amount == 0 and self.ethereum_reorg:
+                    return
+                if sim_coin != mock_coin:
+                    self.error(f"Bad ETH balance: {name} {mock_coin} != {sim_coin}")
+
     def check_vaults(self):
         # check vault data
         vdata = self.thorchain_client.get_vault_data()
@@ -283,7 +309,7 @@ class Smoker:
         btc = self.mock_bitcoin.block_stats
         fees = {
             "BNB": self.mock_binance.singleton_gas,
-            "ETH": self.mock_ethereum.default_gas,
+            "ETH": self.mock_ethereum.gas_price * self.mock_ethereum.default_gas,
             "BTC": btc["tx_size"] * btc["tx_rate"],
         }
         self.thorchain_state.set_network_fees(fees)
@@ -310,7 +336,7 @@ class Smoker:
         processed = False
         pending_txs = 0
 
-        for x in range(0, 30):  # 30 attempts
+        for x in range(0, 60):  # 60 attempts
             events = self.thorchain_client.events[:]
             sim_events = self.thorchain_state.events[:]
 
@@ -432,16 +458,16 @@ class Smoker:
                 continue
 
             self.check_events()
+            self.check_vaults()
             self.check_pools()
 
             self.check_binance()
             self.check_chain(self.bitcoin, self.mock_bitcoin, self.bitcoin_reorg)
-            self.check_chain(self.ethereum, self.mock_ethereum, self.ethereum_reorg)
+            self.check_ethereum()
 
             if RUNE.get_chain() == "THOR":
                 self.check_chain(self.thorchain, self.mock_thorchain, None)
 
-            self.check_vaults()
             self.run_health()
 
             self.log_result(txn, outbounds)

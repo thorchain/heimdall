@@ -17,7 +17,10 @@ def get_rune_asset():
 
 
 def requests_retry_session(
-    retries=6, backoff_factor=1, status_forcelist=(500, 502, 504), session=None,
+    retries=6,
+    backoff_factor=1,
+    status_forcelist=(500, 502, 504),
+    session=None,
 ):
     """
     Creates a request session that has auto retry
@@ -119,6 +122,12 @@ class Asset(str, Jsonable):
         Is this asset eth?
         """
         return self.get_symbol().startswith("ETH")
+
+    def is_erc(self):
+        """
+        Is this asset erc20?
+        """
+        return self.get_chain() == "ETH" and not self.get_symbol().startswith("ETH")
 
     def is_rune(self):
         """
