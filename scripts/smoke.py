@@ -11,6 +11,7 @@ from tenacity import retry, stop_after_delay, wait_fixed
 from utils.segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
 from chains.bitcoin import Bitcoin, MockBitcoin
+from chains.bitcoin_cash import BitcoinCash, MockBitcoinCash
 from chains.ethereum import Ethereum, MockEthereum
 from chains.thorchain import Thorchain, MockThorchain
 from thorchain.thorchain import ThorchainState, ThorchainClient
@@ -20,7 +21,7 @@ from chains.aliases import aliases_bnb, get_alias
 
 # Init logging
 logging.basicConfig(
-    format="%(asctime)s | %(levelname).4s | %(message)s",
+    format="%(levelname).1s[%(asctime)s] %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
@@ -38,6 +39,11 @@ def main():
         "--bitcoin",
         default="http://thorchain:password@localhost:18443",
         help="Regtest bitcoin server",
+    )
+    parser.add_argument(
+        "--bitcoin-cash",
+        default="http://thorchain:password@localhost:28443",
+        help="Regtest bitcoin cash server",
     )
     parser.add_argument(
         "--ethereum",
@@ -82,11 +88,14 @@ def main():
     with open(txn_list, "r") as f:
         txns = json.load(f)
 
-    health = Health(args.thorchain, args.midgard, args.binance, fast_fail=args.fast_fail)
+    health = Health(
+        args.thorchain, args.midgard, args.binance, fast_fail=args.fast_fail
+    )
 
     smoker = Smoker(
         args.binance,
         args.bitcoin,
+        args.bitcoin_cash,
         args.ethereum,
         args.thorchain,
         health,
@@ -111,6 +120,7 @@ class Smoker:
         self,
         bnb,
         btc,
+        bch,
         eth,
         thor,
         health,
@@ -123,6 +133,7 @@ class Smoker:
     ):
         self.binance = Binance()
         self.bitcoin = Bitcoin()
+        self.bitcoin_cash = BitcoinCash()
         self.ethereum = Ethereum()
         self.thorchain = Thorchain()
         self.thorchain_state = ThorchainState()
@@ -133,6 +144,9 @@ class Smoker:
 
         self.thorchain_client = ThorchainClient(thor, enable_websocket=True)
         pubkey = self.thorchain_client.get_vault_pubkey()
+        # extract pubkey from bech32 encoded pubkey
+        # removing first 5 bytes used by amino encoding
+        raw_pubkey = decode_address(pubkey)[5:]
 
         self.thorchain_state.set_vault_pubkey(pubkey)
         if RUNE.get_chain() == "THOR":
@@ -140,17 +154,22 @@ class Smoker:
 
         self.mock_thorchain = MockThorchain(thor)
 
+        # setup bitcoin
         self.mock_bitcoin = MockBitcoin(btc)
-        # extract pubkey from bech32 encoded pubkey
-        # removing first 5 bytes used by amino encoding
-        raw_pubkey = decode_address(pubkey)[5:]
         bitcoin_address = MockBitcoin.get_address_from_pubkey(raw_pubkey)
         self.mock_bitcoin.set_vault_address(bitcoin_address)
 
+        # setup bitcoin cash
+        self.mock_bitcoin_cash = MockBitcoinCash(bch)
+        bitcoin_cash_address = MockBitcoinCash.get_address_from_pubkey(raw_pubkey)
+        self.mock_bitcoin_cash.set_vault_address(bitcoin_cash_address)
+
+        # setup ethereum
         self.mock_ethereum = MockEthereum(eth)
         ethereum_address = MockEthereum.get_address_from_pubkey(raw_pubkey)
         self.mock_ethereum.set_vault_address(ethereum_address)
 
+        # setup binance
         self.mock_binance = MockBinance(bnb)
         self.mock_binance.set_vault_address_by_pubkey(raw_pubkey)
 
@@ -283,6 +302,8 @@ class Smoker:
             return self.mock_binance.transfer(txn)
         if txn.chain == Bitcoin.chain:
             return self.mock_bitcoin.transfer(txn)
+        if txn.chain == BitcoinCash.chain:
+            return self.mock_bitcoin_cash.transfer(txn)
         if txn.chain == Ethereum.chain:
             return self.mock_ethereum.transfer(txn)
         if txn.chain == MockThorchain.chain:
@@ -296,6 +317,8 @@ class Smoker:
             return self.binance.transfer(txn)
         if txn.chain == Bitcoin.chain:
             return self.bitcoin.transfer(txn)
+        if txn.chain == BitcoinCash.chain:
+            return self.bitcoin_cash.transfer(txn)
         if txn.chain == Ethereum.chain:
             return self.ethereum.transfer(txn)
         if txn.chain == Thorchain.chain:
@@ -307,13 +330,16 @@ class Smoker:
         and update thorchain state
         """
         btc = self.mock_bitcoin.block_stats
+        bch = self.mock_bitcoin_cash.block_stats
         fees = {
             "BNB": self.mock_binance.singleton_gas,
             "ETH": self.mock_ethereum.gas_price * self.mock_ethereum.default_gas,
             "BTC": btc["tx_size"] * btc["tx_rate"],
+            "BCH": bch["tx_size"] * bch["tx_rate"],
         }
         self.thorchain_state.set_network_fees(fees)
-        self.thorchain_state.set_tx_rate(btc["tx_rate"])
+        self.thorchain_state.set_btc_tx_rate(btc["tx_rate"])
+        self.thorchain_state.set_bch_tx_rate(bch["tx_rate"])
 
     def sim_trigger_tx(self, txn):
         # process transaction in thorchain
@@ -463,6 +489,9 @@ class Smoker:
 
             self.check_binance()
             self.check_chain(self.bitcoin, self.mock_bitcoin, self.bitcoin_reorg)
+            self.check_chain(
+                self.bitcoin_cash, self.mock_bitcoin_cash, self.bitcoin_reorg
+            )
             self.check_ethereum()
 
             if RUNE.get_chain() == "THOR":

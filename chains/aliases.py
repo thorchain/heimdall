@@ -1,3 +1,12 @@
+aliases_bch = {
+    "MASTER": "qzfuujzhpd2ugtp2lqt2a2aqdnlwzgj04cwqq36m3u",
+    "CONTRIB": "qqtsx6nl0q75dfkl6yl54zy2rr4nkwwgjyuxu04wwa",
+    "USER-1": "qqqzdh86crxjpyh2tgfy7gyfcwk4k74ze55ympqehp",
+    "PROVIDER-1": "qp7zhdp230nf0y0vwcl9radyn0x5r6pzxu7z9q4g5t",
+    "PROVIDER-2": "qzfc77h794v2scmrmsj7sjreuzmy2q9p8sc74ea43r",
+    "VAULT": "",
+}
+
 aliases_btc = {
     "MASTER": "bcrt1qj08ys4ct2hzzc2hcz6h2hgrvlmsjynawhcf2xa",
     "CONTRIB": "bcrt1qzupk5lmc84r2dh738a9g3zscavannjy3084p2x",
@@ -58,6 +67,8 @@ def get_alias_address(chain, alias):
         return aliases_bnb[alias]
     if chain == "BTC":
         return aliases_btc[alias]
+    if chain == "BCH":
+        return aliases_bch[alias]
     if chain == "ETH":
         return aliases_eth[alias]
     if chain == "THOR":
@@ -70,6 +81,8 @@ def get_alias(chain, addr):
         aliases = aliases_bnb
     if chain == "BTC":
         aliases = aliases_btc
+    if chain == "BCH":
+        aliases = aliases_bch
     if chain == "ETH":
         aliases = aliases_eth
     if chain == "THOR":
