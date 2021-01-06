@@ -552,7 +552,7 @@
         "gas": null
     },
     {
-        "chain": "THOR",
+        "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
         "memo": "SWAP:BCH.BCH:USER-1",
@@ -565,7 +565,7 @@
         "gas": null
     },
     {
-        "chain": "BNB",
+        "chain": "THOR",
         "from_address": "USER-1",
         "to_address": "VAULT",
         "memo": "SWAP:ETH.ETH:USER-1",
