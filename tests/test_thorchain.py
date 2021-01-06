@@ -42,13 +42,13 @@ class TestThorchainState(unittest.TestCase):
         # no network fees defined
         # default to 1 RUNE
         thorchain = ThorchainState()
-        gas = thorchain.get_gas("BTC")
+        gas = thorchain.get_gas("BTC", {})
         self.assertEqual(gas, Coin("BTC.BTC", 0))
 
         # happy path
         thorchain.network_fees = {"BTC": 99813}
         thorchain.pools = [Pool("BTC.BTC", 59983570781, 127225819)]
-        gas = thorchain.get_gas("BTC")
+        gas = thorchain.get_gas("BTC", {})
         self.assertEqual(gas, Coin("BTC.BTC", 0))
 
     def test_handle_fee(self):
@@ -119,8 +119,8 @@ class TestThorchainState(unittest.TestCase):
             Event(
                 "refund",
                 [
-                    {"code": "105"},
-                    {"reason": "refund reason message: pool is zero"},
+                    {"code": "108"},
+                    {"reason": "fail swap, invalid balance"},
                     *tx.get_attributes(),
                 ],
             ),
@@ -389,8 +389,8 @@ class TestThorchainState(unittest.TestCase):
             Event(
                 "refund",
                 [
-                    {"code": "105"},
-                    {"reason": "REFUND REASON MESSAGE: POOL IS ZERO"},
+                    {"code": "108"},
+                    {"reason": "fail swap, invalid balance"},
                     *tx.get_attributes(),
                 ],
             ),
@@ -1811,6 +1811,9 @@ class TestThorchainState(unittest.TestCase):
 
     def test_withdraw_native(self):
 
+        # check event generated for successful stake
+        # only if BNB.RUNE-67C as with native RUNE it would
+        # be a cross chain stake and no event on first stake
         if RUNE.get_chain() == "BNB":
             return
 

@@ -247,7 +247,9 @@ class ThorchainState:
             if not tx.gas:
                 continue
             gases = tx.gas
-            if tx.gas[0].asset.is_btc() or tx.gas[0].asset.is_bch():
+            if tx.gas[0].asset.is_btc() or tx.gas[0].asset.is_bch() or (
+                tx.gas[0].asset.is_eth() and tx.coins[0].asset.is_eth()
+            ):
                 gases = tx.max_gas
             for gas in gases:
                 if gas.asset not in gas_coins:
@@ -291,7 +293,12 @@ class ThorchainState:
             return Ethereum.coin
         return None
 
-    def get_gas(self, chain):
+    def get_gas(self, chain, tx):
+        if chain == "ETH":
+            return Ethereum._calculate_gas(None, tx)
+        return self.get_max_gas(chain)
+
+    def get_max_gas(self, chain):
         if chain == "THOR":
             return Coin(RUNE, self.rune_fee)
         rune_fee = self.get_rune_fee(chain)
@@ -302,9 +309,7 @@ class ThorchainState:
         if chain == "BCH":
             amount = int(self.bch_tx_rate * 3 / 2) * self.bch_estimate_size
         if chain == "BNB":
-            amount = pool.get_rune_in_asset(int(round(rune_fee / 3)))
-        if chain == "ETH":
-            amount = 21000
+            amount = pool.get_rune_in_asset(int(rune_fee / 3))
         return Coin(gas_asset, amount)
 
     def get_rune_fee(self, chain):
@@ -332,7 +337,7 @@ class ThorchainState:
             # fee amount in rune value
             rune_fee = self.get_rune_fee(tx.chain)
             if not tx.gas:
-                tx.gas = [self.get_gas(tx.chain)]
+                tx.gas = [self.get_gas(tx.chain, in_tx)]
 
             for coin in tx.coins:
                 if coin.is_rune():
@@ -384,6 +389,21 @@ class ThorchainState:
                                 self.bch_tx_rate * 3 / 2
                             )
                             coin.amount += gap
+                        if coin.asset.get_chain() == "ETH" and not asset_fee == 0:
+                            if coin.asset.is_eth():
+                                tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
+                                gap = (
+                                    int(asset_fee / 2)
+                                    - Ethereum._calculate_gas(pool, tx).amount
+                                )
+                                coin.amount += gap
+                            elif coin.asset.is_erc():
+                                gas_asset = self.get_gas_asset("ETH")
+                                pool_gas = self.get_pool(gas_asset)
+                                fee_in_gas_asset = pool_gas.get_rune_in_asset(rune_fee)
+                                tx.max_gas = [
+                                    Coin(gas_asset, int(fee_in_gas_asset / 2))
+                                ]
 
                         pool_deduct = rune_fee
                         if rune_fee > pool.rune_balance:
@@ -606,30 +626,6 @@ class ThorchainState:
         self.order_outbound_txs(out_txs)
         return out_txs
 
-    def adjust_btc_gas(self, txs):
-        """
-        Adjust the gas used in BTC , in BTC , often we  spend less gas than MaxGas
-        and the extra gas get paid to customer , after that , pool need to be adjusted
-        """
-        # adjust the pool
-        for tx in txs:
-            if not tx.gas:
-                continue
-            for gas in tx.gas:
-                if not gas.asset.is_btc():
-                    continue
-                if gas.asset != tx.fee.asset:
-                    continue
-                max_gas = int(tx.fee.amount / 2)
-                if max_gas > gas.amount:
-                    gap = max_gas - gas.amount
-                    pool = self.get_pool(gas.asset)
-                    rune_amt = pool.get_asset_in_rune(gap)
-                    pool.add(rune_amt, 0)
-                    pool.sub(0, gap)
-                    self.reserve -= rune_amt
-                    self.set_pool(pool)
-
     def handle_reserve(self, tx):
         """
         Add rune to the reserve
@@ -829,15 +825,15 @@ class ThorchainState:
 
         # calculate gas prior to update pool in case we empty the pool
         # and need to subtract
-        gas = self.get_gas(asset.get_chain())
+        gas = self.get_gas(asset.get_chain(), tx)
         # get the fee that are supposed to be charged, this will only be
         # used if it is the last withdraw
         dynamic_fee = pool.get_rune_in_asset(self.get_rune_fee(asset.get_chain())) / 2
-        tx_rune_gas = self.get_gas(RUNE.get_chain())
-
+        tx_rune_gas = self.get_gas(RUNE.get_chain(), tx)
         withdraw_units, rune_amt, asset_amt = pool.withdraw(
             tx.from_address, withdraw_basis_points
         )
+        rune_amt += lp.pending_rune
 
         # if this is our last liquidity provider of bnb, subtract a little BNB for gas.
         emit_asset = asset_amt
@@ -854,8 +850,9 @@ class ThorchainState:
                 pool.asset_balance += gas_amt
                 asset_amt -= gas_amt
             elif pool.asset.is_eth():
-                gas = self.get_gas(asset.get_chain())
-                outbound_asset_amt -= int(dynamic_fee)
+                gas = self.get_gas(asset.get_chain(), tx)
+                asset_amt -= int(dynamic_fee)
+                outbound_asset_amt -= gas.amount
                 pool.asset_balance += dynamic_fee
             elif pool.asset.is_btc():
                 # the last withdraw tx , it need to spend everything
@@ -990,8 +987,7 @@ class ThorchainState:
             # its a double swap
             pool = self.get_pool(source)
             if pool.is_zero():
-                # FIXME real world message
-                return self.refund(tx, 105, "refund reason message")
+                return self.refund(tx, 108, "fail swap, invalid balance")
 
             emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
                 tx.coins[0], RUNE
@@ -1060,7 +1056,7 @@ class ThorchainState:
 
         pool = self.get_pool(asset)
         if pool.is_zero():
-            return self.refund(tx, 105, "refund reason message: pool is zero")
+            return self.refund(tx, 108, "fail swap, invalid balance")
 
         emit, liquidity_fee, liquidity_fee_in_rune, trade_slip, pool = self.swap(
             in_tx.coins[0], asset

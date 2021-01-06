@@ -73,14 +73,12 @@ class TestSmoke(unittest.TestCase):
         thorchain = ThorchainState()  # init local thorchain
         thorchain.network_fees = {  # init fixed network fees
             "BNB": 37500,
-            "BTC": 1,
-            "BCH": 1,
-            "ETH": 1,
+            "BTC": 10000,
+            "BCH": 10000,
+            "ETH": 65000,
         }
 
-        file = "data/smoke_test_transactions.json"
-        if RUNE.get_chain() == "THOR":
-            file = "data/smoke_test_native_transactions.json"
+        file = "data/smoke_test_native_transactions.json"
 
         with open(file, "r") as f:
             contents = f.read()
@@ -102,9 +100,9 @@ class TestSmoke(unittest.TestCase):
             if txn.memo == "SEED":
                 continue
 
-            outbound = thorchain.handle(txn)  # process transaction in thorchain
+            outbounds = thorchain.handle(txn)  # process transaction in thorchain
 
-            for txn in outbound:
+            for txn in outbounds:
                 if txn.chain == Binance.chain:
                     bnb.transfer(txn)  # send outbound txns back to Binance
                 if txn.chain == Bitcoin.chain:
@@ -117,19 +115,19 @@ class TestSmoke(unittest.TestCase):
             thorchain.handle_rewards()
 
             bnbOut = []
-            for out in outbound:
+            for out in outbounds:
                 if out.coins[0].asset.get_chain() == "BNB":
                     bnbOut.append(out)
             btcOut = []
-            for out in outbound:
+            for out in outbounds:
                 if out.coins[0].asset.get_chain() == "BTC":
                     btcOut.append(out)
             bchOut = []
-            for out in outbound:
+            for out in outbounds:
                 if out.coins[0].asset.get_chain() == "BCH":
                     bchOut.append(out)
             ethOut = []
-            for out in outbound:
+            for out in outbounds:
                 if out.coins[0].asset.get_chain() == "ETH":
                     ethOut.append(out)
             thorchain.handle_gas(bnbOut)  # subtract gas from pool(s)
@@ -138,7 +136,7 @@ class TestSmoke(unittest.TestCase):
             thorchain.handle_gas(ethOut)  # subtract gas from pool(s)
 
             # generated a snapshop picture of thorchain and bnb
-            snap = Breakpoint(thorchain, bnb).snapshot(i, len(outbound))
+            snap = Breakpoint(thorchain, bnb).snapshot(i, len(outbounds))
             snaps.append(snap)
             expected = get_balance(i)  # get the expected balance from json file
 
@@ -155,6 +153,15 @@ class TestSmoke(unittest.TestCase):
                 logging.info(pformat(diff))
                 if not export:
                     raise Exception("did not match!")
+
+            # log result
+            if len(outbounds) == 0:
+                continue
+            result = "[+]"
+            if "REFUND" in outbounds[0].memo:
+                result = "[-]"
+            for outbound in outbounds:
+                logging.info(f"{result} {outbound.short()}")
 
         if export:
             with open(export, "w") as fp:
