@@ -220,22 +220,22 @@ class TestTransaction(unittest.TestCase):
             Coin("BNB.BNB", 100),
             "MEMO",
         )
-        self.assertEqual(str(txn), "Tx     USER => VAULT    | MEMO | 100_BNB.BNB")
+        self.assertEqual(str(txn), "      USER => VAULT      [MEMO] 100_BNB.BNB")
         txn.coins = [Coin("BNB.BNB", 1000000000), Coin(RUNE, 1000000000)]
         self.assertEqual(
             str(txn),
-            "Tx     USER => VAULT    | MEMO | 1,000,000,000_BNB.BNB"
+            "      USER => VAULT      [MEMO] 1,000,000,000_BNB.BNB"
             f", 1,000,000,000_{RUNE}",
         )
         txn.coins = None
         self.assertEqual(
             str(txn),
-            "Tx     USER => VAULT    | MEMO | No Coins",
+            "      USER => VAULT      [MEMO] No Coins",
         )
         txn.gas = [Coin("BNB.BNB", 37500)]
         self.assertEqual(
             str(txn),
-            "Tx     USER => VAULT    | MEMO | No Coins | Gas 37,500_BNB.BNB",
+            "      USER => VAULT      [MEMO] No Coins | Gas 37,500_BNB.BNB",
         )
 
     def test_repr(self):
@@ -247,23 +247,20 @@ class TestTransaction(unittest.TestCase):
             "MEMO",
         )
         self.assertEqual(
-            repr(txn), "<Tx     USER => VAULT    | MEMO | [<Coin 100_BNB.BNB>]>"
+            repr(txn), "<Tx       USER => VAULT      [MEMO] [<Coin 100_BNB.BNB>]>"
         )
         txn.coins = [Coin("BNB.BNB", 1000000000), Coin(RUNE, 1000000000)]
         self.assertEqual(
             repr(txn),
-            "<Tx     USER => VAULT    | MEMO | [<Coin 1,000,000,000_BNB.BNB>,"
+            "<Tx       USER => VAULT      [MEMO] [<Coin 1,000,000,000_BNB.BNB>,"
             f" <Coin 1,000,000,000_{RUNE}>]>",
         )
         txn.coins = None
-        self.assertEqual(
-            repr(txn),
-            "<Tx     USER => VAULT    | MEMO | No Coins>",
-        )
+        self.assertEqual(repr(txn), "<Tx       USER => VAULT      [MEMO] No Coins>")
         txn.gas = [Coin("BNB.BNB", 37500)]
         self.assertEqual(
             repr(txn),
-            "<Tx     USER => VAULT    | MEMO | No Coins |"
+            "<Tx       USER => VAULT      [MEMO] No Coins |"
             " Gas [<Coin 37,500_BNB.BNB>]>",
         )
 

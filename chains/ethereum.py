@@ -58,7 +58,6 @@ class MockEthereum:
             self.web3.eth.defaultAccount, self.passphrase
         )
         self.vault = self.get_vault()
-        logging.info(f"addr {self.vault.address}")
         token = self.get_token()
         symbol = token.functions.symbol().call()
         self.tokens[symbol] = token
@@ -203,7 +202,6 @@ class MockEthereum:
                 )
         else:
             memo = txn.memo
-            logging.info(f"memo:{memo}")
 
             if txn.coins[0].asset.get_symbol().split("-")[0] == Ethereum.chain:
                 tx_hash = self.vault.functions.transferETH(

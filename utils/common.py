@@ -117,6 +117,12 @@ class Asset(str, Jsonable):
         """
         return self.get_symbol().startswith("BTC")
 
+    def is_bch(self):
+        """
+        Is this asset bch?
+        """
+        return self.get_symbol().startswith("BCH")
+
     def is_eth(self):
         """
         Is this asset eth?
@@ -264,8 +270,8 @@ class Transaction(Jsonable):
         fee = f" | Fee {self.fee}" if self.fee else ""
         id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
         return (
-            f"<Tx {self.from_address:>8} => {self.to_address:8} | "
-            f"{self.memo} | {coins}{gas}{fee}{id}>"
+            f"<Tx {self.from_address:>10} => {self.to_address:10} "
+            f"[{self.memo}] {coins}{gas}{fee}{id}>"
         )
 
     def __str__(self):
@@ -278,8 +284,8 @@ class Transaction(Jsonable):
             else ""
         )
         return (
-            f"Tx {self.from_address:>8} => {self.to_address:8} | "
-            f"{self.memo} | {coins}{gas}{fee}{id}"
+            f"{self.from_address:>10} => {self.to_address:10} "
+            f"[{self.memo}] {coins}{gas}{fee}{id}"
         )
 
     def short(self):

@@ -7,6 +7,7 @@ from deepdiff import DeepDiff
 
 from chains.binance import Binance
 from chains.bitcoin import Bitcoin
+from chains.bitcoin_cash import BitcoinCash
 from chains.ethereum import Ethereum
 from thorchain.thorchain import ThorchainState, Event
 from utils.breakpoint import Breakpoint
@@ -15,7 +16,7 @@ from utils.common import Transaction, get_rune_asset, DEFAULT_RUNE_ASSET
 RUNE = get_rune_asset()
 # Init logging
 logging.basicConfig(
-    format="%(asctime)s | %(levelname).4s | %(message)s",
+    format="%(levelname).1s[%(asctime)s] %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
@@ -67,11 +68,13 @@ class TestSmoke(unittest.TestCase):
         snaps = []
         bnb = Binance()  # init local binance chain
         btc = Bitcoin()  # init local bitcoin chain
+        bch = BitcoinCash()  # init local bitcoin cash chain
         eth = Ethereum()  # init local ethereum chain
         thorchain = ThorchainState()  # init local thorchain
         thorchain.network_fees = {  # init fixed network fees
             "BNB": 37500,
             "BTC": 10000,
+            "BCH": 10000,
             "ETH": 65000,
         }
 
@@ -89,6 +92,8 @@ class TestSmoke(unittest.TestCase):
                 bnb.transfer(txn)  # send transfer on binance chain
             if txn.chain == Bitcoin.chain:
                 btc.transfer(txn)  # send transfer on bitcoin chain
+            if txn.chain == BitcoinCash.chain:
+                bch.transfer(txn)  # send transfer on bitcoin cash chain
             if txn.chain == Ethereum.chain:
                 eth.transfer(txn)  # send transfer on ethereum chain
 
@@ -102,6 +107,8 @@ class TestSmoke(unittest.TestCase):
                     bnb.transfer(txn)  # send outbound txns back to Binance
                 if txn.chain == Bitcoin.chain:
                     btc.transfer(txn)  # send outbound txns back to Bitcoin
+                if txn.chain == BitcoinCash.chain:
+                    bch.transfer(txn)  # send outbound txns back to Bitcoin Cash
                 if txn.chain == Ethereum.chain:
                     eth.transfer(txn)  # send outbound txns back to Ethereum
 
@@ -115,12 +122,17 @@ class TestSmoke(unittest.TestCase):
             for out in outbounds:
                 if out.coins[0].asset.get_chain() == "BTC":
                     btcOut.append(out)
+            bchOut = []
+            for out in outbounds:
+                if out.coins[0].asset.get_chain() == "BCH":
+                    bchOut.append(out)
             ethOut = []
             for out in outbounds:
                 if out.coins[0].asset.get_chain() == "ETH":
                     ethOut.append(out)
             thorchain.handle_gas(bnbOut)  # subtract gas from pool(s)
             thorchain.handle_gas(btcOut)  # subtract gas from pool(s)
+            thorchain.handle_gas(bchOut)  # subtract gas from pool(s)
             thorchain.handle_gas(ethOut)  # subtract gas from pool(s)
 
             # generated a snapshop picture of thorchain and bnb
