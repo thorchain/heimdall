@@ -247,8 +247,10 @@ class ThorchainState:
             if not tx.gas:
                 continue
             gases = tx.gas
-            if tx.gas[0].asset.is_btc() or tx.gas[0].asset.is_bch() or (
-                tx.gas[0].asset.is_eth() and tx.coins[0].asset.is_eth()
+            if (
+                tx.gas[0].asset.is_btc()
+                or tx.gas[0].asset.is_bch()
+                or (tx.gas[0].asset.is_eth() and tx.coins[0].asset.is_eth())
             ):
                 gases = tx.max_gas
             for gas in gases:
