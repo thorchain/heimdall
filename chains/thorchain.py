@@ -115,7 +115,7 @@ class MockThorchain(HttpClient):
             msgs = payload["value"]["msg"]
             fee = payload["value"]["fee"]
             acct_num = acct["result"]["value"]["account_number"]
-            seq = acct["result"]["value"]["sequence"]
+            seq = acct["result"]["value"].get("sequence", 0)
             sig = self._sign(
                 name, self._get_sign_message("thorchain", acct_num, fee, seq, msgs)
             )
