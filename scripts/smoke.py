@@ -392,6 +392,7 @@ class Smoker:
 
                     elif evt_t.type == "outbound" and processed and pending_txs > 0:
                         # figure out which outbound event is which tx
+                        logging.info(f"outbound:{outbounds}")
                         for out in outbounds:
                             if out.coins_str() == evt_t.get("coin"):
                                 # self.thorchain_state.adjust_btc_gas([out])
