@@ -840,8 +840,8 @@ class ThorchainState:
         # if this is our last liquidity provider of bnb, subtract a little BNB for gas.
         emit_asset = asset_amt
         outbound_asset_amt = asset_amt
-        self.btc_estimate_size = 192
-        self.bch_estimate_size = 198
+        self.btc_estimate_size = 233
+        self.bch_estimate_size = 239
         if pool.total_units == 0:
             if pool.asset.is_bnb():
                 gas_amt = gas.amount
@@ -859,7 +859,7 @@ class ThorchainState:
             elif pool.asset.is_btc():
                 # the last withdraw tx , it need to spend everything
                 # so it will use about 2 UTXO , estimate size is 288
-                self.btc_estimate_size = 233
+                self.btc_estimate_size = 192
                 # left enough gas asset otherwise it will get into negative
                 emit_asset -= int(dynamic_fee)
                 estimate_gas_asset = (
@@ -872,7 +872,7 @@ class ThorchainState:
             elif pool.asset.is_bch():
                 # the last withdraw tx , it need to spend everything
                 # so it will use about 2 UTXO , estimate size is 288
-                self.bch_estimate_size = 239
+                self.bch_estimate_size = 198
                 # left enough gas asset otherwise it will get into negative
                 emit_asset -= int(dynamic_fee)
                 estimate_gas_asset = (
