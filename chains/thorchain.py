@@ -125,7 +125,11 @@ class MockThorchain(HttpClient):
 
     def send(self, payload):
         resp = requests.post(self.get_url("/txs"), data=payload)
+        if resp.status_code >= 400:
+            logging.info(f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}")
         resp.raise_for_status()
+        if resp.json()['code'] > 0:
+            raise Exception(f"Failed to broadcast to THORChain: {resp.json()}")
         return resp.json()
 
     def get_pushable(self, name, msgs, sig, fee, acct_num, seq) -> str:
