@@ -184,8 +184,11 @@ class MockEthereum:
         if txn.memo == self.seed:
 
             if txn.coins[0].asset.get_symbol() == Ethereum.chain:
-                tx_hash = self.vault.functions.transferETH(
-                    Web3.toChecksumAddress(txn.to_address), txn.memo
+                tx_hash = self.vault.functions.deposit(
+                    Web3.toChecksumAddress(txn.to_address),
+                    Web3.toChecksumAddress(self.zero_address),
+                    0,
+                    txn.memo,
                 ).transact(
                     {
                         "value": txn.coins[0].amount,
@@ -204,8 +207,11 @@ class MockEthereum:
             memo = txn.memo
 
             if txn.coins[0].asset.get_symbol().split("-")[0] == Ethereum.chain:
-                tx_hash = self.vault.functions.transferETH(
-                    Web3.toChecksumAddress(txn.to_address), txn.memo
+                tx_hash = self.vault.functions.deposit(
+                    Web3.toChecksumAddress(txn.to_address),
+                    Web3.toChecksumAddress(self.zero_address),
+                    0,
+                    txn.memo,
                 ).transact({"value": txn.coins[0].amount})
             else:
                 # approve the tx first
@@ -258,20 +264,20 @@ class Ethereum(GenericChain):
         if txn.gas is not None and txn.gas[0].asset.is_eth():
             gas = txn.gas[0].amount
         if txn.memo == "WITHDRAW:ETH.ETH:1000":
-            gas = 34716
+            gas = 35520
         elif txn.memo.startswith("SWAP:ETH.ETH:"):
-            gas = 34704
+            gas = 35508
         elif txn.memo.startswith(
             "SWAP:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
         ):
-            gas = 53561
+            gas = 53663
         elif (
             txn.memo
             == "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A:1000"
         ):
-            gas = 53573
+            gas = 53675
         elif txn.memo == "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A":
-            gas = 26781
+            gas = 26832
         elif txn.memo == "WITHDRAW:ETH.ETH":
-            gas = 34716
+            gas = 35520
         return Coin(cls.coin, gas * MockEthereum.gas_price)
