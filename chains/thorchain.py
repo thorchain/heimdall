@@ -120,11 +120,14 @@ class MockThorchain(HttpClient):
                 name, self._get_sign_message("thorchain", acct_num, fee, seq, msgs)
             )
             pushable = self.get_pushable(name, msgs, sig, fee, acct_num, seq)
-            result = self.send(pushable)
+            tx = self._post_encode(self.get_pushable(name, msgs, sig, fee, acct_num, seq))
+            result = self.send(tx)
             txn.id = result["txhash"]
 
-    def send(self, payload):
-        resp = requests.post(self.get_url("/txs"), data=payload)
+    def send(self, tx_bytes, mode = "block"):
+        data = {"tx_bytes": tx_bytes, "mode": mode}
+        logging.info(f"Send ({data['mode']}): {tx_bytes}")
+        resp = requests.post(self.get_url("/cosmos/tx/v1beta1/txs"), data=data)
         if resp.status_code >= 400:
             logging.info(f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}")
         resp.raise_for_status()
@@ -136,7 +139,8 @@ class MockThorchain(HttpClient):
         pubkey = privkey_to_pubkey(self.private_keys[name])
         base64_pubkey = base64.b64encode(bytes.fromhex(pubkey)).decode("utf-8")
         pushable_tx = {
-            "tx": {
+            "type": "cosmos-sdk/StdTx",
+            "value": {
                 "msg": msgs,
                 "fee": fee,
                 "memo": "",
@@ -151,8 +155,7 @@ class MockThorchain(HttpClient):
                         "sequence": str(seq),
                     }
                 ],
-            },
-            "mode": "sync",
+            }
         }
         return json.dumps(pushable_tx, separators=(",", ":"))
 
@@ -184,6 +187,14 @@ class MockThorchain(HttpClient):
 
     def _get_account(self, address):
         return self.fetch("/auth/accounts/" + address)
+
+    def _post_encode(self, payload):
+        resp = requests.post(self.get_url("/txs/encode"), data=payload)
+        if resp.status_code >= 400:
+            logging.info(f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}")
+        resp.raise_for_status()
+        logging.info(f"Successful Encode: {resp.json()}")
+        return resp.json()['tx']
 
 
 class Thorchain(GenericChain):
