@@ -73,8 +73,8 @@ class MockThorchain(HttpClient):
                 if coin["denom"] == asset.get_symbol().lower():
                     return int(coin["amount"])
         else:
-            balance = self.fetch("/auth/accounts/" + address)
-            for coin in balance["result"]["value"]["coins"]:
+            balance = self.fetch("/bank/balances/" + address)
+            for coin in balance["result"]:
                 if coin["denom"] == asset.get_symbol().lower():
                     return int(coin["amount"])
         return 0
@@ -112,7 +112,6 @@ class MockThorchain(HttpClient):
             }
 
             payload = self.post("/thorchain/deposit", payload)
-            print(f"{payload}")
             msgs = payload["value"]["msg"]
             msgs_for_sign = payload["value"]["msg"][0]["value"]
             fee = payload["value"]["fee"]
@@ -122,18 +121,15 @@ class MockThorchain(HttpClient):
                 name, self._get_sign_message("thorchain", acct_num, fee, seq, msgs_for_sign)
             )
             pushable = self.get_pushable(name, msgs, sig, fee, acct_num, seq)
-            print(f"===>{pushable}")
             result = self.send(pushable)
             txn.id = result["txhash"]
 
-    def send(self, tx_bytes, mode = "block"):
-        data = {"tx_bytes": tx_bytes, "mode": mode}
-        logging.info(f"Send ({data['mode']}): {tx_bytes}")
-        resp = requests.post(self.get_url("/cosmos/tx/v1beta1/txs"), data=data)
+    def send(self, payload):
+        resp = requests.post(self.get_url("/txs"), data=payload)
         if resp.status_code >= 400:
             logging.info(f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}")
         resp.raise_for_status()
-        if resp.json()['code'] > 0:
+        if 'status_code' in resp.json() and resp.json()['status_code'] > 0:
             raise Exception(f"Failed to broadcast to THORChain: {resp.json()}")
         return resp.json()
 
@@ -141,8 +137,7 @@ class MockThorchain(HttpClient):
         pubkey = privkey_to_pubkey(self.private_keys[name])
         base64_pubkey = base64.b64encode(bytes.fromhex(pubkey)).decode("utf-8")
         pushable_tx = {
-            "type": "cosmos-sdk/StdTx",
-            "value": {
+            "tx": {
                 "msg": msgs,
                 "fee": fee,
                 "memo": "",
@@ -157,13 +152,13 @@ class MockThorchain(HttpClient):
                         "sequence": str(seq),
                     }
                 ],
-            }
+            },
+            "mode": "sync",
         }
         return json.dumps(pushable_tx, separators=(",", ":"))
 
     def _sign(self, name, body):
         message_str = json.dumps(body, separators=(",", ":"), sort_keys=True)
-        print(f"message body:{message_str}")
         message_bytes = message_str.encode("utf-8")
 
         privkey = ecdsa.SigningKey.from_string(
