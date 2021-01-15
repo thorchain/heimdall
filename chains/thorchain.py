@@ -112,16 +112,18 @@ class MockThorchain(HttpClient):
             }
 
             payload = self.post("/thorchain/deposit", payload)
+            print(f"{payload}")
             msgs = payload["value"]["msg"]
+            msgs_for_sign = payload["value"]["msg"][0]["value"]
             fee = payload["value"]["fee"]
             acct_num = acct["result"]["value"]["account_number"]
             seq = acct["result"]["value"].get("sequence", 0)
             sig = self._sign(
-                name, self._get_sign_message("thorchain", acct_num, fee, seq, msgs)
+                name, self._get_sign_message("thorchain", acct_num, fee, seq, msgs_for_sign)
             )
             pushable = self.get_pushable(name, msgs, sig, fee, acct_num, seq)
-            tx = self._post_encode(self.get_pushable(name, msgs, sig, fee, acct_num, seq))
-            result = self.send(tx)
+            print(f"===>{pushable}")
+            result = self.send(pushable)
             txn.id = result["txhash"]
 
     def send(self, tx_bytes, mode = "block"):
@@ -161,6 +163,7 @@ class MockThorchain(HttpClient):
 
     def _sign(self, name, body):
         message_str = json.dumps(body, separators=(",", ":"), sort_keys=True)
+        print(f"message body:{message_str}")
         message_bytes = message_str.encode("utf-8")
 
         privkey = ecdsa.SigningKey.from_string(
@@ -182,7 +185,7 @@ class MockThorchain(HttpClient):
             "fee": fee,
             "memo": "",
             "sequence": str(seq),
-            "msgs": msgs,
+            "msgs": [msgs],
         }
 
     def _get_account(self, address):
