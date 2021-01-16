@@ -538,7 +538,7 @@
                 "code": "105"
             },
             {
-                "reason": "unknown request: invalid pool asset"
+                "reason": "invalid pool asset: unknown request"
             },
             {
                 "id": "TODO"
@@ -823,7 +823,7 @@
                 "code": "105"
             },
             {
-                "reason": "unknown request: swap Source and Target cannot be the same."
+                "reason": "swap Source and Target cannot be the same.: unknown request"
             },
             {
                 "id": "TODO"
@@ -1705,7 +1705,7 @@
                 "code": "105"
             },
             {
-                "reason": "unknown request: not expecting multiple coins in a swap"
+                "reason": "not expecting multiple coins in a swap: unknown request"
             },
             {
                 "id": "TODO"
