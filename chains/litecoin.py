@@ -4,12 +4,13 @@ import logging
 import threading
 
 from bitcointx import select_chain_params
-from bitcointx.wallet import CBitcoinRegtestKey, P2WPKHBitcoinRegtestAddress
+from bitcointx.wallet import CBitcoinRegtestKey
+from litecointx.wallet import P2WPKHLitecoinRegtestAddress
 from bitcointx.core import Hash160
 from bitcointx.core.script import CScript, OP_0
 from utils.common import Coin, HttpClient, get_rune_asset, Asset
 from decimal import Decimal, getcontext
-from chains.aliases import aliases_btc, get_aliases, get_alias_address
+from chains.aliases import aliases_ltc, get_aliases, get_alias_address
 from chains.chain import GenericChain
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -18,9 +19,9 @@ getcontext().prec = 8
 RUNE = get_rune_asset()
 
 
-class MockBitcoin(HttpClient):
+class MockLitecoin(HttpClient):
     """
-    An client implementation for a regtest bitcoin server
+    An client implementation for a regtest litecoin server
     """
 
     private_keys = [
@@ -39,7 +40,7 @@ class MockBitcoin(HttpClient):
     def __init__(self, base_url):
         super().__init__(base_url)
 
-        select_chain_params("bitcoin/regtest")
+        select_chain_params("litecoin/regtest")
 
         for key in self.private_keys:
             seckey = CBitcoinRegtestKey.from_secret_bytes(codecs.decode(key, "hex_codec"))
@@ -67,14 +68,14 @@ class MockBitcoin(HttpClient):
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
         """
-        Get bitcoin address for a specific hrp (human readable part)
+        Get litecoin address for a specific hrp (human readable part)
         bech32 encoded from a public key(secp256k1).
 
         :param string pubkey: public key
         :returns: string bech32 encoded address
         """
         script_pubkey = CScript([OP_0, Hash160(pubkey)])
-        return str(P2WPKHBitcoinRegtestAddress.from_scriptPubKey(script_pubkey))
+        return str(P2WPKHLitecoinRegtestAddress.from_scriptPubKey(script_pubkey))
 
     def call(self, service, *args):
         payload = {
@@ -91,13 +92,12 @@ class MockBitcoin(HttpClient):
         """
         Set the vault bnb address
         """
-        aliases_btc["VAULT"] = addr
-        logging.info(f"btc vault addr {addr}")
+        aliases_ltc["VAULT"] = addr
         self.call("importaddress", addr)
 
     def get_block_height(self):
         """
-        Get the current block height of bitcoin regtest
+        Get the current block height of litecoin regtest
         """
         return self.call("getblockcount")
 
@@ -134,7 +134,7 @@ class MockBitcoin(HttpClient):
 
     def get_balance(self, address):
         """
-        Get BTC balance for an address
+        Get LTC balance for an address
         """
         unspents = self.call("listunspent", 1, 9999999, [address])
         return int(sum(Decimal(u["amount"]) for u in unspents) * Coin.ONE)
@@ -142,18 +142,18 @@ class MockBitcoin(HttpClient):
     @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
     def wait_for_node(self):
         """
-        Bitcoin regtest node is started with directly mining 100 blocks
+        Litecoin regtest node is started with directly mining 100 blocks
         to be able to start handling transactions.
         It can take a while depending on the machine specs so we retry.
         """
         current_height = self.get_block_height()
         if current_height < 100:
-            logging.warning("Bitcoin regtest starting, waiting")
+            logging.warning("Litecoin regtest starting, waiting")
             raise Exception
 
     def transfer(self, txn):
         """
-        Make a transaction/transfer on regtest bitcoin
+        Make a transaction/transfer on regtest litecoin
         """
         self.wait_for_node()
 
@@ -190,7 +190,7 @@ class MockBitcoin(HttpClient):
             "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
         )
         if len(unspents) == 0:
-            raise Exception(f"Cannot transfer. No BTC UTXO available for {address}")
+            raise Exception(f"Cannot transfer. No LTC UTXO available for {address}")
 
         # choose the first UTXO
         unspent = unspents[0]
@@ -210,27 +210,27 @@ class MockBitcoin(HttpClient):
         tx = self.call("createrawtransaction", tx_in, tx_out)
         tx = self.call("signrawtransactionwithwallet", tx)
         txn.id = self.call("sendrawtransaction", tx["hex"]).upper()
-        txn.gas = [Coin("BTC.BTC", self.default_gas)]
+        txn.gas = [Coin("LTC.LTC", self.default_gas)]
 
 
-class Bitcoin(GenericChain):
+class Litecoin(GenericChain):
     """
-    A local simple implementation of bitcoin chain
+    A local simple implementation of litecoin chain
     """
 
-    name = "Bitcoin"
-    chain = "BTC"
-    coin = Asset("BTC.BTC")
+    name = "Litecoin"
+    chain = "LTC"
+    coin = Asset("LTC.LTC")
     rune_fee = 100000000
 
     @classmethod
     def _calculate_gas(cls, pool, txn):
         """
         Calculate gas according to RUNE thorchain fee
-        1 RUNE / 2 in BTC value
+        1 RUNE / 2 in LTC value
         """
         if pool is None:
-            return Coin(cls.coin, MockBitcoin.default_gas)
+            return Coin(cls.coin, MockLitecoin.default_gas)
 
-        btc_amount = pool.get_rune_in_asset(int(cls.rune_fee / 2))
-        return Coin(cls.coin, btc_amount)
+        ltc_amount = pool.get_rune_in_asset(int(cls.rune_fee / 2))
+        return Coin(cls.coin, ltc_amount)

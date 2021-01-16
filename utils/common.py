@@ -123,6 +123,12 @@ class Asset(str, Jsonable):
         """
         return self.get_symbol().startswith("BCH")
 
+    def is_ltc(self):
+        """
+        Is this asset ltc?
+        """
+        return self.get_symbol().startswith("LTC")
+
     def is_eth(self):
         """
         Is this asset eth?

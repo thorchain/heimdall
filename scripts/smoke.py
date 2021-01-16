@@ -11,6 +11,7 @@ from tenacity import retry, stop_after_delay, wait_fixed
 from utils.segwit_addr import decode_address
 from chains.binance import Binance, MockBinance
 from chains.bitcoin import Bitcoin, MockBitcoin
+from chains.litecoin import Litecoin, MockLitecoin
 from chains.bitcoin_cash import BitcoinCash, MockBitcoinCash
 from chains.ethereum import Ethereum, MockEthereum
 from chains.thorchain import Thorchain, MockThorchain
@@ -44,6 +45,11 @@ def main():
         "--bitcoin-cash",
         default="http://thorchain:password@localhost:28443",
         help="Regtest bitcoin cash server",
+    )
+    parser.add_argument(
+        "--litecoin",
+        default="http://thorchain:password@localhost:38443",
+        help="Regtest litecoin server",
     )
     parser.add_argument(
         "--ethereum",
@@ -96,6 +102,7 @@ def main():
         args.binance,
         args.bitcoin,
         args.bitcoin_cash,
+        args.litecoin,
         args.ethereum,
         args.thorchain,
         health,
@@ -121,6 +128,7 @@ class Smoker:
         bnb,
         btc,
         bch,
+        ltc,
         eth,
         thor,
         health,
@@ -134,6 +142,7 @@ class Smoker:
         self.binance = Binance()
         self.bitcoin = Bitcoin()
         self.bitcoin_cash = BitcoinCash()
+        self.litecoin = Litecoin()
         self.ethereum = Ethereum()
         self.thorchain = Thorchain()
         self.thorchain_state = ThorchainState()
@@ -163,6 +172,11 @@ class Smoker:
         self.mock_bitcoin_cash = MockBitcoinCash(bch)
         bitcoin_cash_address = MockBitcoinCash.get_address_from_pubkey(raw_pubkey)
         self.mock_bitcoin_cash.set_vault_address(bitcoin_cash_address)
+
+        # setup litecoin
+        self.mock_litecoin = MockLitecoin(ltc)
+        litecoin_address = MockLitecoin.get_address_from_pubkey(raw_pubkey)
+        self.mock_litecoin.set_vault_address(litecoin_address)
 
         # setup ethereum
         self.mock_ethereum = MockEthereum(eth)
@@ -305,6 +319,8 @@ class Smoker:
             return self.mock_bitcoin.transfer(txn)
         if txn.chain == BitcoinCash.chain:
             return self.mock_bitcoin_cash.transfer(txn)
+        if txn.chain == Litecoin.chain:
+            return self.mock_litecoin.transfer(txn)
         if txn.chain == Ethereum.chain:
             return self.mock_ethereum.transfer(txn)
         if txn.chain == MockThorchain.chain:
@@ -320,6 +336,8 @@ class Smoker:
             return self.bitcoin.transfer(txn)
         if txn.chain == BitcoinCash.chain:
             return self.bitcoin_cash.transfer(txn)
+        if txn.chain == Litecoin.chain:
+            return self.litecoin.transfer(txn)
         if txn.chain == Ethereum.chain:
             return self.ethereum.transfer(txn)
         if txn.chain == Thorchain.chain:
@@ -332,15 +350,18 @@ class Smoker:
         """
         btc = self.mock_bitcoin.block_stats
         bch = self.mock_bitcoin_cash.block_stats
+        ltc = self.mock_litecoin.block_stats
         fees = {
             "BNB": self.mock_binance.singleton_gas,
             "ETH": self.mock_ethereum.gas_price * self.mock_ethereum.default_gas,
             "BTC": btc["tx_size"] * btc["tx_rate"],
+            "LTC": ltc["tx_size"] * ltc["tx_rate"],
             "BCH": bch["tx_size"] * bch["tx_rate"],
         }
         self.thorchain_state.set_network_fees(fees)
         self.thorchain_state.set_btc_tx_rate(btc["tx_rate"])
         self.thorchain_state.set_bch_tx_rate(bch["tx_rate"])
+        self.thorchain_state.set_ltc_tx_rate(ltc["tx_rate"])
 
     def sim_trigger_tx(self, txn):
         # process transaction in thorchain
@@ -490,6 +511,7 @@ class Smoker:
 
             self.check_binance()
             self.check_chain(self.bitcoin, self.mock_bitcoin, self.bitcoin_reorg)
+            self.check_chain(self.litecoin, self.mock_litecoin, self.bitcoin_reorg)
             self.check_chain(
                 self.bitcoin_cash, self.mock_bitcoin_cash, self.bitcoin_reorg
             )
