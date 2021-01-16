@@ -118,7 +118,8 @@ class MockThorchain(HttpClient):
             acct_num = acct["result"]["value"]["account_number"]
             seq = acct["result"]["value"].get("sequence", 0)
             sig = self._sign(
-                name, self._get_sign_message("thorchain", acct_num, fee, seq, msgs_for_sign)
+                name,
+                self._get_sign_message("thorchain", acct_num, fee, seq, msgs_for_sign),
             )
             pushable = self.get_pushable(name, msgs, sig, fee, acct_num, seq)
             result = self.send(pushable)
@@ -127,9 +128,11 @@ class MockThorchain(HttpClient):
     def send(self, payload):
         resp = requests.post(self.get_url("/txs"), data=payload)
         if resp.status_code >= 400:
-            logging.info(f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}")
+            logging.info(
+                f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}"
+            )
         resp.raise_for_status()
-        if 'status_code' in resp.json() and resp.json()['status_code'] > 0:
+        if "status_code" in resp.json() and resp.json()["status_code"] > 0:
             raise Exception(f"Failed to broadcast to THORChain: {resp.json()}")
         return resp.json()
 
@@ -189,10 +192,12 @@ class MockThorchain(HttpClient):
     def _post_encode(self, payload):
         resp = requests.post(self.get_url("/txs/encode"), data=payload)
         if resp.status_code >= 400:
-            logging.info(f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}")
+            logging.info(
+                f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}"
+            )
         resp.raise_for_status()
         logging.info(f"Successful Encode: {resp.json()}")
-        return resp.json()['tx']
+        return resp.json()["tx"]
 
 
 class Thorchain(GenericChain):
