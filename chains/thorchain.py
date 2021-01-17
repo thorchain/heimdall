@@ -73,8 +73,8 @@ class MockThorchain(HttpClient):
                 if coin["denom"] == asset.get_symbol().lower():
                     return int(coin["amount"])
         else:
-            balance = self.fetch("/auth/accounts/" + address)
-            for coin in balance["result"]["value"]["coins"]:
+            balance = self.fetch("/bank/balances/" + address)
+            for coin in balance["result"]:
                 if coin["denom"] == asset.get_symbol().lower():
                     return int(coin["amount"])
         return 0
@@ -113,11 +113,13 @@ class MockThorchain(HttpClient):
 
             payload = self.post("/thorchain/deposit", payload)
             msgs = payload["value"]["msg"]
+            msgs_for_sign = payload["value"]["msg"][0]["value"]
             fee = payload["value"]["fee"]
             acct_num = acct["result"]["value"]["account_number"]
-            seq = acct["result"]["value"]["sequence"]
+            seq = acct["result"]["value"].get("sequence", 0)
             sig = self._sign(
-                name, self._get_sign_message("thorchain", acct_num, fee, seq, msgs)
+                name,
+                self._get_sign_message("thorchain", acct_num, fee, seq, msgs_for_sign),
             )
             pushable = self.get_pushable(name, msgs, sig, fee, acct_num, seq)
             result = self.send(pushable)
@@ -125,7 +127,13 @@ class MockThorchain(HttpClient):
 
     def send(self, payload):
         resp = requests.post(self.get_url("/txs"), data=payload)
+        if resp.status_code >= 400:
+            logging.info(
+                f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}"
+            )
         resp.raise_for_status()
+        if "status_code" in resp.json() and resp.json()["status_code"] > 0:
+            raise Exception(f"Failed to broadcast to THORChain: {resp.json()}")
         return resp.json()
 
     def get_pushable(self, name, msgs, sig, fee, acct_num, seq) -> str:
@@ -175,11 +183,21 @@ class MockThorchain(HttpClient):
             "fee": fee,
             "memo": "",
             "sequence": str(seq),
-            "msgs": msgs,
+            "msgs": [msgs],
         }
 
     def _get_account(self, address):
         return self.fetch("/auth/accounts/" + address)
+
+    def _post_encode(self, payload):
+        resp = requests.post(self.get_url("/txs/encode"), data=payload)
+        if resp.status_code >= 400:
+            logging.info(
+                f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}"
+            )
+        resp.raise_for_status()
+        logging.info(f"Successful Encode: {resp.json()}")
+        return resp.json()["tx"]
 
 
 class Thorchain(GenericChain):
