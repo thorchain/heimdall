@@ -711,7 +711,7 @@ class ThorchainState:
 
         # cant have rune memo
         if asset.is_rune():
-            return self.refund(tx, 105, "unknown request: invalid pool asset")
+            return self.refund(tx, 105, "invalid pool asset: unknown request")
 
         # check that we have one rune and one asset
         if len(tx.coins) > 2:
@@ -723,7 +723,7 @@ class ThorchainState:
             if not coin.is_rune():
                 if not asset == coin.asset:
                     return self.refund(
-                        tx, 105, "unknown request: did not find both coins"
+                        tx, 105, "did not find both coins: unknown request"
                     )
 
         pool = self.get_pool(asset)
@@ -964,7 +964,7 @@ class ThorchainState:
 
         # check that we have one coin
         if len(tx.coins) != 1:
-            reason = "unknown request: not expecting multiple coins in a swap"
+            reason = "not expecting multiple coins in a swap: unknown request"
             return self.refund(tx, 105, reason)
 
         source = tx.coins[0].asset
@@ -973,7 +973,7 @@ class ThorchainState:
         # refund if we're trying to swap with the coin we given ie swapping bnb
         # with bnb
         if source == asset:
-            reason = "unknown request: swap Source and Target cannot be the same."
+            reason = "swap Source and Target cannot be the same.: unknown request"
             return self.refund(tx, 105, reason)
 
         pools = []
