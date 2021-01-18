@@ -113,13 +113,12 @@ class MockThorchain(HttpClient):
 
             payload = self.post("/thorchain/deposit", payload)
             msgs = payload["value"]["msg"]
-            msgs_for_sign = payload["value"]["msg"][0]["value"]
             fee = payload["value"]["fee"]
             acct_num = acct["result"]["value"]["account_number"]
             seq = acct["result"]["value"].get("sequence", 0)
             sig = self._sign(
                 name,
-                self._get_sign_message("thorchain", acct_num, fee, seq, msgs_for_sign),
+                self._get_sign_message("thorchain", acct_num, fee, seq, msgs),
             )
             pushable = self.get_pushable(name, msgs, sig, fee, acct_num, seq)
             result = self.send(pushable)
@@ -183,7 +182,7 @@ class MockThorchain(HttpClient):
             "fee": fee,
             "memo": "",
             "sequence": str(seq),
-            "msgs": [msgs],
+            "msgs": msgs,
         }
 
     def _get_account(self, address):
