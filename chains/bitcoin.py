@@ -92,7 +92,6 @@ class MockBitcoin(HttpClient):
         Set the vault bnb address
         """
         aliases_btc["VAULT"] = addr
-        logging.info(f"btc vault addr {addr}")
         self.call("importaddress", addr)
 
     def get_block_height(self):
