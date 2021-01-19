@@ -62,7 +62,7 @@ class ThorchainClient(HttpClient):
         url = self.base_url.replace("1317", "26657")
         return url
 
-    @retry(stop=stop_after_delay(30), wait=wait_fixed(1))
+    @retry(stop=stop_after_delay(60), wait=wait_fixed(1))
     def wait_for_node(self):
         current_height = self.get_block_height()
         if current_height < 1:
