@@ -16,6 +16,15 @@ aliases_btc = {
     "VAULT": "",
 }
 
+aliases_ltc = {
+    "MASTER": "rltc1qj08ys4ct2hzzc2hcz6h2hgrvlmsjynawf4nr3r",
+    "CONTRIB": "rltc1qzupk5lmc84r2dh738a9g3zscavannjy3320gac",
+    "USER-1": "rltc1qqqnde7kqe5sf96j6zf8jpzwr44dh4gkd05d5hf",
+    "PROVIDER-1": "rltc1q0s4mg25tu6termrk8egltfyme4q7sg3hemvd64",
+    "PROVIDER-2": "rltc1qjw8h4l3dtz5xxc7uyh5ys70qkezspgfu4f2839",
+    "VAULT": "",
+}
+
 aliases_bnb = {
     "MASTER": "tbnb1ht7v08hv2lhtmk8y7szl2hjexqryc3hcldlztl",
     "CONTRIB": "tbnb1lltanv67yztkpt5czw4ajsmg94dlqnnhrq7zqm",
@@ -54,9 +63,11 @@ def get_address_prefix(chain):
     if chain == "BNB":
         return "tbnb"
     if chain == "BTC":
-        return "bc"
+        return "tbc"
+    if chain == "LTC":
+        return "tltc"
     if chain == "THOR":
-        return "thor"
+        return "tthor"
     raise Exception(f"Address prefix not found, chain not supported ({chain})")
 
 
@@ -69,6 +80,8 @@ def get_alias_address(chain, alias):
         return aliases_btc[alias]
     if chain == "BCH":
         return aliases_bch[alias]
+    if chain == "LTC":
+        return aliases_ltc[alias]
     if chain == "ETH":
         return aliases_eth[alias]
     if chain == "THOR":
@@ -81,6 +94,8 @@ def get_alias(chain, addr):
         aliases = aliases_bnb
     if chain == "BTC":
         aliases = aliases_btc
+    if chain == "LTC":
+        aliases = aliases_ltc
     if chain == "BCH":
         aliases = aliases_bch
     if chain == "ETH":

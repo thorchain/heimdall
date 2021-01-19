@@ -17,6 +17,7 @@ from utils.common import (
 
 from chains.aliases import get_alias, get_alias_address, get_aliases
 from chains.bitcoin import Bitcoin
+from chains.litecoin import Litecoin
 from chains.bitcoin_cash import BitcoinCash
 from chains.ethereum import Ethereum
 from chains.binance import Binance
@@ -174,8 +175,10 @@ class ThorchainState:
         self.network_fees = {}
         self.btc_estimate_size = 192
         self.bch_estimate_size = 198
+        self.ltc_estimate_size = 192
         self.btc_tx_rate = 0
         self.bch_tx_rate = 0
+        self.ltc_tx_rate = 0
 
     def set_btc_tx_rate(self, tx_rate):
         """
@@ -188,6 +191,12 @@ class ThorchainState:
         Set median BCH tx rate , used to calculate gas
         """
         self.bch_tx_rate = tx_rate
+
+    def set_ltc_tx_rate(self, tx_rate):
+        """
+        Set median LTC tx rate , used to calculate gas
+        """
+        self.ltc_tx_rate = tx_rate
 
     def set_vault_pubkey(self, pubkey):
         """
@@ -250,6 +259,7 @@ class ThorchainState:
             if (
                 tx.gas[0].asset.is_btc()
                 or tx.gas[0].asset.is_bch()
+                or tx.gas[0].asset.is_ltc()
                 or (tx.gas[0].asset.is_eth() and tx.coins[0].asset.is_eth())
             ):
                 gases = tx.max_gas
@@ -291,6 +301,8 @@ class ThorchainState:
             return Bitcoin.coin
         if chain == "BCH":
             return BitcoinCash.coin
+        if chain == "LTC":
+            return Litecoin.coin
         if chain == "ETH":
             return Ethereum.coin
         return None
@@ -310,6 +322,8 @@ class ThorchainState:
             amount = int(self.btc_tx_rate * 3 / 2) * self.btc_estimate_size
         if chain == "BCH":
             amount = int(self.bch_tx_rate * 3 / 2) * self.bch_estimate_size
+        if chain == "LTC":
+            amount = int(self.ltc_tx_rate * 3 / 2) * self.ltc_estimate_size
         if chain == "BNB":
             amount = pool.get_rune_in_asset(int(rune_fee / 3))
         return Coin(gas_asset, amount)
@@ -391,6 +405,14 @@ class ThorchainState:
                                 self.bch_tx_rate * 3 / 2
                             )
                             coin.amount += gap
+
+                        if coin.asset.is_ltc() and not asset_fee == 0:
+                            tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
+                            gap = int(asset_fee / 2) - self.ltc_estimate_size * int(
+                                self.ltc_tx_rate * 3 / 2
+                            )
+                            coin.amount += gap
+
                         if coin.asset.get_chain() == "ETH" and not asset_fee == 0:
                             if coin.asset.is_eth():
                                 tx.max_gas = [Coin(coin.asset, int(asset_fee / 2))]
@@ -842,6 +864,7 @@ class ThorchainState:
         outbound_asset_amt = asset_amt
         self.btc_estimate_size = 233
         self.bch_estimate_size = 239
+        self.ltc_estimate_size = 233
         if pool.total_units == 0:
             if pool.asset.is_bnb():
                 gas_amt = gas.amount
@@ -877,6 +900,19 @@ class ThorchainState:
                 emit_asset -= int(dynamic_fee)
                 estimate_gas_asset = (
                     int(self.bch_tx_rate * 3 / 2) * self.bch_estimate_size
+                )
+                gas = Coin(gas.asset, estimate_gas_asset)
+                outbound_asset_amt -= int(estimate_gas_asset)
+                pool.asset_balance += dynamic_fee
+                asset_amt -= int(dynamic_fee)
+            elif pool.asset.is_ltc():
+                # the last withdraw tx , it need to spend everything
+                # so it will use about 2 UTXO , estimate size is 288
+                self.ltc_estimate_size = 192
+                # left enough gas asset otherwise it will get into negative
+                emit_asset -= int(dynamic_fee)
+                estimate_gas_asset = (
+                    int(self.ltc_tx_rate * 3 / 2) * self.ltc_estimate_size
                 )
                 gas = Coin(gas.asset, estimate_gas_asset)
                 outbound_asset_amt -= int(estimate_gas_asset)
