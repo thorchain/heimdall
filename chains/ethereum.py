@@ -264,20 +264,20 @@ class Ethereum(GenericChain):
         if txn.gas is not None and txn.gas[0].asset.is_eth():
             gas = txn.gas[0].amount
         if txn.memo == "WITHDRAW:ETH.ETH:1000":
-            gas = 35520
+            gas = 35617
         elif txn.memo.startswith("SWAP:ETH.ETH:"):
-            gas = 35508
+            gas = 35605
         elif txn.memo.startswith(
             "SWAP:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
         ):
-            gas = 53663
+            gas = 53743
         elif (
             txn.memo
             == "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A:1000"
         ):
-            gas = 53675
+            gas = 53755
         elif txn.memo == "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A":
-            gas = 26832
+            gas = 26872
         elif txn.memo == "WITHDRAW:ETH.ETH":
-            gas = 35520
+            gas = 35617
         return Coin(cls.coin, gas * MockEthereum.gas_price)
