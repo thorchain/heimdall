@@ -1642,10 +1642,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "53663"
+                "asset_amt": "53705"
             },
             {
-                "rune_amt": "1626226"
+                "rune_amt": "1627499"
             },
             {
                 "transaction_count": "1"
@@ -1806,10 +1806,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "315004384"
+                "emit_asset": "315004380"
             },
             {
-                "emit_rune": "9546350917"
+                "emit_rune": "9546351044"
             },
             {
                 "id": "TODO"
@@ -1924,10 +1924,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "53675"
+                "asset_amt": "53717"
             },
             {
-                "rune_amt": "1626533"
+                "rune_amt": "1627806"
             },
             {
                 "transaction_count": "1"
@@ -3460,10 +3460,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "26832"
+                "asset_amt": "26853"
             },
             {
-                "rune_amt": "813131"
+                "rune_amt": "813767"
             },
             {
                 "transaction_count": "1"
@@ -3511,10 +3511,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "2834958946"
+                "emit_asset": "2834958845"
             },
             {
-                "emit_rune": "85916642728"
+                "emit_rune": "85916645783"
             },
             {
                 "id": "TODO"
