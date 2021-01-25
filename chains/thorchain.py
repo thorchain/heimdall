@@ -15,7 +15,7 @@ from chains.account import Account
 
 # Init logging
 logging.basicConfig(
-    format="%(asctime)s | %(levelname).4s | %(message)s",
+    format="%(levelname).1s[%(asctime)s] %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
@@ -49,9 +49,18 @@ class MockThorchain(HttpClient):
 
     chain = "THOR"
     private_keys = {
-        "USER-1": "ef235aacf90d9f4aadd8c92e4b2562e1d9eb97f0df9ba3b508258739cb013db2",
-        "STAKER-1": "289c2857d4598e37fb9647507e47a309d6133539bf21a8b9cb6df88fd5232032",
-        "STAKER-2": "e810f1d7d6691b4a7a73476f3543bd87d601f9a53e7faf670eac2c5b517d83bf",
+        # vintage announce rapid clip spare stomach matter camp noble habit
+        # beef amateur chimney time fuel machine culture end toe oval isolate
+        # laptop solar gift
+        "USER-1": "8c9ae14956daa9854fea2e33c0a50e039d5943de142d1153ceb9ea8c671b04dc",
+        # discover blue crunch cart club fish airport crazy roast hybrid scheme
+        # picnic veteran mango beach narrow luxury glory dynamic crawl symbol
+        # win sell dress
+        "PROVIDER-1": "f65ebc1bdb78067923bb9e839360e2925478780779c8caf69c0b45f80e9c1501",
+        # sock true leave evil budget lonely foster danger reopen anxiety dash
+        # naive list advance unhappy trust inmate culture bounce museum light
+        # more pear story
+        "PROVIDER-2": "e00609419daa4a0e9e9668921bf0b746e1c72090a6a0ce2206f3abcb56b8c1d1",
     }
 
     def get_balance(self, address, asset=Asset("THOR.RUNE")):
@@ -64,8 +73,8 @@ class MockThorchain(HttpClient):
                 if coin["denom"] == asset.get_symbol().lower():
                     return int(coin["amount"])
         else:
-            balance = self.fetch("/auth/accounts/" + address)
-            for coin in balance["result"]["value"]["coins"]:
+            balance = self.fetch("/bank/balances/" + address)
+            for coin in balance["result"]:
                 if coin["denom"] == asset.get_symbol().lower():
                     return int(coin["amount"])
         return 0
@@ -102,13 +111,14 @@ class MockThorchain(HttpClient):
                 "base_req": {"chain_id": "thorchain", "from": txn.from_address},
             }
 
-            payload = self.post("/thorchain/native/tx", payload)
+            payload = self.post("/thorchain/deposit", payload)
             msgs = payload["value"]["msg"]
             fee = payload["value"]["fee"]
             acct_num = acct["result"]["value"]["account_number"]
-            seq = acct["result"]["value"]["sequence"]
+            seq = acct["result"]["value"].get("sequence", 0)
             sig = self._sign(
-                name, self._get_sign_message("thorchain", acct_num, fee, seq, msgs)
+                name,
+                self._get_sign_message("thorchain", acct_num, fee, seq, msgs),
             )
             pushable = self.get_pushable(name, msgs, sig, fee, acct_num, seq)
             result = self.send(pushable)
@@ -116,7 +126,13 @@ class MockThorchain(HttpClient):
 
     def send(self, payload):
         resp = requests.post(self.get_url("/txs"), data=payload)
+        if resp.status_code >= 400:
+            logging.info(
+                f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}"
+            )
         resp.raise_for_status()
+        if "status_code" in resp.json() and resp.json()["status_code"] > 0:
+            raise Exception(f"Failed to broadcast to THORChain: {resp.json()}")
         return resp.json()
 
     def get_pushable(self, name, msgs, sig, fee, acct_num, seq) -> str:
@@ -172,6 +188,16 @@ class MockThorchain(HttpClient):
     def _get_account(self, address):
         return self.fetch("/auth/accounts/" + address)
 
+    def _post_encode(self, payload):
+        resp = requests.post(self.get_url("/txs/encode"), data=payload)
+        if resp.status_code >= 400:
+            logging.info(
+                f"Failed to broadcast to THORChain ({resp.status_code}): {resp.json()}"
+            )
+        resp.raise_for_status()
+        logging.info(f"Successful Encode: {resp.json()}")
+        return resp.json()["tx"]
+
 
 class Thorchain(GenericChain):
     """
@@ -186,15 +212,15 @@ class Thorchain(GenericChain):
         super().__init__()
 
         # seeding the users, these seeds are established in build/scripts/genesis.sh
-        acct = Account("tthor1j08ys4ct2hzzc2hcz6h2hgrvlmsjynawtaa5zs")
+        acct = Account("tthor1z63f3mzwv3g75az80xwmhrawdqcjpaekk0kd54")
         acct.add(Coin(self.coin, 5000000000000))
         self.set_account(acct)
 
-        acct = Account("tthor1zupk5lmc84r2dh738a9g3zscavannjy3nzplwt")
+        acct = Account("tthor1wz78qmrkplrdhy37tw0tnvn0tkm5pqd6zdp257")
         acct.add(Coin(self.coin, 25000000000100))
         self.set_account(acct)
 
-        acct = Account("tthor1qqnde7kqe5sf96j6zf8jpzwr44dh4gkddurry6")
+        acct = Account("tthor1xwusttz86hqfuk5z7amcgqsg7vp6g8zhsp5lu2")
         acct.add(Coin(self.coin, 5090000000000))
         self.set_account(acct)
 

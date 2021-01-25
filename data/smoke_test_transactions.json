@@ -40,7 +40,28 @@
     {
         "chain": "BNB",
         "from_address": "MASTER",
-        "to_address": "STAKER-1",
+        "to_address": "USER-1",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 100000000
+            },
+            {
+                "asset": "BNB.RUNE-67C",
+                "amount": 50000000000
+            },
+            {
+                "asset": "BNB.LOK-3C0",
+                "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "MASTER",
+        "to_address": "PROVIDER-1",
         "memo": "SEED",
         "coins": [
             {
@@ -61,12 +82,12 @@
     {
         "chain": "BNB",
         "from_address": "MASTER",
-        "to_address": "STAKER-1",
+        "to_address": "PROVIDER-1",
         "memo": "SEED",
         "coins": [
             {
                 "asset": "BNB.BNB",
-                "amount": 300000000
+                "amount": 600000000
             },
             {
                 "asset": "BNB.RUNE-67C",
@@ -82,7 +103,7 @@
     {
         "chain": "BNB",
         "from_address": "MASTER",
-        "to_address": "STAKER-2",
+        "to_address": "PROVIDER-2",
         "memo": "SEED",
         "coins": [
             {
@@ -116,7 +137,7 @@
     {
         "chain": "BTC",
         "from_address": "MASTER",
-        "to_address": "STAKER-1",
+        "to_address": "PROVIDER-1",
         "memo": "SEED",
         "coins": [
             {
@@ -129,7 +150,7 @@
     {
         "chain": "BTC",
         "from_address": "MASTER",
-        "to_address": "STAKER-2",
+        "to_address": "PROVIDER-2",
         "memo": "SEED",
         "coins": [
             {
@@ -147,7 +168,33 @@
         "coins": [
             {
                 "asset": "ETH.ETH",
-                "amount": 4000000000000
+                "amount": 40000000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "ETH",
+        "from_address": "MASTER",
+        "to_address": "PROVIDER-1",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "ETH.ETH",
+                "amount": 40000000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "ETH",
+        "from_address": "MASTER",
+        "to_address": "USER-1",
+        "memo": "SEED",
+        "coins": [
+            {
+                "asset": "ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
+                "amount": 40000000000000
             }
         ],
         "gas": null
@@ -159,7 +206,7 @@
         "memo": "SEED",
         "coins": [
             {
-                "asset": "ETH.ETH",
+                "asset": "ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
                 "amount": 40000000000000
             }
         ],
@@ -180,6 +227,49 @@
     },
     {
         "chain": "BNB",
+        "from_address": "PROVIDER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:BNB.BNB",
+        "coins": [
+            {
+                "asset": "BNB.BNB",
+                "amount": 150000000
+            },
+            {
+                "asset": "BNB.RUNE-67C",
+                "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "PROVIDER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:BTC.BTC:PROVIDER-1",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-67C",
+                "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BTC",
+        "from_address": "PROVIDER-1",
+        "to_address": "VAULT",
+        "memo": "STAKE:BTC.BTC:PROVIDER-1",
+        "coins": [
+            {
+                "asset": "BTC.BTC",
+                "amount": 150000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.BNB",
@@ -197,9 +287,9 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BTC.BTC:STAKER-1",
+        "memo": "STAKE:ETH.ETH:PROVIDER-1",
         "coins": [
             {
                 "asset": "BNB.RUNE-67C",
@@ -209,14 +299,14 @@
         "gas": null
     },
     {
-        "chain": "BTC",
-        "from_address": "STAKER-1",
+        "chain": "ETH",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:BTC.BTC:STAKER-1",
+        "memo": "STAKE:ETH.ETH:PROVIDER-1",
         "coins": [
             {
-                "asset": "BTC.BTC",
-                "amount": 150000000
+                "asset": "ETH.ETH",
+                "amount": 4000000000
             }
         ],
         "gas": null
@@ -225,7 +315,7 @@
         "chain": "BNB",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:ETH.ETH:STAKER-1",
+        "memo": "STAKE:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A:STAKER-1",
         "coins": [
             {
                 "asset": "BNB.RUNE-67C",
@@ -238,10 +328,10 @@
         "chain": "ETH",
         "from_address": "STAKER-1",
         "to_address": "VAULT",
-        "memo": "STAKE:ETH.ETH:STAKER-1",
+        "memo": "STAKE:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A:STAKER-1",
         "coins": [
             {
-                "asset": "ETH.ETH",
+                "asset": "ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
                 "amount": 4000000000
             }
         ],
@@ -249,9 +339,9 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BTC.BTC:STAKER-2",
+        "memo": "STAKE:BTC.BTC:PROVIDER-2",
         "coins": [
             {
                 "asset": "BNB.RUNE-67C",
@@ -262,9 +352,9 @@
     },
     {
         "chain": "BTC",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
-        "memo": "STAKE:BTC.BTC:STAKER-2",
+        "memo": "STAKE:BTC.BTC:PROVIDER-2",
         "coins": [
             {
                 "asset": "BTC.BTC",
@@ -275,7 +365,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.LOK-3C0",
         "coins": [
@@ -292,7 +382,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "",
         "coins": [
@@ -309,7 +399,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "ABDG?",
         "coins": [
@@ -326,7 +416,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "STAKE:",
         "coins": [
@@ -339,7 +429,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.TCAN-014",
         "coins": [
@@ -356,7 +446,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.RUNE-67C",
         "coins": [
@@ -373,7 +463,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.BNB",
         "coins": [
@@ -386,7 +476,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.BNB",
         "coins": [
@@ -399,7 +489,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "STAKE:BNB.BNB",
         "coins": [
@@ -416,9 +506,9 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
-        "memo": "ADD:BNB.BNB",
+        "memo": "DONATE:BNB.BNB",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -484,19 +574,6 @@
         "gas": null
     },
     {
-        "chain": "BNB",
-        "from_address": "USER-1",
-        "to_address": "VAULT",
-        "memo": "SWAP:ETH.ETH:USER-1",
-        "coins": [
-            {
-                "asset": "BNB.BNB",
-                "amount": 500000
-            }
-        ],
-        "gas": null
-    },
-    {
         "chain": "BTC",
         "from_address": "USER-1",
         "to_address": "VAULT",
@@ -510,6 +587,19 @@
         "gas": null
     },
     {
+        "chain": "BNB",
+        "from_address": "USER-1",
+        "to_address": "VAULT",
+        "memo": "SWAP:ETH.ETH:USER-1",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-67C",
+                "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
         "chain": "ETH",
         "from_address": "USER-1",
         "to_address": "VAULT",
@@ -517,14 +607,40 @@
         "coins": [
             {
                 "asset": "ETH.ETH",
-                "amount": 15000000
+                "amount": 150000000
             }
         ],
         "gas": null
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "USER-1",
+        "to_address": "VAULT",
+        "memo": "SWAP:BNB.RUNE-67C:USER-1",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-67C",
+                "amount": 50000000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "ETH",
+        "from_address": "USER-1",
+        "to_address": "VAULT",
+        "memo": "SWAP:BNB.RUNE-67C:USER-1",
+        "coins": [
+            {
+                "asset": "ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
+                "amount": 150000000
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:ETH.ETH:1000",
         "coins": [
@@ -593,7 +709,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BTC.BTC:1000",
         "coins": [
@@ -621,7 +737,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.BNB:STAKER-1:23853375",
+        "memo": "SWAP:BNB.BNB:PROVIDER-1:23853375",
         "coins": [
             {
                 "asset": "BNB.RUNE-67C",
@@ -634,7 +750,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.BNB:STAKER-1:22460886",
+        "memo": "SWAP:BNB.BNB:PROVIDER-1:22460886",
         "coins": [
             {
                 "asset": "BNB.RUNE-67C",
@@ -647,7 +763,7 @@
         "chain": "BNB",
         "from_address": "USER-1",
         "to_address": "VAULT",
-        "memo": "SWAP:BNB.RUNE-67C:bnbSTAKER-1",
+        "memo": "SWAP:BNB.RUNE-67C:bnbPROVIDER-1",
         "coins": [
             {
                 "asset": "BNB.BNB",
@@ -710,7 +826,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB:5000",
         "coins": [
@@ -723,7 +839,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.LOK-3C0",
         "coins": [
@@ -736,7 +852,7 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-1",
+        "from_address": "PROVIDER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB:10000",
         "coins": [
@@ -749,7 +865,33 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-67C",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:ETH.ETH",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-67C",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BTC.BTC",
         "coins": [
@@ -762,7 +904,46 @@
     },
     {
         "chain": "BNB",
-        "from_address": "STAKER-2",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:ETH.ETH",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-A1F",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "STAKER-1",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:BTC.BTC",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-67C",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "PROVIDER-2",
+        "to_address": "VAULT",
+        "memo": "WITHDRAW:BTC.BTC",
+        "coins": [
+            {
+                "asset": "BNB.RUNE-67C",
+                "amount": 1
+            }
+        ],
+        "gas": null
+    },
+    {
+        "chain": "BNB",
+        "from_address": "PROVIDER-2",
         "to_address": "VAULT",
         "memo": "WITHDRAW:BNB.BNB",
         "coins": [

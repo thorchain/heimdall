@@ -3,13 +3,19 @@ import codecs
 import logging
 import threading
 
-from bitcointx import select_chain_params
-from bitcointx.wallet import CBitcoinRegtestKey, P2WPKHBitcoinRegtestAddress
-from bitcointx.core import Hash160
-from bitcointx.core.script import CScript, OP_0
+from bitcoincash import SelectParams
+from bitcoincash.wallet import CBitcoinSecret, P2PKHBitcoinAddress
+from bitcoincash.core import Hash160
+from bitcoincash.core.script import (
+    CScript,
+    OP_DUP,
+    OP_HASH160,
+    OP_CHECKSIG,
+    OP_EQUALVERIFY,
+)
 from utils.common import Coin, HttpClient, get_rune_asset, Asset
 from decimal import Decimal, getcontext
-from chains.aliases import aliases_btc, get_aliases, get_alias_address
+from chains.aliases import aliases_bch, get_aliases, get_alias_address
 from chains.chain import GenericChain
 from tenacity import retry, stop_after_delay, wait_fixed
 
@@ -18,9 +24,9 @@ getcontext().prec = 8
 RUNE = get_rune_asset()
 
 
-class MockBitcoin(HttpClient):
+class MockBitcoinCash(HttpClient):
     """
-    An client implementation for a regtest bitcoin server
+    An client implementation for a regtest bitcoin cash server
     """
 
     private_keys = [
@@ -39,10 +45,10 @@ class MockBitcoin(HttpClient):
     def __init__(self, base_url):
         super().__init__(base_url)
 
-        select_chain_params("bitcoin/regtest")
+        SelectParams("regtest")
 
         for key in self.private_keys:
-            seckey = CBitcoinRegtestKey.from_secret_bytes(codecs.decode(key, "hex_codec"))
+            seckey = CBitcoinSecret.from_secret_bytes(codecs.decode(key, "hex_codec"))
             self.call("importprivkey", str(seckey))
 
         threading.Thread(target=self.scan_blocks, daemon=True).start()
@@ -51,7 +57,7 @@ class MockBitcoin(HttpClient):
         while True:
             try:
                 result = self.get_block_stats()
-                avg_fee_rate = result["avgfeerate"]
+                avg_fee_rate = int(result["avgfeerate"] * Coin.ONE)
                 avg_tx_size = 250  # result["mediantxsize"]
                 if avg_fee_rate != 0:
                     min_relay_fee = 1000  # sats
@@ -67,14 +73,16 @@ class MockBitcoin(HttpClient):
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
         """
-        Get bitcoin address for a specific hrp (human readable part)
+        Get bitcoin cash address for a specific hrp (human readable part)
         bech32 encoded from a public key(secp256k1).
 
         :param string pubkey: public key
         :returns: string bech32 encoded address
         """
-        script_pubkey = CScript([OP_0, Hash160(pubkey)])
-        return str(P2WPKHBitcoinRegtestAddress.from_scriptPubKey(script_pubkey))
+        script_pubkey = CScript(
+            [OP_DUP, OP_HASH160, Hash160(pubkey), OP_EQUALVERIFY, OP_CHECKSIG]
+        )
+        return str(P2PKHBitcoinAddress.from_scriptPubKey(script_pubkey)).split(":")[1]
 
     def call(self, service, *args):
         payload = {
@@ -91,7 +99,7 @@ class MockBitcoin(HttpClient):
         """
         Set the vault bnb address
         """
-        aliases_btc["VAULT"] = addr
+        aliases_bch["VAULT"] = addr
         self.call("importaddress", addr)
 
     def get_block_height(self):
@@ -133,7 +141,7 @@ class MockBitcoin(HttpClient):
 
     def get_balance(self, address):
         """
-        Get BTC balance for an address
+        Get BCH balance for an address
         """
         unspents = self.call("listunspent", 1, 9999999, [address])
         return int(sum(Decimal(u["amount"]) for u in unspents) * Coin.ONE)
@@ -189,7 +197,7 @@ class MockBitcoin(HttpClient):
             "listunspent", 1, 9999, [str(address)], True, {"minimumAmount": min_amount}
         )
         if len(unspents) == 0:
-            raise Exception(f"Cannot transfer. No BTC UTXO available for {address}")
+            raise Exception(f"Cannot transfer. No BCH UTXO available for {address}")
 
         # choose the first UTXO
         unspent = unspents[0]
@@ -209,27 +217,27 @@ class MockBitcoin(HttpClient):
         tx = self.call("createrawtransaction", tx_in, tx_out)
         tx = self.call("signrawtransactionwithwallet", tx)
         txn.id = self.call("sendrawtransaction", tx["hex"]).upper()
-        txn.gas = [Coin("BTC.BTC", self.default_gas)]
+        txn.gas = [Coin("BCH.BCH", self.default_gas)]
 
 
-class Bitcoin(GenericChain):
+class BitcoinCash(GenericChain):
     """
-    A local simple implementation of bitcoin chain
+    A local simple implementation of bitcoin cash chain
     """
 
-    name = "Bitcoin"
-    chain = "BTC"
-    coin = Asset("BTC.BTC")
+    name = "Bitcoin-Cash"
+    chain = "BCH"
+    coin = Asset("BCH.BCH")
     rune_fee = 100000000
 
     @classmethod
     def _calculate_gas(cls, pool, txn):
         """
         Calculate gas according to RUNE thorchain fee
-        1 RUNE / 2 in BTC value
+        1 RUNE / 2 in BCH value
         """
         if pool is None:
-            return Coin(cls.coin, MockBitcoin.default_gas)
+            return Coin(cls.coin, MockBitcoinCash.default_gas)
 
-        btc_amount = pool.get_rune_in_asset(int(cls.rune_fee / 2))
-        return Coin(cls.coin, btc_amount)
+        bch_amount = pool.get_rune_in_asset(int(cls.rune_fee / 2))
+        return Coin(cls.coin, bch_amount)

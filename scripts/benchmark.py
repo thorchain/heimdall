@@ -12,7 +12,7 @@ from chains.aliases import get_alias
 
 # Init logging
 logging.basicConfig(
-    format="%(asctime)s | %(levelname).4s | %(message)s",
+    format="%(levelname).1s[%(asctime)s] %(message)s",
     level=os.environ.get("LOGLEVEL", "INFO"),
 )
 
@@ -33,7 +33,9 @@ def main():
         help="Thorchain Websocket url",
     )
     parser.add_argument(
-        "--tx-type", default="swap", help="Transactions type to perform (swap or stake)"
+        "--tx-type",
+        default="swap",
+        help="Transactions type to perform (swap or provide liquidity)",
     )
     parser.add_argument(
         "--num", type=int, default=100, help="Number of transactions to perform"
@@ -65,7 +67,7 @@ class Benchie:
 
         self.num = num
         self.tx_type = tx_type
-        if self.tx_type != "swap" and self.tx_type != "stake":
+        if self.tx_type != "swap" and self.tx_type != "add":
             logging.error("invalid tx type: " + self.tx_type)
             os.exit(1)
 
@@ -81,12 +83,12 @@ class Benchie:
     def run(self):
         logging.info(f">>> Starting benchmark... ({self.tx_type}: {self.num})")
         logging.info(">>> setting up...")
-        # seed staker
+        # seed liquidity provider
         self.mock_binance.transfer(
             Transaction(
                 "BNB",
                 get_alias("BNB", "MASTER"),
-                get_alias("BNB", "STAKER-1"),
+                get_alias("BNB", "PROVIDER-1"),
                 [
                     Coin("BNB.BNB", self.num * 100 * Coin.ONE),
                     Coin(RUNE, self.num * 100 * Coin.ONE),
@@ -108,17 +110,17 @@ class Benchie:
         )
 
         if self.tx_type == "swap":
-            # stake BNB
+            # provide BNB
             self.mock_binance.transfer(
                 Transaction(
                     "BNB",
-                    get_alias("BNB", "STAKER-1"),
+                    get_alias("BNB", "PROVIDER-1"),
                     get_alias("BNB", "VAULT"),
                     [
                         Coin("BNB.BNB", self.num * 100 * Coin.ONE),
                         Coin(RUNE, self.num * 100 * Coin.ONE),
                     ],
-                    memo="STAKE:BNB.BNB",
+                    memo="ADD:BNB.BNB",
                 )
             )
 
@@ -129,7 +131,7 @@ class Benchie:
         txns = []
         memo = f"{self.tx_type}:BNB.BNB"
         for x in range(0, self.num):
-            if self.tx_type == "stake":
+            if self.tx_type == "add":
                 coins = [
                     Coin(RUNE, 10 * Coin.ONE),
                     Coin("BNB.BNB", 10 * Coin.ONE),

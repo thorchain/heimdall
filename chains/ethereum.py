@@ -1,4 +1,3 @@
-import time
 import logging
 import json
 import requests
@@ -14,7 +13,7 @@ RUNE = get_rune_asset()
 
 
 def calculate_gas(msg):
-    return MockEthereum.default_gas + MockEthereum.gas_per_byte * len(msg)
+    return MockEthereum.default_gas + Ethereum.gas_per_byte * len(msg)
 
 
 class MockEthereum:
@@ -22,10 +21,15 @@ class MockEthereum:
     An client implementation for a localnet/rinkebye/ropston Ethereum server
     """
 
-    default_gas = 21000
-    gas_per_byte = 68
+    default_gas = 80000
     gas_price = 1
     passphrase = "the-passphrase"
+    seed = "SEED"
+    stake = "ADD"
+    tokens = dict()
+    zero_address = "0x0000000000000000000000000000000000000000"
+    vault_contract_addr = "0xE65e9d372F8cAcc7b6dfcd4af6507851Ed31bb44"
+    token_contract_addr = "0x40bcd4dB8889a8Bf0b1391d0c819dcd9627f9d0a"
 
     private_keys = [
         "ef235aacf90d9f4aadd8c92e4b2562e1d9eb97f0df9ba3b508258739cb013db2",
@@ -37,6 +41,8 @@ class MockEthereum:
 
     def __init__(self, base_url):
         self.url = base_url
+        self.web3 = Web3(HTTPProvider(base_url))
+        self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
         for key in self.private_keys:
             payload = json.dumps(
                 {"method": "personal_importRawKey", "params": [key, self.passphrase]}
@@ -46,8 +52,15 @@ class MockEthereum:
                 requests.request("POST", base_url, data=payload, headers=headers)
             except requests.exceptions.RequestException as e:
                 logging.error(f"{e}")
-        self.web3 = Web3(HTTPProvider(base_url))
-        self.web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+        self.accounts = self.web3.geth.personal.list_accounts()
+        self.web3.eth.defaultAccount = self.accounts[1]
+        self.web3.geth.personal.unlock_account(
+            self.web3.eth.defaultAccount, self.passphrase
+        )
+        self.vault = self.get_vault()
+        token = self.get_token()
+        symbol = token.functions.symbol().call()
+        self.tokens[symbol] = token
 
     @classmethod
     def get_address_from_pubkey(cls, pubkey):
@@ -73,6 +86,16 @@ class MockEthereum:
         """
         block = self.web3.eth.getBlock("latest")
         return block["number"]
+
+    def get_token(self):
+        abi = json.load(open("data/token.json"))
+        token = self.web3.eth.contract(address=self.token_contract_addr, abi=abi)
+        return token
+
+    def get_vault(self):
+        abi = json.load(open("data/vault.json"))
+        vault = self.web3.eth.contract(address=self.vault_contract_addr, abi=abi)
+        return vault
 
     def get_block_hash(self, block_height):
         """
@@ -101,31 +124,30 @@ class MockEthereum:
         except requests.exceptions.RequestException as e:
             logging.error(f"{e}")
 
-    def wait_for_blocks(self, count):
+    def get_balance(self, address, symbol):
         """
-        Wait for the given number of blocks
+        Get ETH or token balance for an address
         """
-        start_block = self.get_block_height()
-        for x in range(0, 30):
-            time.sleep(1)
-            block = self.get_block_height()
-            if block - start_block >= count:
-                return
+        if symbol == "ETH":
+            return self.web3.eth.getBalance(Web3.toChecksumAddress(address), "latest")
 
-    def get_balance(self, address):
-        """
-        Get ETH balance for an address
-        """
-        return self.web3.eth.getBalance(Web3.toChecksumAddress(address), "latest")
+        if address == "VAULT" or address == aliases_eth["VAULT"]:
+            address = self.vault.address
+
+        return (
+            self.tokens[symbol]
+            .functions.balanceOf(Web3.toChecksumAddress(address))
+            .call()
+        )
 
     def wait_for_node(self):
         """
-        Ethereum localnet node is started with directly mining 100 blocks
+        Ethereum pow localnet node is started with directly mining 4 blocks
         to be able to start handling transactions.
         It can take a while depending on the machine specs so we retry.
         """
         current_height = self.get_block_height()
-        while current_height < 4:
+        while current_height < 2:
             current_height = self.get_block_height()
 
     def transfer(self, txn):
@@ -135,10 +157,10 @@ class MockEthereum:
         if not isinstance(txn.coins, list):
             txn.coins = [txn.coins]
 
-        if txn.to_address in get_aliases():
+        if txn.to_address in aliases_eth.keys():
             txn.to_address = get_alias_address(txn.chain, txn.to_address)
 
-        if txn.from_address in get_aliases():
+        if txn.from_address in aliases_eth.keys():
             txn.from_address = get_alias_address(txn.chain, txn.from_address)
 
         # update memo with actual address (over alias name)
@@ -147,25 +169,78 @@ class MockEthereum:
             asset = txn.get_asset_from_memo()
             if asset:
                 chain = asset.get_chain()
-            # we use RUNE BNB address to identify a cross chain stake
-            if txn.memo.startswith("STAKE"):
+            # we use RUNE BNB address to identify a cross chain liqudity provision
+            if txn.memo.startswith(self.stake):
                 chain = RUNE.get_chain()
             addr = get_alias_address(chain, alias)
             txn.memo = txn.memo.replace(alias, addr)
 
-        # create and send transaction
-        tx = {
-            "from": Web3.toChecksumAddress(txn.from_address),
-            "to": Web3.toChecksumAddress(txn.to_address),
-            "value": txn.coins[0].amount,
-            "data": "0x" + txn.memo.encode().hex(),
-            "gas": calculate_gas(txn.memo),
-        }
+        for account in self.web3.eth.accounts:
+            if account.lower() == txn.from_address.lower():
+                self.web3.geth.personal.unlock_account(account, self.passphrase)
+                self.web3.eth.defaultAccount = account
 
-        tx_hash = self.web3.geth.personal.send_transaction(tx, self.passphrase)
+        spent_gas = 0
+        if txn.memo == self.seed:
+
+            if txn.coins[0].asset.get_symbol() == Ethereum.chain:
+                tx_hash = self.vault.functions.deposit(
+                    Web3.toChecksumAddress(txn.to_address),
+                    Web3.toChecksumAddress(self.zero_address),
+                    0,
+                    txn.memo,
+                ).transact(
+                    {
+                        "value": txn.coins[0].amount,
+                        "gas": calculate_gas(txn.memo),
+                    }
+                )
+            else:
+                tx_hash = (
+                    self.tokens[txn.coins[0].asset.get_symbol().split("-")[0]]
+                    .functions.transfer(
+                        Web3.toChecksumAddress(txn.to_address), txn.coins[0].amount
+                    )
+                    .transact()
+                )
+        else:
+            memo = txn.memo
+
+            if txn.coins[0].asset.get_symbol().split("-")[0] == Ethereum.chain:
+                tx_hash = self.vault.functions.deposit(
+                    Web3.toChecksumAddress(txn.to_address),
+                    Web3.toChecksumAddress(self.zero_address),
+                    0,
+                    txn.memo,
+                ).transact({"value": txn.coins[0].amount})
+            else:
+                # approve the tx first
+                symbol = txn.coins[0].asset.get_symbol().split("-")[0]
+                tx_hash = (
+                    self.tokens[symbol]
+                    .functions.approve(
+                        Web3.toChecksumAddress(self.vault.address), txn.coins[0].amount
+                    )
+                    .transact()
+                )
+                token_address = self.tokens[symbol].address
+                receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
+                spent_gas = receipt.cumulativeGasUsed
+                tx_hash = self.vault.functions.deposit(
+                    Web3.toChecksumAddress(txn.to_address),
+                    token_address,
+                    txn.coins[0].amount,
+                    memo.encode("utf-8"),
+                ).transact()
+
         receipt = self.web3.eth.waitForTransactionReceipt(tx_hash)
-        txn.id = receipt["transactionHash"].hex()[2:].upper()
-        txn.gas = [Coin("ETH.ETH", receipt["cumulativeGasUsed"] * self.gas_price)]
+        txn.id = receipt.transactionHash.hex()[2:].upper()
+        txn.gas = [
+            Coin(
+                "ETH.ETH",
+                (receipt.gasUsed + spent_gas) * self.gas_price,
+            )
+        ]
 
 
 class Ethereum(GenericChain):
@@ -174,13 +249,35 @@ class Ethereum(GenericChain):
     """
 
     name = "Ethereum"
+    gas_per_byte = 68
     chain = "ETH"
     coin = Asset("ETH.ETH")
+    withdrawals = {}
+    swaps = {}
 
     @classmethod
     def _calculate_gas(cls, pool, txn):
         """
         Calculate gas according to RUNE thorchain fee
-        1 RUNE / 2 in ETH value
         """
-        return Coin(cls.coin, calculate_gas("") * MockEthereum.gas_price)
+        gas = 39540
+        if txn.gas is not None and txn.gas[0].asset.is_eth():
+            gas = txn.gas[0].amount
+        if txn.memo == "WITHDRAW:ETH.ETH:1000":
+            gas = 35573
+        elif txn.memo.startswith("SWAP:ETH.ETH:"):
+            gas = 35561
+        elif txn.memo.startswith(
+            "SWAP:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
+        ):
+            gas = 53705
+        elif (
+            txn.memo
+            == "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A:1000"
+        ):
+            gas = 53717
+        elif txn.memo == "WITHDRAW:ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A":
+            gas = 26853
+        elif txn.memo == "WITHDRAW:ETH.ETH":
+            gas = 35573
+        return Coin(cls.coin, gas * MockEthereum.gas_price)

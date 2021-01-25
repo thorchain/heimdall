@@ -10,6 +10,15 @@ from chains.chain import GenericChain
 RUNE = get_rune_asset()
 
 
+class BinanceApi(HttpClient):
+    """
+    An client implementation for a Binance API server
+    """
+
+    def account(self, address):
+        return self.fetch(f"/api/v1/account/{address}")
+
+
 class MockBinance(HttpClient):
     """
     An client implementation for a mock binance server
@@ -73,14 +82,14 @@ class MockBinance(HttpClient):
         return self.fetch("/accounts")
 
     @classmethod
-    def get_address_from_pubkey(cls, pubkey):
+    def get_address_from_pubkey(cls, pubkey, prefix="tbnb"):
         """
         Get bnb testnet address for a public key
 
         :param string pubkey: public key
         :returns: string bech32 encoded address
         """
-        return address_from_public_key(pubkey, "tbnb")
+        return address_from_public_key(pubkey, prefix)
 
     def transfer(self, txns):
         """
@@ -106,7 +115,7 @@ class MockBinance(HttpClient):
                 asset = txn.get_asset_from_memo()
                 if asset:
                     chain = asset.get_chain()
-                if txn.memo.startswith("STAKE"):
+                if txn.memo.startswith("ADD"):
                     if asset and txn.chain == asset.get_chain():
                         chain = RUNE.get_chain()
                 addr = get_alias_address(chain, alias)

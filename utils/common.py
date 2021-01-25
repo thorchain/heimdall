@@ -9,7 +9,7 @@ from decimal import Decimal, getcontext
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-DEFAULT_RUNE_ASSET = "BNB.RUNE-67C"
+DEFAULT_RUNE_ASSET = "THOR.RUNE"
 
 
 def get_rune_asset():
@@ -48,6 +48,15 @@ def get_share(part, total, alloc):
         return 0
     getcontext().prec = 18
     return int(round(Decimal(alloc) / (Decimal(total) / Decimal(part))))
+
+
+def get_diff(current, previous):
+    if current == previous:
+        return 0
+    try:
+        return (abs(current - previous) / ((current + previous) / 2)) * 100.0
+    except ZeroDivisionError:
+        return float("inf")
 
 
 class HttpClient:
@@ -108,11 +117,29 @@ class Asset(str, Jsonable):
         """
         return self.get_symbol().startswith("BTC")
 
+    def is_bch(self):
+        """
+        Is this asset bch?
+        """
+        return self.get_symbol().startswith("BCH")
+
+    def is_ltc(self):
+        """
+        Is this asset ltc?
+        """
+        return self.get_symbol().startswith("LTC")
+
     def is_eth(self):
         """
         Is this asset eth?
         """
         return self.get_symbol().startswith("ETH")
+
+    def is_erc(self):
+        """
+        Is this asset erc20?
+        """
+        return self.get_chain() == "ETH" and not self.get_symbol().startswith("ETH")
 
     def is_rune(self):
         """
@@ -182,6 +209,12 @@ class Coin(Jsonable):
     def __lt__(self, other):
         return self.amount < other.amount
 
+    def __sub__(self, other):
+        return self.amount - other.amount
+
+    def __add__(self, other):
+        return self.amount + other.amount
+
     def __hash__(self):
         return hash(str(self))
 
@@ -195,6 +228,9 @@ class Coin(Jsonable):
     def __str__(self):
         return f"{self.amount:0,.0f}_{self.asset}"
 
+    def str_amt(self):
+        return f"{self.amount:0,.0f}"
+
 
 class Transaction(Jsonable):
     """
@@ -204,7 +240,15 @@ class Transaction(Jsonable):
     empty_id = "0000000000000000000000000000000000000000000000000000000000000000"
 
     def __init__(
-        self, chain, from_address, to_address, coins, memo="", gas=None, id="TODO"
+        self,
+        chain,
+        from_address,
+        to_address,
+        coins,
+        memo="",
+        gas=None,
+        id="TODO",
+        max_gas=None,
     ):
         self.id = id.upper()
         self.chain = chain
@@ -221,6 +265,9 @@ class Transaction(Jsonable):
         if gas and not isinstance(gas, list):
             gas = [gas]
         self.gas = gas
+        if max_gas and not isinstance(max_gas, list):
+            max_gas = [max_gas]
+        self.max_gas = max_gas
         self.fee = None
 
     def __repr__(self):
@@ -229,8 +276,8 @@ class Transaction(Jsonable):
         fee = f" | Fee {self.fee}" if self.fee else ""
         id = f" | ID {self.id.upper()}" if self.id != "TODO" else ""
         return (
-            f"<Tx {self.from_address:>8} => {self.to_address:8} | "
-            f"{self.memo} | {coins}{gas}{fee}{id}>"
+            f"<Tx {self.from_address:>10} => {self.to_address:10} "
+            f"[{self.memo}] {coins}{gas}{fee}{id}>"
         )
 
     def __str__(self):
@@ -243,8 +290,8 @@ class Transaction(Jsonable):
             else ""
         )
         return (
-            f"Tx {self.from_address:>8} => {self.to_address:8} | "
-            f"{self.memo} | {coins}{gas}{fee}{id}"
+            f"{self.from_address:>10} => {self.to_address:10} "
+            f"[{self.memo}] {coins}{gas}{fee}{id}"
         )
 
     def short(self):
@@ -288,11 +335,10 @@ class Transaction(Jsonable):
             return Asset(parts[1])
         return None
 
-    def is_cross_chain_stake(self):
-        if not self.memo.startswith("STAKE:"):
+    def is_cross_chain_provision(self):
+        if not self.memo.startswith("ADD:"):
             return False
-        asset = self.get_asset_from_memo()
-        if asset and asset.get_chain() != self.chain:
+        if len(self.memo.split(":")) == 3:
             return True
         return False
 
