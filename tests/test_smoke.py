@@ -151,7 +151,6 @@ class TestSmoke(unittest.TestCase):
             ethOut = []
             for out in outbounds:
                 if out.coins[0].asset.get_chain() == "ETH":
-                    logging.info(f"========>test:{out}")
                     ethOut.append(out)
             thorchain.handle_gas(bnbOut)  # subtract gas from pool(s)
             thorchain.handle_gas(btcOut)  # subtract gas from pool(s)
