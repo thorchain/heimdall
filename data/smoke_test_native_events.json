@@ -250,7 +250,7 @@
                 "rune_amount": "50000000000"
             },
             {
-                "asset_amount": "4000000000"
+                "asset_amount": "40000000.0"
             },
             {
                 "asset_address": "PROVIDER-1"
@@ -306,7 +306,7 @@
                 "rune_amount": "50000000000"
             },
             {
-                "asset_amount": "4000000000"
+                "asset_amount": "400000000.0"
             },
             {
                 "asset_address": "PROVIDER-1"
@@ -1463,7 +1463,7 @@
                 "coins": "195000 ETH.ETH"
             },
             {
-                "pool_deduct": "6500000"
+                "pool_deduct": "650000000"
             }
         ]
     },
@@ -1480,13 +1480,13 @@
                 "trade_slip": "5000"
             },
             {
-                "liquidity_fee": "1000000000"
+                "liquidity_fee": "10000000"
             },
             {
                 "liquidity_fee_in_rune": "12500000000"
             },
             {
-                "emit_asset": "1000000000 ETH.ETH"
+                "emit_asset": "10000000 ETH.ETH"
             },
             {
                 "id": "TODO"
@@ -1518,7 +1518,7 @@
                 "asset_amt": "97500"
             },
             {
-                "rune_amt": "3249578"
+                "rune_amt": "320802285"
             },
             {
                 "transaction_count": "1"
@@ -1549,16 +1549,16 @@
                 "price_target": "0"
             },
             {
-                "trade_slip": "476"
+                "trade_slip": "3326"
             },
             {
-                "liquidity_fee": "226735962"
+                "liquidity_fee": "11026699458"
             },
             {
-                "liquidity_fee_in_rune": "226735962"
+                "liquidity_fee_in_rune": "11026699458"
             },
             {
-                "emit_asset": "4534866634 THOR.RUNE"
+                "emit_asset": "22125072463 THOR.RUNE"
             },
             {
                 "id": "TODO"
@@ -1573,7 +1573,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "150000000 ETH.ETH"
+                "coin": "15000000.0 ETH.ETH"
             },
             {
                 "memo": "SWAP:THOR.RUNE:USER-1"
@@ -1587,10 +1587,10 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "177281 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
+                "coins": "1005915 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
             },
             {
-                "pool_deduct": "5909362"
+                "pool_deduct": "335305002"
             }
         ]
     },
@@ -1607,13 +1607,13 @@
                 "trade_slip": "5000"
             },
             {
-                "liquidity_fee": "1000000000"
+                "liquidity_fee": "100000000"
             },
             {
                 "liquidity_fee_in_rune": "12500000000"
             },
             {
-                "emit_asset": "1000000000 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
+                "emit_asset": "100000000 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
             },
             {
                 "id": "TODO"
@@ -1642,10 +1642,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "53705"
+                "asset_amt": "53729"
             },
             {
-                "rune_amt": "1627499"
+                "rune_amt": "92387705"
             },
             {
                 "transaction_count": "1"
@@ -1731,16 +1731,16 @@
                 "price_target": "0"
             },
             {
-                "trade_slip": "476"
+                "trade_slip": "475"
             },
             {
-                "liquidity_fee": "226718449"
+                "liquidity_fee": "224560536"
             },
             {
-                "liquidity_fee_in_rune": "226718449"
+                "liquidity_fee_in_rune": "224560536"
             },
             {
-                "emit_asset": "4534636946 THOR.RUNE"
+                "emit_asset": "4506269976 THOR.RUNE"
             },
             {
                 "id": "TODO"
@@ -1755,7 +1755,7 @@
                 "to": "VAULT"
             },
             {
-                "coin": "150000000 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
+                "coin": "15000000.0 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
             },
             {
                 "memo": "SWAP:THOR.RUNE:USER-1"
@@ -1772,7 +1772,7 @@
                 "coins": "195000 ETH.ETH"
             },
             {
-                "pool_deduct": "5909564"
+                "pool_deduct": "336104916"
             }
         ]
     },
@@ -1806,10 +1806,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "315004380"
+                "emit_asset": "4504377"
             },
             {
-                "emit_rune": "9546351044"
+                "emit_rune": "7763811753"
             },
             {
                 "id": "TODO"
@@ -1841,7 +1841,7 @@
                 "asset_amt": "97500"
             },
             {
-                "rune_amt": "2954375"
+                "rune_amt": "166443487"
             },
             {
                 "transaction_count": "1"
@@ -1855,10 +1855,10 @@
                 "tx_id": "TODO"
             },
             {
-                "coins": "195003 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
+                "coins": "1110769 ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A"
             },
             {
-                "pool_deduct": "5909157"
+                "pool_deduct": "334484364"
             }
         ]
     },
@@ -1892,10 +1892,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "315017728"
+                "emit_asset": "31600592"
             },
             {
-                "emit_rune": "9545945369"
+                "emit_rune": "9515842502"
             },
             {
                 "id": "TODO"
@@ -1924,10 +1924,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "53717"
+                "asset_amt": "53753"
             },
             {
-                "rune_amt": "1627806"
+                "rune_amt": "92202759"
             },
             {
                 "transaction_count": "1"
@@ -3428,10 +3428,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "2835354556"
+                "emit_asset": "285516092"
             },
             {
-                "emit_rune": "85907599166"
+                "emit_rune": "85308098156"
             },
             {
                 "id": "TODO"
@@ -3460,10 +3460,10 @@
                 "asset": "ETH.ETH"
             },
             {
-                "asset_amt": "26853"
+                "asset_amt": "26877"
             },
             {
-                "rune_amt": "813767"
+                "rune_amt": "46224363"
             },
             {
                 "transaction_count": "1"
@@ -3511,10 +3511,10 @@
                 "asymmetry": "0.000000000000000000"
             },
             {
-                "emit_asset": "2834958845"
+                "emit_asset": "40458764"
             },
             {
-                "emit_rune": "85916645783"
+                "emit_rune": "69843071467"
             },
             {
                 "id": "TODO"
