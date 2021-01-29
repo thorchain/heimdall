@@ -5,7 +5,7 @@ import os
 import sys
 import json
 import itertools
-
+from copy import deepcopy
 from tenacity import retry, stop_after_delay, wait_fixed
 
 from utils.segwit_addr import decode_address
@@ -338,7 +338,8 @@ class Smoker:
         if txn.chain == Litecoin.chain:
             return self.litecoin.transfer(txn)
         if txn.chain == Ethereum.chain:
-            return self.ethereum.transfer(txn)
+            tx_copy = deepcopy(txn)
+            return self.ethereum.transfer(tx_copy)
         if txn.chain == Thorchain.chain:
             return self.thorchain.transfer(txn)
 
@@ -365,11 +366,23 @@ class Smoker:
     def sim_trigger_tx(self, txn):
         # process transaction in thorchain
         self.set_network_fees()
+        if txn.chain == Ethereum.chain:
+            for idx, coin in enumerate(txn.coins):
+                txn.coins[idx].amount = int(coin.amount / 1e10)
+            for idx, c in enumerate(txn.gas):
+                txn.gas[idx].amount = int(c.amount / 1e10)
         outbounds = self.thorchain_state.handle(txn)
 
         for outbound in outbounds:
+            out = deepcopy(outbound)
             # update simulator state with outbound txs
-            self.broadcast_simulator(outbound)
+            if out.chain == Ethereum.chain:
+                for idx, coin in enumerate(out.coins):
+                    out.coins[idx].amount = int(coin.amount * 1e10)
+                for idx, c in enumerate(out.gas):
+                    out.gas[idx].amount = int(c.amount * 1e10)
+                out.fee.amount = out.fee.amount * 1e10
+            self.broadcast_simulator(out)
 
         return outbounds
 
