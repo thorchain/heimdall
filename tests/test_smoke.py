@@ -4,6 +4,7 @@ import logging
 import json
 from pprint import pformat
 from deepdiff import DeepDiff
+from copy import deepcopy
 
 from chains.binance import Binance
 from chains.bitcoin import Bitcoin
@@ -101,10 +102,14 @@ class TestSmoke(unittest.TestCase):
                 bch.transfer(txn)  # send transfer on bitcoin cash chain
             if txn.chain == Ethereum.chain:
                 eth.transfer(txn)  # send transfer on ethereum chain
+                # convert the coin amount to thorchain amount which is 1e8
+                for idx, c in enumerate(txn.coins):
+                    txn.coins[idx].amount = c.amount / 1e10
+                for idx, c in enumerate(txn.gas):
+                    txn.gas[idx].amount = c.amount / 1e10
 
             if txn.memo == "SEED":
                 continue
-
             outbounds = thorchain.handle(txn)  # process transaction in thorchain
 
             for txn in outbounds:
@@ -117,7 +122,13 @@ class TestSmoke(unittest.TestCase):
                 if txn.chain == BitcoinCash.chain:
                     bch.transfer(txn)  # send outbound txns back to Bitcoin Cash
                 if txn.chain == Ethereum.chain:
-                    eth.transfer(txn)  # send outbound txns back to Ethereum
+                    temp_txn = deepcopy(txn)
+                    for idx, c in enumerate(temp_txn.coins):
+                        temp_txn.coins[idx].amount = c.amount * 1e10
+                    for idx, c in enumerate(temp_txn.gas):
+                        temp_txn.gas[idx].amount = c.amount * 1e10
+                    temp_txn.fee.amount = temp_txn.fee.amount * 1e10
+                    eth.transfer(temp_txn)  # send outbound txns back to Ethereum
 
             thorchain.handle_rewards()
 
@@ -140,6 +151,7 @@ class TestSmoke(unittest.TestCase):
             ethOut = []
             for out in outbounds:
                 if out.coins[0].asset.get_chain() == "ETH":
+                    logging.info(f"========>test:{out}")
                     ethOut.append(out)
             thorchain.handle_gas(bnbOut)  # subtract gas from pool(s)
             thorchain.handle_gas(btcOut)  # subtract gas from pool(s)
