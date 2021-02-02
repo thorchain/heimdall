@@ -42,7 +42,9 @@ class MockBitcoin(HttpClient):
         select_chain_params("bitcoin/regtest")
 
         for key in self.private_keys:
-            seckey = CBitcoinRegtestKey.from_secret_bytes(codecs.decode(key, "hex_codec"))
+            seckey = CBitcoinRegtestKey.from_secret_bytes(
+                codecs.decode(key, "hex_codec")
+            )
             self.call("importprivkey", str(seckey))
 
         threading.Thread(target=self.scan_blocks, daemon=True).start()

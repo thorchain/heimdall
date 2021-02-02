@@ -168,7 +168,7 @@
         "coins": [
             {
                 "asset": "ETH.ETH",
-                "amount": 40000000000000
+                "amount": 40000000000000000000
             }
         ],
         "gas": null
@@ -181,7 +181,7 @@
         "coins": [
             {
                 "asset": "ETH.ETH",
-                "amount": 40000000000000
+                "amount": 40000000000000000000
             }
         ],
         "gas": null
@@ -194,7 +194,7 @@
         "coins": [
             {
                 "asset": "ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
-                "amount": 40000000000000
+                "amount": 40000000000000000000
             }
         ],
         "gas": null
@@ -207,7 +207,7 @@
         "coins": [
             {
                 "asset": "ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
-                "amount": 40000000000000
+                "amount": 40000000000000000000
             }
         ],
         "gas": null
@@ -306,7 +306,7 @@
         "coins": [
             {
                 "asset": "ETH.ETH",
-                "amount": 4000000000
+                "amount": 4000000000000000000
             }
         ],
         "gas": null
@@ -332,7 +332,7 @@
         "coins": [
             {
                 "asset": "ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
-                "amount": 4000000000
+                "amount": 4000000000000000000
             }
         ],
         "gas": null
@@ -607,7 +607,7 @@
         "coins": [
             {
                 "asset": "ETH.ETH",
-                "amount": 150000000
+                "amount": 150000000000000000
             }
         ],
         "gas": null
@@ -633,7 +633,7 @@
         "coins": [
             {
                 "asset": "ETH.TKN-0X40BCD4DB8889A8BF0B1391D0C819DCD9627F9D0A",
-                "amount": 150000000
+                "amount": 150000000000000000
             }
         ],
         "gas": null
